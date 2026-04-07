@@ -24,6 +24,7 @@
             --text-muted: #8e8e93;
             --border-color: #e5e5ea;
             --radius: 16px;
+            
             --clr-support-bg: #fef08a; --clr-support-text: #854d0e; 
             --clr-ekta-bg: #bfdbfe; --clr-ekta-text: #1e3a8a;    
             --clr-epz-bg: #e0f2fe; --clr-epz-text: #0369a1;    
@@ -42,49 +43,63 @@
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
         .container { width: 100%; max-width: 480px; display: flex; flex-direction: column; gap: 16px; margin-bottom: 80px; }
-        .search-block { background: var(--card-bg); padding: 20px; border-radius: var(--radius); box-shadow: 0 2px 10px rgba(0,0,0,0.03); }
-        h2 { color: var(--primary); margin: 0 0 10px 0; font-size: 24px; font-weight: 800; letter-spacing: -0.7px;}
-        .status { font-size: 11px; margin-bottom: 15px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; display: flex; align-items: center; gap: 6px; }
         
-        input { width: 100%; padding: 16px; border: 1px solid var(--border-color); border-radius: 16px; font-size: 16px; outline: none; transition: 0.2s; background: #ffffff; margin-bottom: 12px;}
+        /* Поиск */
+        .search-block { background: var(--card-bg); padding: 20px; border-radius: var(--radius); box-shadow: 0 2px 10px rgba(0,0,0,0.03); position: relative; }
+        h2 { color: var(--primary); margin: 0 0 10px 0; font-size: 24px; font-weight: 800; }
+        .status { font-size: 11px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; margin-bottom: 15px; display: flex; align-items: center; gap: 6px; }
+        
+        .search-wrapper { position: relative; }
+        input { width: 100%; padding: 16px; border: 1px solid var(--border-color); border-radius: 16px; font-size: 16px; outline: none; transition: 0.2s; background: #ffffff; }
         input:focus { border-color: var(--primary); box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1); }
-        
-        .price-wrapper { display: none; gap: 8px; margin-bottom: 12px; }
-        .ok-btn { background: #166534; color: white; border: none; padding: 0 24px; border-radius: 16px; font-weight: 800; cursor: pointer; }
+        .clear-btn { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: #fee2e2; color: #ef4444; border: none; width: 28px; height: 28px; border-radius: 50%; font-weight: 800; cursor: pointer; display: none; align-items: center; justify-content: center; }
 
-        .suggestions-list { position: absolute; top: 100%; left: 0; right: 0; background: #fff; border: 1px solid var(--border-color); border-radius: 16px; box-shadow: 0 15px 35px rgba(0,0,0,0.1); max-height: 250px; overflow-y: auto; z-index: 100; display: none; padding: 6px; }
-        .suggestion-item { padding: 14px; cursor: pointer; border-radius: 10px; font-size: 15px; font-weight: 500; }
+        .suggestions-list { position: absolute; top: 100%; left: 0; right: 0; background: #fff; border: 1px solid var(--border-color); border-radius: 16px; box-shadow: 0 15px 35px rgba(0,0,0,0.1); max-height: 250px; overflow-y: auto; z-index: 100; display: none; padding: 6px; margin-top: 5px; }
+        .suggestion-item { padding: 14px; cursor: pointer; border-radius: 10px; font-size: 15px; font-weight: 500; border-bottom: 1px solid #f9f9f9; }
+        .suggestion-item:last-child { border: none; }
         .suggestion-item:active { background: #f2f2f7; }
-        
-        .result-box { display: none; flex-direction: column; gap: 16px; margin-top: 5px;}
+
+        .price-wrapper { display: none; gap: 8px; margin-top: 12px; }
+        #devicePrice { margin-bottom: 0; flex: 1; color: #166534; font-weight: 800; }
+        .ok-btn { background: #166534; color: white; border: none; padding: 0 20px; border-radius: 16px; font-weight: 800; cursor: pointer; }
+
+        /* Результаты */
+        .result-box { display: none; flex-direction: column; gap: 16px; margin-top: 5px; animation: fadeIn 0.4s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
         .tech-card { background: var(--card-bg); border-radius: var(--radius); padding: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.03); }
-        .ua-name { font-weight: 800; font-size: 22px; border-left: 5px solid var(--primary); padding-left: 12px; margin-bottom: 15px;}
+        .ua-name { font-weight: 800; font-size: 22px; border-left: 5px solid var(--primary); padding-left: 12px; margin-bottom: 5px; }
+        .item-category { font-size: 12px; color: var(--text-muted); font-weight: 700; text-transform: uppercase; margin-bottom: 20px; padding-left: 16px;}
         
-        .tech-item { display: flex; align-items: center; gap: 16px; background: #ffffff; padding: 16px; border-radius: 16px; border: 1px solid #f2f2f7; margin-bottom: 10px; }
-        .icon-circle { width: 44px; height: 44px; min-width: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 22px; }
-        .tech-label { font-size: 10px; color: var(--text-muted); font-weight: 700; text-transform: uppercase; margin-bottom: 4px; display: block; }
-        .tech-val { font-size: 15px; font-weight: 600; line-height: 1.3; }
+        .tech-item { display: flex; align-items: center; gap: 16px; background: #ffffff; padding: 14px; border-radius: 16px; border: 1px solid #f2f2f7; margin-bottom: 10px; }
+        .icon-circle { width: 40px; height: 40px; min-width: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px; }
+        .tech-label { font-size: 10px; color: var(--text-muted); font-weight: 700; text-transform: uppercase; display: block; margin-bottom: 2px; }
+        .tech-val { font-size: 14px; font-weight: 600; line-height: 1.2; }
 
         .service-list { background: var(--card-bg); border-radius: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.03); overflow: hidden; display: flex; flex-direction: column; }
         .accordion-item { border-bottom: 1px solid var(--border-color); }
         .accordion-header { width: 100%; display: flex; justify-content: space-between; align-items: center; padding: 18px 20px; background: none; border: none; cursor: pointer; text-align: left; }
-        .service-title { font-size: 15px; font-weight: 700; }
-        .price-badge { font-size: 16px; font-weight: 800; }
-        .chevron-icon { width: 22px; height: 22px; stroke: #c7c7cc; stroke-width: 2.5; fill: none; transition: 0.3s; }
+        
+        .brand-tag { font-size: 9px; font-weight: 800; text-transform: uppercase; padding: 4px 8px; border-radius: 6px; margin-bottom: 6px; display: inline-block; }
+        .service-title { font-size: 14px; font-weight: 700; color: #1c1c1e; display: block; }
+        
+        .price-badge { font-size: 15px; font-weight: 800; color: #1c1c1e; margin-right: 8px; }
+        .chevron-icon { width: 20px; height: 20px; stroke: #c7c7cc; stroke-width: 2.5; fill: none; transition: 0.3s; }
         
         .accordion-body { display: grid; grid-template-rows: 0fr; transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); background-color: #fafafa; }
         .accordion-item.active .accordion-body { grid-template-rows: 1fr; }
         .accordion-item.active .chevron-icon { transform: rotate(90deg); }
         .content-wrapper { overflow: hidden; padding: 0 20px 20px 20px; }
 
+        .desc-line { display: flex; gap: 10px; margin-top: 10px; font-size: 13px; line-height: 1.4; color: #444; }
+        .code-pill { display: inline-flex; align-items: center; gap: 8px; background: #eff6ff; padding: 6px 12px; border-radius: 8px; font-weight: 800; color: var(--primary); cursor: pointer; border: 1px solid #bfdbfe; margin-top: 15px; font-size: 13px; }
+
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); display: none; justify-content: center; align-items: center; z-index: 9999; }
         .modal.show { display: flex; }
         .modal-content { background: #fff; width: 92%; max-width: 480px; border-radius: 24px; padding: 24px; max-height: 90vh; overflow-y: auto; }
         
-        .code-box { display: inline-flex; align-items: center; gap: 8px; background: #eff6ff; padding: 8px 12px; border-radius: 8px; font-weight: 800; color: var(--primary); cursor: pointer; margin-bottom: 12px; font-size: 14px;}
-        .footer { margin-top: 20px; text-align: center; font-size: 11px; color: var(--text-muted); padding-bottom: 30px;}
-        .floating-btns { position: fixed; bottom: 24px; right: 24px; display: flex; flex-direction: column; gap: 16px; z-index: 999; }
-        .float-btn { width: 56px; height: 56px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: #fff; box-shadow: 0 6px 20px rgba(0,0,0,0.1); color: var(--primary); border: 1px solid var(--border-color);}
+        .footer { margin-top: 30px; text-align: center; font-size: 11px; color: var(--text-muted); padding-bottom: 40px;}
+        .float-btn { position: fixed; bottom: 24px; right: 24px; width: 56px; height: 56px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: var(--primary); color: #fff; box-shadow: 0 8px 25px rgba(37, 99, 235, 0.3); border: none; }
     </style>
 </head>
 <body>
@@ -98,8 +113,9 @@
     <div class="search-block">
         <h2>SkillHUB Assistant</h2>
         <div id="status" class="status">🔄 Підключення...</div>
-        <div style="position:relative;">
+        <div class="search-wrapper">
             <input type="text" id="catInput" placeholder="Яку техніку шукаємо?" autocomplete="off" disabled>
+            <button id="clearAllBtn" class="clear-btn">✕</button>
             <div id="customSuggestions" class="suggestions-list"><div id="matchesContainer"></div></div>
         </div>
         <div class="price-wrapper" id="priceWrapper">
@@ -111,17 +127,24 @@
     <div id="result" class="result-box">
         <div class="tech-card">
             <div class="ua-name" id="uaTitle"></div>
+            <div id="itemCategory" class="item-category"></div>
             <div id="techInfo"></div>
         </div>
         <div class="service-list" id="serviceList"></div>
     </div>
+    
+    <div class="footer">🇺🇦 ROZETKA KHARKIV REGION • 2026<br><span id="appVersionDisp"></span></div>
 </div>
 
 <div id="descModal" class="modal"><div class="modal-content"><div id="modalBody"></div><br><button onclick="closeModal()" style="width:100%; padding:14px; border-radius:12px; border:none; background:var(--primary); color:#fff; font-weight:700;">Закрити</button></div></div>
 
+<a href="https://forms.gle/z4wz9XcSLT5pGXkp8" target="_blank" class="float-btn">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+</a>
+
 <script>
     const API_URL = 'https://script.google.com/macros/s/AKfycbzqIwwzkR3WpM9L18bgnlHVrQeFq3ciL-M39SMtkhaaEMFwZo04zTrYFds7rRdGtoGorQ/exec';
-    const CACHE_KEY = 'skillhub_v310_final'; 
+    const CACHE_KEY = 'skillhub_v320_stable'; 
     
     let db = { categories: [], descriptions: {}, tariffs: [], appVersion: "", montazhData: [], serviceCodes: {} };
     let currentCategoryData = null;
@@ -129,8 +152,7 @@
     async function init() {
         const cached = localStorage.getItem(CACHE_KEY);
         if (cached) {
-            try { db = JSON.parse(cached); enableUI(); refreshData(); } 
-            catch(e) { refreshData(true); }
+            try { db = JSON.parse(cached); enableUI(); refreshData(); } catch(e) { refreshData(true); }
         } else { refreshData(true); }
     }
 
@@ -155,15 +177,22 @@
     }
 
     const elCatInput = document.getElementById('catInput');
+    const elClearBtn = document.getElementById('clearAllBtn');
+
     elCatInput.addEventListener('input', () => {
-        const val = elCatInput.value.toLowerCase();
+        const val = elCatInput.value.toLowerCase().trim();
+        elClearBtn.style.display = val.length > 0 ? 'flex' : 'none';
         if (val.length < 2) { document.getElementById('customSuggestions').style.display = 'none'; return; }
-        const matches = db.categories.filter(c => c.ua.toLowerCase().includes(val)).slice(0, 10);
+        
+        const matches = db.categories.filter(c => c.ua.toLowerCase().includes(val) || (c.ru && c.ru.toLowerCase().includes(val))).slice(0, 10);
+        
         if (matches.length > 0) {
             document.getElementById('customSuggestions').style.display = 'block';
             document.getElementById('matchesContainer').innerHTML = matches.map(m => `
-                <div class="suggestion-item" onclick='selectItem(${JSON.stringify(m).replace(/'/g, "&apos;")})'>${m.ua}</div>
+                <div class="suggestion-item" onmousedown='selectItem(${JSON.stringify(m).replace(/'/g, "&apos;")})'>${m.ua}</div>
             `).join('');
+        } else {
+            document.getElementById('customSuggestions').style.display = 'none';
         }
     });
 
@@ -172,6 +201,7 @@
         elCatInput.value = item.ua;
         document.getElementById('customSuggestions').style.display = 'none';
         document.getElementById('uaTitle').innerText = item.ua;
+        document.getElementById('itemCategory').innerText = item.category || "";
         document.getElementById('priceWrapper').style.display = 'flex';
         document.getElementById('result').style.display = 'flex';
         renderServices();
@@ -179,55 +209,94 @@
 
     function renderServices() {
         const p = parseFloat(document.getElementById('devicePrice').value) || 0;
-        renderTechInfo();
+        renderTechInfo(p);
+        const container = document.getElementById('serviceList');
+        container.innerHTML = "";
+        
         if (!currentCategoryData.service) return;
 
         const services = currentCategoryData.service.split('|').filter(s => s.trim());
-        let html = "";
+        
         services.forEach(name => {
-            const isComplex = name.toUpperCase().includes('МОНТАЖ') || name.toUpperCase().includes('SWEET') || name.toUpperCase().includes('PARALLELS');
+            const brandMatch = name.match(/^\[(.*?)\]/);
+            const brand = brandMatch ? brandMatch[1] : "";
+            const title = brandMatch ? name.replace(brandMatch[0], "").trim() : name;
+            const uName = name.toUpperCase();
             
-            html += `
-            <div class="accordion-item">
-                <button class="accordion-header" onclick="${isComplex ? `openComplexModal('${name}')` : `this.parentElement.classList.toggle('active')`}">
-                    <span class="service-title">${name}</span>
+            const isComplex = uName.includes('МОНТАЖ') || uName.includes('SWEET') || uName.includes('PARALLELS') || uName.includes('АНТИВІРУС') || uName.includes('НАЛАШТУВАННЯ');
+            
+            let nameClean = name.replace(/^\[.*?\]\s*/, '').replace(/[«»"'”`\u00A0\s]/g, '').trim().toLowerCase();
+            const matchingTariffs = db.tariffs.filter(x => x.service.replace(/[«»"'”`\u00A0\s]/g, '').toLowerCase().includes(nameClean));
+            let t = matchingTariffs.find(x => p >= x.minPrice && p <= x.maxPrice) || matchingTariffs[0];
+
+            let costLabel = isComplex ? "Обрати" : (t && t.cost ? t.cost : "Деталі");
+            let brandCls = brand.toLowerCase().includes('support') ? 'brand-support' : brand.toLowerCase().includes('екта') ? 'brand-ekta' : 'brand-epz';
+
+            const itemEl = document.createElement('div');
+            itemEl.className = 'accordion-item';
+            itemEl.innerHTML = `
+                <button class="accordion-header" onclick="${isComplex ? `openComplexModal('${name.replace(/'/g,"")}')` : `this.parentElement.classList.toggle('active')`}">
+                    <div style="flex:1;">
+                        ${brand ? `<span class="brand-tag ${brandCls}">${brand}</span>` : ''}
+                        <span class="service-title">${title}</span>
+                    </div>
                     <div style="display:flex; align-items:center; gap:10px;">
-                        <span style="font-weight:800; font-size:14px;">${isComplex ? 'Обрати' : 'Деталі'}</span>
-                        ${isComplex ? '<span>↗</span>' : '<svg class="chevron-icon" viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" stroke-width="2.5" fill="none"><polyline points="9 18 15 12 9 6"></polyline></svg>'}
+                        <span class="price-badge">${costLabel}</span>
+                        ${isComplex ? '<span style="font-size:18px; color:var(--primary)">↗</span>' : '<svg class="chevron-icon" viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="3" fill="none"><polyline points="9 18 15 12 9 6"></polyline></svg>'}
                     </div>
                 </button>
                 <div class="accordion-body">
-                    <div class="content-wrapper">${getDescHTML(name)}</div>
+                    <div class="content-wrapper">
+                        ${getDescHTML(name, t ? t.code : "")}
+                    </div>
                 </div>
-            </div>`;
+            `;
+            container.appendChild(itemEl);
         });
-        document.getElementById('serviceList').innerHTML = html;
     }
 
-    function renderTechInfo() {
+    function renderTechInfo(p) {
         const item = currentCategoryData;
         let html = "";
-        if (item.complexity) html += `<div class="tech-item"><div class="icon-circle" style="background:#fef9c3; color:#eab308;">⚙️</div><div><span class="tech-label">Складність</span><span class="tech-val">${item.complexity}</span></div></div>`;
-        if (item.price) html += `<div class="tech-item"><div class="icon-circle" style="background:#dcfce7; color:#10b981;">💵</div><div><span class="tech-label">Ремонт</span><span class="tech-val">${item.price}</span></div></div>`;
+        const addItem = (icon, label, val, bg, color) => `
+            <div class="tech-item">
+                <div class="icon-circle" style="background:${bg}; color:${color}">${icon}</div>
+                <div><span class="tech-label">${label}</span><span class="tech-val">${val}</span></div>
+            </div>`;
+
+        if (item.complexity) html += addItem("⚙️", "Складність", item.complexity, "#fef9c3", "#eab308");
+        if (item.price) html += addItem("💵", "Орієнтовний ремонт", item.price, "#dcfce7", "#10b981");
+        if (item.garant) html += addItem("✅", "Гарантія", item.garant, "#d1fae5", "#059669");
+        if (item.negarant) html += addItem("❌", "Негарантія", item.negarant, "#fee2e2", "#ef4444");
+
         document.getElementById('techInfo').innerHTML = html;
     }
 
-    function getDescHTML(name) {
-        const cleanName = name.replace(/^\[.*?\]\s*/, '').toLowerCase();
+    function getDescHTML(name, code) {
+        let cleanName = name.replace(/^\[.*?\]\s*/, '').toLowerCase().trim();
         let desc = "Опис відсутній";
         for (let k in db.descriptions) {
             if (k.toLowerCase().includes(cleanName)) { desc = db.descriptions[k]; break; }
         }
-        return `<div style="padding-top:10px; font-size:14px; line-height:1.4; color:#444;">🔹 ${desc.replace(/\|/g, '<br>🔹 ')}</div>`;
+        let codeHtml = code ? `<div class="code-pill" onclick="copyCode(event, '${code}')">Код: ${code} 📋</div>` : "";
+        let lines = desc.split('|').map(l => `<div class="desc-line"><span>🔹</span><span>${l.trim()}</span></div>`).join('');
+        return codeHtml + lines;
     }
 
+    window.copyCode = function(e, code) {
+        e.stopPropagation();
+        navigator.clipboard.writeText(code).then(() => alert("Код скопійовано!"));
+    };
+
     window.openComplexModal = function(name) {
-        document.getElementById('modalBody').innerHTML = `<h3>${name}</h3><p style="color:#666;">Вибір пакетів доступний в основній базі.</p>`;
+        document.getElementById('modalBody').innerHTML = `<h3>${name}</h3><p style="margin-top:15px; color:#666;">Функціонал вибору пакетів та міст активується при наявності даних у вкладках ВПТ та Вартість.</p>`;
         document.getElementById('descModal').classList.add('show');
     };
     window.closeModal = () => document.getElementById('descModal').classList.remove('show');
 
-    document.getElementById('okBtn').onclick = () => renderServices();
+    document.getElementById('okBtn').onclick = () => { document.getElementById('devicePrice').blur(); renderServices(); };
+    elClearBtn.onclick = () => { elCatInput.value = ""; elClearBtn.style.display="none"; document.getElementById('result').style.display="none"; };
+
     init();
 
     if ('serviceWorker' in navigator) {
