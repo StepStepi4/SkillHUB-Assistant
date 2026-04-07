@@ -1,10 +1,10 @@
-const APP_VERSION = 'skillhub-v2.0.0';
+const APP_VERSION = 'skillhub-v2.1.0'; // Оновлена версія для скидання кешу
 const CACHE_FILES = [
   './',
   './index.html',
   './manifest.json',
   './icon-192.png',
-  './icon-512.png'
+  './icon-512.jpg'  // Змінено з .png на .jpg відповідно до вашого файлу
 ];
 
 self.addEventListener('install', (event) => {
@@ -32,11 +32,9 @@ self.addEventListener('activate', (event) => {
 });
 
 self.addEventListener('fetch', (event) => {
-  // Пропускаем запросы к Google Apps Script
   if (event.request.url.includes('script.google.com')) {
       return; 
   }
-
   event.respondWith(
     caches.match(event.request).then((response) => {
       return response || fetch(event.request);
