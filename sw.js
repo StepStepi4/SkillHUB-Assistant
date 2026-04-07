@@ -1,10 +1,10 @@
-const APP_VERSION = 'skillhub-v3.0.0'; // НОВАЯ ВЕРСИЯ
+const APP_VERSION = 'skillhub-v3.1.0'; // ОБНОВЛЕНО
 const CACHE_FILES = [
   './',
   './index.html',
   './manifest.json',
   './icon-192.png',
-  './icon-512.png' 
+  './icon-512.jpg' 
 ];
 
 self.addEventListener('install', (event) => {
@@ -38,8 +38,6 @@ self.addEventListener('fetch', (event) => {
   event.respondWith(
     caches.match(event.request).then((response) => {
       return response || fetch(event.request);
-    }).catch(() => {
-        return caches.match('./index.html');
     })
   );
 });
