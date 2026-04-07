@@ -1,4 +1,4 @@
-const APP_VERSION = 'skillhub-v3.1.0'; // ОБНОВЛЕНО
+const APP_VERSION = 'skillhub-v3.2.0'; // ОБНОВЛЕНО
 const CACHE_FILES = [
   './',
   './index.html',
