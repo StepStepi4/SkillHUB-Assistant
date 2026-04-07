@@ -34,25 +34,25 @@
         body.modal-open { overflow: hidden; position: fixed; width: 100%; }
         body { font-family: 'Inter', sans-serif; background: var(--bg-main); color: var(--text-main); margin: 0; padding: 20px 16px; display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; -webkit-font-smoothing: antialiased; }
         
-        .app-loader { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #ffffff; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 999999; }
-        .app-loader.hidden { opacity: 0; visibility: hidden; pointer-events: none; transition: opacity 0.4s ease; }
+        .app-loader { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #ffffff; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 999999; transition: opacity 0.4s ease; }
+        .app-loader.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
         .spinner-ring { width: 60px; height: 60px; border-radius: 50%; border: 4px solid #f2f2f7; border-top-color: var(--primary); animation: spin 1s linear infinite; margin-bottom: 20px; }
         .loader-text { font-size: 13px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; text-align: center; line-height: 1.5; }
         
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-        .container { width: 100%; max-width: 480px; display: flex; flex-direction: column; gap: 16px; }
+        .container { width: 100%; max-width: 480px; display: flex; flex-direction: column; gap: 16px; margin-bottom: 80px; }
         .search-block { background: var(--card-bg); padding: 20px; border-radius: var(--radius); box-shadow: 0 2px 10px rgba(0,0,0,0.03); }
-        h2 { color: var(--primary); margin: 0 0 10px 0; font-size: 24px; font-weight: 800; }
+        h2 { color: var(--primary); margin: 0 0 10px 0; font-size: 24px; font-weight: 800; letter-spacing: -0.7px;}
         .status { font-size: 11px; margin-bottom: 15px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; display: flex; align-items: center; gap: 6px; }
         
-        input { width: 100%; padding: 16px; border: 1px solid var(--border-color); border-radius: 16px; font-size: 16px; outline: none; transition: 0.2s; background: #ffffff; }
+        input { width: 100%; padding: 16px; border: 1px solid var(--border-color); border-radius: 16px; font-size: 16px; outline: none; transition: 0.2s; background: #ffffff; margin-bottom: 12px;}
         input:focus { border-color: var(--primary); box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1); }
         
-        .price-wrapper { display: none; gap: 8px; margin-top: 12px; }
+        .price-wrapper { display: none; gap: 8px; margin-bottom: 12px; }
         .ok-btn { background: #166534; color: white; border: none; padding: 0 24px; border-radius: 16px; font-weight: 800; cursor: pointer; }
 
-        .suggestions-list { position: absolute; top: 100%; left: 0; right: 0; background: #fff; border: 1px solid var(--border-color); border-radius: 16px; box-shadow: 0 15px 35px rgba(0,0,0,0.1); max-height: 250px; overflow-y: auto; z-index: 100; display: none; padding: 6px; margin-top: 5px;}
+        .suggestions-list { position: absolute; top: 100%; left: 0; right: 0; background: #fff; border: 1px solid var(--border-color); border-radius: 16px; box-shadow: 0 15px 35px rgba(0,0,0,0.1); max-height: 250px; overflow-y: auto; z-index: 100; display: none; padding: 6px; }
         .suggestion-item { padding: 14px; cursor: pointer; border-radius: 10px; font-size: 15px; font-weight: 500; }
         .suggestion-item:active { background: #f2f2f7; }
         
@@ -69,6 +69,7 @@
         .accordion-item { border-bottom: 1px solid var(--border-color); }
         .accordion-header { width: 100%; display: flex; justify-content: space-between; align-items: center; padding: 18px 20px; background: none; border: none; cursor: pointer; text-align: left; }
         .service-title { font-size: 15px; font-weight: 700; }
+        .price-badge { font-size: 16px; font-weight: 800; }
         .chevron-icon { width: 22px; height: 22px; stroke: #c7c7cc; stroke-width: 2.5; fill: none; transition: 0.3s; }
         
         .accordion-body { display: grid; grid-template-rows: 0fr; transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); background-color: #fafafa; }
@@ -82,13 +83,15 @@
         
         .code-box { display: inline-flex; align-items: center; gap: 8px; background: #eff6ff; padding: 8px 12px; border-radius: 8px; font-weight: 800; color: var(--primary); cursor: pointer; margin-bottom: 12px; font-size: 14px;}
         .footer { margin-top: 20px; text-align: center; font-size: 11px; color: var(--text-muted); padding-bottom: 30px;}
+        .floating-btns { position: fixed; bottom: 24px; right: 24px; display: flex; flex-direction: column; gap: 16px; z-index: 999; }
+        .float-btn { width: 56px; height: 56px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: #fff; box-shadow: 0 6px 20px rgba(0,0,0,0.1); color: var(--primary); border: 1px solid var(--border-color);}
     </style>
 </head>
 <body>
 
 <div id="appLoader" class="app-loader">
     <div class="spinner-ring"></div>
-    <div class="loader-text" id="loaderText">Завантаження...</div>
+    <div class="loader-text" id="loaderText">Оновлення бази...</div>
 </div>
 
 <div class="container">
@@ -112,27 +115,22 @@
         </div>
         <div class="service-list" id="serviceList"></div>
     </div>
-    
-    <div class="footer">🇺🇦 ROZETKA KHARKIV REGION • 2026<br><span id="appVersionDisp"></span></div>
 </div>
 
 <div id="descModal" class="modal"><div class="modal-content"><div id="modalBody"></div><br><button onclick="closeModal()" style="width:100%; padding:14px; border-radius:12px; border:none; background:var(--primary); color:#fff; font-weight:700;">Закрити</button></div></div>
 
 <script>
     const API_URL = 'https://script.google.com/macros/s/AKfycbzqIwwzkR3WpM9L18bgnlHVrQeFq3ciL-M39SMtkhaaEMFwZo04zTrYFds7rRdGtoGorQ/exec';
-    const CACHE_KEY = 'skillhub_v2100_stable'; 
+    const CACHE_KEY = 'skillhub_v310_final'; 
     
-    let db = { categories: [], descriptions: {}, tariffs: [], appVersion: "" };
+    let db = { categories: [], descriptions: {}, tariffs: [], appVersion: "", montazhData: [], serviceCodes: {} };
     let currentCategoryData = null;
 
     async function init() {
         const cached = localStorage.getItem(CACHE_KEY);
         if (cached) {
-            try { 
-                db = JSON.parse(cached); 
-                enableUI(); 
-                refreshData(); 
-            } catch(e) { refreshData(true); }
+            try { db = JSON.parse(cached); enableUI(); refreshData(); } 
+            catch(e) { refreshData(true); }
         } else { refreshData(true); }
     }
 
@@ -224,13 +222,12 @@
     }
 
     window.openComplexModal = function(name) {
-        document.getElementById('modalBody').innerHTML = `<h3>${name}</h3><p style="color:#666;">Вибір пакетів та міст доступний в основній базі. Зверніться до розділу ВПТ.</p>`;
+        document.getElementById('modalBody').innerHTML = `<h3>${name}</h3><p style="color:#666;">Вибір пакетів доступний в основній базі.</p>`;
         document.getElementById('descModal').classList.add('show');
     };
     window.closeModal = () => document.getElementById('descModal').classList.remove('show');
 
     document.getElementById('okBtn').onclick = () => renderServices();
-
     init();
 
     if ('serviceWorker' in navigator) {
