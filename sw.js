@@ -1,10 +1,10 @@
-const APP_VERSION = 'skillhub-v2.1.0'; // Оновлена версія для скидання кешу
+const APP_VERSION = 'skillhub-v3.0.0'; // НОВАЯ ВЕРСИЯ
 const CACHE_FILES = [
   './',
   './index.html',
   './manifest.json',
   './icon-192.png',
-  './icon-512.jpg'  // Змінено з .png на .jpg відповідно до вашого файлу
+  './icon-512.png' 
 ];
 
 self.addEventListener('install', (event) => {
