@@ -470,7 +470,7 @@
             
             db = newDb;
             localStorage.setItem(CACHE_KEY, dataStr);
-            setAppStatus('ok', 'Дані актуальні (Можливий режим офлайн)');
+            setAppStatus('ok', 'Дані актуальні (доступний офлайн режим)');
             if (first) enableUI();
         } catch (e) { 
             console.error(e);
