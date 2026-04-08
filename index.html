@@ -55,7 +55,6 @@
         .container { width: 94%; max-width: 480px; background: var(--card-bg); padding: 24px; border-radius: 30px; box-shadow: 0 15px 40px -5px rgba(0, 0, 0, 0.1); margin-top: 5vh; margin-bottom: 80px; transform: translateZ(0); border: 1px solid rgba(255,255,255,0.6); }
         h2 { color: var(--primary); margin: 0 0 15px 0; font-size: 24px; font-weight: 800; letter-spacing: -0.7px;}
         
-        /* ПУЛЬСУЮЧИЙ СТАТУС */
         .status-container { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
         .status-wrapper { display: flex; align-items: center; gap: 8px; }
         .status-text { font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
@@ -135,7 +134,6 @@
         .brand-ekta { background: var(--clr-ekta-bg); color: var(--clr-ekta-text); }
         .brand-epz { background: var(--clr-epz-bg); color: var(--clr-epz-text); }
 
-        /* ИОС-ПОДОБНЫЕ МОДАЛКИ (СНИЗУ ВВЕРХ) */
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15,23,42,0.5); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); display: flex; align-items: flex-end; justify-content: center; z-index: 9999; overscroll-behavior: contain; opacity: 0; visibility: hidden; pointer-events: none; transition: opacity 0.3s ease, visibility 0.3s ease; }
         .modal.show { opacity: 1; visibility: visible; pointer-events: auto; }
         .modal-content { background: #fff; width: 100%; max-width: 480px; border-radius: 24px 24px 0 0; padding: 24px; padding-bottom: 40px; display: flex; flex-direction: column; max-height: 90vh; min-height: 45vh; transform: translateY(100%); transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1); will-change: transform; box-shadow: 0 -10px 40px rgba(0,0,0,0.1); margin: 0 auto;}
@@ -150,41 +148,45 @@
         .modal-item { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; background: #f8fafc; padding: 10px; border-radius: 15px; border: 1px solid #f1f5f9; }
         .modal-icon-circle { width: 36px; height: 36px; min-width: 36px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; background: #fff; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
         .modal-text { font-size: 11px; line-height: 1.4; color: #334155; font-weight: 500; }
-
-        /* ОНОВЛЕНИЙ ДИЗАЙН КОДУ СЕРВІСУ */
-        .service-code-container {
+        
+        /* НОВИЙ ГАРНИЙ ДИЗАЙН ДЛЯ БЛОКУ КОДУ */
+        .code-block-wrapper {
+            background: #ffffff;
+            border: 2px dashed #bfdbfe;
+            border-radius: 16px;
+            padding: 14px;
+            margin-bottom: 16px;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 12px;
-            padding: 16px;
-            background: #ffffff;
-            border: 2px dashed #e2e8f0;
-            border-radius: 16px;
-            margin-bottom: 16px;
-        }
-        .service-code-label {
-            font-size: 15px;
-            font-weight: 700;
-            color: #475569;
-        }
-        .service-code-value {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            background: #eff6ff;
-            color: #2563eb;
-            padding: 8px 16px;
-            border-radius: 12px;
-            font-size: 18px;
-            font-weight: 800;
             cursor: pointer;
             transition: transform 0.15s ease, background 0.15s ease;
         }
-        .service-code-value:active {
-            transform: scale(0.95);
-            background: #dbeafe;
+        .code-block-wrapper:active { transform: scale(0.97); background: #eff6ff; }
+        .code-label-text { font-size: 15px; font-weight: 700; color: #1e293b; }
+        .code-value-text { font-size: 18px; font-weight: 900; color: #2563eb; display: flex; align-items: center; gap: 8px; background: #eff6ff; padding: 6px 12px; border-radius: 10px; }
+
+        /* КНОПКА ДЛЯ ФОТОГРАФІЙ */
+        .tech-photo-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            background: #f8fafc;
+            color: #475569;
+            padding: 12px;
+            border-radius: 16px;
+            text-decoration: none;
+            font-weight: 800;
+            font-size: 12px;
+            text-transform: uppercase;
+            margin-top: 5px;
+            border: 1px solid #e2e8f0;
+            transition: 0.2s;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.02);
         }
+        .tech-photo-btn:active { background: #e2e8f0; transform: scale(0.98); }
 
         .montazh-label { font-size: 13px; color: #475569; margin-bottom: 8px; display: block; font-weight: 600; text-align: left; padding-left: 8px; }
         .montazh-select { width: 100%; padding: 16px 20px; border-radius: 16px; background: #f8fafc; border: 1px solid #e2e8f0; font-size: 15px; font-weight: 700; color: #0f172a; margin-bottom: 20px; text-align: left; cursor: pointer; outline: none; transition: 0.2s; box-shadow: 0 4px 10px rgba(0,0,0,0.02); }
@@ -194,91 +196,29 @@
         .montazh-card-ekta { background: #eff6ff; border-color: #bfdbfe;} 
         .montazh-card-myservice { background: #f0fdf4; border-color: #bbf7d0;} 
 
-        .availability-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 4px 8px;
-            border-radius: 8px;
-            font-size: 11px;
-            font-weight: 700;
-            text-transform: uppercase;
-            margin-top: 8px;
-            line-height: 1;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.02);
-        }
+        .availability-badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 8px; border-radius: 8px; font-size: 11px; font-weight: 700; text-transform: uppercase; margin-top: 8px; line-height: 1; box-shadow: 0 1px 2px rgba(0,0,0,0.02); }
         .status-city-limit { background-color: #fee2e2; color: #991b1b; }
-        .status-fee-zone { background-color: #fffbeb; color: #b45309; }
+        .status-fee-zone { background-color: #fef08a; color: #854d0e; }
         .status-full-coverage { background-color: #dcfce7; color: #166534; }
         .status-plus { background-color: #f3e8ff; color: #6b21a8; }
         
         .desc-toggle { font-size: 13px; font-weight: 800; color: #2563eb; margin-top: 12px; cursor: pointer; display: flex; align-items: center; gap: 6px; padding-top: 12px; border-top: 1px dashed rgba(0,0,0,0.1); width: 100%; transition: 0.2s; user-select: none;}
         .desc-toggle:active { opacity: 0.6; }
         .desc-content { margin-top: 10px; padding: 14px; background: rgba(0,0,0,0.03); border-radius: 14px; }
-        .copy-code-pill { background: #dbeafe; padding: 6px 12px; border-radius: 10px; margin-left: 6px; display: inline-flex; align-items: center; gap: 6px; cursor: pointer; color: #2563eb; transition: 0.2s; box-shadow: 0 1px 2px rgba(0,0,0,0.05);}
-        .copy-code-pill:hover { background: #bfdbfe; }
-        .copy-code-pill:active { transform: scale(0.95); }
 
         .footer { margin-top: 25px; text-align: center; font-size: 10px; color: #94a3b8; font-weight: 600; line-height: 1.5; padding-bottom: 20px;}
         .app-version { display: block; font-size: 8px; font-weight: 500; opacity: 0.6; margin-top: 4px; }
 
-        /* ФЛОАТ-КНОПКИ */
-        .floating-btns {
-            position: fixed;
-            bottom: 24px;
-            right: 24px;
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-            z-index: 99999;
-            transform: translateZ(0); 
-            pointer-events: none; 
-        }
-        .float-btn {
-            width: 52px; height: 52px;
-            border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            cursor: pointer;
-            text-decoration: none;
-            outline: none;
-            -webkit-tap-highlight-color: transparent;
-            pointer-events: auto; 
-            border: 1px solid rgba(0,0,0,0.05);
-            box-shadow: 0 6px 18px rgba(0,0,0,0.12);
-            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
+        .floating-btns { position: fixed; bottom: 24px; right: 24px; display: flex; flex-direction: column; gap: 16px; z-index: 99999; transform: translateZ(0); pointer-events: none; }
+        .float-btn { width: 52px; height: 52px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; text-decoration: none; outline: none; pointer-events: auto; border: 1px solid rgba(0,0,0,0.05); box-shadow: 0 6px 18px rgba(0,0,0,0.12); transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         
-        #scrollTopBtn {
-            background: #ffffff;
-            color: #2563eb;
-            opacity: 0;
-            visibility: hidden;
-            border: 1px solid rgba(37, 99, 235, 0.1);
-            transform: translateY(20px) scale(0.8) translateZ(0); 
-        }
-        #scrollTopBtn.show {
-            opacity: 1;
-            visibility: visible;
-            transform: translateY(0) scale(1) translateZ(0); 
-        }
-        #scrollTopBtn:active {
-            transform: scale(0.92) translateZ(0); 
-            background: #f0f9ff;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
-        }
+        #scrollTopBtn { background: #ffffff; color: #2563eb; opacity: 0; visibility: hidden; border: 1px solid rgba(37, 99, 235, 0.1); transform: translateY(20px) scale(0.8) translateZ(0); }
+        #scrollTopBtn.show { opacity: 1; visibility: visible; transform: translateY(0) scale(1) translateZ(0); }
+        #scrollTopBtn:active { transform: scale(0.92) translateZ(0); background: #f0f9ff; box-shadow: 0 3px 10px rgba(0,0,0,0.1); }
         #scrollTopBtn svg { width: 24px; height: 24px; stroke-width: 2.5px; }
 
-        .float-btn.primary {
-            background: #2563eb;
-            color: #ffffff;
-            border: none;
-            box-shadow: 0 6px 20px rgba(37, 99, 235, 0.3);
-            transform: translateZ(0);
-        }
-        .float-btn.primary:active {
-            transform: scale(0.92) translateZ(0);
-            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
-        }
+        .float-btn.primary { background: #2563eb; color: #ffffff; border: none; box-shadow: 0 6px 20px rgba(37, 99, 235, 0.3); transform: translateZ(0); }
+        .float-btn.primary:active { transform: scale(0.92) translateZ(0); box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2); }
         .float-btn.primary svg { width: 24px; height: 24px; }
         
     </style>
@@ -294,36 +234,38 @@
 </div>
 
 <div class="container">
-    <h2>SkillHUB Assistant</h2>
-    
-    <div class="status-container">
-        <div class="status-wrapper">
-            <div id="statusDot" class="pulse-dot dot-loading"></div>
-            <div id="statusText" class="status-text">Синхронізація...</div>
+    <div class="search-block">
+        <h2>SkillHUB Assistant</h2>
+        
+        <div class="status-container">
+            <div class="status-wrapper">
+                <div id="statusDot" class="pulse-dot dot-loading"></div>
+                <div id="statusText" class="status-text">Синхронізація...</div>
+            </div>
+            <button id="forceUpdateBtn" class="refresh-db-btn" title="Оновити базу">
+                <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"><polyline points="23 4 23 10 17 10"></polyline><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg>
+            </button>
         </div>
-        <button id="forceUpdateBtn" class="refresh-db-btn" title="Оновити базу">
-            <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"><polyline points="23 4 23 10 17 10"></polyline><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg>
-        </button>
-    </div>
-    
-    <div class="search-wrapper">
-        <input type="text" id="catInput" placeholder="Яку техніку шукаємо?" autocomplete="off" disabled>
-        <button id="clearAllBtn" class="clear-data-btn">✕</button>
-        <div id="customSuggestions" class="suggestions-list">
-            <div id="matchesContainer"></div>
+        
+        <div class="search-wrapper">
+            <input type="text" id="catInput" placeholder="Яку техніку шукаємо?" autocomplete="off" disabled>
+            <button id="clearAllBtn" class="clear-data-btn">✕</button>
+            <div id="customSuggestions" class="suggestions-list">
+                <div id="matchesContainer"></div>
+            </div>
         </div>
-    </div>
 
-    <div class="price-wrapper" id="priceWrapper">
-        <input type="number" id="devicePrice" placeholder="Вартість техніки ₴" inputmode="numeric">
-        <button class="ok-btn" id="okBtn">ОК</button>
+        <div class="price-wrapper" id="priceWrapper">
+            <input type="number" id="devicePrice" placeholder="Вартість техніки ₴" inputmode="numeric">
+            <button class="ok-btn" id="okBtn">ОК</button>
+        </div>
     </div>
 
     <div id="result" class="result-box">
         <div class="ua-name" id="uaTitle"></div>
         <div id="itemCategory" class="item-category"></div>
         <div id="techInfo" class="tech-info"></div>
-        <span style="font-size: 10px; font-weight: 800; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; display: block;">Доступні сервіси</span>
+        <span style="font-size: 10px; font-weight: 800; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px; display: block; padding-left: 10px;">Доступні сервіси</span>
         <div id="serviceList" class="service-list"></div>
     </div>
     
@@ -353,7 +295,7 @@
 </div>
 
 <script>
-    const API_URL = 'https://script.google.com/macros/s/AKfycbzqIwwzkR3WpM9L18bgnlHVrQeFq3ciL-M39SMtkhaaEMFwZo04zTrYFds7rRdGtoGorQ/exec';
+    const API_URL = 'https://script.google.com/macros/s/AKfycbzRBv75zii1YxShVLWCDQAnS4Jc2Vey2x0mzGUHaOyU1Kwun94VKbyOwMj04m12DZrh2g/exec';
     const CACHE_KEY = 'skillhub_v_data_offline'; 
     
     let db = { categories: [], descriptions: {}, tariffs: [], appVersion: "", montazhData: [], serviceCodes: {} };
@@ -421,14 +363,18 @@
     }
 
     function showCopied(el, originalCode) {
-        const originalHTML = el.innerHTML;
-        el.innerHTML = "✅ Скопійовано!";
-        el.style.color = "#10b981";
-        el.style.background = "rgba(16, 185, 129, 0.1)";
+        // Знаходимо блок зі значенням коду
+        const valueBox = el.querySelector('.code-value-text');
+        if(!valueBox) return; // якщо структура зміниться
+        
+        const originalHTML = valueBox.innerHTML;
+        valueBox.innerHTML = "✅ Скопійовано!";
+        valueBox.style.color = "#10b981";
+        valueBox.style.background = "#d1fae5";
         setTimeout(() => {
-            el.innerHTML = originalHTML;
-            el.style.color = "";
-            el.style.background = "";
+            valueBox.innerHTML = originalHTML;
+            valueBox.style.color = "";
+            valueBox.style.background = "";
         }, 1500);
     }
 
@@ -451,7 +397,7 @@
             try { 
                 db = JSON.parse(cached); 
                 enableUI(); 
-                setAppStatus('ok', 'Працюю офлайн (Дані з кешу)');
+                setAppStatus('ok', 'Працюю офлайн (З кешу)');
                 refreshData(); 
             } catch(e) { await refreshData(true); }
         } else { await refreshData(true); }
@@ -470,7 +416,7 @@
             
             db = newDb;
             localStorage.setItem(CACHE_KEY, dataStr);
-            setAppStatus('ok', 'Дані актуальні (доступний офлайн режим)');
+            setAppStatus('ok', 'Дані актуальні (Готово до офлайну)');
             if (first) enableUI();
         } catch (e) { 
             console.error(e);
@@ -574,21 +520,27 @@
             }
         });
 
+        // КНОПКА ФОТОГРАФІЙ ПОШКОДЖЕНОЇ ТЕХНІКИ
+        if (item.photo && item.photo.trim() !== "") {
+            hasInfo = true;
+            techHTML += `<a href="${item.photo}" target="_blank" class="tech-photo-btn">📸 Приклади пошкодженої техніки</a>`;
+        }
+
         elTechInfo.style.display = hasInfo ? 'flex' : 'none';
         elTechInfo.innerHTML = hasInfo ? techHTML : "";
     }
 
     function parseDescriptionLines(descE) {
-        if (!descE) return `<div style="text-align:center; padding: 20px; color:#94a3b8; font-size:13px;">Опис відсутній...</div>`;
+        if (!descE) return `<div style="text-align:center; padding: 20px; color:var(--text-muted); font-size:13px;">Опис відсутній...</div>`;
         let raw = descE.toString().trim();
-        if (raw === "Опис відсутній..." || raw === "") return `<div style="text-align:center; padding: 20px; color:#94a3b8; font-size:13px;">Опис відсутній...</div>`;
+        if (raw === "Опис відсутній..." || raw === "") return `<div style="text-align:center; padding: 20px; color:var(--text-muted); font-size:13px;">Опис відсутній...</div>`;
 
         return raw.replace(/\|/g, '\n').split(/\r?\n/).map(line => {
             const l = line.trim(); 
             if (!l) return '';
-            if (l.startsWith('+')) return `<div class="modal-section-title">${l.substring(1).trim()}</div>`;
-            if (l.startsWith('=')) return `<div class="modal-cost-header">${l.substring(1).trim() || 'Вартість:'}</div>`;
-            if (l.includes('---')) return `<div class="modal-divider"></div>`;
+            if (l.startsWith('+')) return `<div style="font-weight: 800; color: var(--text-main); margin: 16px 0 8px 0; font-size: 15px;">${l.substring(1).trim()}</div>`;
+            if (l.startsWith('=')) return `<div style="font-size: 11px; font-weight: 800; color: var(--primary); text-transform: uppercase; margin: 12px 0 4px 0; letter-spacing: 0.5px;">${l.substring(1).trim() || 'ВАРТІСТЬ:'}</div>`;
+            if (l.includes('---')) return `<div style="height: 1px; background: var(--border-color); margin: 12px 0;"></div>`;
             
             let match = l.match(emojiRegex); 
             let e = match ? match[0] : "";
@@ -608,22 +560,29 @@
             return `
             <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 6px; background: rgba(255,255,255,0.85); padding: 8px 10px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.6); box-shadow: 0 2px 5px rgba(0,0,0,0.02);">
                 <div style="width: 32px; height: 32px; min-width: 32px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; background: #fff; box-shadow: 0 2px 6px rgba(0,0,0,0.04);">${e}</div>
-                <div style="font-size: 11px; line-height: 1.4; color: #334155; font-weight: 500;">${t}</div>
+                <div style="font-size: 12px; line-height: 1.4; color: #334155; font-weight: 500;">${t}</div>
             </div>`;
         }).join('');
+    }
+
+    function getSimpleDescHTML(name, codeF) {
+        let descContentText = parseDescriptionLines(findInDb(db.descriptions, name));
+        let codeBlockHTML = codeF ? `
+            <div class="code-block-wrapper" onclick="copyCode(event, this, '${codeF}')">
+                <span class="code-label-text">Код сервісу:</span>
+                <span class="code-value-text">${codeF} <span style="font-size:16px;">📋</span></span>
+            </div>` : '';
+        return `<div style="background: rgba(0,0,0,0.02); border-radius: 16px; padding: 16px; border: 1px solid rgba(0,0,0,0.04);">${codeBlockHTML}${descContentText}</div>`;
     }
 
     function generateDescToggleHTML(descE, codeF) {
         let descContentText = "";
         let raw = descE ? descE.toString().trim() : "";
         if (raw && raw !== "Опис відсутній...") { descContentText = parseDescriptionLines(raw); }
-        
         let codeBlockHTML = codeF ? `
-            <div class="service-code-container">
-                <span class="service-code-label">Код сервісу:</span>
-                <div class="service-code-value" onclick="copyCode(event, this, '${codeF}')">
-                    ${codeF} <span style="font-size: 16px;">📋</span>
-                </div>
+            <div class="code-block-wrapper" onclick="copyCode(event, this, '${codeF}')">
+                <span class="code-label-text">Код сервісу:</span>
+                <span class="code-value-text">${codeF} <span style="font-size:16px;">📋</span></span>
             </div>` : '';
 
         if (!descContentText && !codeBlockHTML) return '';
@@ -1208,7 +1167,7 @@
                 elModal.classList.add('show');
                 return;
             }
-            else if (u.includes('КІНОТЕАТР') || u.includes('SWEET') || u.includes('PARALLELS')) { 
+            else if (u.includes('КІНОТЕАТР') || u.includes('SWEET') || u.includes('PARALLELS')) {
                 document.getElementById('modalTitle').innerText = u.includes('PARALLELS') ? "Parallels Desktop" : "Онлайн кінотеатри";
                 renderDirectListModal(u.includes('PARALLELS') ? ["parallels"] : ["sweet", "кінотеатр"]);
                 elModal.classList.add('show');
@@ -1238,11 +1197,9 @@
         }
         
         let codeBlock = isValidCode ? `
-            <div class="service-code-container">
-                <span class="service-code-label">Код сервісу:</span>
-                <div class="service-code-value" onclick="copyCode(event, this, '${code}')">
-                    ${code} <span style="font-size: 16px;">📋</span>
-                </div>
+            <div class="code-block-wrapper" onclick="copyCode(event, this, '${code}')">
+                <span class="code-label-text">Код сервісу:</span>
+                <span class="code-value-text">${code} <span style="font-size:16px;">📋</span></span>
             </div>` : '';
             
         elModalBody.innerHTML = codeBlock + parseDescriptionLines(raw);
