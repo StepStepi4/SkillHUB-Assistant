@@ -1,4 +1,4 @@
-const APP_VERSION = 'skillhub-v4.0.0';
+const APP_VERSION = 'skillhub-v5.0.0';
 const CACHE_FILES = [
   './',
   './index.html',
