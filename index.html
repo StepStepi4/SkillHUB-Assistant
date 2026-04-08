@@ -32,11 +32,20 @@
         body.modal-open { overflow: hidden; position: fixed; width: 100%; }
         body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text-main); margin: 0; padding: 0; display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; -webkit-font-smoothing: antialiased; }
         
-        .app-loader { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #ffffff; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 999999; transition: opacity 0.4s ease, visibility 0.4s ease; }
+        .app-loader {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #ffffff; display: flex; flex-direction: column; justify-content: center; align-items: center;
+            z-index: 999999; transition: opacity 0.4s ease, visibility 0.4s ease; will-change: opacity;
+        }
         .app-loader.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
         .spinner-box { position: relative; width: 70px; height: 70px; display: flex; justify-content: center; align-items: center; margin-bottom: 20px; transform: translateZ(0); }
-        .spinner-ring { position: absolute; width: 100%; height: 100%; border-radius: 50%; border: 4px solid transparent; border-top-color: var(--primary); border-bottom-color: var(--primary); animation: spin 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite; }
-        .spinner-ring::before { content: ''; position: absolute; top: 8px; left: 8px; right: 8px; bottom: 8px; border-radius: 50%; border: 4px solid transparent; border-left-color: #7dd3fc; border-right-color: #7dd3fc; animation: spin 0.8s ease-in-out infinite reverse; }
+        .spinner-ring {
+            position: absolute; width: 100%; height: 100%; border-radius: 50%; border: 4px solid transparent;
+            border-top-color: var(--primary); border-bottom-color: var(--primary); animation: spin 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+        }
+        .spinner-ring::before {
+            content: ''; position: absolute; top: 8px; left: 8px; right: 8px; bottom: 8px; border-radius: 50%; border: 4px solid transparent; border-left-color: #7dd3fc; border-right-color: #7dd3fc; animation: spin 0.8s ease-in-out infinite reverse;
+        }
         .spinner-logo { font-size: 24px; animation: pulseText 1.5s ease-in-out infinite; will-change: transform; }
         .loader-text { font-size: 13px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; animation: pulseText 1.5s ease-in-out infinite; will-change: transform, opacity; text-align: center; padding: 0 20px; line-height: 1.4;}
         
@@ -95,33 +104,6 @@
         .bg-negarant { background-color: #fff1f2 !important; border: 1px solid #fca5a5 !important; }
         .bg-parts { background-color: #f3e8ff; } 
 
-        /* НОВИЙ БЛОК ДЛЯ ФОТОГРАФІЙ */
-        .tech-photo-wrapper {
-            display: flex; align-items: center; gap: 14px; margin-top: 6px;
-            background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
-            padding: 14px 16px; border-radius: 16px; border: 1px solid #bfdbfe;
-            cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;
-            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.1);
-        }
-        .tech-photo-wrapper:active { transform: scale(0.97); }
-        .photo-icon { font-size: 24px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1)); }
-        .photo-text { flex: 1; display: flex; flex-direction: column; }
-        .photo-title { font-size: 14px; font-weight: 800; color: #1e3a8a; }
-        .photo-subtitle { font-size: 11px; font-weight: 600; color: #3b82f6; margin-top: 2px; }
-        .photo-arrow { color: #3b82f6; font-weight: 900; font-size: 18px; }
-
-        /* ГАЛЕРЕЯ ДЛЯ ПЕРЕГЛЯДУ ФОТО */
-        .gallery-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 100000; display: flex; flex-direction: column; align-items: center; justify-content: center; opacity: 0; visibility: hidden; transition: opacity 0.3s; backdrop-filter: blur(10px); }
-        .gallery-modal.show { opacity: 1; visibility: visible; }
-        .gallery-content { position: relative; width: 100%; max-width: 500px; display: flex; align-items: center; justify-content: center; padding: 0 50px; box-sizing: border-box;}
-        .gallery-content img { max-width: 100%; max-height: 75vh; border-radius: 16px; box-shadow: 0 10px 40px rgba(0,0,0,0.5); object-fit: contain; }
-        .gallery-close { position: absolute; top: 20px; right: 20px; color: white; font-size: 24px; cursor: pointer; z-index: 2; width: 44px; height: 44px; background: rgba(255,255,255,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; }
-        .gallery-nav { background: rgba(255,255,255,0.2); color: white; border: none; border-radius: 50%; width: 44px; height: 44px; font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s; position: absolute; top: 50%; transform: translateY(-50%); }
-        .gallery-nav:active { background: rgba(255,255,255,0.4); transform: translateY(-50%) scale(0.9); }
-        .gallery-nav.prev { left: 5px; }
-        .gallery-nav.next { right: 5px; }
-        .gallery-counter { color: white; font-size: 14px; font-weight: 700; margin-top: 20px; letter-spacing: 2px; background: rgba(255,255,255,0.2); padding: 6px 16px; border-radius: 20px;}
-
         .service-list { display: flex; flex-direction: column; gap: 12px; }
         
         .service-card { display: flex; justify-content: space-between; align-items: center; padding: 16px; border-radius: 20px; cursor: pointer; transition: transform 0.15s ease, box-shadow 0.15s ease; border: none; box-shadow: 0 4px 12px rgba(0,0,0,0.08); will-change: transform; transform: translateZ(0); }
@@ -167,25 +149,58 @@
         .modal-item { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; background: #f8fafc; padding: 10px; border-radius: 15px; border: 1px solid #f1f5f9; }
         .modal-icon-circle { width: 36px; height: 36px; min-width: 36px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; background: #fff; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
         .modal-text { font-size: 11px; line-height: 1.4; color: #334155; font-weight: 500; }
-        
-        .copy-code-span { color: #2563eb; font-size: 16px; font-weight: 800; cursor: pointer; padding: 6px 14px; border-radius: 10px; transition: 0.2s; display: inline-flex; align-items: center; gap: 6px; background: #e0f2fe; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
-        .copy-code-span:hover { background: #bae6fd; }
-        .copy-code-span:active { transform: scale(0.95); }
 
-        .code-block-wrapper { background: #ffffff; border: 2px dashed #bfdbfe; border-radius: 16px; padding: 14px; margin-bottom: 16px; display: flex; align-items: center; justify-content: center; gap: 12px; cursor: pointer; transition: transform 0.15s ease, background 0.15s ease; }
-        .code-block-wrapper:active { transform: scale(0.97); background: #eff6ff; }
-        .code-label-text { font-size: 15px; font-weight: 700; color: #1e293b; }
-        .code-value-text { font-size: 18px; font-weight: 900; color: #2563eb; display: flex; align-items: center; gap: 8px; background: #eff6ff; padding: 6px 12px; border-radius: 10px; }
+        /* ОНОВЛЕНИЙ І ВИРІВНЯНИЙ БЛОК ДЛЯ КОДУ */
+        .code-block-wrapper {
+            background: #f8fafc;
+            border: 2px dashed #bfdbfe;
+            border-radius: 16px;
+            padding: 12px 18px;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .code-block-wrapper:active { transform: scale(0.97); background: #eff6ff; border-color: #93c5fd; }
+        .code-label-text { font-size: 14px; font-weight: 700; color: #475569; }
+        .code-value-text {
+            font-size: 16px;
+            font-weight: 900;
+            color: #2563eb;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: #ffffff;
+            padding: 8px 14px;
+            border-radius: 12px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+            border: 1px solid #e2e8f0;
+            transition: background 0.2s ease;
+        }
 
         .montazh-label { font-size: 13px; color: #475569; margin-bottom: 8px; display: block; font-weight: 600; text-align: left; padding-left: 8px; }
         .montazh-select { width: 100%; padding: 16px 20px; border-radius: 16px; background: #ffffff; border: 1px solid #e2e8f0; font-size: 16px; font-weight: 700; color: #0f172a; margin-bottom: 20px; text-align: left; cursor: pointer; outline: none; transition: 0.2s; box-shadow: 0 4px 10px rgba(0,0,0,0.03); }
         .montazh-select:focus { box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1); border-color: var(--primary); background: #fff;}
         
         .montazh-card { border-radius: 18px; padding: 18px; margin-bottom: 14px; display: flex; flex-direction: column; animation: fadeIn 0.3s ease; border: 1px solid var(--border); box-shadow: 0 4px 12px rgba(0,0,0,0.04); background: #fff;}
-        .montazh-card-ekta { background: #eff6ff; border-color: #bfdbfe; } 
-        .montazh-card-myservice { background: #f0fdf4; border-color: #bbf7d0; } 
+        .montazh-card-ekta { background: #eff6ff; border-color: #bfdbfe;} 
+        .montazh-card-myservice { background: #f0fdf4; border-color: #bbf7d0;} 
 
-        .availability-badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 8px; border-radius: 8px; font-size: 11px; font-weight: 700; text-transform: uppercase; margin-top: 8px; line-height: 1; box-shadow: 0 1px 2px rgba(0,0,0,0.02); }
+        .availability-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 8px;
+            border-radius: 8px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-top: 8px;
+            line-height: 1;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+        }
         .status-city-limit { background-color: #fee2e2; color: #991b1b; }
         .status-fee-zone { background-color: #fffbeb; color: #b45309; }
         .status-full-coverage { background-color: #dcfce7; color: #166534; }
@@ -198,16 +213,63 @@
         .footer { margin-top: 25px; text-align: center; font-size: 10px; color: #94a3b8; font-weight: 600; line-height: 1.5; padding-bottom: 20px;}
         .app-version { display: block; font-size: 8px; font-weight: 500; opacity: 0.6; margin-top: 4px; }
 
-        .floating-btns { position: fixed; bottom: 24px; right: 24px; display: flex; flex-direction: column; gap: 16px; z-index: 99999; transform: translateZ(0); pointer-events: none; }
-        .float-btn { width: 52px; height: 52px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; text-decoration: none; outline: none; pointer-events: auto; border: 1px solid rgba(0,0,0,0.05); box-shadow: 0 6px 18px rgba(0,0,0,0.12); transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        /* ФЛОАТ-КНОПКИ */
+        .floating-btns {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            z-index: 99999;
+            transform: translateZ(0); 
+            pointer-events: none; 
+        }
+        .float-btn {
+            width: 52px; height: 52px;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer;
+            text-decoration: none;
+            outline: none;
+            -webkit-tap-highlight-color: transparent;
+            pointer-events: auto; 
+            border: 1px solid rgba(0,0,0,0.05);
+            box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
         
-        #scrollTopBtn { background: #ffffff; color: #2563eb; opacity: 0; visibility: hidden; border: 1px solid rgba(37, 99, 235, 0.1); transform: translateY(20px) scale(0.8) translateZ(0); }
-        #scrollTopBtn.show { opacity: 1; visibility: visible; transform: translateY(0) scale(1) translateZ(0); }
-        #scrollTopBtn:active { transform: scale(0.92) translateZ(0); background: #f0f9ff; box-shadow: 0 3px 10px rgba(0,0,0,0.1); }
+        #scrollTopBtn {
+            background: #ffffff;
+            color: #2563eb;
+            opacity: 0;
+            visibility: hidden;
+            border: 1px solid rgba(37, 99, 235, 0.1);
+            transform: translateY(20px) scale(0.8) translateZ(0); 
+        }
+        #scrollTopBtn.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0) scale(1) translateZ(0); 
+        }
+        #scrollTopBtn:active {
+            transform: scale(0.92) translateZ(0); 
+            background: #f0f9ff;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
         #scrollTopBtn svg { width: 24px; height: 24px; stroke-width: 2.5px; }
 
-        .float-btn.primary { background: #2563eb; color: #ffffff; border: none; box-shadow: 0 6px 20px rgba(37, 99, 235, 0.3); transform: translateZ(0); }
-        .float-btn.primary:active { transform: scale(0.92) translateZ(0); box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2); }
+        .float-btn.primary {
+            background: #2563eb;
+            color: #ffffff;
+            border: none;
+            box-shadow: 0 6px 20px rgba(37, 99, 235, 0.3);
+            transform: translateZ(0);
+        }
+        .float-btn.primary:active {
+            transform: scale(0.92) translateZ(0);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+        }
         .float-btn.primary svg { width: 24px; height: 24px; }
         
     </style>
@@ -273,16 +335,6 @@
     </div>
 </div>
 
-<div id="galleryModal" class="gallery-modal">
-    <div class="gallery-close" onclick="closeGallery()">✕</div>
-    <div class="gallery-content">
-        <button class="gallery-nav prev" onclick="changePhoto(-1)">❮</button>
-        <img id="galleryImage" src="" alt="Фото пошкодження">
-        <button class="gallery-nav next" onclick="changePhoto(1)">❯</button>
-    </div>
-    <div id="galleryCounter" class="gallery-counter">1 / 3</div>
-</div>
-
 <div class="floating-btns">
     <button id="scrollTopBtn" class="float-btn" title="Вгору">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
@@ -299,7 +351,7 @@
 </div>
 
 <script>
-    const API_URL = 'https://script.google.com/macros/s/AKfycbxsptQBT-viBqDGJZ53eJa6ybzHZ8UZxZ8M7AwoaLJpvpLmzAcqpFo8WAHVGLHUL8NFFA/exec';
+    const API_URL = 'https://script.google.com/macros/s/AKfycbzNLTh2qXQTsKbaHqkDyObc-d9RTFR2LbyKdCtI9SDBdWpTNmUsBAtJR-g85ucSfLKtDQ/exec';
     
     const CACHE_KEY = 'skillhub_v1000_parallels_fix'; 
     
@@ -508,73 +560,6 @@
         renderServices(); 
     }
 
-    // --- ЛОГІКА ГАЛЕРЕЇ ФОТО ---
-    let currentPhotos = [];
-    let currentPhotoIndex = 0;
-
-    window.openGallery = function(photosStr) {
-        currentPhotos = photosStr.split(',').filter(p => p.trim() !== "");
-        if (currentPhotos.length === 0) return;
-
-        // Перевірка на посилання Google Photos
-        if (currentPhotos[0].includes('photos.app.goo.gl') || currentPhotos[0].includes('photos.google.com')) {
-            if(currentPhotos.length === 1) {
-                window.open(currentPhotos[0], '_blank');
-                return;
-            } else {
-                document.getElementById('modalTitle').innerText = "Приклади пошкоджень";
-                let linksHtml = currentPhotos.map((url, i) => `
-                    <a href="${url}" target="_blank" class="copy-code-pill" style="display:flex; width:100%; justify-content:center; margin-bottom:10px; text-decoration:none; padding:16px; border-radius:16px; font-size:15px;">
-                        📸 Відкрити Фото ${i+1}
-                    </a>
-                `).join('');
-                document.getElementById('modalBody').innerHTML = `
-                    <div style="padding:10px; text-align:center; color:#64748b; font-size:13px; margin-bottom:15px; background:rgba(0,0,0,0.03); border-radius:12px;">
-                        Посилання формату Google Photos відкриваються у новій вкладці
-                    </div>
-                    ${linksHtml}
-                `;
-                document.getElementById('descModal').classList.add('show');
-                document.body.classList.add('modal-open');
-                return;
-            }
-        }
-
-        currentPhotoIndex = 0;
-        updateGalleryImage();
-        document.getElementById('galleryModal').classList.add('show');
-    };
-
-    window.closeGallery = function() {
-        document.getElementById('galleryModal').classList.remove('show');
-    };
-
-    window.changePhoto = function(dir) {
-        currentPhotoIndex += dir;
-        if (currentPhotoIndex < 0) currentPhotoIndex = currentPhotos.length - 1;
-        if (currentPhotoIndex >= currentPhotos.length) currentPhotoIndex = 0;
-        updateGalleryImage();
-    };
-
-    function updateGalleryImage() {
-        const img = document.getElementById('galleryImage');
-        const counter = document.getElementById('galleryCounter');
-        const prev = document.querySelector('.gallery-nav.prev');
-        const next = document.querySelector('.gallery-nav.next');
-
-        img.src = currentPhotos[currentPhotoIndex].trim();
-        counter.innerText = `${currentPhotoIndex + 1} / ${currentPhotos.length}`;
-        
-        if (currentPhotos.length <= 1) {
-            prev.style.display = 'none';
-            next.style.display = 'none';
-        } else {
-            prev.style.display = 'flex';
-            next.style.display = 'flex';
-        }
-    }
-    // ---------------------------------
-
     function renderTechInfo() {
         if (!currentCategoryData) return;
         const item = currentCategoryData;
@@ -616,26 +601,6 @@
                 techHTML += `<div class="${cls}"><div class="icon-circle ${f[3]}">${f[0]}</div><div><span style="font-size:9px;color:#94a3b8;display:block;font-weight:700;text-transform:uppercase;">${f[1]}</span><span style="font-size:13px;font-weight:600;">${f[2]}</span></div></div>`;
             }
         });
-
-        // КНОПКА ФОТОГРАФІЙ ПОШКОДЖЕНОЇ ТЕХНІКИ
-        let photosArray = [];
-        if (item.photo1) photosArray.push(item.photo1);
-        if (item.photo2) photosArray.push(item.photo2);
-        if (item.photo3) photosArray.push(item.photo3);
-
-        if (photosArray.length > 0) {
-            hasInfo = true;
-            let photosStr = photosArray.join(',');
-            techHTML += `
-            <div class="tech-photo-wrapper" onclick="openGallery('${photosStr}')">
-                <div class="photo-icon">📸</div>
-                <div class="photo-text">
-                    <span class="photo-title">Приклади пошкодженої техніки</span>
-                    <span class="photo-subtitle">Переглянути фото (${photosArray.length})</span>
-                </div>
-                <div class="photo-arrow">❯</div>
-            </div>`;
-        }
 
         elTechInfo.style.display = hasInfo ? 'flex' : 'none';
         elTechInfo.innerHTML = hasInfo ? techHTML : "";
