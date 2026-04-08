@@ -32,20 +32,11 @@
         body.modal-open { overflow: hidden; position: fixed; width: 100%; }
         body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text-main); margin: 0; padding: 0; display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; -webkit-font-smoothing: antialiased; }
         
-        .app-loader {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: #ffffff; display: flex; flex-direction: column; justify-content: center; align-items: center;
-            z-index: 999999; transition: opacity 0.4s ease, visibility 0.4s ease; will-change: opacity;
-        }
+        .app-loader { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #ffffff; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 999999; transition: opacity 0.4s ease, visibility 0.4s ease; }
         .app-loader.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
         .spinner-box { position: relative; width: 70px; height: 70px; display: flex; justify-content: center; align-items: center; margin-bottom: 20px; transform: translateZ(0); }
-        .spinner-ring {
-            position: absolute; width: 100%; height: 100%; border-radius: 50%; border: 4px solid transparent;
-            border-top-color: var(--primary); border-bottom-color: var(--primary); animation: spin 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
-        }
-        .spinner-ring::before {
-            content: ''; position: absolute; top: 8px; left: 8px; right: 8px; bottom: 8px; border-radius: 50%; border: 4px solid transparent; border-left-color: #7dd3fc; border-right-color: #7dd3fc; animation: spin 0.8s ease-in-out infinite reverse;
-        }
+        .spinner-ring { position: absolute; width: 100%; height: 100%; border-radius: 50%; border: 4px solid transparent; border-top-color: var(--primary); border-bottom-color: var(--primary); animation: spin 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite; }
+        .spinner-ring::before { content: ''; position: absolute; top: 8px; left: 8px; right: 8px; bottom: 8px; border-radius: 50%; border: 4px solid transparent; border-left-color: #7dd3fc; border-right-color: #7dd3fc; animation: spin 0.8s ease-in-out infinite reverse; }
         .spinner-logo { font-size: 24px; animation: pulseText 1.5s ease-in-out infinite; will-change: transform; }
         .loader-text { font-size: 13px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; animation: pulseText 1.5s ease-in-out infinite; will-change: transform, opacity; text-align: center; padding: 0 20px; line-height: 1.4;}
         
@@ -55,6 +46,7 @@
         .container { width: 94%; max-width: 480px; background: var(--card-bg); padding: 24px; border-radius: 30px; box-shadow: 0 15px 40px -5px rgba(0, 0, 0, 0.1); margin-top: 5vh; margin-bottom: 80px; transform: translateZ(0); border: 1px solid rgba(255,255,255,0.6); }
         h2 { color: var(--primary); margin: 0 0 15px 0; font-size: 24px; font-weight: 800; letter-spacing: -0.7px;}
         
+        /* ПУЛЬСУЮЧИЙ СТАТУС */
         .status-container { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
         .status-wrapper { display: flex; align-items: center; gap: 8px; }
         .status-text { font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
@@ -103,6 +95,33 @@
         .bg-negarant { background-color: #fff1f2 !important; border: 1px solid #fca5a5 !important; }
         .bg-parts { background-color: #f3e8ff; } 
 
+        /* НОВИЙ БЛОК ДЛЯ ФОТОГРАФІЙ */
+        .tech-photo-wrapper {
+            display: flex; align-items: center; gap: 14px; margin-top: 6px;
+            background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+            padding: 14px 16px; border-radius: 16px; border: 1px solid #bfdbfe;
+            cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.1);
+        }
+        .tech-photo-wrapper:active { transform: scale(0.97); }
+        .photo-icon { font-size: 24px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1)); }
+        .photo-text { flex: 1; display: flex; flex-direction: column; }
+        .photo-title { font-size: 14px; font-weight: 800; color: #1e3a8a; }
+        .photo-subtitle { font-size: 11px; font-weight: 600; color: #3b82f6; margin-top: 2px; }
+        .photo-arrow { color: #3b82f6; font-weight: 900; font-size: 18px; }
+
+        /* ГАЛЕРЕЯ ДЛЯ ПЕРЕГЛЯДУ ФОТО */
+        .gallery-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 100000; display: flex; flex-direction: column; align-items: center; justify-content: center; opacity: 0; visibility: hidden; transition: opacity 0.3s; backdrop-filter: blur(10px); }
+        .gallery-modal.show { opacity: 1; visibility: visible; }
+        .gallery-content { position: relative; width: 100%; max-width: 500px; display: flex; align-items: center; justify-content: center; padding: 0 50px; box-sizing: border-box;}
+        .gallery-content img { max-width: 100%; max-height: 75vh; border-radius: 16px; box-shadow: 0 10px 40px rgba(0,0,0,0.5); object-fit: contain; }
+        .gallery-close { position: absolute; top: 20px; right: 20px; color: white; font-size: 24px; cursor: pointer; z-index: 2; width: 44px; height: 44px; background: rgba(255,255,255,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+        .gallery-nav { background: rgba(255,255,255,0.2); color: white; border: none; border-radius: 50%; width: 44px; height: 44px; font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s; position: absolute; top: 50%; transform: translateY(-50%); }
+        .gallery-nav:active { background: rgba(255,255,255,0.4); transform: translateY(-50%) scale(0.9); }
+        .gallery-nav.prev { left: 5px; }
+        .gallery-nav.next { right: 5px; }
+        .gallery-counter { color: white; font-size: 14px; font-weight: 700; margin-top: 20px; letter-spacing: 2px; background: rgba(255,255,255,0.2); padding: 6px 16px; border-radius: 20px;}
+
         .service-list { display: flex; flex-direction: column; gap: 12px; }
         
         .service-card { display: flex; justify-content: space-between; align-items: center; padding: 16px; border-radius: 20px; cursor: pointer; transition: transform 0.15s ease, box-shadow 0.15s ease; border: none; box-shadow: 0 4px 12px rgba(0,0,0,0.08); will-change: transform; transform: translateZ(0); }
@@ -149,63 +168,33 @@
         .modal-icon-circle { width: 36px; height: 36px; min-width: 36px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; background: #fff; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
         .modal-text { font-size: 11px; line-height: 1.4; color: #334155; font-weight: 500; }
         
-        /* НОВИЙ ГАРНИЙ ДИЗАЙН ДЛЯ БЛОКУ КОДУ */
-        .code-block-wrapper {
-            background: #ffffff;
-            border: 2px dashed #bfdbfe;
-            border-radius: 16px;
-            padding: 14px;
-            margin-bottom: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            cursor: pointer;
-            transition: transform 0.15s ease, background 0.15s ease;
-        }
+        .copy-code-span { color: #2563eb; font-size: 16px; font-weight: 800; cursor: pointer; padding: 6px 14px; border-radius: 10px; transition: 0.2s; display: inline-flex; align-items: center; gap: 6px; background: #e0f2fe; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .copy-code-span:hover { background: #bae6fd; }
+        .copy-code-span:active { transform: scale(0.95); }
+
+        .code-block-wrapper { background: #ffffff; border: 2px dashed #bfdbfe; border-radius: 16px; padding: 14px; margin-bottom: 16px; display: flex; align-items: center; justify-content: center; gap: 12px; cursor: pointer; transition: transform 0.15s ease, background 0.15s ease; }
         .code-block-wrapper:active { transform: scale(0.97); background: #eff6ff; }
         .code-label-text { font-size: 15px; font-weight: 700; color: #1e293b; }
         .code-value-text { font-size: 18px; font-weight: 900; color: #2563eb; display: flex; align-items: center; gap: 8px; background: #eff6ff; padding: 6px 12px; border-radius: 10px; }
 
-        /* КНОПКА ДЛЯ ФОТОГРАФІЙ */
-        .tech-photo-btn {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            background: #f8fafc;
-            color: #475569;
-            padding: 12px;
-            border-radius: 16px;
-            text-decoration: none;
-            font-weight: 800;
-            font-size: 12px;
-            text-transform: uppercase;
-            margin-top: 5px;
-            border: 1px solid #e2e8f0;
-            transition: 0.2s;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.02);
-        }
-        .tech-photo-btn:active { background: #e2e8f0; transform: scale(0.98); }
-
         .montazh-label { font-size: 13px; color: #475569; margin-bottom: 8px; display: block; font-weight: 600; text-align: left; padding-left: 8px; }
-        .montazh-select { width: 100%; padding: 16px 20px; border-radius: 16px; background: #f8fafc; border: 1px solid #e2e8f0; font-size: 15px; font-weight: 700; color: #0f172a; margin-bottom: 20px; text-align: left; cursor: pointer; outline: none; transition: 0.2s; box-shadow: 0 4px 10px rgba(0,0,0,0.02); }
+        .montazh-select { width: 100%; padding: 16px 20px; border-radius: 16px; background: #ffffff; border: 1px solid #e2e8f0; font-size: 16px; font-weight: 700; color: #0f172a; margin-bottom: 20px; text-align: left; cursor: pointer; outline: none; transition: 0.2s; box-shadow: 0 4px 10px rgba(0,0,0,0.03); }
         .montazh-select:focus { box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1); border-color: var(--primary); background: #fff;}
         
-        .montazh-card { border-radius: 18px; padding: 18px; margin-bottom: 14px; display: flex; flex-direction: column; animation: fadeIn 0.3s ease; border: 1px solid var(--border); box-shadow: 0 4px 12px rgba(0,0,0,0.03); background: #fff;}
-        .montazh-card-ekta { background: #eff6ff; border-color: #bfdbfe;} 
-        .montazh-card-myservice { background: #f0fdf4; border-color: #bbf7d0;} 
+        .montazh-card { border-radius: 18px; padding: 18px; margin-bottom: 14px; display: flex; flex-direction: column; animation: fadeIn 0.3s ease; border: 1px solid var(--border); box-shadow: 0 4px 12px rgba(0,0,0,0.04); background: #fff;}
+        .montazh-card-ekta { background: #eff6ff; border-color: #bfdbfe; } 
+        .montazh-card-myservice { background: #f0fdf4; border-color: #bbf7d0; } 
 
         .availability-badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 8px; border-radius: 8px; font-size: 11px; font-weight: 700; text-transform: uppercase; margin-top: 8px; line-height: 1; box-shadow: 0 1px 2px rgba(0,0,0,0.02); }
         .status-city-limit { background-color: #fee2e2; color: #991b1b; }
-        .status-fee-zone { background-color: #fef08a; color: #854d0e; }
+        .status-fee-zone { background-color: #fffbeb; color: #b45309; }
         .status-full-coverage { background-color: #dcfce7; color: #166534; }
         .status-plus { background-color: #f3e8ff; color: #6b21a8; }
         
         .desc-toggle { font-size: 13px; font-weight: 800; color: #2563eb; margin-top: 12px; cursor: pointer; display: flex; align-items: center; gap: 6px; padding-top: 12px; border-top: 1px dashed rgba(0,0,0,0.1); width: 100%; transition: 0.2s; user-select: none;}
         .desc-toggle:active { opacity: 0.6; }
         .desc-content { margin-top: 10px; padding: 14px; background: rgba(0,0,0,0.03); border-radius: 14px; }
-
+        
         .footer { margin-top: 25px; text-align: center; font-size: 10px; color: #94a3b8; font-weight: 600; line-height: 1.5; padding-bottom: 20px;}
         .app-version { display: block; font-size: 8px; font-weight: 500; opacity: 0.6; margin-top: 4px; }
 
@@ -230,47 +219,46 @@
         <div class="spinner-ring"></div>
         <div class="spinner-logo">⚡</div>
     </div>
-    <div class="loader-text">Оновлення бази...</div>
+    <div class="loader-text">Завантаження даних ...</div>
 </div>
 
 <div class="container">
-    <div class="search-block">
-        <h2>SkillHUB Assistant</h2>
-        
-        <div class="status-container">
-            <div class="status-wrapper">
-                <div id="statusDot" class="pulse-dot dot-loading"></div>
-                <div id="statusText" class="status-text">Синхронізація...</div>
-            </div>
-            <button id="forceUpdateBtn" class="refresh-db-btn" title="Оновити базу">
-                <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"><polyline points="23 4 23 10 17 10"></polyline><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg>
-            </button>
+    <h2>SkillHUB Assistant</h2>
+    
+    <div class="status-container">
+        <div class="status-wrapper">
+            <div id="statusDot" class="pulse-dot dot-loading"></div>
+            <div id="statusText" class="status-text">Синхронізація...</div>
         </div>
-        
-        <div class="search-wrapper">
-            <input type="text" id="catInput" placeholder="Яку техніку шукаємо?" autocomplete="off" disabled>
-            <button id="clearAllBtn" class="clear-data-btn">✕</button>
-            <div id="customSuggestions" class="suggestions-list">
-                <div id="matchesContainer"></div>
-            </div>
+        <button id="forceUpdateBtn" class="refresh-db-btn" title="Оновити базу">
+            <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"><polyline points="23 4 23 10 17 10"></polyline><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg>
+        </button>
+    </div>
+    
+    <div class="search-wrapper">
+        <input type="text" id="catInput" placeholder="Яку техніку шукаємо?" autocomplete="off" disabled>
+        <button id="clearAllBtn" class="clear-data-btn">✕</button>
+        <div id="customSuggestions" class="suggestions-list">
+            <div id="matchesContainer"></div>
         </div>
+    </div>
 
-        <div class="price-wrapper" id="priceWrapper">
-            <input type="number" id="devicePrice" placeholder="Вартість техніки ₴" inputmode="numeric">
-            <button class="ok-btn" id="okBtn">ОК</button>
-        </div>
+    <div class="price-wrapper" id="priceWrapper">
+        <input type="number" id="devicePrice" placeholder="Вартість техніки ₴" inputmode="numeric">
+        <button class="ok-btn" id="okBtn">ОК</button>
     </div>
 
     <div id="result" class="result-box">
         <div class="ua-name" id="uaTitle"></div>
         <div id="itemCategory" class="item-category"></div>
         <div id="techInfo" class="tech-info"></div>
-        <span style="font-size: 10px; font-weight: 800; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px; display: block; padding-left: 10px;">Доступні сервіси</span>
+        <span style="font-size: 10px; font-weight: 800; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; display: block;">Доступні сервіси</span>
         <div id="serviceList" class="service-list"></div>
     </div>
     
     <div class="footer">
-        🇺🇦 ROZETKA KHARKIV REGION • 2026<br><span id="appVersionDisp" style="margin-top:5px; display:inline-block;"></span>
+        🇺🇦 ROZETKA KHARKIV REGION • 2026
+        <span id="appVersionDisp" class="app-version"></span>
     </div>
 </div>
 
@@ -285,18 +273,35 @@
     </div>
 </div>
 
+<div id="galleryModal" class="gallery-modal">
+    <div class="gallery-close" onclick="closeGallery()">✕</div>
+    <div class="gallery-content">
+        <button class="gallery-nav prev" onclick="changePhoto(-1)">❮</button>
+        <img id="galleryImage" src="" alt="Фото пошкодження">
+        <button class="gallery-nav next" onclick="changePhoto(1)">❯</button>
+    </div>
+    <div id="galleryCounter" class="gallery-counter">1 / 3</div>
+</div>
+
 <div class="floating-btns">
     <button id="scrollTopBtn" class="float-btn" title="Вгору">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="18 15 12 9 6 15"></polyline>
+        </svg>
     </button>
+    
     <a href="https://forms.gle/z4wz9XcSLT5pGXkp8" target="_blank" class="float-btn primary" title="Зворотній зв'язок">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path><polygon points="12 7 13.5 10.5 17 11 14.5 13.5 15 17 12 15.5 9 17 9.5 13.5 7 11 10.5 10.5 12 7"></polygon></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
+            <polygon points="12 7 13.5 10.5 17 11 14.5 13.5 15 17 12 15.5 9 17 9.5 13.5 7 11 10.5 10.5 12 7"></polygon>
+        </svg>
     </a>
 </div>
 
 <script>
-    const API_URL = 'https://script.google.com/macros/s/AKfycbyRNQC7Yj12i0vldvLR0QPSn9TYc0vrAIXUzwRqMwVAJgOTHRK05PGmkIQdYhu4-JWk8w/exec';
-    const CACHE_KEY = 'skillhub_v_data_offline'; 
+    const API_URL = 'https://script.google.com/macros/s/AKfycbzYY2T8oHSzhKqt5eB0Fp35zuWc_AZnUy4Ok1_pkV1GHLwNoYYLBSDGtll1r10pbu625Q/exec';
+    
+    const CACHE_KEY = 'skillhub_v1000_parallels_fix'; 
     
     let db = { categories: [], descriptions: {}, tariffs: [], appVersion: "", montazhData: [], serviceCodes: {} };
     let currentCategoryData = null;
@@ -318,11 +323,16 @@
     const scrollTopBtn = document.getElementById('scrollTopBtn');
 
     window.addEventListener('scroll', () => {
-        if (window.scrollY > 100) { scrollTopBtn.classList.add('show'); } 
-        else { scrollTopBtn.classList.remove('show'); }
+        if (window.scrollY > 100) {
+            scrollTopBtn.classList.add('show');
+        } else {
+            scrollTopBtn.classList.remove('show');
+        }
     });
 
-    scrollTopBtn.onclick = () => window.scrollTo({ top: 0, behavior: 'smooth' });
+    scrollTopBtn.onclick = () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
 
     const normalize = (str) => str ? str.toString().toLowerCase().trim().replace(/[‘’'"`]/g, "") : "";
 
@@ -335,7 +345,9 @@
         if (!key) return "";
         if (dict[key]) return dict[key];
         let clean = normalizeServiceName(key);
-        for (let k in dict) { if (normalizeServiceName(k) === clean) return dict[k]; }
+        for (let k in dict) {
+            if (normalizeServiceName(k) === clean) return dict[k];
+        }
         return "";
     }
 
@@ -351,22 +363,35 @@
         if (e) e.stopPropagation(); 
         const fallbackCopy = () => {
             let textArea = document.createElement("textarea");
-            textArea.value = code; textArea.style.position = "fixed"; textArea.style.top = "0"; textArea.style.left = "0"; textArea.style.opacity = "0";
-            document.body.appendChild(textArea); textArea.focus(); textArea.select();
-            try { document.execCommand('copy'); showCopied(el, code); } catch (err) {}
+            textArea.value = code;
+            textArea.style.position = "fixed";
+            textArea.style.top = "0";
+            textArea.style.left = "0";
+            textArea.style.opacity = "0";
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            try {
+                document.execCommand('copy');
+                showCopied(el, code);
+            } catch (err) {
+                console.error('Копіювання не вдалося', err);
+            }
             textArea.remove();
         };
 
         if (navigator.clipboard && window.isSecureContext) {
-            navigator.clipboard.writeText(code).then(() => showCopied(el, code)).catch(() => fallbackCopy());
-        } else { fallbackCopy(); }
+            navigator.clipboard.writeText(code)
+                .then(() => showCopied(el, code))
+                .catch(() => fallbackCopy());
+        } else {
+            fallbackCopy();
+        }
     }
 
     function showCopied(el, originalCode) {
-        // Знаходимо блок зі значенням коду
         const valueBox = el.querySelector('.code-value-text');
-        if(!valueBox) return; // якщо структура зміниться
-        
+        if(!valueBox) return; 
         const originalHTML = valueBox.innerHTML;
         valueBox.innerHTML = "✅ Скопійовано!";
         valueBox.style.color = "#10b981";
@@ -394,13 +419,17 @@
     async function init() {
         const cached = localStorage.getItem(CACHE_KEY);
         if (cached) { 
-            try { 
+            try {
                 db = JSON.parse(cached); 
                 enableUI(); 
                 setAppStatus('ok', 'Працюю офлайн (З кешу)');
                 refreshData(); 
-            } catch(e) { await refreshData(true); }
-        } else { await refreshData(true); }
+            } catch(e) {
+                await refreshData(true);
+            }
+        } else { 
+            await refreshData(true); 
+        }
     }
 
     async function refreshData(first = false) {
@@ -412,6 +441,7 @@
             if (dataStr.trim().startsWith('<')) throw new Error("CORS/Auth Error");
             
             let newDb = JSON.parse(dataStr);
+            
             if (newDb.error) throw new Error(newDb.error);
             
             db = newDb;
@@ -426,7 +456,7 @@
             } else { 
                 setAppStatus('error', 'Помилка (немає даних)');
                 if (first && elLoader) {
-                    elLoader.querySelector('.loader-text').innerHTML = "❌ Помилка з'єднання.<br>Перевірте інтернет.";
+                    elLoader.querySelector('.loader-text').innerHTML = "❌ Відсутній інтернет.<br>Немає збережених даних.";
                     elLoader.querySelector('.spinner-ring').style.display = 'none';
                 }
             }
@@ -478,6 +508,73 @@
         renderServices(); 
     }
 
+    // --- ЛОГІКА ГАЛЕРЕЇ ФОТО ---
+    let currentPhotos = [];
+    let currentPhotoIndex = 0;
+
+    window.openGallery = function(photosStr) {
+        currentPhotos = photosStr.split(',').filter(p => p.trim() !== "");
+        if (currentPhotos.length === 0) return;
+
+        // Перевірка на посилання Google Photos
+        if (currentPhotos[0].includes('photos.app.goo.gl') || currentPhotos[0].includes('photos.google.com')) {
+            if(currentPhotos.length === 1) {
+                window.open(currentPhotos[0], '_blank');
+                return;
+            } else {
+                document.getElementById('modalTitle').innerText = "Приклади пошкоджень";
+                let linksHtml = currentPhotos.map((url, i) => `
+                    <a href="${url}" target="_blank" class="copy-code-pill" style="display:flex; width:100%; justify-content:center; margin-bottom:10px; text-decoration:none; padding:16px; border-radius:16px; font-size:15px;">
+                        📸 Відкрити Фото ${i+1}
+                    </a>
+                `).join('');
+                document.getElementById('modalBody').innerHTML = `
+                    <div style="padding:10px; text-align:center; color:#64748b; font-size:13px; margin-bottom:15px; background:rgba(0,0,0,0.03); border-radius:12px;">
+                        Посилання формату Google Photos відкриваються у новій вкладці
+                    </div>
+                    ${linksHtml}
+                `;
+                document.getElementById('descModal').classList.add('show');
+                document.body.classList.add('modal-open');
+                return;
+            }
+        }
+
+        currentPhotoIndex = 0;
+        updateGalleryImage();
+        document.getElementById('galleryModal').classList.add('show');
+    };
+
+    window.closeGallery = function() {
+        document.getElementById('galleryModal').classList.remove('show');
+    };
+
+    window.changePhoto = function(dir) {
+        currentPhotoIndex += dir;
+        if (currentPhotoIndex < 0) currentPhotoIndex = currentPhotos.length - 1;
+        if (currentPhotoIndex >= currentPhotos.length) currentPhotoIndex = 0;
+        updateGalleryImage();
+    };
+
+    function updateGalleryImage() {
+        const img = document.getElementById('galleryImage');
+        const counter = document.getElementById('galleryCounter');
+        const prev = document.querySelector('.gallery-nav.prev');
+        const next = document.querySelector('.gallery-nav.next');
+
+        img.src = currentPhotos[currentPhotoIndex].trim();
+        counter.innerText = `${currentPhotoIndex + 1} / ${currentPhotos.length}`;
+        
+        if (currentPhotos.length <= 1) {
+            prev.style.display = 'none';
+            next.style.display = 'none';
+        } else {
+            prev.style.display = 'flex';
+            next.style.display = 'flex';
+        }
+    }
+    // ---------------------------------
+
     function renderTechInfo() {
         if (!currentCategoryData) return;
         const item = currentCategoryData;
@@ -521,9 +618,23 @@
         });
 
         // КНОПКА ФОТОГРАФІЙ ПОШКОДЖЕНОЇ ТЕХНІКИ
-        if (item.photo && item.photo.trim() !== "") {
+        let photosArray = [];
+        if (item.photo1) photosArray.push(item.photo1);
+        if (item.photo2) photosArray.push(item.photo2);
+        if (item.photo3) photosArray.push(item.photo3);
+
+        if (photosArray.length > 0) {
             hasInfo = true;
-            techHTML += `<a href="${item.photo}" target="_blank" class="tech-photo-btn">📸 Приклади пошкодженої техніки</a>`;
+            let photosStr = photosArray.join(',');
+            techHTML += `
+            <div class="tech-photo-wrapper" onclick="openGallery('${photosStr}')">
+                <div class="photo-icon">📸</div>
+                <div class="photo-text">
+                    <span class="photo-title">Приклади пошкодженої техніки</span>
+                    <span class="photo-subtitle">Переглянути фото (${photosArray.length})</span>
+                </div>
+                <div class="photo-arrow">❯</div>
+            </div>`;
         }
 
         elTechInfo.style.display = hasInfo ? 'flex' : 'none';
@@ -531,16 +642,16 @@
     }
 
     function parseDescriptionLines(descE) {
-        if (!descE) return `<div style="text-align:center; padding: 20px; color:var(--text-muted); font-size:13px;">Опис відсутній...</div>`;
+        if (!descE) return `<div style="text-align:center; padding: 20px; color:#94a3b8; font-size:13px;">Опис відсутній...</div>`;
         let raw = descE.toString().trim();
-        if (raw === "Опис відсутній..." || raw === "") return `<div style="text-align:center; padding: 20px; color:var(--text-muted); font-size:13px;">Опис відсутній...</div>`;
+        if (raw === "Опис відсутній..." || raw === "") return `<div style="text-align:center; padding: 20px; color:#94a3b8; font-size:13px;">Опис відсутній...</div>`;
 
         return raw.replace(/\|/g, '\n').split(/\r?\n/).map(line => {
             const l = line.trim(); 
             if (!l) return '';
-            if (l.startsWith('+')) return `<div style="font-weight: 800; color: var(--text-main); margin: 16px 0 8px 0; font-size: 15px;">${l.substring(1).trim()}</div>`;
-            if (l.startsWith('=')) return `<div style="font-size: 11px; font-weight: 800; color: var(--primary); text-transform: uppercase; margin: 12px 0 4px 0; letter-spacing: 0.5px;">${l.substring(1).trim() || 'ВАРТІСТЬ:'}</div>`;
-            if (l.includes('---')) return `<div style="height: 1px; background: var(--border-color); margin: 12px 0;"></div>`;
+            if (l.startsWith('+')) return `<div class="modal-section-title">${l.substring(1).trim()}</div>`;
+            if (l.startsWith('=')) return `<div class="modal-cost-header">${l.substring(1).trim() || 'Вартість:'}</div>`;
+            if (l.includes('---')) return `<div class="modal-divider"></div>`;
             
             let match = l.match(emojiRegex); 
             let e = match ? match[0] : "";
@@ -565,20 +676,14 @@
         }).join('');
     }
 
-    function getSimpleDescHTML(name, codeF) {
-        let descContentText = parseDescriptionLines(findInDb(db.descriptions, name));
-        let codeBlockHTML = codeF ? `
-            <div class="code-block-wrapper" onclick="copyCode(event, this, '${codeF}')">
-                <span class="code-label-text">Код сервісу:</span>
-                <span class="code-value-text">${codeF} <span style="font-size:16px;">📋</span></span>
-            </div>` : '';
-        return `<div style="background: rgba(0,0,0,0.02); border-radius: 16px; padding: 16px; border: 1px solid rgba(0,0,0,0.04);">${codeBlockHTML}${descContentText}</div>`;
-    }
-
     function generateDescToggleHTML(descE, codeF) {
         let descContentText = "";
         let raw = descE ? descE.toString().trim() : "";
-        if (raw && raw !== "Опис відсутній...") { descContentText = parseDescriptionLines(raw); }
+        
+        if (raw && raw !== "Опис відсутній...") {
+            descContentText = parseDescriptionLines(raw);
+        }
+        
         let codeBlockHTML = codeF ? `
             <div class="code-block-wrapper" onclick="copyCode(event, this, '${codeF}')">
                 <span class="code-label-text">Код сервісу:</span>
@@ -1135,6 +1240,7 @@
 
         let isSetupCategory = db.tariffs.some(t => t.cat && normalizeServiceName(t.cat) === nameClean);
 
+        // ДОДАНО ВИКЛЮЧЕННЯ ДЛЯ PARALLELS
         let isStaticEpz = (u.includes('WINDOWS') || u.includes('OFFICE') || u.includes('OFFICE 365') || u.includes('OFFICE 2024') || u.includes('ESD') || u.includes('[ESD]')) 
             && !u.includes('НАЛАШТУВАННЯ') 
             && !u.includes('ВСТАНОВЛЕННЯ') 
@@ -1167,7 +1273,7 @@
                 elModal.classList.add('show');
                 return;
             }
-            else if (u.includes('КІНОТЕАТР') || u.includes('SWEET') || u.includes('PARALLELS')) {
+            else if (u.includes('КІНОТЕАТР') || u.includes('SWEET') || u.includes('PARALLELS')) { 
                 document.getElementById('modalTitle').innerText = u.includes('PARALLELS') ? "Parallels Desktop" : "Онлайн кінотеатри";
                 renderDirectListModal(u.includes('PARALLELS') ? ["parallels"] : ["sweet", "кінотеатр"]);
                 elModal.classList.add('show');
