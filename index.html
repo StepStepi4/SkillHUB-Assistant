@@ -73,8 +73,14 @@
         .refresh-db-btn.spinning svg { animation: spin 1s linear infinite; }
         
         .search-wrapper { position: relative; margin-bottom: 12px; display: flex; align-items: center; }
-        input { width: 100%; padding: 14px 45px 14px 16px; border: none; border-radius: 16px; font-size: 16px; font-family: inherit; outline: none; transition: box-shadow 0.2s ease; background: #ffffff; box-shadow: 0 4px 10px rgba(0,0,0,0.04); will-change: box-shadow; }
+        input { width: 100%; padding: 14px 80px 14px 16px; border: none; border-radius: 16px; font-size: 16px; font-family: inherit; outline: none; transition: box-shadow 0.2s ease; background: #ffffff; box-shadow: 0 4px 10px rgba(0,0,0,0.04); will-change: box-shadow; }
         input:focus { box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.15), 0 4px 10px rgba(0,0,0,0.04); }
+        
+        /* СТИЛІ КНОПОК ПОШУКУ */
+        .voice-btn { position: absolute; right: 44px; background: #eff6ff; color: #2563eb; border: none; width: 28px; height: 28px; border-radius: 50%; font-size: 14px; cursor: pointer; display: none; align-items: center; justify-content: center; transition: background 0.2s, transform 0.2s; }
+        .voice-btn:active { transform: scale(0.9); }
+        .voice-btn.listening { background: #fee2e2; color: #ef4444; animation: pulseRed 1.5s infinite; }
+        
         .clear-data-btn { position: absolute; right: 12px; background: #fee2e2; color: #ef4444; border: none; width: 28px; height: 28px; border-radius: 50%; font-size: 14px; font-weight: 800; cursor: pointer; display: none; align-items: center; justify-content: center; transition: background 0.2s; }
         .clear-data-btn:active { background: #fca5a5; }
 
@@ -117,7 +123,6 @@
         .photo-subtitle { font-size: 11px; font-weight: 600; color: #3b82f6; margin-top: 2px; }
         .photo-arrow { color: #3b82f6; font-weight: 900; font-size: 18px; }
 
-        /* ВІДРЕДАГОВАНА ГАЛЕРЕЯ ДЛЯ ПЕРЕГЛЯДУ ФОТО З МУЛЬТИТАЧЕМ */
         .gallery-modal { 
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
             background: rgba(0,0,0,0.92); z-index: 100000; 
@@ -131,7 +136,6 @@
         
         .gallery-content { position: relative; width: 100%; height: 75vh; max-width: 100%; display: flex; align-items: center; justify-content: center; padding: 0; box-sizing: border-box; overflow: hidden; }
         
-        /* Зображення тепер може зумитись і панорамуватись */
         .gallery-content img { max-width: 100%; max-height: 100%; border-radius: 8px; object-fit: contain; transform-origin: center; will-change: transform; pointer-events: auto; }
         
         .gallery-nav { background: rgba(255,255,255,0.15); color: white; border: 1px solid rgba(255,255,255,0.2); border-radius: 50%; width: 44px; height: 44px; font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s; position: absolute; top: 50%; transform: translateY(-50%); z-index: 50; backdrop-filter: blur(5px);}
@@ -141,7 +145,6 @@
         
         .gallery-counter { color: white; font-size: 14px; font-weight: 700; margin-top: 15px; letter-spacing: 2px; background: rgba(255,255,255,0.15); padding: 6px 16px; border-radius: 20px;}
         
-        /* НОВА КНОПКА ЗАКРИТТЯ ГАЛЕРЕЇ */
         .gallery-close-text-btn {
             margin-top: 20px;
             background: rgba(255,255,255,0.15);
@@ -219,16 +222,18 @@
         .code-block-wrapper:active { transform: scale(0.97); background: #eff6ff; border-color: #93c5fd; }
         .code-label-text { font-size: 14px; font-weight: 700; color: #475569; }
         .code-value-text {
-/* ТАБЛИЦЯ ПОРІВНЯННЯ СЕРВІСІВ */
-        .compare-wrapper { overflow-x: auto; margin-top: 10px; border-radius: 14px; border: 1px solid #e2e8f0; box-shadow: 0 4px 10px rgba(0,0,0,0.03); -webkit-overflow-scrolling: touch; }
-        .compare-table { width: 100%; min-width: 380px; border-collapse: collapse; font-size: 12px; text-align: center; background: #fff; }
-        .compare-table th { padding: 12px 6px; font-weight: 800; font-size: 10px; text-transform: uppercase; border-bottom: 2px solid #e2e8f0; background: #f8fafc; }
-        .compare-table td { padding: 14px 6px; border-bottom: 1px solid #f1f5f9; color: #475569; font-weight: 600; line-height: 1.3; }
-        .compare-table tr:last-child td { border-bottom: none; }
-        .compare-table tr td:first-child { text-align: left; font-weight: 700; color: #0f172a; position: sticky; left: 0; background: #fff; z-index: 1; box-shadow: 2px 0 5px rgba(0,0,0,0.02); padding-left: 14px;}
-        .compare-table th:first-child { position: sticky; left: 0; z-index: 2; background: #f8fafc; padding-left: 14px; text-align: left; }
-        .check-yes { color: #10b981; font-size: 18px; font-weight: 900; }
-        .check-no { color: #ef4444; font-size: 18px; font-weight: 900; opacity: 0.3; }
+            font-size: 16px;
+            font-weight: 900;
+            color: #2563eb;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: #ffffff;
+            padding: 8px 14px;
+            border-radius: 12px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+            border: 1px solid #e2e8f0;
+            transition: background 0.2s ease;
         }
 
         .montazh-label { font-size: 13px; color: #475569; margin-bottom: 8px; display: block; font-weight: 600; text-align: left; padding-left: 8px; }
@@ -264,6 +269,17 @@
         .float-btn.primary:active { transform: scale(0.92) translateZ(0); box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2); }
         .float-btn.primary svg { width: 24px; height: 24px; }
         
+        /* ТАБЛИЦЯ ПОРІВНЯННЯ СЕРВІСІВ */
+        .compare-wrapper { overflow-x: auto; margin-top: 10px; border-radius: 14px; border: 1px solid #e2e8f0; box-shadow: 0 4px 10px rgba(0,0,0,0.03); -webkit-overflow-scrolling: touch; }
+        .compare-table { width: 100%; min-width: 380px; border-collapse: collapse; font-size: 12px; text-align: center; background: #fff; }
+        .compare-table th { padding: 12px 6px; font-weight: 800; font-size: 10px; text-transform: uppercase; border-bottom: 2px solid #e2e8f0; background: #f8fafc; }
+        .compare-table td { padding: 14px 6px; border-bottom: 1px solid #f1f5f9; color: #475569; font-weight: 600; line-height: 1.3; }
+        .compare-table tr:last-child td { border-bottom: none; }
+        .compare-table tr td:first-child { text-align: left; font-weight: 700; color: #0f172a; position: sticky; left: 0; background: #fff; z-index: 1; box-shadow: 2px 0 5px rgba(0,0,0,0.02); padding-left: 14px;}
+        .compare-table th:first-child { position: sticky; left: 0; z-index: 2; background: #f8fafc; padding-left: 14px; text-align: left; }
+        .check-yes { color: #10b981; font-size: 18px; font-weight: 900; }
+        .check-no { color: #ef4444; font-size: 18px; font-weight: 900; opacity: 0.3; }
+
     </style>
 </head>
 <body>
@@ -291,6 +307,7 @@
     
     <div class="search-wrapper">
         <input type="text" id="catInput" placeholder="Яку техніку шукаємо?" autocomplete="off" disabled>
+        <button id="voiceBtn" class="voice-btn" title="Голосовий пошук">🎤</button>
         <button id="clearAllBtn" class="clear-data-btn">✕</button>
         <div id="customSuggestions" class="suggestions-list">
             <div id="matchesContainer"></div>
@@ -306,7 +323,12 @@
         <div class="ua-name" id="uaTitle"></div>
         <div id="itemCategory" class="item-category"></div>
         <div id="techInfo" class="tech-info"></div>
-        <span style="font-size: 10px; font-weight: 800; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; display: block;">Доступні сервіси</span>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+            <span style="font-size: 10px; font-weight: 800; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px;">Доступні сервіси</span>
+            <button onclick="openCompareModal()" style="background: #eff6ff; color: #2563eb; border: none; padding: 6px 12px; border-radius: 10px; font-size: 11px; font-weight: 800; cursor: pointer; display: flex; align-items: center; gap: 4px; box-shadow: 0 2px 5px rgba(37,99,235,0.1); transition: 0.2s;">
+                <span style="font-size: 14px;">⚖️</span> Порівняти
+            </button>
+        </div>
         <div id="serviceList" class="service-list"></div>
     </div>
     
@@ -675,7 +697,6 @@
         galleryImage.style.transform = `translate(0px, 0px) scale(1)`;
     }
 
-    // MULTITOUCH ZOOM LOGIC
     galleryContent.addEventListener('touchstart', e => {
         if (e.touches.length === 2) {
             e.preventDefault();
@@ -1451,6 +1472,82 @@
         elModal.classList.add('show'); 
     }
 
+    window.openCompareModal = function() {
+        scrollPos = window.pageYOffset; 
+        document.body.style.top = `-${scrollPos}px`; 
+        document.body.classList.add('modal-open');
+        
+        document.getElementById('modalTitle').innerText = "Порівняння сервісів";
+        
+        let html = `
+        <div style="font-size: 12px; color: #64748b; margin-bottom: 15px; text-align: center;">Шпаргалка для роботи з запереченнями клієнта.</div>
+        <div class="compare-wrapper">
+            <table class="compare-table">
+                <thead>
+                    <tr>
+                        <th>Що покриває?</th>
+                        <th><div class="brand-tag brand-epz" style="margin:0;">ЕПЗ</div></th>
+                        <th><div class="brand-tag brand-ekta" style="margin:0;">ЕКТА</div></th>
+                        <th><div class="brand-tag brand-support" style="margin:0;">SUPPORT</div></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Заводський брак (після гарантії)</td>
+                        <td class="check-yes">✓</td>
+                        <td class="check-yes">✓</td>
+                        <td class="check-yes">✓</td>
+                    </tr>
+                    <tr>
+                        <td>Розбиття екрану / Корпусу</td>
+                        <td class="check-no">✕</td>
+                        <td class="check-yes">✓</td>
+                        <td class="check-yes">✓</td>
+                    </tr>
+                    <tr>
+                        <td>Залиття рідиною</td>
+                        <td class="check-no">✕</td>
+                        <td class="check-yes">✓</td>
+                        <td class="check-yes">✓</td>
+                    </tr>
+                    <tr>
+                        <td>Перепад напруги в мережі</td>
+                        <td class="check-no">✕</td>
+                        <td class="check-yes">✓</td>
+                        <td class="check-yes">✓</td>
+                    </tr>
+                    <tr>
+                        <td>Компенсація, якщо не підлягає ремонту</td>
+                        <td class="check-yes">✓</td>
+                        <td class="check-yes">✓</td>
+                        <td style="font-size:10px; font-weight:800; color:#10b981;">Повернення 100%</td>
+                    </tr>
+                    <tr>
+                        <td>Безкоштовна доставка в сервіс</td>
+                        <td class="check-no">✕</td>
+                        <td class="check-yes">✓</td>
+                        <td class="check-yes">✓</td>
+                    </tr>
+                    <tr>
+                        <td>Підмінний фонд на час ремонту</td>
+                        <td class="check-no">✕</td>
+                        <td class="check-no">✕</td>
+                        <td class="check-yes">✓</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div style="margin-top: 15px; font-size: 11px; line-height: 1.4; color: #475569; background: #f8fafc; padding: 12px; border-radius: 12px; border: 1px dashed #cbd5e1;">
+            💡 <b>Швидка підказка:</b><br><br>
+            • <b>ЕПЗ</b> ідеально для великої техніки (Холодильники, Пралки, ТВ), де механіка рідкість, але ремонт електроніки дорогий.<br>
+            • <b>ЕКТА / Support</b> — мастхев для Смартфонів, Ноутбуків та Смарт-годинників (постійно падають і топляться).
+        </div>
+        `;
+        
+        document.getElementById('modalBody').innerHTML = html;
+        document.getElementById('descModal').classList.add('show');
+    };
+
     function closeModal() { 
         elModal.classList.remove('show'); 
         document.body.classList.remove('modal-open');
@@ -1460,6 +1557,72 @@
     
     document.getElementById('closeModalBtn').onclick = closeModal;
     elModal.onclick = (e) => { if(e.target.id === 'descModal') closeModal(); };
+
+    // --- ГОЛОСОВИЙ ПОШУК ---
+    const voiceBtn = document.getElementById('voiceBtn');
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+    if (SpeechRecognition && voiceBtn) {
+        voiceBtn.style.display = 'flex';
+        const recognition = new SpeechRecognition();
+        
+        recognition.lang = 'uk-UA'; 
+        recognition.continuous = false;
+        recognition.interimResults = false;
+
+        voiceBtn.onclick = () => {
+            try {
+                recognition.start();
+                voiceBtn.classList.add('listening');
+                elCatInput.placeholder = "Слухаю вас...";
+            } catch (e) {
+                console.log("Мікрофон вже працює");
+            }
+        };
+
+        recognition.onresult = (event) => {
+            let transcript = event.results[0][0].transcript.toLowerCase();
+            
+            transcript = transcript.replace(/(\d)\s+(?=\d)/g, "$1");
+            transcript = transcript.replace(/\s*(тис(яч(і|ів|а|у)?)?|тыс(яч(и|ей|а|у)?)?)/g, "000");
+            transcript = transcript.replace(/\s*(грн|гривен|гривні|гривню|рублей|руб)\b/g, "");
+
+            let numbersMatch = transcript.match(/\d+/g);
+            let price = 0;
+            let categoryText = transcript;
+
+            if (numbersMatch) {
+                let prices = numbersMatch.filter(n => parseInt(n) >= 100);
+                if (prices.length > 0) {
+                    price = parseInt(prices[prices.length - 1]); 
+                    categoryText = transcript.replace(price.toString(), "").replace(/\s+/g, " ").trim();
+                }
+            }
+
+            elCatInput.value = categoryText;
+            
+            if (price > 0) {
+                elPriceWrapper.style.display = 'flex';
+                elPriceInput.value = price;
+            } else {
+                elPriceInput.value = "";
+            }
+
+            elClearBtn.style.display = 'flex';
+            elCatInput.dispatchEvent(new Event('input'));
+        };
+
+        recognition.onspeechend = () => {
+            voiceBtn.classList.remove('listening');
+            elCatInput.placeholder = "Яку техніку шукаємо?";
+        };
+
+        recognition.onerror = (event) => {
+            voiceBtn.classList.remove('listening');
+            elCatInput.placeholder = "Яку техніку шукаємо?";
+            console.error("Помилка мікрофона: ", event.error);
+        };
+    }
 
     init();
 
