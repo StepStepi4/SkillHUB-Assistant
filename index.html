@@ -29,7 +29,6 @@
             --clr-other-bg: #e2e2e8; --clr-other-text: #1e293b;
             --gradient-primary: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
             --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
         }
 
         body.modal-open { overflow: hidden; position: fixed; width: 100%; }
@@ -218,7 +217,7 @@
         .desc-content { margin-top: 10px; padding: 14px; background: rgba(0,0,0,0.03); border-radius: 14px; }
         
         .footer { margin-top: 25px; text-align: center; font-size: 10px; color: #94a3b8; font-weight: 600; line-height: 1.5; padding-bottom: 20px;}
-        .app-version { display: block; font-size: 8px; font-weight: 500; opacity: 0.6; margin-top: 4px; }
+        .app-version { display: block; font-size: 10px; font-weight: 700; opacity: 0.8; margin-top: 4px; color: #2563eb; }
 
         .floating-btns { position: fixed; bottom: 24px; right: 24px; display: flex; flex-direction: column; gap: 16px; z-index: 99999; transform: translateZ(0); pointer-events: none; }
         .float-btn { width: 52px; height: 52px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; text-decoration: none; outline: none; pointer-events: auto; border: 1px solid rgba(0,0,0,0.05); box-shadow: 0 6px 18px rgba(0,0,0,0.12); transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
@@ -259,18 +258,6 @@
             transform: scale(0.98);
             box-shadow: 0 2px 6px rgba(37, 99, 235, 0.3);
         }
-        
-        /* ТАБЛИЦЯ ПОРІВНЯННЯ СЕРВІСІВ (ДИНАМІЧНА) */
-        .compare-wrapper { overflow-x: auto; margin-top: 10px; border-radius: 14px; border: 1px solid #e2e8f0; box-shadow: 0 4px 10px rgba(0,0,0,0.03); -webkit-overflow-scrolling: touch; width: 100%; }
-        .compare-table { width: 100%; border-collapse: collapse; font-size: 12px; text-align: center; background: #fff; table-layout: auto; }
-        .compare-table th { padding: 12px 10px; font-weight: 800; font-size: 10px; text-transform: uppercase; border-bottom: 2px solid #e2e8f0; background: #f8fafc; min-width: 100px; vertical-align: top; }
-        .compare-table td { padding: 14px 10px; border-bottom: 1px solid #f1f5f9; color: #475569; font-weight: 600; line-height: 1.3; }
-        .compare-table tr:last-child td { border-bottom: none; }
-        .compare-table tr td:first-child { text-align: left; font-weight: 700; color: #0f172a; position: sticky; left: 0; background: #fff; z-index: 1; box-shadow: 2px 0 5px rgba(0,0,0,0.04); padding-left: 14px; min-width: 120px;}
-        .compare-table th:first-child { position: sticky; left: 0; z-index: 2; background: #f8fafc; padding-left: 14px; text-align: left; vertical-align: middle; }
-        .check-yes { color: #22c55e; font-size: 18px; font-weight: 900; }
-        .check-no { color: #ef4444; font-size: 18px; font-weight: 900; }
-
     </style>
 </head>
 <body>
@@ -314,12 +301,7 @@
         <div id="itemCategory" class="item-category"></div>
         <div id="techInfo" class="tech-info"></div>
         
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-            <span style="font-size: 10px; font-weight: 800; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px;">Доступні сервіси</span>
-            <button id="compareBtn" onclick="openCompareModal()" style="display:none; background: #eff6ff; color: #2563eb; border: none; padding: 6px 12px; border-radius: 10px; font-size: 11px; font-weight: 800; cursor: pointer; align-items: center; gap: 4px; box-shadow: 0 2px 5px rgba(37,99,235,0.1); transition: 0.2s;">
-                <span style="font-size: 14px;">⚖️</span> Порівняти
-            </button>
-        </div>
+        <span style="font-size: 10px; font-weight: 800; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; display: block;">Доступні сервіси</span>
         
         <div id="serviceList" class="service-list"></div>
     </div>
@@ -375,8 +357,6 @@
     let db = { categories: [], descriptions: {}, tariffs: [], appVersion: "", changelog: "", montazhData: [], serviceCodes: {} };
     let currentCategoryData = null;
     let scrollPos = 0;
-    
-    window.lastCalculatedServices = [];
 
     const brandRegex = /^\[(.*?)\]/;
     const emojiRegex = /^(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])/;
@@ -552,7 +532,7 @@
 
     function enableUI() { 
         elCatInput.disabled = false; 
-        if (db.appVersion) elAppVersion.innerText = "v " + db.appVersion;
+        if (db.appVersion) elAppVersion.innerText = "Версія v" + db.appVersion;
         if (elLoader) elLoader.classList.add('hidden'); 
     }
 
@@ -574,7 +554,7 @@
         });
     }, 100));
 
-    elClearBtn.onclick = () => { elCatInput.value = ""; elPriceInput.value = ""; elClearBtn.style.display = "none"; elSuggList.style.display = "none"; elPriceWrapper.style.display = "none"; elResultBox.style.display = "none"; currentCategoryData = null; elCatInput.focus(); document.getElementById('compareBtn').style.display = 'none'; };
+    elClearBtn.onclick = () => { elCatInput.value = ""; elPriceInput.value = ""; elClearBtn.style.display = "none"; elSuggList.style.display = "none"; elPriceWrapper.style.display = "none"; elResultBox.style.display = "none"; currentCategoryData = null; elCatInput.focus(); };
     elOkBtn.onclick = () => elPriceInput.blur();
 
     function selectItem(item) {
@@ -876,8 +856,6 @@
 
         const p = parseFloat(elPriceInput.value) || 0; 
         if (!currentCategoryData || !currentCategoryData.service) {
-            window.lastCalculatedServices = [];
-            document.getElementById('compareBtn').style.display = 'none';
             return;
         }
 
@@ -976,11 +954,6 @@
             if (!a.isFocus && b.isFocus) return 1;
             return b.numCost - a.numCost;
         });
-
-        window.lastCalculatedServices = dataForSort;
-        
-        let hasCompare = dataForSort.some(s => ['brand-epz', 'brand-ekta', 'brand-support'].includes(s.cls));
-        document.getElementById('compareBtn').style.display = hasCompare ? 'flex' : 'none';
 
         requestAnimationFrame(() => {
             elServiceList.innerHTML = dataForSort.map(s => `
@@ -1485,141 +1458,18 @@
         elModal.classList.add('show'); 
     }
 
-    // --- ДИНАМІЧНИЙ ГЕНЕРАТОР ТАБЛИЦЬ ПОРІВНЯННЯ ---
-    function generateDynamicCompareTable(servicesArray) {
-        if (!servicesArray || servicesArray.length === 0) return "";
-        
-        let allFeaturesMap = new Map(); 
-        let serviceFeatures = {}; 
-
-        servicesArray.forEach(s => {
-            let rawDesc = findInDb(db.descriptions, s.name) || "";
-            let lines = rawDesc.replace(/\|/g, '\n').split(/\r?\n/);
-            serviceFeatures[s.name] = {}; 
-
-            lines.forEach(line => {
-                let l = line.trim();
-                if (!l || l === "Опис відсутній..." || l.startsWith('+') || l.startsWith('=') || l.includes('---')) return;
-                
-                let isNegative = l.startsWith('✕') || l.startsWith('❌');
-                let cleanText = l.replace(/^(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff]|✓|✕|❌|✅|\+|-|\*|•|🔹|⚙️|🛡️|🔑|♻️|🎬|🛠️)\s*/, '').trim();
-                
-                if (cleanText.toLowerCase().startsWith('не покриває ')) {
-                    cleanText = cleanText.substring(12).trim();
-                    isNegative = true;
-                }
-                
-                if (cleanText) {
-                    cleanText = cleanText.charAt(0).toUpperCase() + cleanText.slice(1);
-                    let norm = cleanText.toLowerCase();
-                    if (!allFeaturesMap.has(norm)) {
-                        allFeaturesMap.set(norm, cleanText); 
-                    }
-                    serviceFeatures[s.name][norm] = { isPositive: !isNegative, original: cleanText };
-                }
-            });
-        });
-
-        if (allFeaturesMap.size === 0) {
-            return `<div style="text-align:center; padding: 10px; color:#94a3b8;">Немає детального опису для порівняння.</div>`;
-        }
-
-        let html = `<div class="compare-wrapper"><table class="compare-table"><thead><tr><th>Що покриває?</th>`;
-        
-        servicesArray.forEach(s => {
-            let tagCls = s.cls;
-            let brandLabel = s.brand;
-            if (!brandLabel) {
-                if (s.cls === 'brand-ekta') brandLabel = 'ЕКТА';
-                else if (s.cls === 'brand-support') brandLabel = 'SUPPORT';
-                else if (s.cls === 'brand-epz') brandLabel = 'ЕПЗ';
-                else brandLabel = 'СЕРВІС';
-            }
-            
-            html += `<th>
-                        <div class="brand-tag ${tagCls}" style="margin:0 auto 6px auto; display: inline-block;">${brandLabel}</div>
-                        <div style="font-size: 11px; white-space: normal; line-height: 1.2;">${s.title}</div>
-                        <div style="font-size: 13px; font-weight: 900; color: #1e293b; margin-top: 6px;">${s.label}</div>
-                     </th>`;
-        });
-        html += `</tr></thead><tbody>`;
-
-        allFeaturesMap.forEach((originalText, norm) => {
-            html += `<tr><td>${originalText}</td>`;
-            servicesArray.forEach(s => {
-                let feat = serviceFeatures[s.name][norm];
-                if (feat) {
-                    if (feat.isPositive) {
-                        html += `<td class="check-yes">✓</td>`;
-                    } else {
-                        html += `<td class="check-no">✕</td>`;
-                    }
-                } else {
-                    html += `<td class="check-no">✕</td>`;
-                }
-            });
-            html += `</tr>`;
-        });
-        
-        html += `</tbody></table></div>`;
-        return html;
-    }
-
-    window.openCompareModal = function() {
-        if (!window.lastCalculatedServices || window.lastCalculatedServices.length === 0) return;
-        
-        let epzServices = window.lastCalculatedServices.filter(s => s.cls === 'brand-epz' && !s.title.toUpperCase().includes('WINDOWS') && !s.title.toUpperCase().includes('OFFICE'));
-        let ektaSupportServices = window.lastCalculatedServices.filter(s => s.cls === 'brand-ekta' || s.cls === 'brand-support');
-
-        let html = `<div style="font-size: 12px; color: #64748b; margin-bottom: 15px; text-align: center;">Динамічне порівняння на основі опису сервісів</div>`;
-        let hasAny = false;
-
-        if (ektaSupportServices.length > 0) {
-            let tableHtml = generateDynamicCompareTable(ektaSupportServices);
-            if (tableHtml && !tableHtml.includes('Немає детального опису')) {
-                html += `<div style="font-size: 14px; font-weight: 800; color: #0f172a; margin-bottom: 10px;">Страховий захист (ЕКТА та SUPPORT)</div>`;
-                html += tableHtml;
-                hasAny = true;
-            }
-        }
-
-        if (epzServices.length > 0) {
-            let tableHtml = generateDynamicCompareTable(epzServices);
-            if (tableHtml && !tableHtml.includes('Немає детального опису')) {
-                html += `<div style="font-size: 14px; font-weight: 800; color: #0f172a; margin-top: 25px; margin-bottom: 10px;">Додаткова гарантія (ЕПЗ)</div>`;
-                html += tableHtml;
-                hasAny = true;
-            }
-        }
-
-        if (!hasAny) {
-             html += `<div style="text-align:center; padding: 20px; color:#94a3b8;">Не знайдено розширених описів для порівняння.</div>`;
-        }
-
-        scrollPos = window.pageYOffset;
-        document.body.style.top = `-${scrollPos}px`;
-        document.body.classList.add('modal-open');
-
-        document.getElementById('modalTitle').innerText = "Порівняння сервісів";
-        document.getElementById('modalBody').innerHTML = html;
-        document.getElementById('descModal').classList.add('show');
-    };
-
+    // --- НОВА ФУНКЦІЯ ДЛЯ ФОРМАТУВАННЯ ЧЕНДЖЛОГУ ---
     function parseChangelogLines(text) {
         if (!text) return '<div style="text-align:center; color:#94a3b8;">Опис змін відсутній...</div>';
         
-        // Видаляємо системні подвійні лапки
         text = text.replace(/^"|"$/g, '').trim();
-        
         let lines = text.split('\n');
         let html = '<div style="display:flex; flex-direction:column; gap:8px;">';
         
         lines.forEach(line => {
             const l = line.trim();
             if (l) {
-                // Перевіряємо чи є емодзі на початку рядка
                 let hasEmoji = /^(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])/.test(l);
-                // Якщо емодзі немає, додаємо маленьку синю крапочку
                 let prefix = hasEmoji ? "" : "<span style='color:#2563eb; font-weight:bold; margin-right:6px;'>•</span>";
                 
                 html += `
@@ -1633,6 +1483,7 @@
         return html;
     }
 
+    // --- ОНОВЛЕНА ФУНКЦІЯ ПОКАЗУ ЕКРАНУ ОНОВЛЕНЬ ---
     window.showChangelogModal = function(version, changelogText) {
         scrollPos = window.pageYOffset; 
         document.body.style.top = `-${scrollPos}px`; 
