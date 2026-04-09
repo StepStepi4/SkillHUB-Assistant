@@ -349,7 +349,7 @@
 </div>
 
 <script>
-    const API_URL = 'https://script.google.com/macros/s/AKfycbyZ2Xh6xwt5ySH4O-MFfuRIjsCnhHvZ0lo3i5L2kmTFz4ulTg69iQRMV1U57OyRZAMSsg/exec';
+    const API_URL = 'https://script.google.com/macros/s/AKfycbyod6zNHPR8tDsM02eqr9wvzf5U-oBU3GxFaKvMCRkbXlYiaHRu-3Waw7EyvUTue4qm1A/exec';
     
     const CACHE_KEY = 'skillhub_v1000_drive_fix'; 
     const SEEN_VERSION_KEY = 'skillhub_seen_version';
@@ -855,9 +855,7 @@
         renderTechInfo(); 
 
         const p = parseFloat(elPriceInput.value) || 0; 
-        if (!currentCategoryData || !currentCategoryData.service) {
-            return;
-        }
+        if (!currentCategoryData || !currentCategoryData.service) return;
 
         const focusList = currentCategoryData.focusServices ? currentCategoryData.focusServices.split('|').map(s => normalizeServiceName(s)) : [];
         const servicesNames = currentCategoryData.service.split('|').map(s => s.trim()).filter(s => s);
@@ -1468,12 +1466,10 @@
         lines.forEach(line => {
             const l = line.trim();
             if (l) {
-                let hasEmoji = /^(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])/.test(l);
-                let prefix = hasEmoji ? "" : "<span style='color:#2563eb; font-weight:bold; margin-right:6px;'>•</span>";
-                
+                // Звичайний вивід тексту (без додавання крапочок, так як ви юзаєте емодзі)
                 html += `
                 <div style="display:flex; align-items:flex-start; font-size:13px; line-height:1.4; color:#1e293b;">
-                    ${prefix}<span style="flex:1;">${l}</span>
+                    <span style="flex:1;">${l}</span>
                 </div>`;
             }
         });
