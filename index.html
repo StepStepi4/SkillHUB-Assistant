@@ -349,7 +349,7 @@
 </div>
 
 <script>
-    const API_URL = 'https://script.google.com/macros/s/AKfycbyVuB-Mj_z2Iw8VHU4AQcZ6AxgpL-4-nr04yFrkTI8miukG8Pj0VjBd9e1Lk14SzBmHig/exec';
+    const API_URL = 'https://script.google.com/macros/s/AKfycbxa1RPTegQwjh1Jj4uW1T8amwYvo0XwwK9Vq6XYOGz3C97-mEJR-4maPFf8_IAENy-pIA/exec';
     
     const CACHE_KEY = 'skillhub_v1000_drive_fix'; 
     const SEEN_VERSION_KEY = 'skillhub_seen_version';
@@ -1458,7 +1458,6 @@
         elModal.classList.add('show'); 
     }
 
-    // --- НОВА ФУНКЦІЯ ДЛЯ ФОРМАТУВАННЯ ЧЕНДЖЛОГУ ---
     function parseChangelogLines(text) {
         if (!text) return '<div style="text-align:center; color:#94a3b8;">Опис змін відсутній...</div>';
         
@@ -1483,7 +1482,6 @@
         return html;
     }
 
-    // --- ОНОВЛЕНА ФУНКЦІЯ ПОКАЗУ ЕКРАНУ ОНОВЛЕНЬ ---
     window.showChangelogModal = function(version, changelogText) {
         scrollPos = window.pageYOffset; 
         document.body.style.top = `-${scrollPos}px`; 
