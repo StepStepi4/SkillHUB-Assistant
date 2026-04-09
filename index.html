@@ -75,6 +75,7 @@
         .search-wrapper { position: relative; margin-bottom: 12px; display: flex; align-items: center; }
         input { width: 100%; padding: 14px 45px 14px 16px; border: none; border-radius: 16px; font-size: 16px; font-family: inherit; outline: none; transition: box-shadow 0.2s ease; background: #ffffff; box-shadow: 0 4px 10px rgba(0,0,0,0.04); will-change: box-shadow; }
         input:focus { box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.15), 0 4px 10px rgba(0,0,0,0.04); }
+        
         .clear-data-btn { position: absolute; right: 12px; background: #fee2e2; color: #ef4444; border: none; width: 28px; height: 28px; border-radius: 50%; font-size: 14px; font-weight: 800; cursor: pointer; display: none; align-items: center; justify-content: center; transition: background 0.2s; }
         .clear-data-btn:active { background: #fca5a5; }
 
@@ -1447,96 +1448,129 @@
         elModal.classList.add('show'); 
     }
 
-    // --- ДИНАМІЧНА ТАБЛИЦЯ ПОРІВНЯННЯ ---
+    // --- ДИНАМІЧНИЙ ГЕНЕРАТОР ТАБЛИЦЬ ПОРІВНЯННЯ ---
+    function generateDynamicCompareTable(servicesArray) {
+        if (!servicesArray || servicesArray.length === 0) return "";
+        
+        let allFeaturesMap = new Map(); 
+        let serviceFeatures = {}; 
+
+        // Збираємо унікальні властивості з усіх переданих сервісів
+        servicesArray.forEach(s => {
+            let rawDesc = findInDb(db.descriptions, s.name) || "";
+            let lines = rawDesc.replace(/\|/g, '\n').split(/\r?\n/);
+            serviceFeatures[s.name] = {}; 
+
+            lines.forEach(line => {
+                let l = line.trim();
+                // Відкидаємо порожні рядки та технічні заголовки
+                if (!l || l === "Опис відсутній..." || l.startsWith('+') || l.startsWith('=') || l.includes('---')) return;
+                
+                // Визначаємо чи це негативна властивість (не покривається)
+                let isNegative = l.startsWith('✕') || l.startsWith('❌');
+                
+                // Очищаємо рядок від маркерів та емодзі для чистого порівняння
+                let cleanText = l.replace(/^(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff]|✓|✕|❌|✅|\+|-|\*|•|🔹|⚙️|🛡️|🔑|♻️|🎬|🛠️)\s*/, '').trim();
+                
+                // Додаткова перевірка на текстове заперечення
+                if (cleanText.toLowerCase().startsWith('не покриває ')) {
+                    cleanText = cleanText.substring(12).trim();
+                    isNegative = true;
+                }
+                
+                if (cleanText) {
+                    // Робимо першу літеру великою для красивого виводу
+                    cleanText = cleanText.charAt(0).toUpperCase() + cleanText.slice(1);
+                    let norm = cleanText.toLowerCase();
+                    if (!allFeaturesMap.has(norm)) {
+                        allFeaturesMap.set(norm, cleanText); 
+                    }
+                    serviceFeatures[s.name][norm] = { isPositive: !isNegative, original: cleanText };
+                }
+            });
+        });
+
+        if (allFeaturesMap.size === 0) {
+            return `<div style="text-align:center; padding: 10px; color:#94a3b8;">Немає детального опису для порівняння.</div>`;
+        }
+
+        let html = `<div class="compare-wrapper"><table class="compare-table"><thead><tr><th>Що покриває?</th>`;
+        
+        // Рендеримо заголовки таблиці (Сервіси)
+        servicesArray.forEach(s => {
+            let tagCls = s.cls;
+            let brandLabel = s.brand;
+            if (!brandLabel) {
+                if (s.cls === 'brand-ekta') brandLabel = 'ЕКТА';
+                else if (s.cls === 'brand-support') brandLabel = 'SUPPORT';
+                else if (s.cls === 'brand-epz') brandLabel = 'ЕПЗ';
+                else brandLabel = 'СЕРВІС';
+            }
+            
+            html += `<th>
+                        <div class="brand-tag ${tagCls}" style="margin:0 auto 6px auto; display: inline-block;">${brandLabel}</div>
+                        <div style="font-size: 11px; white-space: normal; line-height: 1.2;">${s.title}</div>
+                        <div style="font-size: 13px; font-weight: 900; color: #1e293b; margin-top: 6px;">${s.label}</div>
+                     </th>`;
+        });
+        html += `</tr></thead><tbody>`;
+
+        // Рендеримо рядки (Властивості)
+        allFeaturesMap.forEach((originalText, norm) => {
+            html += `<tr><td>${originalText}</td>`;
+            servicesArray.forEach(s => {
+                let feat = serviceFeatures[s.name][norm];
+                if (feat) {
+                    if (feat.isPositive) {
+                        html += `<td class="check-yes">✓</td>`;
+                    } else {
+                        html += `<td class="check-no">✕</td>`;
+                    }
+                } else {
+                    // Якщо в описі цього сервісу такої властивості взагалі немає
+                    html += `<td class="check-no">✕</td>`;
+                }
+            });
+            html += `</tr>`;
+        });
+        
+        html += `</tbody></table></div>`;
+        return html;
+    }
+
     window.openCompareModal = function() {
         if (!window.lastCalculatedServices || window.lastCalculatedServices.length === 0) return;
         
+        // Розділяємо сервіси на дві групи
         let epzServices = window.lastCalculatedServices.filter(s => s.cls === 'brand-epz' && !s.title.toUpperCase().includes('WINDOWS') && !s.title.toUpperCase().includes('OFFICE'));
         let ektaSupportServices = window.lastCalculatedServices.filter(s => s.cls === 'brand-ekta' || s.cls === 'brand-support');
 
-        let html = `<div style="font-size: 12px; color: #64748b; margin-bottom: 15px; text-align: center;">Порівняння актуальних сервісів для обраної техніки</div>`;
+        let html = `<div style="font-size: 12px; color: #64748b; margin-bottom: 15px; text-align: center;">Динамічне порівняння на основі опису сервісів</div>`;
+        let hasAny = false;
 
+        // Таблиця 1: ЕКТА та САППОРТ
         if (ektaSupportServices.length > 0) {
-            html += `<div style="font-size: 14px; font-weight: 800; color: #0f172a; margin-bottom: 10px;">Страховий захист</div>`;
-            html += `<div class="compare-wrapper"><table class="compare-table"><thead><tr><th>Що покриває?</th>`;
-            
-            // Динамічні колонки ЕКТА / САППОРТ
-            ektaSupportServices.forEach(s => {
-                let tagCls = s.cls === 'brand-ekta' ? 'brand-ekta' : 'brand-support';
-                html += `<th>
-                            <div class="brand-tag ${tagCls}" style="margin:0 auto 6px auto; display: inline-block;">${s.brand || (s.cls==='brand-ekta'?'ЕКТА':'SUPPORT')}</div>
-                            <div style="font-size: 11px; white-space: normal; line-height: 1.2;">${s.title}</div>
-                            <div style="font-size: 13px; font-weight: 900; color: #1e293b; margin-top: 6px;">${s.label}</div>
-                         </th>`;
-            });
-            html += `</tr></thead><tbody>`;
-
-            const features = [
-                { name: "Заводський брак", ekta: true, support: true },
-                { name: "Розбиття екрану / Корпусу", ekta: true, support: true },
-                { name: "Залиття рідиною", ekta: true, support: true },
-                { name: "Перепад напруги", ekta: true, support: true },
-                { name: "Компенсація (якщо не підлягає ремонту)", ekta: true, support: "100% повернення" },
-                { name: "Безкоштовна доставка", ekta: true, support: true },
-                { name: "Підмінний фонд", ekta: false, support: true }
-            ];
-
-            features.forEach(f => {
-                html += `<tr><td>${f.name}</td>`;
-                ektaSupportServices.forEach(s => {
-                    let val = s.cls === 'brand-ekta' ? f.ekta : f.support;
-                    if (val === true) html += `<td class="check-yes">✓</td>`;
-                    else if (val === false) html += `<td class="check-no">✕</td>`;
-                    else html += `<td style="font-size:11px; font-weight:800; color:#10b981; line-height: 1.2;">${val}</td>`;
-                });
-                html += `</tr>`;
-            });
-            html += `</tbody></table></div>`;
+            let tableHtml = generateDynamicCompareTable(ektaSupportServices);
+            if (tableHtml && !tableHtml.includes('Немає детального опису')) {
+                html += `<div style="font-size: 14px; font-weight: 800; color: #0f172a; margin-bottom: 10px;">Страховий захист (ЕКТА та SUPPORT)</div>`;
+                html += tableHtml;
+                hasAny = true;
+            }
         }
 
+        // Таблиця 2: ЕПЗ (порівнюються тільки між собою)
         if (epzServices.length > 0) {
-            html += `<div style="font-size: 14px; font-weight: 800; color: #0f172a; margin-top: 20px; margin-bottom: 10px;">Додаткова гарантія (ЕПЗ)</div>`;
-            html += `<div class="compare-wrapper"><table class="compare-table"><thead><tr><th>Що покриває?</th>`;
-            
-            // Динамічні колонки ЕПЗ
-            epzServices.forEach(s => {
-                html += `<th>
-                            <div class="brand-tag brand-epz" style="margin:0 auto 6px auto; display: inline-block;">${s.brand || 'ЕПЗ'}</div>
-                            <div style="font-size: 11px; white-space: normal; line-height: 1.2;">${s.title}</div>
-                            <div style="font-size: 13px; font-weight: 900; color: #1e293b; margin-top: 6px;">${s.label}</div>
-                         </th>`;
-            });
-            html += `</tr></thead><tbody>`;
-
-            const featuresEpz = [
-                { name: "Заводський брак (після закінчення гар. від виробника)", val: true },
-                { name: "Компенсація", val: "Повернення 100%" },
-                { name: "Механічні пошкодження / Вода", val: false },
-                { name: "Перепад напруги", val: false }
-            ];
-
-            featuresEpz.forEach(f => {
-                html += `<tr><td>${f.name}</td>`;
-                epzServices.forEach(s => {
-                    if (f.val === true) html += `<td class="check-yes">✓</td>`;
-                    else if (f.val === false) html += `<td class="check-no">✕</td>`;
-                    else html += `<td style="font-size:11px; font-weight:800; color:#10b981; line-height: 1.2;">${f.val}</td>`;
-                });
-                html += `</tr>`;
-            });
-            html += `</tbody></table></div>`;
+            let tableHtml = generateDynamicCompareTable(epzServices);
+            if (tableHtml && !tableHtml.includes('Немає детального опису')) {
+                html += `<div style="font-size: 14px; font-weight: 800; color: #0f172a; margin-top: 25px; margin-bottom: 10px;">Додаткова гарантія (ЕПЗ)</div>`;
+                html += tableHtml;
+                hasAny = true;
+            }
         }
 
-        if (ektaSupportServices.length === 0 && epzServices.length === 0) {
-             html += `<div style="text-align:center; padding: 20px; color:#94a3b8;">Немає сервісів для порівняння у цій категорії.</div>`;
+        if (!hasAny) {
+             html += `<div style="text-align:center; padding: 20px; color:#94a3b8;">Не знайдено розширених описів для порівняння.</div>`;
         }
-
-        html += `
-        <div style="margin-top: 20px; font-size: 11px; line-height: 1.4; color: #475569; background: #f8fafc; padding: 12px; border-radius: 12px; border: 1px dashed #cbd5e1;">
-            💡 <b>Швидка підказка:</b><br><br>
-            • <b>ЕПЗ</b> ідеально для великої техніки (Холодильники, Пралки, ТВ), де механіка рідкість, але ремонт електроніки дорогий.<br>
-            • <b>ЕКТА / Support</b> — мастхев для Смартфонів, Ноутбуків та Смарт-годинників (постійно падають і топляться).
-        </div>`;
 
         scrollPos = window.pageYOffset;
         document.body.style.top = `-${scrollPos}px`;
