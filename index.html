@@ -17,46 +17,66 @@
         *, *::before, *::after { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
         :root {
+            /* Light Theme Variables */
             --primary: #2563eb; 
             --bg: transparent; 
             --card-bg: #f0f4f8; 
-            --text-main: #0f172a; --text-muted: #475569; --border: #e2e8f0;
+            --box-bg: #ffffff;
+            --input-bg: #ffffff;
+            --feat-bg: #f8fafc;
+            --text-main: #0f172a; 
+            --text-muted: #475569; 
+            --border: #e2e8f0;
+            --modal-overlay: rgba(15,23,42,0.5);
+            
             --clr-support-bg: #fde047; --clr-support-text: #854d0e; 
             --clr-ekta-bg: #3b82f6; --clr-ekta-text: #ffffff;    
             --clr-epz-bg: #7dd3fc; --clr-epz-text: #0369a1;    
             --clr-settings-bg: #4ade80; --clr-settings-text: #064e3b; 
             --clr-install-bg: #a78bfa; --clr-install-text: #ffffff; 
             --clr-other-bg: #e2e2e8; --clr-other-text: #1e293b;
+            
             --gradient-primary: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
             --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
             --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
         }
 
+        [data-theme="dark"] {
+            /* Dark Theme Variables */
+            --bg: #020617; 
+            --card-bg: #0f172a; 
+            --box-bg: #1e293b;
+            --input-bg: #1e293b;
+            --feat-bg: #0f172a;
+            --text-main: #f8fafc; 
+            --text-muted: #94a3b8; 
+            --border: #334155;
+            --modal-overlay: rgba(0,0,0,0.7);
+            
+            --clr-other-bg: #334155; 
+            --clr-other-text: #f8fafc;
+        }
+
         body.modal-open { overflow: hidden; position: fixed; width: 100%; }
-        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text-main); margin: 0; padding: 0; display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; -webkit-font-smoothing: antialiased; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text-main); margin: 0; padding: 0; display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; -webkit-font-smoothing: antialiased; transition: background 0.3s, color 0.3s; }
         
-        .app-loader {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: #ffffff; display: flex; flex-direction: column; justify-content: center; align-items: center;
-            z-index: 999999; transition: opacity 0.4s ease, visibility 0.4s ease; will-change: opacity;
-        }
+        .app-loader { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--box-bg); display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 999999; transition: opacity 0.4s ease, visibility 0.4s ease; }
         .app-loader.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
-        .spinner-box { position: relative; width: 70px; height: 70px; display: flex; justify-content: center; align-items: center; margin-bottom: 20px; transform: translateZ(0); }
-        .spinner-ring {
-            position: absolute; width: 100%; height: 100%; border-radius: 50%; border: 4px solid transparent;
-            border-top-color: var(--primary); border-bottom-color: var(--primary); animation: spin 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
-        }
-        .spinner-ring::before {
-            content: ''; position: absolute; top: 8px; left: 8px; right: 8px; bottom: 8px; border-radius: 50%; border: 4px solid transparent; border-left-color: #7dd3fc; border-right-color: #7dd3fc; animation: spin 0.8s ease-in-out infinite reverse;
-        }
-        .spinner-logo { font-size: 24px; animation: pulseText 1.5s ease-in-out infinite; will-change: transform; }
-        .loader-text { font-size: 13px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; animation: pulseText 1.5s ease-in-out infinite; will-change: transform, opacity; text-align: center; padding: 0 20px; line-height: 1.4;}
+        .spinner-box { position: relative; width: 70px; height: 70px; display: flex; justify-content: center; align-items: center; margin-bottom: 20px; }
+        .spinner-ring { position: absolute; width: 100%; height: 100%; border-radius: 50%; border: 4px solid transparent; border-top-color: var(--primary); border-bottom-color: var(--primary); animation: spin 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite; }
+        .spinner-ring::before { content: ''; position: absolute; top: 8px; left: 8px; right: 8px; bottom: 8px; border-radius: 50%; border: 4px solid transparent; border-left-color: #7dd3fc; border-right-color: #7dd3fc; animation: spin 0.8s ease-in-out infinite reverse; }
+        .spinner-logo { font-size: 24px; animation: pulseText 1.5s ease-in-out infinite; }
+        .loader-text { font-size: 13px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; animation: pulseText 1.5s ease-in-out infinite; text-align: center; padding: 0 20px; line-height: 1.4;}
         
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         @keyframes pulseText { 0%, 100% { transform: scale(0.95); opacity: 0.6; } 50% { transform: scale(1.05); opacity: 1; } }
 
-        .container { width: 94%; max-width: 480px; background: var(--card-bg); padding: 24px; border-radius: 30px; box-shadow: 0 15px 40px -5px rgba(0, 0, 0, 0.1); margin-top: 5vh; margin-bottom: 120px; transform: translateZ(0); border: 1px solid rgba(255,255,255,0.6); }
-        h2 { color: var(--primary); margin: 0 0 15px 0; font-size: 24px; font-weight: 800; letter-spacing: -0.7px;}
+        .container { width: 94%; max-width: 480px; background: var(--card-bg); padding: 24px; border-radius: 30px; box-shadow: 0 15px 40px -5px rgba(0, 0, 0, 0.1); margin-top: 5vh; margin-bottom: 120px; border: 1px solid var(--border); transition: background 0.3s, border 0.3s; }
+        
+        .header-wrapper { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        h2 { color: var(--primary); margin: 0; font-size: 24px; font-weight: 800; letter-spacing: -0.7px;}
+        .theme-btn { background: var(--box-bg); border: 1px solid var(--border); font-size: 18px; cursor: pointer; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: var(--shadow-md); transition: 0.2s; }
+        .theme-btn:active { transform: scale(0.9); }
         
         .status-container { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
         .status-wrapper { display: flex; align-items: center; gap: 8px; }
@@ -71,189 +91,161 @@
         @keyframes pulseRed { 0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); } 70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(239, 68, 68, 0); } 100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); } }
         @keyframes pulseYellow { 0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(234, 179, 8, 0.7); } 70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(234, 179, 8, 0); } 100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(234, 179, 8, 0); } }
 
-        .refresh-db-btn { background: #e0f2fe; color: var(--primary); border: none; border-radius: 10px; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; }
+        .refresh-db-btn { background: var(--box-bg); color: var(--primary); border: 1px solid var(--border); border-radius: 10px; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; }
         .refresh-db-btn:active { transform: scale(0.9); }
         .refresh-db-btn.spinning svg { animation: spin 1s linear infinite; }
         
         .search-wrapper { position: relative; margin-bottom: 12px; display: flex; align-items: center; }
-        input { width: 100%; padding: 14px 45px 14px 16px; border: none; border-radius: 16px; font-size: 16px; font-family: inherit; outline: none; transition: box-shadow 0.2s ease; background: #ffffff; box-shadow: 0 4px 10px rgba(0,0,0,0.04); will-change: box-shadow; }
-        input:focus { box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.15), 0 4px 10px rgba(0,0,0,0.04); }
-        .clear-data-btn { position: absolute; right: 12px; background: #fee2e2; color: #ef4444; border: none; width: 28px; height: 28px; border-radius: 50%; font-size: 14px; font-weight: 800; cursor: pointer; display: none; align-items: center; justify-content: center; transition: background 0.2s; }
+        input { width: 100%; padding: 14px 45px 14px 16px; border: 1px solid var(--border); border-radius: 16px; font-size: 16px; font-family: inherit; outline: none; transition: 0.2s; background: var(--input-bg); color: var(--text-main); box-shadow: 0 4px 10px rgba(0,0,0,0.04); }
+        input:focus { box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.15); border-color: var(--primary); }
+        .clear-data-btn { position: absolute; right: 12px; background: #fee2e2; color: #ef4444; border: none; width: 28px; height: 28px; border-radius: 50%; font-size: 14px; font-weight: 800; cursor: pointer; display: none; align-items: center; justify-content: center; transition: 0.2s; }
         .clear-data-btn:active { background: #fca5a5; }
 
         .price-wrapper { display: none; gap: 8px; margin-bottom: 12px; align-items: stretch; animation: fadeIn 0.3s ease; }
-        #devicePrice { flex-grow: 1; color: #064e3b; font-weight: 900; background-color: #ffffff; }
-        #devicePrice::placeholder { color: #064e3b; opacity: 0.6; font-weight: 600; }
-        .ok-btn { background: #064e3b; color: white; border: none; padding: 0 20px; border-radius: 16px; font-weight: 800; font-size: 14px; cursor: pointer; transition: transform 0.1s ease, opacity 0.1s ease; display: flex; align-items: center; justify-content: center; will-change: transform; box-shadow: 0 4px 10px rgba(0,0,0,0.04); }
+        #devicePrice { flex-grow: 1; color: var(--primary); font-weight: 900; }
+        #devicePrice::placeholder { color: var(--text-muted); opacity: 0.8; font-weight: 600; }
+        .ok-btn { background: var(--primary); color: white; border: none; padding: 0 20px; border-radius: 16px; font-weight: 800; font-size: 14px; cursor: pointer; transition: 0.1s; }
         .ok-btn:active { transform: scale(0.95); opacity: 0.9; }
 
-        .suggestions-list { position: absolute; top: 105%; left: 0; right: 0; background: #fff; border: 1px solid var(--border); border-radius: 18px; box-shadow: 0 15px 30px rgba(0,0,0,0.15); max-height: 250px; overflow-y: auto; z-index: 100; display: none; padding: 5px; -webkit-overflow-scrolling: touch; }
-        .suggestion-item { padding: 12px; cursor: pointer; border-radius: 12px; font-size: 14px; font-weight: 500; margin-bottom: 2px; transition: background 0.2s ease; }
-        .suggestion-item:active, .suggestion-item:hover { background: #f8fafc; }
+        .suggestions-list { position: absolute; top: 105%; left: 0; right: 0; background: var(--box-bg); border: 1px solid var(--border); border-radius: 18px; box-shadow: var(--shadow-lg); max-height: 250px; overflow-y: auto; z-index: 100; display: none; padding: 5px; }
+        .suggestion-item { padding: 12px; cursor: pointer; border-radius: 12px; font-size: 14px; font-weight: 500; color: var(--text-main); margin-bottom: 2px; transition: background 0.2s; }
+        .suggestion-item:active, .suggestion-item:hover { background: var(--feat-bg); }
         
-        .result-box { display: none; border-top: 2px solid rgba(0,0,0,0.05); padding-top: 15px; margin-top: 10px; animation: fadeIn 0.4s ease; }
+        .result-box { display: none; border-top: 2px solid var(--border); padding-top: 15px; margin-top: 10px; animation: fadeIn 0.4s ease; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
-        .ua-name { font-weight: 800; font-size: 19px; margin-bottom: 5px; border-left: 5px solid var(--primary); padding-left: 12px; }
-        .item-category { font-size: 11px; color: var(--text-muted); font-weight: 700; margin-bottom: 15px; padding-left: 14px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .ua-name { font-weight: 800; font-size: 19px; margin-bottom: 5px; border-left: 5px solid var(--primary); padding-left: 12px; color: var(--text-main); }
+        .item-category { font-size: 11px; color: var(--text-muted); font-weight: 700; margin-bottom: 15px; padding-left: 14px; text-transform: uppercase; }
         
-        .tech-info { background: transparent; padding: 0; border: none; display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px;}
-        .tech-item { display: flex; align-items: center; gap: 12px; background: #ffffff; padding: 10px; border-radius: 16px; border: none; box-shadow: 0 4px 10px rgba(0,0,0,0.04); transform: translateZ(0); }
+        .tech-info { display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; }
+        .tech-item { display: flex; align-items: center; gap: 12px; background: var(--box-bg); padding: 10px; border-radius: 16px; box-shadow: var(--shadow-md); border: 1px solid var(--border); }
         .icon-circle { width: 34px; height: 34px; min-width: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; }
-        .bg-complexity { background-color: #fef9c3; } 
-        .bg-price { background-color: #dcfce7; } 
-        .bg-garant { background-color: #dbeafe; } 
-        .bg-negarant { background-color: #fff1f2 !important; border: 1px solid #fca5a5 !important; }
-        .bg-parts { background-color: #f3e8ff; } 
+        
+        .bg-complexity { background-color: #fef9c3; color: #854d0e; } 
+        .bg-price { background-color: #dcfce7; color: #166534; } 
+        .bg-garant { background-color: #dbeafe; color: #1e3a8a; } 
+        .bg-negarant { background-color: #fee2e2; border: 1px solid #fca5a5; color: #991b1b; }
+        .bg-parts { background-color: #f3e8ff; color: #6b21a8; } 
 
-        .tech-photo-wrapper { display: flex; align-items: center; gap: 14px; margin-top: 6px; background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%); padding: 14px 16px; border-radius: 16px; border: 1px solid #bfdbfe; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; box-shadow: 0 4px 15px rgba(37, 99, 235, 0.1); }
-        .tech-photo-wrapper:active { transform: scale(0.97); }
-        .photo-icon { font-size: 24px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1)); }
+        [data-theme="dark"] .bg-complexity { background-color: #422006; color: #fde047; border: 1px solid #713f12; }
+        [data-theme="dark"] .bg-price { background-color: #064e3b; color: #6ee7b7; border: 1px solid #065f46; }
+        [data-theme="dark"] .bg-garant { background-color: #1e3a8a; color: #bfdbfe; border: 1px solid #1e40af; }
+        [data-theme="dark"] .bg-negarant { background-color: #450a0a; color: #fecaca; border: 1px solid #7f1d1d; }
+        [data-theme="dark"] .bg-parts { background-color: #3b0764; color: #e9d5ff; border: 1px solid #581c87; }
+
+        .tech-photo-wrapper { display: flex; align-items: center; gap: 14px; margin-top: 6px; background: var(--feat-bg); padding: 14px 16px; border-radius: 16px; border: 1px solid var(--border); cursor: pointer; box-shadow: var(--shadow-md); }
+        .photo-icon { font-size: 24px; }
         .photo-text { flex: 1; display: flex; flex-direction: column; }
-        .photo-title { font-size: 14px; font-weight: 800; color: #1e3a8a; }
-        .photo-subtitle { font-size: 11px; font-weight: 600; color: #3b82f6; margin-top: 2px; }
-        .photo-arrow { color: #3b82f6; font-weight: 900; font-size: 18px; }
+        .photo-title { font-size: 14px; font-weight: 800; color: var(--text-main); }
+        .photo-subtitle { font-size: 11px; font-weight: 600; color: var(--primary); margin-top: 2px; }
+        .photo-arrow { color: var(--primary); font-weight: 900; font-size: 18px; }
 
-        .gallery-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.92); z-index: 100000; display: flex; flex-direction: column; align-items: center; justify-content: center; opacity: 0; visibility: hidden; transition: opacity 0.3s; backdrop-filter: blur(10px); touch-action: none; overscroll-behavior: none; }
+        .gallery-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 100000; display: flex; flex-direction: column; align-items: center; justify-content: center; opacity: 0; visibility: hidden; transition: opacity 0.3s; touch-action: none; overscroll-behavior: none; }
         .gallery-modal.show { opacity: 1; visibility: visible; }
         .gallery-content { position: relative; width: 100%; height: 75vh; max-width: 100%; display: flex; align-items: center; justify-content: center; padding: 0; box-sizing: border-box; overflow: hidden; }
-        .gallery-content img { max-width: 100%; max-height: 100%; border-radius: 8px; object-fit: contain; transform-origin: center; will-change: transform; pointer-events: auto; }
-        .gallery-nav { background: rgba(255,255,255,0.15); color: white; border: 1px solid rgba(255,255,255,0.2); border-radius: 50%; width: 44px; height: 44px; font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s; position: absolute; top: 50%; transform: translateY(-50%); z-index: 50; backdrop-filter: blur(5px);}
-        .gallery-nav:active { background: rgba(255,255,255,0.3); transform: translateY(-50%) scale(0.9); }
+        .gallery-content img { max-width: 100%; max-height: 100%; border-radius: 8px; object-fit: contain; transform-origin: center; will-change: transform; }
+        .gallery-nav { background: rgba(255,255,255,0.15); color: white; border: 1px solid rgba(255,255,255,0.2); border-radius: 50%; width: 44px; height: 44px; font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; position: absolute; top: 50%; transform: translateY(-50%); z-index: 50; }
         .gallery-nav.prev { left: 15px; }
         .gallery-nav.next { right: 15px; }
-        .gallery-counter { color: white; font-size: 14px; font-weight: 700; margin-top: 15px; letter-spacing: 2px; background: rgba(255,255,255,0.15); padding: 6px 16px; border-radius: 20px;}
-        .gallery-close-text-btn { margin-top: 20px; background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3); color: #fff; padding: 12px 30px; border-radius: 14px; font-size: 15px; font-weight: 700; cursor: pointer; backdrop-filter: blur(5px); transition: 0.2s; z-index: 50; }
-        .gallery-close-text-btn:active { background: rgba(255,255,255,0.3); transform: scale(0.95); }
+        .gallery-counter { color: white; font-size: 14px; font-weight: 700; margin-top: 15px; background: rgba(255,255,255,0.15); padding: 6px 16px; border-radius: 20px;}
+        .gallery-close-text-btn { margin-top: 20px; background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3); color: #fff; padding: 12px 30px; border-radius: 14px; font-size: 15px; font-weight: 700; cursor: pointer; z-index: 50; }
 
         .service-list { display: flex; flex-direction: column; gap: 12px; }
-        
-        .service-card { position: relative; display: flex; justify-content: space-between; align-items: center; padding: 16px; border-radius: 20px; cursor: pointer; transition: transform 0.15s ease, box-shadow 0.15s ease, border 0.2s ease; border: 2px solid transparent; box-shadow: 0 4px 12px rgba(0,0,0,0.08); will-change: transform; transform: translateZ(0); overflow: hidden;}
-        .service-card:active { transform: scale(0.98); box-shadow: inset 0 2px 4px rgba(0,0,0,0.1); }
+        .service-card { position: relative; display: flex; justify-content: space-between; align-items: center; padding: 16px; border-radius: 20px; cursor: pointer; border: 2px solid transparent; box-shadow: var(--shadow-md); overflow: hidden; background: var(--box-bg); transition: 0.2s;}
+        .service-card:active { transform: scale(0.98); }
         .service-content-left { display: flex; align-items: center; gap: 8px; flex: 1; padding-right: 5px; pointer-events: none; z-index: 2;}
         
-        /* Стилі вибору для порівняння */
         .service-card.compare-mode { padding-left: 45px; }
-        .compare-checkbox { position: absolute; left: -30px; top: 50%; transform: translateY(-50%); width: 22px; height: 22px; border-radius: 50%; border: 2px solid #cbd5e1; background: #fff; transition: 0.3s ease; z-index: 1; display: flex; align-items: center; justify-content: center; }
+        .compare-checkbox { position: absolute; left: -30px; top: 50%; transform: translateY(-50%); width: 22px; height: 22px; border-radius: 50%; border: 2px solid var(--text-muted); background: var(--box-bg); transition: 0.3s ease; z-index: 1; display: flex; align-items: center; justify-content: center; }
         .service-card.compare-mode .compare-checkbox { left: 12px; }
-        .service-card.selected-for-compare { border: 2px solid var(--primary) !important; background-color: #f0fdf4 !important; }
+        .service-card.selected-for-compare { border: 2px solid var(--primary) !important; background-color: var(--feat-bg) !important; }
         .service-card.selected-for-compare .compare-checkbox { border-color: var(--primary); background: var(--primary); }
         .service-card.selected-for-compare .compare-checkbox::after { content: '✓'; color: #fff; font-size: 14px; font-weight: 900; }
         
-        /* Специфічні брендові фони (коли НЕ вибрано) */
         .service-card.brand-support:not(.selected-for-compare) { background: var(--clr-support-bg); color: var(--clr-support-text); }
         .service-card.brand-ekta:not(.selected-for-compare) { background: var(--clr-ekta-bg); color: var(--clr-ekta-text); }
         .service-card.brand-epz:not(.selected-for-compare) { background: var(--clr-epz-bg); color: var(--clr-epz-text); }
         .service-card.brand-settings:not(.selected-for-compare) { background: var(--clr-settings-bg); color: var(--clr-settings-text); }
-        .service-card.brand-install:not(.selected-for-compare) { background: var(--clr-install-bg); color: var(--clr-install-text); box-shadow: 0 6px 15px rgba(167, 139, 250, 0.4); }
-        .service-card.brand-other:not(.selected-for-compare) { background: #ffffff; color: var(--text-main); }
+        .service-card.brand-install:not(.selected-for-compare) { background: var(--clr-install-bg); color: var(--clr-install-text); }
+        .service-card.brand-other:not(.selected-for-compare) { background: var(--box-bg); color: var(--text-main); }
         
-        .service-card.selected-for-compare .service-title { color: #0f172a; }
-        .service-card.selected-for-compare .brand-tag { color: #0f172a; background: rgba(37,99,235,0.1) !important; }
-        .service-card.selected-for-compare .price-badge { color: #0f172a; background: rgba(255,255,255,0.9); }
+        .service-card.selected-for-compare .service-title { color: var(--text-main); }
+        .service-card.selected-for-compare .brand-tag { color: var(--text-main); background: var(--border) !important; }
+        .service-card.selected-for-compare .price-badge { color: var(--text-main); background: var(--box-bg); }
 
         .service-title { font-size: 14px; font-weight: 800; line-height: 1.2; color: inherit; }
 
-        .service-card .brand-tag { font-size: 10px; font-weight: 900; text-transform: uppercase; padding: 4px 8px; border-radius: 8px; margin-bottom: 6px; display: inline-block; background: rgba(255,255,255,0.3); color: inherit; box-shadow: none; }
+        .service-card .brand-tag { font-size: 10px; font-weight: 900; text-transform: uppercase; padding: 4px 8px; border-radius: 8px; margin-bottom: 6px; display: inline-block; background: rgba(255,255,255,0.3); color: inherit; }
         .service-card.brand-support .brand-tag { background: rgba(255,255,255,0.6); } 
-        .service-card.brand-install .brand-tag { background: rgba(255,255,255,0.2) !important; color: transparent !important; width: 30px; height: 8px; border-radius: 10px; padding: 0 !important; margin-bottom: 6px !important; }
+        .service-card.brand-install .brand-tag { background: rgba(255,255,255,0.2) !important; color: transparent !important; width: 30px; height: 8px; padding: 0 !important; margin-bottom: 6px !important; }
 
-        .price-badge { font-size: 14px; font-weight: 900; background: rgba(255,255,255,0.9); color: #475569; padding: 8px 14px; border-radius: 14px; min-width: 95px; text-align: center; line-height: 1.1; pointer-events: none; box-shadow: 0 2px 5px rgba(0,0,0,0.05); z-index: 2;}
-        .service-card.brand-support .price-badge { color: #854d0e; }
+        .price-badge { font-size: 14px; font-weight: 900; background: var(--box-bg); color: var(--text-main); padding: 8px 14px; border-radius: 14px; min-width: 95px; text-align: center; line-height: 1.1; pointer-events: none; box-shadow: var(--shadow-md); z-index: 2;}
+        .service-card.brand-support .price-badge { color: #854d0e; background: #fff; }
         .service-card.brand-install .price-badge { background: rgba(255,255,255,0.25); color: #ffffff; box-shadow: none; font-size: 12px; }
 
-        .focus-icon { font-size: 20px; filter: drop-shadow(0px 2px 4px rgba(255, 100, 0, 0.4)); animation: pulseFocus 2s infinite ease-in-out; margin-left: -2px; will-change: transform; transform: translateZ(0); }
+        .focus-icon { font-size: 20px; filter: drop-shadow(0px 2px 4px rgba(255, 100, 0, 0.4)); animation: pulseFocus 2s infinite ease-in-out; margin-left: -2px; }
         @keyframes pulseFocus { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
 
-        .modal-body .brand-tag, .montazh-card .brand-tag { font-size: 10px; font-weight: 900; text-transform: uppercase; padding: 4px 10px; border-radius: 10px; margin-bottom: 5px; display: inline-block; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
-        .brand-support { background: var(--clr-support-bg); color: var(--clr-support-text); }
-        .brand-ekta { background: var(--clr-ekta-bg); color: var(--clr-ekta-text); }
-        .brand-epz { background: var(--clr-epz-bg); color: var(--clr-epz-text); }
-
-        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15,23,42,0.5); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); display: flex; align-items: flex-end; justify-content: center; z-index: 9999; overscroll-behavior: contain; opacity: 0; visibility: hidden; pointer-events: none; transition: opacity 0.3s ease, visibility 0.3s ease; }
-        .modal.show { opacity: 1; visibility: visible; pointer-events: auto; }
-        .modal-content { background: #fff; width: 100%; max-width: 480px; border-radius: 24px 24px 0 0; padding: 24px; padding-bottom: 40px; display: flex; flex-direction: column; max-height: 90vh; min-height: 45vh; transform: translateY(100%); transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1); will-change: transform; box-shadow: 0 -10px 40px rgba(0,0,0,0.1); margin: 0 auto;}
+        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--modal-overlay); backdrop-filter: blur(4px); display: none; align-items: flex-end; justify-content: center; z-index: 9999; opacity: 0; transition: opacity 0.3s; }
+        .modal.show { display: flex; opacity: 1; }
+        .modal-content { background: var(--box-bg); width: 100%; max-width: 480px; border-radius: 24px 24px 0 0; padding: 24px; padding-bottom: 40px; display: flex; flex-direction: column; max-height: 90vh; min-height: 45vh; transform: translateY(100%); transition: transform 0.3s; margin: 0 auto; box-shadow: 0 -10px 40px rgba(0,0,0,0.2); }
         .modal.show .modal-content { transform: translateY(0); }
         
-        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; border-bottom: 1px solid #f1f5f9; padding-bottom: 12px; flex-shrink: 0; }
-        .modal-body { overflow-y: auto; flex-grow: 1; padding-right: 5px; -webkit-overflow-scrolling: touch; transform: translateZ(0); margin-bottom: 10px;}
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; border-bottom: 1px solid var(--border); padding-bottom: 12px; }
+        .modal-body { overflow-y: auto; flex-grow: 1; padding-right: 5px; color: var(--text-main); }
         
-        .modal-section-title { font-size: 15px; font-weight: 800; color: var(--text-main); margin: 15px 0 8px 0; line-height: 1.3;}
+        .modal-section-title { font-size: 15px; font-weight: 800; margin: 15px 0 8px 0; line-height: 1.3;}
         .modal-cost-header { font-size: 10px; font-weight: 900; color: var(--primary); text-transform: uppercase; margin: 12px 0 6px 5px; letter-spacing: 1px;}
-        .modal-divider { height: 2px; background: #f1f5f9; margin: 12px 0; border-radius: 2px; width: 100%; }
-        .modal-item { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; background: #f8fafc; padding: 10px; border-radius: 15px; border: 1px solid #f1f5f9; }
-        .modal-icon-circle { width: 36px; height: 36px; min-width: 36px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; background: #fff; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
-        .modal-text { font-size: 11px; line-height: 1.4; color: #334155; font-weight: 500; }
+        .modal-divider { height: 2px; background: var(--border); margin: 12px 0; border-radius: 2px; width: 100%; }
         
-        .code-block-wrapper { background: #f8fafc; border: 2px dashed #bfdbfe; border-radius: 16px; padding: 12px 18px; margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; transition: all 0.2s ease; }
-        .code-block-wrapper:active { transform: scale(0.97); background: #eff6ff; border-color: #93c5fd; }
-        .code-label-text { font-size: 14px; font-weight: 700; color: #475569; }
-        .code-value-text { font-size: 16px; font-weight: 900; color: #2563eb; display: flex; align-items: center; gap: 8px; background: #ffffff; padding: 8px 14px; border-radius: 12px; box-shadow: 0 2px 6px rgba(0,0,0,0.04); border: 1px solid #e2e8f0; transition: background 0.2s ease; }
+        .code-block-wrapper { background: var(--feat-bg); border: 2px dashed var(--border); border-radius: 16px; padding: 12px 18px; margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; }
+        .code-label-text { font-size: 14px; font-weight: 700; color: var(--text-muted); }
+        .code-value-text { font-size: 16px; font-weight: 900; color: var(--primary); display: flex; align-items: center; gap: 8px; background: var(--box-bg); padding: 8px 14px; border-radius: 12px; box-shadow: var(--shadow-md); border: 1px solid var(--border); }
 
-        .montazh-label { font-size: 13px; color: #475569; margin-bottom: 8px; display: block; font-weight: 600; text-align: left; padding-left: 8px; }
-        .montazh-select { width: 100%; padding: 16px 20px; border-radius: 16px; background: #ffffff; border: 1px solid #e2e8f0; font-size: 16px; font-weight: 700; color: #0f172a; margin-bottom: 20px; text-align: left; cursor: pointer; outline: none; transition: 0.2s; box-shadow: 0 4px 10px rgba(0,0,0,0.03); }
-        .montazh-select:focus { box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1); border-color: var(--primary); background: #fff;}
+        .montazh-label { font-size: 13px; color: var(--text-muted); margin-bottom: 8px; display: block; font-weight: 600; padding-left: 8px; }
+        .montazh-select { width: 100%; padding: 16px 20px; border-radius: 16px; background: var(--input-bg); border: 1px solid var(--border); font-size: 16px; font-weight: 700; color: var(--text-main); margin-bottom: 20px; cursor: pointer; outline: none; }
+        .montazh-card { border-radius: 18px; padding: 18px; margin-bottom: 14px; display: flex; flex-direction: column; background: var(--box-bg); border: 1px solid var(--border); box-shadow: var(--shadow-md); }
         
-        .montazh-card { border-radius: 18px; padding: 18px; margin-bottom: 14px; display: flex; flex-direction: column; animation: fadeIn 0.3s ease; border: 1px solid var(--border); box-shadow: 0 4px 12px rgba(0,0,0,0.04); background: #fff;}
-        .montazh-card-ekta { background: #eff6ff; border-color: #bfdbfe; } 
-        .montazh-card-myservice { background: #f0fdf4; border-color: #bbf7d0; } 
+        .availability-badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 8px; border-radius: 8px; font-size: 11px; font-weight: 700; text-transform: uppercase; margin-top: 8px; background: var(--feat-bg); border: 1px solid var(--border); }
+        
+        .desc-toggle { font-size: 13px; font-weight: 800; color: var(--primary); margin-top: 12px; cursor: pointer; display: flex; align-items: center; gap: 6px; padding-top: 12px; border-top: 1px dashed var(--border); }
+        .desc-content { margin-top: 10px; padding: 14px; background: var(--feat-bg); border-radius: 14px; border: 1px solid var(--border);}
+        
+        .footer { margin-top: 25px; text-align: center; font-size: 10px; color: var(--text-muted); font-weight: 600; padding-bottom: 20px;}
+        .app-version { display: block; font-size: 10px; font-weight: 700; margin-top: 4px; color: var(--primary); }
 
-        .availability-badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 8px; border-radius: 8px; font-size: 11px; font-weight: 700; text-transform: uppercase; margin-top: 8px; line-height: 1; box-shadow: 0 1px 2px rgba(0,0,0,0.02); }
-        .status-city-limit { background-color: #fee2e2; color: #991b1b; }
-        .status-fee-zone { background-color: #fffbeb; color: #b45309; }
-        .status-full-coverage { background-color: #dcfce7; color: #166534; }
-        .status-plus { background-color: #f3e8ff; color: #6b21a8; }
-        
-        .desc-toggle { font-size: 13px; font-weight: 800; color: #2563eb; margin-top: 12px; cursor: pointer; display: flex; align-items: center; gap: 6px; padding-top: 12px; border-top: 1px dashed rgba(0,0,0,0.1); width: 100%; transition: 0.2s; user-select: none;}
-        .desc-toggle:active { opacity: 0.6; }
-        .desc-content { margin-top: 10px; padding: 14px; background: rgba(0,0,0,0.03); border-radius: 14px; }
-        
-        .footer { margin-top: 25px; text-align: center; font-size: 10px; color: #94a3b8; font-weight: 600; line-height: 1.5; padding-bottom: 20px;}
-        .app-version { display: block; font-size: 10px; font-weight: 700; opacity: 0.8; margin-top: 4px; color: #2563eb; }
-
-        .floating-btns { position: fixed; bottom: 24px; right: 24px; display: flex; flex-direction: column; gap: 16px; z-index: 99999; transform: translateZ(0); pointer-events: none; }
-        .float-btn { width: 52px; height: 52px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; text-decoration: none; outline: none; pointer-events: auto; border: 1px solid rgba(0,0,0,0.05); box-shadow: 0 6px 18px rgba(0,0,0,0.12); transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-        
-        #scrollTopBtn { background: #ffffff; color: #2563eb; opacity: 0; visibility: hidden; border: 1px solid rgba(37, 99, 235, 0.1); transform: translateY(20px) scale(0.8) translateZ(0); }
-        #scrollTopBtn.show { opacity: 1; visibility: visible; transform: translateY(0) scale(1) translateZ(0); }
-        #scrollTopBtn:active { transform: scale(0.92) translateZ(0); background: #f0f9ff; box-shadow: 0 3px 10px rgba(0,0,0,0.1); }
-        #scrollTopBtn svg { width: 24px; height: 24px; stroke-width: 2.5px; }
-
-        .float-btn.primary { background: #2563eb; color: #ffffff; border: none; box-shadow: 0 6px 20px rgba(37, 99, 235, 0.3); transform: translateZ(0); }
-        .float-btn.primary:active { transform: scale(0.92) translateZ(0); box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2); }
-        .float-btn.primary svg { width: 24px; height: 24px; }
+        .floating-btns { position: fixed; bottom: 24px; right: 24px; display: flex; flex-direction: column; gap: 16px; z-index: 99999; }
+        .float-btn { width: 52px; height: 52px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; text-decoration: none; background: var(--box-bg); border: 1px solid var(--border); box-shadow: var(--shadow-lg); transition: 0.2s; }
+        #scrollTopBtn { color: var(--primary); opacity: 0; visibility: hidden; transform: translateY(20px); }
+        #scrollTopBtn.show { opacity: 1; visibility: visible; transform: translateY(0); }
+        .float-btn.primary { background: var(--primary); color: #fff; border: none; }
 
         /* --- КРАСИВЕ МОДАЛЬНЕ ОКНО ОНОВЛЕННЯ --- */
         .update-title-wrapper { display: flex; align-items: center; gap: 12px; width: 100%; text-align: left;}
-        .update-icon-circle { width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px; background: #eff6ff; border: 1px solid #bfdbfe; box-shadow: inset 0 2px 4px rgba(0,0,0,0.05); }
+        .update-icon-circle { width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px; background: var(--feat-bg); border: 1px solid var(--border); }
         .update-text-wrapper { display: flex; flex-direction: column; flex: 1;}
-        .update-title { font-size: 16px; font-weight: 900; color: #0f172a; margin-bottom: 2px;}
-        .update-version { font-size: 12px; font-weight: 600; color: #2563eb; text-transform: uppercase; letter-spacing: 0.5px;}
-        .changelog-panel { background: #f8fafc; border-radius: 16px; padding: 16px; border: 1px solid #e2e8f0; box-shadow: var(--shadow-md); margin-bottom: 20px;}
+        .update-title { font-size: 16px; font-weight: 900; margin-bottom: 2px;}
+        .update-version { font-size: 12px; font-weight: 600; color: var(--primary); text-transform: uppercase; }
+        .changelog-panel { background: var(--feat-bg); border-radius: 16px; padding: 16px; border: 1px solid var(--border); margin-bottom: 20px;}
         
-        .modal-confirm-btn { width: 100%; padding: 16px; border-radius: 16px; border: none; background: var(--gradient-primary); color: #fff; font-weight: 800; cursor: pointer; font-size: 16px; margin-top: 10px; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2); transition: 0.2s ease, transform 0.1s ease; }
-        .modal-confirm-btn:active { transform: scale(0.98); box-shadow: 0 2px 6px rgba(37, 99, 235, 0.3); }
+        .modal-confirm-btn { width: 100%; padding: 16px; border-radius: 16px; border: none; background: var(--gradient-primary); color: #fff; font-weight: 800; cursor: pointer; font-size: 16px; margin-top: 10px; box-shadow: var(--shadow-md); }
 
         /* --- СТИЛІ ДЛЯ ПОРІВНЯННЯ --- */
-        .compare-toggle-btn { background: #eff6ff; color: #2563eb; border: none; padding: 6px 12px; border-radius: 10px; font-size: 11px; font-weight: 800; cursor: pointer; display: flex; align-items: center; gap: 4px; box-shadow: 0 2px 5px rgba(37,99,235,0.1); transition: 0.2s; }
-        .compare-toggle-btn.active { background: #fee2e2; color: #ef4444; box-shadow: 0 2px 5px rgba(239,68,68,0.1); }
+        .compare-toggle-btn { background: var(--feat-bg); color: var(--primary); border: 1px solid var(--border); padding: 6px 12px; border-radius: 10px; font-size: 11px; font-weight: 800; cursor: pointer; display: flex; align-items: center; gap: 4px; transition: 0.2s; }
+        .compare-toggle-btn.active { background: #fee2e2; color: #ef4444; border-color: #fca5a5; }
         
-        .compare-action-bar { position: fixed; bottom: 0; left: 0; width: 100%; background: #ffffff; padding: 16px 24px 30px 24px; box-shadow: 0 -10px 30px rgba(0,0,0,0.1); display: flex; justify-content: space-between; align-items: center; transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1); z-index: 9998; border-radius: 30px 30px 0 0; border-top: 1px solid #e2e8f0; }
+        .compare-action-bar { position: fixed; bottom: 0; left: 0; width: 100%; background: var(--box-bg); padding: 16px 24px 30px 24px; box-shadow: 0 -10px 30px rgba(0,0,0,0.2); display: flex; justify-content: space-between; align-items: center; transform: translateY(100%); transition: transform 0.3s; z-index: 9998; border-radius: 30px 30px 0 0; border-top: 1px solid var(--border); }
         .compare-action-bar.show { transform: translateY(0); }
-        .compare-status-text { font-size: 14px; font-weight: 800; color: #0f172a; }
-        .compare-execute-btn { background: #d1d5db; color: #94a3b8; border: none; padding: 10px 20px; border-radius: 14px; font-size: 14px; font-weight: 800; cursor: not-allowed; transition: 0.2s; }
-        .compare-execute-btn.ready { background: var(--gradient-primary); color: #ffffff; cursor: pointer; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2); }
-        .compare-execute-btn.ready:active { transform: scale(0.96); }
+        .compare-status-text { font-size: 14px; font-weight: 800; color: var(--text-main); }
+        .compare-execute-btn { background: var(--border); color: var(--text-muted); border: none; padding: 10px 20px; border-radius: 14px; font-size: 14px; font-weight: 800; cursor: not-allowed; transition: 0.2s; }
+        .compare-execute-btn.ready { background: var(--gradient-primary); color: #ffffff; cursor: pointer; box-shadow: var(--shadow-md); }
 
-        .compare-wrapper { overflow-y: auto; margin-top: 10px; border-radius: 14px; border: 1px solid #e2e8f0; box-shadow: 0 4px 10px rgba(0,0,0,0.03); max-height: 50vh; }
-        .compare-table { width: 100%; border-collapse: collapse; font-size: 12px; background: #fff; }
-        .compare-table th { padding: 12px 10px; border-bottom: 2px solid #e2e8f0; background: #f8fafc; text-align: center; position: sticky; top: 0; z-index: 2; width: 50%; }
-        .compare-table td { padding: 14px 10px; border-bottom: 1px solid #f1f5f9; color: #475569; font-weight: 600; line-height: 1.4; vertical-align: middle; text-align: center; }
+        .compare-wrapper { overflow-x: auto; margin-top: 10px; border-radius: 14px; border: 1px solid var(--border); max-height: 50vh; }
+        .compare-table { width: 100%; border-collapse: collapse; font-size: 12px; background: var(--box-bg); }
+        .compare-table th { padding: 12px 10px; border-bottom: 2px solid var(--border); background: var(--feat-bg); text-align: center; position: sticky; top: 0; z-index: 2; width: 50%; color: var(--text-main);}
+        .compare-table td { padding: 14px 10px; border-bottom: 1px solid var(--border); color: var(--text-main); font-weight: 600; line-height: 1.4; vertical-align: top; text-align: left; }
         .compare-table tr:last-child td { border-bottom: none; }
-        
-        .diff-highlight { background-color: rgba(34, 197, 94, 0.15) !important; color: #166534 !important; border-radius: 8px;} /* Зелена підсвітка */
-        .feat-row { position: relative; }
-        
+        .feat-row { position: relative; display: flex; align-items: flex-start; }
     </style>
 </head>
 <body>
@@ -267,7 +259,10 @@
 </div>
 
 <div class="container">
-    <h2>SkillHUB Assistant</h2>
+    <div class="header-wrapper">
+        <h2>SkillHUB Assistant</h2>
+        <button id="themeToggle" class="theme-btn">🌙</button>
+    </div>
     
     <div class="status-container">
         <div class="status-wrapper">
@@ -298,7 +293,7 @@
         <div id="techInfo" class="tech-info"></div>
         
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-            <span style="font-size: 10px; font-weight: 800; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px;">Доступні сервіси</span>
+            <span style="font-size: 10px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px;">Доступні сервіси</span>
             <button id="toggleCompareBtn" onclick="toggleCompareMode()" class="compare-toggle-btn" style="display: none;">
                 <span style="font-size: 14px;">⚖️</span> Порівняти
             </button>
@@ -321,8 +316,8 @@
 <div id="descModal" class="modal">
     <div class="modal-content">
         <div class="modal-header">
-            <b id="modalTitle" style="font-size: 18px; color: #0f172a; font-weight: 800;">Опис</b>
-            <button id="closeModalBtn" style="border:none; background:none; cursor:pointer; font-size:28px; color: #94a3b8; transition: 0.2s;">✕</button>
+            <b id="modalTitle" style="font-size: 18px; font-weight: 800;">Опис</b>
+            <button id="closeModalBtn" style="border:none; background:none; cursor:pointer; font-size:28px; color: var(--text-muted); transition: 0.2s;">✕</button>
         </div>
         <div id="modalBody" class="modal-body"></div>
         <button onclick="closeModal()" class="modal-confirm-btn">Ок</button>
@@ -368,6 +363,19 @@
     let isCompareMode = false;
     let compareSelection = [];
     window.lastCalculatedServices = [];
+
+    // Тема
+    const themeToggleBtn = document.getElementById('themeToggle');
+    let currentTheme = localStorage.getItem('theme') || 'light';
+    document.documentElement.setAttribute('data-theme', currentTheme);
+    themeToggleBtn.innerText = currentTheme === 'dark' ? '☀️' : '🌙';
+
+    themeToggleBtn.onclick = () => {
+        currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', currentTheme);
+        localStorage.setItem('theme', currentTheme);
+        themeToggleBtn.innerText = currentTheme === 'dark' ? '☀️' : '🌙';
+    };
 
     const brandRegex = /^\[(.*?)\]/;
     const emojiRegex = /^(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])/;
@@ -461,11 +469,9 @@
         const originalHTML = valueBox.innerHTML;
         valueBox.innerHTML = "✅ Скопійовано!";
         valueBox.style.color = "#10b981";
-        valueBox.style.background = "#d1fae5";
         setTimeout(() => {
             valueBox.innerHTML = originalHTML;
             valueBox.style.color = "";
-            valueBox.style.background = "";
         }, 1500);
     }
 
@@ -632,12 +638,12 @@
             } else {
                 document.getElementById('modalTitle').innerText = "Приклади пошкоджень";
                 let linksHtml = currentPhotos.map((url, i) => `
-                    <a href="${url}" target="_blank" class="copy-code-pill" style="display:flex; width:100%; justify-content:center; margin-bottom:10px; text-decoration:none; padding:16px; border-radius:16px; font-size:15px;">
+                    <a href="${url}" target="_blank" class="copy-code-pill" style="display:flex; width:100%; justify-content:center; margin-bottom:10px; text-decoration:none; padding:16px; border-radius:16px; font-size:15px; background:var(--feat-bg); color:var(--text-main); border:1px solid var(--border);">
                         📸 Відкрити Фото ${i+1}
                     </a>
                 `).join('');
                 document.getElementById('modalBody').innerHTML = `
-                    <div style="padding:10px; text-align:center; color:#64748b; font-size:13px; margin-bottom:15px; background:rgba(0,0,0,0.03); border-radius:12px;">
+                    <div style="padding:10px; text-align:center; font-size:13px; margin-bottom:15px; background:var(--feat-bg); border-radius:12px; border:1px solid var(--border);">
                         Посилання формату Google Photos відкриваються у новій вкладці
                     </div>
                     ${linksHtml}
@@ -750,18 +756,18 @@
         const item = currentCategoryData;
         const p = parseFloat(elPriceInput.value) || 0;
         
-        let techHTML = `<div style="font-size: 10px; font-weight: 800; color: #2563eb; text-transform: uppercase;">🛠️ Технічна довідка</div>`;
+        let techHTML = `<div style="font-size: 10px; font-weight: 800; color: var(--primary); text-transform: uppercase;">🛠️ Технічна довідка</div>`;
         let hasInfo = false;
 
         if (item.complexity) {
             hasInfo = true;
-            let s = "color: #475569; font-weight: 600;"; 
+            let s = "color: var(--text-muted); font-weight: 600;"; 
             const t = item.complexity.toLowerCase();
             if (t.includes('критич')) s = "color: #991b1b; font-weight: 900; text-decoration: underline;";
             else if (t.includes('висок')) s = "color: #ef4444; font-weight: 800;";
             else if (t.includes('середн')) s = "color: #f97316; font-weight: 700;";
             else if (t.includes('низьк')) s = "color: #10b981; font-weight: 600;";
-            techHTML += `<div class="tech-item"><div class="icon-circle bg-complexity">⚙️</div><div><span style="font-size:9px;color:#94a3b8;display:block;font-weight:700;text-transform:uppercase;">СКЛАДНІСТЬ</span><span style="font-size:13px; ${s}">${item.complexity}</span></div></div>`;
+            techHTML += `<div class="tech-item"><div class="icon-circle bg-complexity">⚙️</div><div><span style="font-size:9px;color:var(--text-muted);display:block;font-weight:700;text-transform:uppercase;">СКЛАДНІСТЬ</span><span style="font-size:13px; ${s}">${item.complexity}</span></div></div>`;
         }
         
         let calcRepairPrice = item.price ? item.price.toString() : "";
@@ -783,7 +789,7 @@
             if (f[2] && f[2].toString().trim() !== "") { 
                 hasInfo = true;
                 let cls = f[1] === 'НЕГАРАНТІЙНІ ПОЛОМКИ' ? 'tech-item bg-negarant' : 'tech-item';
-                techHTML += `<div class="${cls}"><div class="icon-circle ${f[3]}">${f[0]}</div><div><span style="font-size:9px;color:#94a3b8;display:block;font-weight:700;text-transform:uppercase;">${f[1]}</span><span style="font-size:13px;font-weight:600;">${f[2]}</span></div></div>`;
+                techHTML += `<div class="${cls}"><div class="icon-circle ${f[3]}">${f[0]}</div><div><span style="font-size:9px;color:var(--text-muted);display:block;font-weight:700;text-transform:uppercase;">${f[1]}</span><span style="font-size:13px;font-weight:600;">${f[2]}</span></div></div>`;
             }
         });
 
@@ -811,9 +817,9 @@
     }
 
     function parseDescriptionLines(descE) {
-        if (!descE) return `<div style="text-align:center; padding: 20px; color:#94a3b8; font-size:13px;">Опис відсутній...</div>`;
+        if (!descE) return `<div style="text-align:center; padding: 20px; color:var(--text-muted); font-size:13px;">Опис відсутній...</div>`;
         let raw = descE.toString().trim();
-        if (raw === "Опис відсутній..." || raw === "") return `<div style="text-align:center; padding: 20px; color:#94a3b8; font-size:13px;">Опис відсутній...</div>`;
+        if (raw === "Опис відсутній..." || raw === "") return `<div style="text-align:center; padding: 20px; color:var(--text-muted); font-size:13px;">Опис відсутній...</div>`;
 
         return raw.replace(/\|/g, '\n').split(/\r?\n/).map(line => {
             const l = line.trim(); 
@@ -838,9 +844,9 @@
             }
             
             return `
-            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 6px; background: rgba(255,255,255,0.85); padding: 8px 10px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.6); box-shadow: 0 2px 5px rgba(0,0,0,0.02);">
-                <div style="width: 32px; height: 32px; min-width: 32px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; background: #fff; box-shadow: 0 2px 6px rgba(0,0,0,0.04);">${e}</div>
-                <div style="font-size: 12px; line-height: 1.4; color: #334155; font-weight: 500;">${t}</div>
+            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 6px; background: var(--feat-bg); padding: 8px 10px; border-radius: 14px; border: 1px solid var(--border);">
+                <div style="width: 32px; height: 32px; min-width: 32px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; background: var(--box-bg); border: 1px solid var(--border);">${e}</div>
+                <div style="font-size: 12px; line-height: 1.4; color: var(--text-main); font-weight: 500;">${t}</div>
             </div>`;
         }).join('');
     }
@@ -852,7 +858,7 @@
                 <span class="code-label-text">Код сервісу:</span>
                 <span class="code-value-text">${codeF} <span style="font-size:16px;">📋</span></span>
             </div>` : '';
-        return `<div style="background: rgba(0,0,0,0.02); border-radius: 16px; padding: 16px; border: 1px solid rgba(0,0,0,0.04);">${codeBlockHTML}${descContentText}</div>`;
+        return `<div style="background: var(--feat-bg); border-radius: 16px; padding: 16px; border: 1px solid var(--border);">${codeBlockHTML}${descContentText}</div>`;
     }
 
     function generateDescToggleHTML(descE, codeF) {
@@ -931,7 +937,7 @@
         else compareExecuteBtn.classList.remove('ready');
     }
 
-    // Збираємо список властивостей як масив рядків
+    // Витягування властивостей для порівняння
     function extractFeaturesList(desc) {
         let features = [];
         if (!desc) return features;
@@ -940,7 +946,7 @@
         lines.forEach(line => {
             let l = line.trim();
             if (!l || l === "Опис відсутній..." || l.startsWith('+') || l.startsWith('=') || l.includes('---')) return;
-            // Беремо лише позитивні властивості (ті, що є)
+            // Беремо лише позитивні (ті що покриваються)
             if (!l.startsWith('✕') && !l.startsWith('❌') && !l.toLowerCase().startsWith('не покриває ')) {
                 let cleanText = l.replace(/^(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff]|✓|✕|❌|✅|\+|-|\*|•|🔹|⚙️|🛡️|🔑|♻️|🎬|🛠️)\s*/, '').trim();
                 if (cleanText) {
@@ -950,12 +956,6 @@
             }
         });
         return features;
-    }
-
-    // Перевіряємо чи властивість A є схожою на властивість B (ігноруємо регістр)
-    function hasSimilarFeature(feature, list) {
-        let fNorm = feature.toLowerCase();
-        return list.some(item => item.toLowerCase() === fNorm);
     }
 
     window.executeCompare = function() {
@@ -972,14 +972,28 @@
         let listA = extractFeaturesList(descA);
         let listB = extractFeaturesList(descB);
 
-        if (listA.length === 0 && listB.length === 0) {
+        // Знаходимо спільні та відмінні
+        let common = [];
+        let diffA = [];
+        let diffB = [...listB];
+
+        listA.forEach(featA => {
+            let normA = featA.toLowerCase();
+            let idxB = diffB.findIndex(featB => featB.toLowerCase() === normA);
+            if (idxB !== -1) {
+                common.push({a: featA, b: diffB[idxB]});
+                diffB.splice(idxB, 1);
+            } else {
+                diffA.push(featA);
+            }
+        });
+
+        if (common.length === 0 && diffA.length === 0 && diffB.length === 0) {
             alert("Немає детального опису для порівняння цих сервісів.");
             return;
         }
 
-        let maxRows = Math.max(listA.length, listB.length);
-
-        let html = `<div style="font-size: 12px; color: #64748b; margin-bottom: 15px; text-align: center;">Порівняння властивостей (унікальні підсвічені зеленим)</div>`;
+        let html = `<div style="font-size: 12px; color: var(--text-muted); margin-bottom: 15px; text-align: center;">Властивості послуг (відмінності позначені ✨)</div>`;
         html += `<div class="compare-wrapper"><table class="compare-table"><thead><tr>`;
         
         [sA, sB].forEach(s => {
@@ -987,35 +1001,28 @@
             html += `<th>
                         <div class="brand-tag ${s.cls}" style="margin:0 auto 6px auto; display: inline-block;">${brandLabel}</div>
                         <div style="font-size: 11px; white-space: normal; line-height: 1.2;">${s.title}</div>
-                        <div style="font-size: 13px; font-weight: 900; color: #1e293b; margin-top: 6px;">${s.label}</div>
+                        <div style="font-size: 13px; font-weight: 900; margin-top: 6px;">${s.label}</div>
                      </th>`;
         });
         html += `</tr></thead><tbody>`;
 
-        for (let i = 0; i < maxRows; i++) {
-            html += `<tr>`;
-            
-            // Колонка 1
-            if (i < listA.length) {
-                let textA = listA[i];
-                let isUniqueA = !hasSimilarFeature(textA, listB);
-                let bgClass = isUniqueA ? "diff-highlight" : "";
-                html += `<td class="${bgClass}"><div class="feat-row">${isUniqueA ? '<span style="margin-right:4px;">✨</span>' : ''}${textA}</div></td>`;
-            } else {
-                html += `<td></td>`;
-            }
+        // Спільні
+        common.forEach(pair => {
+            html += `<tr>
+                <td><div class="feat-row">${pair.a}</div></td>
+                <td><div class="feat-row">${pair.b}</div></td>
+            </tr>`;
+        });
 
-            // Колонка 2
-            if (i < listB.length) {
-                let textB = listB[i];
-                let isUniqueB = !hasSimilarFeature(textB, listA);
-                let bgClass = isUniqueB ? "diff-highlight" : "";
-                html += `<td class="${bgClass}"><div class="feat-row">${isUniqueB ? '<span style="margin-right:4px;">✨</span>' : ''}${textB}</div></td>`;
-            } else {
-                html += `<td></td>`;
-            }
-
-            html += `</tr>`;
+        // Відмінні (пліч-о-пліч)
+        let maxDiff = Math.max(diffA.length, diffB.length);
+        for (let i = 0; i < maxDiff; i++) {
+            let valA = diffA[i] ? `<span style="margin-right:4px;">✨</span>${diffA[i]}` : "";
+            let valB = diffB[i] ? `<span style="margin-right:4px;">✨</span>${diffB[i]}` : "";
+            html += `<tr>
+                <td><div class="feat-row" style="font-weight:800; color: var(--primary);">${valA}</div></td>
+                <td><div class="feat-row" style="font-weight:800; color: var(--primary);">${valB}</div></td>
+            </tr>`;
         }
 
         html += `</tbody></table></div>`;
@@ -1439,10 +1446,10 @@
              let cleanName = m.service.replace(/^\[.*?\]\s*/, '');
              
              return `
-             <div class="montazh-card brand-settings" style="background-color: #f0fdf4; border: 1px solid #bbf7d0;">
+             <div class="montazh-card brand-settings" style="background-color: var(--feat-bg); border: 1px solid var(--border);">
                  <div style="display: flex; justify-content: space-between; gap: 10px; align-items: flex-start; margin-bottom: 5px;">
-                     <div style="font-size: 14px; font-weight: 700; line-height: 1.3; flex: 1; color: #166534;">${cleanName}</div>
-                     <div style="font-size: 17px; font-weight: 900; white-space: nowrap; color: #15803d;">${m.priceText}</div>
+                     <div style="font-size: 14px; font-weight: 700; line-height: 1.3; flex: 1; color: var(--text-main);">${cleanName}</div>
+                     <div style="font-size: 17px; font-weight: 900; white-space: nowrap; color: var(--text-main);">${m.priceText}</div>
                  </div>
                  ${descToggleHTML}
              </div>
@@ -1559,10 +1566,10 @@
              let cleanName = m.service.replace(/^\[.*?\]\s*/, '');
              
              return `
-             <div class="montazh-card brand-settings" style="background-color: #f0fdf4; border: 1px solid #bbf7d0;">
+             <div class="montazh-card brand-settings" style="background-color: var(--feat-bg); border: 1px solid var(--border);">
                  <div style="display: flex; justify-content: space-between; gap: 10px; align-items: flex-start; margin-bottom: 5px;">
-                     <div style="font-size: 14px; font-weight: 700; line-height: 1.3; flex: 1; color: #166534;">${cleanName}</div>
-                     <div style="font-size: 17px; font-weight: 900; white-space: nowrap; color: #15803d;">${m.priceText}</div>
+                     <div style="font-size: 14px; font-weight: 700; line-height: 1.3; flex: 1; color: var(--text-main);">${cleanName}</div>
+                     <div style="font-size: 17px; font-weight: 900; white-space: nowrap; color: var(--text-main);">${m.priceText}</div>
                  </div>
                  ${descToggleHTML}
              </div>
@@ -1570,6 +1577,87 @@
         }).join('');
         
         container.innerHTML = html;
+    }
+
+    function openModal(name, code = "") {
+        scrollPos = window.pageYOffset; 
+        document.body.style.top = `-${scrollPos}px`; 
+        document.body.classList.add('modal-open');
+        
+        let nameClean = normalizeServiceName(name);
+        let u = name.toUpperCase(); 
+
+        let isSetupCategory = db.tariffs.some(t => t.cat && normalizeServiceName(t.cat) === nameClean);
+
+        let isStaticEpz = (u.includes('WINDOWS') || u.includes('OFFICE') || u.includes('OFFICE 365') || u.includes('OFFICE 2024') || u.includes('ESD') || u.includes('[ESD]')) 
+            && !u.includes('НАЛАШТУВАННЯ') 
+            && !u.includes('ВСТАНОВЛЕННЯ') 
+            && !u.includes('АНТИВІРУС') 
+            && !u.includes('ESET')
+            && !u.includes('PARALLELS');
+
+        if (!isStaticEpz) {
+            if (u.includes('МОНТАЖ') || u.includes('ПІДКЛЮЧЕННЯ') || (u.includes('ВСТАНОВЛЕННЯ') && !u.includes('ЗАХИСН'))) {
+                document.getElementById('modalTitle').innerText = "Монтаж ВПТ";
+                renderMontazhModal();
+                elModal.classList.add('show');
+                return;
+            } 
+            else if (u.includes('ПЕРЕВІРКА') || u.includes('ПІКСЕЛ')) {
+                document.getElementById('modalTitle').innerText = "Перевірка на биті пікселі";
+                renderDirectListModal(["перевірка", "піксел"]);
+                elModal.classList.add('show');
+                return;
+            } 
+            else if (u.includes('ПОКЛЕЙКА') || u.includes('ЗАХИСН') || u.includes('СКЛО') || u.includes('ПЛІВК')) {
+                document.getElementById('modalTitle').innerText = "Поклейка скла та плівок";
+                renderDirectListModal(["поклейка", "скло", "плівк", "захисн"]);
+                elModal.classList.add('show');
+                return;
+            }
+            else if (u.includes('АНТИВІРУС') || u.includes('ESET')) {
+                document.getElementById('modalTitle').innerText = "Антивіруси";
+                renderSetupModal(name, "antivirus");
+                elModal.classList.add('show');
+                return;
+            }
+            else if (u.includes('КІНОТЕАТР') || u.includes('SWEET') || u.includes('PARALLELS')) { 
+                document.getElementById('modalTitle').innerText = u.includes('PARALLELS') ? "Parallels Desktop" : "Онлайн кінотеатри";
+                renderDirectListModal(u.includes('PARALLELS') ? ["parallels"] : ["sweet", "кінотеатр"]);
+                elModal.classList.add('show');
+                return;
+            }
+            else if (isSetupCategory || u.includes('НАЛАШТУВАННЯ') || u.includes('ПЗ') || u.includes('ПОСЛУГИ') || u.includes('ГОДИНА РОБОТИ')) {
+                document.getElementById('modalTitle').innerText = "Налаштування та сервіси";
+                renderSetupModal(name, "setup");
+                elModal.classList.add('show');
+                return;
+            }
+        }
+
+        let title = name.replace(/🇺🇦\s*/g, '').replace(/^UA\s+/i, ''); 
+        title = title.replace(/^\[.*?\]\s*/, '');
+        document.getElementById('modalTitle').innerText = title;
+        
+        const raw = findInDb(db.descriptions, name) || "";
+        
+        let isValidCode = false;
+        if (code) {
+            let cStr = code.toString().trim();
+            let nStr = name.toString().trim();
+            if (cStr !== "" && cStr.toLowerCase() !== nStr.toLowerCase() && /\d/.test(cStr)) {
+                isValidCode = true;
+            }
+        }
+        
+        let codeBlock = isValidCode ? `
+            <div class="code-block-wrapper" onclick="copyCode(event, this, '${code}')">
+                <span class="code-label-text">Код сервісу:</span>
+                <span class="code-value-text">${code} <span style="font-size:16px;">📋</span></span>
+            </div>` : '';
+            
+        elModalBody.innerHTML = codeBlock + parseDescriptionLines(raw);
+        elModal.classList.add('show'); 
     }
 
     function parseChangelogLines(text) {
@@ -1582,9 +1670,12 @@
         lines.forEach(line => {
             const l = line.trim();
             if (l) {
+                let hasEmoji = /^(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])/.test(l);
+                let prefix = hasEmoji ? "" : "<span style='color:var(--primary); font-weight:bold; margin-right:6px;'>•</span>";
+                
                 html += `
-                <div style="display:flex; align-items:flex-start; font-size:13px; line-height:1.4; color:#1e293b;">
-                    <span style="flex:1;">${l}</span>
+                <div style="display:flex; align-items:flex-start; font-size:13px; line-height:1.4; color:var(--text-main);">
+                    ${prefix}<span style="flex:1;">${l}</span>
                 </div>`;
             }
         });
@@ -1605,12 +1696,12 @@
         let html = `
         <div style="text-align: center; margin-bottom: 15px;">
             <span style="font-size: 30px;">🎉</span>
-            <h3 style="margin: 10px 0 5px 0; color: #0f172a; font-weight: 800;">Ось що нового у цій версії:</h3>
+            <h3 style="margin: 10px 0 5px 0; color: var(--text-main); font-weight: 800;">Ось що нового у цій версії:</h3>
         </div>
         <div class="changelog-panel">
             ${changelogLinesHTML}
         </div>
-        <div style="text-align: center; margin-top: 15px; font-size: 11px; color: #94a3b8; font-weight: 500; opacity: 0.8;">
+        <div style="text-align: center; margin-top: 15px; font-size: 11px; color: var(--text-muted); font-weight: 500; opacity: 0.8;">
             Вдалих продажів! 💙
         </div>
         `;
