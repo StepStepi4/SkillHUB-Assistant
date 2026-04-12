@@ -17,6 +17,7 @@
         *, *::before, *::after { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
         :root {
+            /* Light Theme Variables */
             --primary: #2563eb; 
             --bg: transparent; 
             --card-bg: #f0f4f8; 
@@ -41,6 +42,7 @@
         }
 
         [data-theme="dark"] {
+            /* Dark Theme Variables */
             --bg: #020617; 
             --card-bg: #0f172a; 
             --box-bg: #1e293b;
@@ -71,10 +73,10 @@
 
         .container { position: relative; width: 94%; max-width: 480px; background: var(--card-bg); padding: 24px; border-radius: 30px; box-shadow: 0 15px 40px -5px rgba(0, 0, 0, 0.1); margin-top: 5vh; margin-bottom: 120px; border: 1px solid var(--border); transition: background 0.3s, border 0.3s; }
         
-        /* Верхні кнопки */
-        .top-right-controls { position: absolute; top: 22px; right: 24px; display: flex; gap: 10px; align-items: center; z-index: 10; }
-        .top-btn { background: var(--box-bg); border: 1px solid var(--border); font-size: 16px; cursor: pointer; width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: var(--shadow-md); transition: 0.2s; color: var(--text-main); text-decoration: none;}
-        .top-btn:active { transform: scale(0.9); }
+        /* Акуратні кнопки в правому верхньому куті */
+        .top-right-controls { position: absolute; top: 22px; right: 24px; display: flex; gap: 14px; align-items: center; z-index: 10; }
+        .top-btn { background: none; border: none; font-size: 20px; cursor: pointer; padding: 0; opacity: 0.7; transition: 0.2s; color: var(--text-main); text-decoration: none; display: flex; align-items: center; justify-content: center;}
+        .top-btn:active { transform: scale(0.85); opacity: 1; }
         
         h2 { color: var(--primary); margin: 0 0 20px 0; font-size: 24px; font-weight: 800; letter-spacing: -0.7px;}
         
@@ -157,6 +159,7 @@
         .service-card:active { transform: scale(0.98); }
         .service-content-left { display: flex; align-items: center; gap: 8px; flex: 1; padding-right: 5px; pointer-events: none; z-index: 2;}
         
+        /* Стилі вибору для порівняння */
         .service-card.compare-mode { padding-left: 45px; }
         .compare-checkbox { position: absolute; left: -30px; top: 50%; transform: translateY(-50%); width: 22px; height: 22px; border-radius: 50%; border: 2px solid var(--text-muted); background: var(--box-bg); transition: 0.3s ease; z-index: 1; display: flex; align-items: center; justify-content: center; }
         .service-card.compare-mode .compare-checkbox { left: 12px; }
@@ -177,9 +180,9 @@
 
         .service-title { font-size: 14px; font-weight: 800; line-height: 1.2; color: inherit; }
 
-        .service-card .brand-tag { font-size: 10px; font-weight: 900; text-transform: uppercase; padding: 4px 8px; border-radius: 8px; margin-bottom: 6px; display: inline-block; background: rgba(255,255,255,0.3); color: inherit; box-shadow: none; }
+        .service-card .brand-tag { font-size: 10px; font-weight: 900; text-transform: uppercase; padding: 4px 8px; border-radius: 8px; margin-bottom: 6px; display: inline-block; background: rgba(255,255,255,0.3); color: inherit; }
         .service-card.brand-support .brand-tag { background: rgba(255,255,255,0.6); } 
-        .service-card.brand-install .brand-tag { background: rgba(255,255,255,0.2) !important; color: transparent !important; width: 30px; height: 8px; border-radius: 10px; padding: 0 !important; margin-bottom: 6px !important; }
+        .service-card.brand-install .brand-tag { background: rgba(255,255,255,0.2) !important; color: transparent !important; width: 30px; height: 8px; padding: 0 !important; margin-bottom: 6px !important; }
 
         .price-badge { font-size: 14px; font-weight: 900; background: var(--box-bg); color: var(--text-main); padding: 8px 14px; border-radius: 14px; min-width: 95px; text-align: center; line-height: 1.1; pointer-events: none; box-shadow: var(--shadow-md); z-index: 2;}
         .service-card.brand-support .price-badge { color: #854d0e; background: #fff; }
@@ -217,9 +220,7 @@
         .app-version { display: inline-block; font-size: 11px; font-weight: 700; margin-top: 8px; color: var(--primary); text-decoration: underline; cursor: pointer; padding: 4px; transition: 0.2s;}
         .app-version:active { opacity: 0.6; }
 
-        .floating-btns { position: fixed; bottom: 24px; right: 24px; display: flex; flex-direction: column; gap: 16px; z-index: 99999; }
-        .float-btn { width: 52px; height: 52px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; text-decoration: none; background: var(--box-bg); border: 1px solid var(--border); box-shadow: var(--shadow-lg); transition: 0.2s; }
-        #scrollTopBtn { color: var(--primary); opacity: 0; visibility: hidden; transform: translateY(20px); }
+        #scrollTopBtn { position: fixed; bottom: 24px; right: 24px; z-index: 99999; width: 52px; height: 52px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; background: var(--box-bg); border: 1px solid var(--border); box-shadow: var(--shadow-lg); transition: 0.2s; color: var(--primary); opacity: 0; visibility: hidden; transform: translateY(20px); }
         #scrollTopBtn.show { opacity: 1; visibility: visible; transform: translateY(0); }
 
         /* --- КРАСИВЕ МОДАЛЬНЕ ОКНО ОНОВЛЕННЯ --- */
@@ -308,7 +309,7 @@
     
     <div class="footer">
         🇺🇦 ROZETKA KHARKIV REGION • 2026<br>
-        <span id="appVersionDisp" class="app-version" onclick="if(db.appVersion) showChangelogModal(db.appVersion, db.changelog)">Оновлення відсутні</span>
+        <span id="appVersionDisp" class="app-version" onclick="if(db.appVersion) showChangelogModal(db.appVersion, db.changelog)"></span>
     </div>
 </div>
 
@@ -349,16 +350,14 @@
     <button class="gallery-close-text-btn" onclick="closeGallery()">Закрити перегляд</button>
 </div>
 
-<div class="floating-btns" id="floatBtnsGroup">
-    <button id="scrollTopBtn" class="float-btn" title="Вгору">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="18 15 12 9 6 15"></polyline>
-        </svg>
-    </button>
-</div>
+<button id="scrollTopBtn" class="float-btn" title="Вгору">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" width="24" height="24" stroke-width="2.5">
+        <polyline points="18 15 12 9 6 15"></polyline>
+    </svg>
+</button>
 
 <script>
-    const API_URL = 'https://script.google.com/macros/s/AKfycbz5dRYiLLXlm0MK2legnXS7yBKFjwqGrNj3wjm1rht8Ho67P-gSh7iUT9X0KqUO54jaxQ/exec';
+    const API_URL = 'https://script.google.com/macros/s/AKfycbyW3Z_9mQQkSSvHVNzR-SBAu_9PJDjULJHs1N4us9EPCbuFN2JMW1-iCMuzQ2u9MbUEXA/exec';
     
     const CACHE_KEY = 'skillhub_v1000_drive_fix'; 
     const SEEN_VERSION_KEY = 'skillhub_seen_version';
@@ -407,7 +406,6 @@
     const toggleCompareBtn = document.getElementById('toggleCompareBtn');
     const compareBar = document.getElementById('compareBar');
     const compareExecuteBtn = document.getElementById('compareExecuteBtn');
-    const floatBtnsGroup = document.getElementById('floatBtnsGroup');
 
     window.addEventListener('scroll', () => {
         if (window.scrollY > 100) {
@@ -528,11 +526,9 @@
             if (dataStr.trim().startsWith('<')) throw new Error("CORS/Auth Error");
             
             let newDb = JSON.parse(dataStr);
-            
             if (newDb.error) throw new Error(newDb.error);
             
             let savedVersion = localStorage.getItem(SEEN_VERSION_KEY);
-            
             db = newDb;
             localStorage.setItem(CACHE_KEY, dataStr);
             setAppStatus('ok', 'Дані актуальні (Готово до офлайну)');
@@ -569,7 +565,7 @@
     function enableUI() { 
         elCatInput.disabled = false; 
         if (db.appVersion) {
-            elAppVersion.innerText = "Версія v" + db.appVersion + " (що нового?)";
+            elAppVersion.innerHTML = `Версія v${db.appVersion} <span style="font-weight: normal;">(що нового?)</span>`;
         }
         if (elLoader) elLoader.classList.add('hidden'); 
     }
@@ -621,15 +617,7 @@
 
     let currentPhotos = [];
     let currentPhotoIndex = 0;
-    
-    let scale = 1;
-    let pointX = 0;
-    let pointY = 0;
-    let startX = 0;
-    let startY = 0;
-    let startDistance = 0;
-    let startScale = 1;
-    let panning = false;
+    let scale = 1; let pointX = 0; let pointY = 0; let startX = 0; let startY = 0; let startDistance = 0; let startScale = 1; let panning = false;
 
     const galleryContent = document.getElementById('galleryContent');
     const galleryImage = document.getElementById('galleryImage');
@@ -637,9 +625,7 @@
     function getDirectImageUrl(url) {
         if (!url) return "";
         let driveMatch = url.match(/drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/);
-        if (driveMatch && driveMatch[1]) {
-            return `https://drive.google.com/thumbnail?id=${driveMatch[1]}&sz=w1200`;
-        }
+        if (driveMatch && driveMatch[1]) return `https://drive.google.com/thumbnail?id=${driveMatch[1]}&sz=w1200`;
         return url;
     }
 
@@ -653,49 +639,27 @@
                 return;
             } else {
                 document.getElementById('modalTitle').innerText = "Приклади пошкоджень";
-                let linksHtml = currentPhotos.map((url, i) => `
-                    <a href="${url}" target="_blank" class="copy-code-pill" style="display:flex; width:100%; justify-content:center; margin-bottom:10px; text-decoration:none; padding:16px; border-radius:16px; font-size:15px; background:var(--feat-bg); color:var(--text-main); border:1px solid var(--border);">
-                        📸 Відкрити Фото ${i+1}
-                    </a>
-                `).join('');
-                document.getElementById('modalBody').innerHTML = `
-                    <div style="padding:10px; text-align:center; font-size:13px; margin-bottom:15px; background:var(--feat-bg); border-radius:12px; border:1px solid var(--border);">
-                        Посилання формату Google Photos відкриваються у новій вкладці
-                    </div>
-                    ${linksHtml}
-                `;
-                
+                let linksHtml = currentPhotos.map((url, i) => `<a href="${url}" target="_blank" style="display:flex; width:100%; justify-content:center; margin-bottom:10px; text-decoration:none; padding:16px; border-radius:16px; font-size:15px; background:var(--feat-bg); color:var(--text-main); border:1px solid var(--border);">📸 Відкрити Фото ${i+1}</a>`).join('');
+                document.getElementById('modalBody').innerHTML = `<div style="padding:10px; text-align:center; font-size:13px; margin-bottom:15px; background:var(--feat-bg); border-radius:12px; border:1px solid var(--border);">Посилання формату Google Photos відкриваються у новій вкладці</div>${linksHtml}`;
                 if (!document.body.classList.contains('modal-open')) {
-                    scrollPos = window.pageYOffset;
-                    document.body.style.top = `-${scrollPos}px`;
-                    document.body.classList.add('modal-open');
+                    scrollPos = window.pageYOffset; document.body.style.top = `-${scrollPos}px`; document.body.classList.add('modal-open');
                 }
                 document.getElementById('descModal').classList.add('show');
                 return;
             }
         }
-
-        currentPhotoIndex = 0;
-        resetZoom();
-        updateGalleryImage();
-        
+        currentPhotoIndex = 0; resetZoom(); updateGalleryImage();
         if (!document.body.classList.contains('modal-open')) {
-            scrollPos = window.pageYOffset; 
-            document.body.style.top = `-${scrollPos}px`; 
-            document.body.classList.add('modal-open');
+            scrollPos = window.pageYOffset; document.body.style.top = `-${scrollPos}px`; document.body.classList.add('modal-open');
         }
-        
         document.getElementById('galleryModal').classList.add('show');
     };
 
     window.closeGallery = function() {
         document.getElementById('galleryModal').classList.remove('show');
         resetZoom();
-        
         if (!document.getElementById('descModal').classList.contains('show') && !document.getElementById('compareModal').classList.contains('show')) {
-            document.body.classList.remove('modal-open');
-            document.body.style.top = '';
-            window.scrollTo(0, scrollPos);
+            document.body.classList.remove('modal-open'); document.body.style.top = ''; window.scrollTo(0, scrollPos);
         }
     };
 
@@ -703,82 +667,50 @@
         currentPhotoIndex += dir;
         if (currentPhotoIndex < 0) currentPhotoIndex = currentPhotos.length - 1;
         if (currentPhotoIndex >= currentPhotos.length) currentPhotoIndex = 0;
-        resetZoom();
-        updateGalleryImage();
+        resetZoom(); updateGalleryImage();
     };
 
     function updateGalleryImage() {
         const counter = document.getElementById('galleryCounter');
         const prev = document.querySelector('.gallery-nav.prev');
         const next = document.querySelector('.gallery-nav.next');
-
-        let rawUrl = currentPhotos[currentPhotoIndex].trim();
-        galleryImage.src = getDirectImageUrl(rawUrl); 
-        
+        galleryImage.src = getDirectImageUrl(currentPhotos[currentPhotoIndex].trim()); 
         counter.innerText = `${currentPhotoIndex + 1} / ${currentPhotos.length}`;
-        
-        if (currentPhotos.length <= 1) {
-            prev.style.display = 'none';
-            next.style.display = 'none';
-        } else {
-            prev.style.display = 'flex';
-            next.style.display = 'flex';
-        }
+        if (currentPhotos.length <= 1) { prev.style.display = 'none'; next.style.display = 'none'; } 
+        else { prev.style.display = 'flex'; next.style.display = 'flex'; }
     }
 
-    function resetZoom() {
-        scale = 1; pointX = 0; pointY = 0;
-        galleryImage.style.transform = `translate(0px, 0px) scale(1)`;
-    }
+    function resetZoom() { scale = 1; pointX = 0; pointY = 0; galleryImage.style.transform = `translate(0px, 0px) scale(1)`; }
 
     galleryContent.addEventListener('touchstart', e => {
         if (e.touches.length === 2) {
-            e.preventDefault();
-            startDistance = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
-            startScale = scale;
+            e.preventDefault(); startDistance = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY); startScale = scale;
         } else if (e.touches.length === 1 && scale > 1) {
-            e.preventDefault();
-            panning = true;
-            startX = e.touches[0].clientX - pointX;
-            startY = e.touches[0].clientY - pointY;
+            e.preventDefault(); panning = true; startX = e.touches[0].clientX - pointX; startY = e.touches[0].clientY - pointY;
         }
     }, {passive: false});
 
     galleryContent.addEventListener('touchmove', e => {
         if (e.touches.length === 2) {
-            e.preventDefault();
-            const currentDistance = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+            e.preventDefault(); const currentDistance = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
             scale = Math.min(Math.max(1, startScale * (currentDistance / startDistance)), 4);
             galleryImage.style.transform = `translate(${pointX}px, ${pointY}px) scale(${scale})`;
         } else if (e.touches.length === 1 && panning && scale > 1) {
-            e.preventDefault();
-            pointX = e.touches[0].clientX - startX;
-            pointY = e.touches[0].clientY - startY;
+            e.preventDefault(); pointX = e.touches[0].clientX - startX; pointY = e.touches[0].clientY - startY;
             galleryImage.style.transform = `translate(${pointX}px, ${pointY}px) scale(${scale})`;
         }
     }, {passive: false});
 
-    galleryContent.addEventListener('touchend', e => {
-        if (e.touches.length < 2) {
-            panning = false;
-            if (scale <= 1) {
-                resetZoom();
-            }
-        }
-    });
+    galleryContent.addEventListener('touchend', e => { if (e.touches.length < 2) { panning = false; if (scale <= 1) resetZoom(); } });
 
     function renderTechInfo() {
         if (!currentCategoryData) return;
-        const item = currentCategoryData;
-        const p = parseFloat(elPriceInput.value) || 0;
-        
+        const item = currentCategoryData; const p = parseFloat(elPriceInput.value) || 0;
         let techHTML = `<div style="font-size: 10px; font-weight: 800; color: var(--primary); text-transform: uppercase;">🛠️ Технічна довідка</div>`;
         let hasInfo = false;
 
         if (item.complexity) {
-            hasInfo = true;
-            let s = "color: var(--text-muted); font-weight: 600;"; 
-            const t = item.complexity.toLowerCase();
+            hasInfo = true; let s = "color: var(--text-muted); font-weight: 600;"; const t = item.complexity.toLowerCase();
             if (t.includes('критич')) s = "color: #991b1b; font-weight: 900; text-decoration: underline;";
             else if (t.includes('висок')) s = "color: #ef4444; font-weight: 800;";
             else if (t.includes('середн')) s = "color: #f97316; font-weight: 700;";
@@ -788,48 +720,27 @@
         
         let calcRepairPrice = item.price ? item.price.toString() : "";
         if (calcRepairPrice.includes('%') && p > 0) {
-            let uahCalc = calcRepairPrice.replace(/(\d+(?:\.\d+)?)%/g, (match, p1) => {
-                return Math.round(p * parseFloat(p1) / 100).toLocaleString('uk-UA') + " ₴";
-            });
+            let uahCalc = calcRepairPrice.replace(/(\d+(?:\.\d+)?)%/g, (match, p1) => { return Math.round(p * parseFloat(p1) / 100).toLocaleString('uk-UA') + " ₴"; });
             calcRepairPrice = `${calcRepairPrice} <span style="color:var(--primary);">(${uahCalc})</span>`;
         }
         
-        const fields = [
-            ['💵', 'ВАРТІСТЬ ПЛАТНОГО РЕМОНТУ', calcRepairPrice, 'bg-price'], 
-            ['🔧', 'НАЙДОРОЖЧІ ЗАПЧАСТИНИ', item.expensiveParts, 'bg-parts'],
-            ['✅', 'ГАРАНТІЙНІ ПОЛОМКИ', item.garant, 'bg-garant'], 
-            ['❌', 'НЕГАРАНТІЙНІ ПОЛОМКИ', item.negarant, 'bg-negarant']
-        ];
+        const fields = [ ['💵', 'ВАРТІСТЬ ПЛАТНОГО РЕМОНТУ', calcRepairPrice, 'bg-price'], ['🔧', 'НАЙДОРОЖЧІ ЗАПЧАСТИНИ', item.expensiveParts, 'bg-parts'], ['✅', 'ГАРАНТІЙНІ ПОЛОМКИ', item.garant, 'bg-garant'], ['❌', 'НЕГАРАНТІЙНІ ПОЛОМКИ', item.negarant, 'bg-negarant'] ];
         
         fields.forEach(f => {
             if (f[2] && f[2].toString().trim() !== "") { 
-                hasInfo = true;
-                let cls = f[1] === 'НЕГАРАНТІЙНІ ПОЛОМКИ' ? 'tech-item bg-negarant' : 'tech-item';
-                techHTML += `<div class="${cls}"><div class="icon-circle ${f[3]}">${f[0]}</div><div><span style="font-size:9px;color:var(--text-muted);display:block;font-weight:700;text-transform:uppercase;">${f[1]}</span><span style="font-size:13px;font-weight:600;">${f[2]}</span></div></div>`;
+                hasInfo = true; let cls = f[1] === 'НЕГАРАНТІЙНІ ПОЛОМКИ' ? 'tech-item bg-negarant' : 'tech-item';
+                techHTML += `<div class="${cls}"><div class="icon-circle ${f[3]}">${f[0]}</div><div><span style="font-size:9px;color:var(--text-muted);display:block;font-weight:700;text-transform:uppercase;">${f[1]}</span><span style="font-size:13px;font-weight:600;color:var(--text-main);">${f[2]}</span></div></div>`;
             }
         });
 
         let photosArray = [];
-        if (item.photo1) photosArray.push(item.photo1);
-        if (item.photo2) photosArray.push(item.photo2);
-        if (item.photo3) photosArray.push(item.photo3);
+        if (item.photo1) photosArray.push(item.photo1); if (item.photo2) photosArray.push(item.photo2); if (item.photo3) photosArray.push(item.photo3);
 
         if (photosArray.length > 0) {
-            hasInfo = true;
-            let photosStr = photosArray.join(',');
-            techHTML += `
-            <div class="tech-photo-wrapper" onclick="openGallery('${photosStr}')">
-                <div class="photo-icon">📸</div>
-                <div class="photo-text">
-                    <span class="photo-title">Приклади пошкодженої техніки</span>
-                    <span class="photo-subtitle">Переглянути фото (${photosArray.length})</span>
-                </div>
-                <div class="photo-arrow">❯</div>
-            </div>`;
+            hasInfo = true; let photosStr = photosArray.join(',');
+            techHTML += `<div class="tech-photo-wrapper" onclick="openGallery('${photosStr}')"><div class="photo-icon">📸</div><div class="photo-text"><span class="photo-title">Приклади пошкодженої техніки</span><span class="photo-subtitle">Переглянути фото (${photosArray.length})</span></div><div class="photo-arrow">❯</div></div>`;
         }
-
-        elTechInfo.style.display = hasInfo ? 'flex' : 'none';
-        elTechInfo.innerHTML = hasInfo ? techHTML : "";
+        elTechInfo.style.display = hasInfo ? 'flex' : 'none'; elTechInfo.innerHTML = hasInfo ? techHTML : "";
     }
 
     function parseDescriptionLines(descE) {
@@ -838,15 +749,11 @@
         if (raw === "Опис відсутній..." || raw === "") return `<div style="text-align:center; padding: 20px; color:var(--text-muted); font-size:13px;">Опис відсутній...</div>`;
 
         return raw.replace(/\|/g, '\n').split(/\r?\n/).map(line => {
-            const l = line.trim(); 
-            if (!l) return '';
+            const l = line.trim(); if (!l) return '';
             if (l.startsWith('+')) return `<div class="modal-section-title">${l.substring(1).trim()}</div>`;
             if (l.startsWith('=')) return `<div class="modal-cost-header">${l.substring(1).trim() || 'Вартість:'}</div>`;
             if (l.includes('---')) return `<div class="modal-divider"></div>`;
-            
-            let match = l.match(emojiRegex); 
-            let e = match ? match[0] : "";
-            let t = match ? l.replace(e, '').trim() : l;
+            let match = l.match(emojiRegex); let e = match ? match[0] : ""; let t = match ? l.replace(e, '').trim() : l;
             
             if (!e) {
                 let lower = t.toLowerCase();
@@ -858,131 +765,64 @@
                 else if (lower.includes('монтаж') || lower.includes('демонтаж') || lower.includes('підключення') || lower.includes('магістрал')) e = '🛠️';
                 else e = '🔹';
             }
-            
-            return `
-            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 6px; background: var(--feat-bg); padding: 8px 10px; border-radius: 14px; border: 1px solid var(--border);">
-                <div style="width: 32px; height: 32px; min-width: 32px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; background: var(--box-bg); border: 1px solid var(--border);">${e}</div>
-                <div style="font-size: 12px; line-height: 1.4; color: var(--text-main); font-weight: 500;">${t}</div>
-            </div>`;
+            return `<div style="display: flex; align-items: center; gap: 10px; margin-bottom: 6px; background: var(--feat-bg); padding: 8px 10px; border-radius: 14px; border: 1px solid var(--border);"><div style="width: 32px; height: 32px; min-width: 32px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; background: var(--box-bg); border: 1px solid var(--border);">${e}</div><div style="font-size: 12px; line-height: 1.4; color: var(--text-main); font-weight: 500;">${t}</div></div>`;
         }).join('');
     }
 
-    function getSimpleDescHTML(name, codeF) {
-        let descContentText = parseDescriptionLines(findInDb(db.descriptions, name));
-        let codeBlockHTML = codeF ? `
-            <div class="code-block-wrapper" onclick="copyCode(event, this, '${codeF}')">
-                <span class="code-label-text">Код сервісу:</span>
-                <span class="code-value-text">${codeF} <span style="font-size:16px;">📋</span></span>
-            </div>` : '';
-        return `<div style="background: var(--feat-bg); border-radius: 16px; padding: 16px; border: 1px solid var(--border);">${codeBlockHTML}${descContentText}</div>`;
-    }
-
     function generateDescToggleHTML(descE, codeF) {
-        let descContentText = "";
-        let raw = descE ? descE.toString().trim() : "";
-        if (raw && raw !== "Опис відсутній...") { descContentText = parseDescriptionLines(raw); }
-        let codeBlockHTML = codeF ? `
-            <div class="code-block-wrapper" onclick="copyCode(event, this, '${codeF}')">
-                <span class="code-label-text">Код сервісу:</span>
-                <span class="code-value-text">${codeF} <span style="font-size:16px;">📋</span></span>
-            </div>` : '';
-
+        let descContentText = ""; let raw = descE ? descE.toString().trim() : "";
+        if (raw && raw !== "Опис відсутній...") descContentText = parseDescriptionLines(raw); 
+        let codeBlockHTML = codeF ? `<div class="code-block-wrapper" onclick="copyCode(event, this, '${codeF}')"><span class="code-label-text">Код сервісу:</span><span class="code-value-text">${codeF} <span style="font-size:16px;">📋</span></span></div>` : '';
         if (!descContentText && !codeBlockHTML) return '';
-
-        return `
-            <div class="desc-toggle" onclick="const content = this.nextElementSibling; const arrow = this.querySelector('.arrow'); if(content.style.display === 'none'){ content.style.display = 'block'; arrow.innerHTML = '▲'; } else { content.style.display = 'none'; arrow.innerHTML = '▼'; }">
-                Детальний опис <span class="arrow" style="display:inline-block; font-size:10px; margin-left:4px;">▼</span>
-            </div>
-            <div class="desc-content" style="display: none;">
-                ${codeBlockHTML}
-                ${descContentText}
-            </div>
-        `;
+        return `<div class="desc-toggle" onclick="const content = this.nextElementSibling; const arrow = this.querySelector('.arrow'); if(content.style.display === 'none'){ content.style.display = 'block'; arrow.innerHTML = '▲'; } else { content.style.display = 'none'; arrow.innerHTML = '▼'; }">Детальний опис <span class="arrow" style="display:inline-block; font-size:10px; margin-left:4px;">▼</span></div><div class="desc-content" style="display: none;">${codeBlockHTML}${descContentText}</div>`;
     }
 
     // --- ЛОГІКА ПОРІВНЯННЯ ---
     function toggleCompareMode() {
-        isCompareMode = !isCompareMode;
-        compareSelection = []; 
-        
+        isCompareMode = !isCompareMode; compareSelection = []; 
         if (isCompareMode) {
-            toggleCompareBtn.classList.add('active');
-            toggleCompareBtn.innerHTML = '<span style="font-size: 14px;">✕</span> Скасувати';
-            compareBar.classList.add('show');
-            compareBar.style.zIndex = '9998'; 
-            floatBtnsGroup.style.display = 'none'; 
+            toggleCompareBtn.classList.add('active'); toggleCompareBtn.innerHTML = '<span style="font-size: 14px;">✕</span> Скасувати';
+            compareBar.classList.add('show'); compareBar.style.zIndex = '9998'; 
         } else {
-            toggleCompareBtn.classList.remove('active');
-            toggleCompareBtn.innerHTML = '<span style="font-size: 14px;">⚖️</span> Порівняти';
+            toggleCompareBtn.classList.remove('active'); toggleCompareBtn.innerHTML = '<span style="font-size: 14px;">⚖️</span> Порівняти';
             compareBar.classList.remove('show');
-            floatBtnsGroup.style.display = 'flex';
         }
-        
-        updateCompareUI();
-        renderServices(); 
+        updateCompareUI(); renderServices(); 
     }
 
     window.toggleModalCompareMode = function() {
-        isModalCompareMode = !isModalCompareMode;
-        modalCompareSelection = []; 
-        
+        isModalCompareMode = !isModalCompareMode; modalCompareSelection = []; 
         const btn = document.getElementById('modalCompareBtn');
         if (isModalCompareMode) {
-            btn.classList.add('active');
-            btn.innerHTML = '<span style="font-size: 14px;">✕</span> Скасувати';
-            compareBar.classList.add('show');
-            compareBar.style.zIndex = '100005'; // Поверх основного модального вікна
+            btn.classList.add('active'); btn.innerHTML = '<span style="font-size: 14px;">✕</span> Скасувати';
+            compareBar.classList.add('show'); compareBar.style.zIndex = '100005';
         } else {
-            btn.classList.remove('active');
-            btn.innerHTML = '<span style="font-size: 14px;">⚖️</span> Порівняти';
+            btn.classList.remove('active'); btn.innerHTML = '<span style="font-size: 14px;">⚖️</span> Порівняти';
             compareBar.classList.remove('show');
         }
-        updateModalCompareUI();
-        updateSetupResults(); 
+        updateModalCompareUI(); updateSetupResults(); 
     }
 
-    function handleServiceClick(name, code) {
+    function handleServiceClick(name, code, isPackage) {
         if (isCompareMode) {
+            if (isPackage) { openModal(name, code); return; } // Пакети не порівнюємо, відкриваємо модалку
             let index = compareSelection.indexOf(name);
-            if (index > -1) {
-                compareSelection.splice(index, 1); 
-            } else {
-                if (compareSelection.length < 2) {
-                    compareSelection.push(name); 
-                } else {
-                    compareBar.style.transform = 'translateY(-10px)';
-                    setTimeout(() => compareBar.style.transform = 'translateY(0)', 150);
-                }
-            }
-            updateCompareUI();
-            renderServices(); 
-        } else {
-            openModal(name, code);
-        }
+            if (index > -1) compareSelection.splice(index, 1); 
+            else if (compareSelection.length < 2) compareSelection.push(name); 
+            else { compareBar.style.transform = 'translateY(-10px)'; setTimeout(() => compareBar.style.transform = 'translateY(0)', 150); }
+            updateCompareUI(); renderServices(); 
+        } else { openModal(name, code); }
     }
 
     window.handleModalServiceClick = function(e, name) {
         if (!isModalCompareMode) return;
-        
-        // Щоб клік по "Детальний опис" не рахувався як клік по картці для порівняння
         let target = e.target;
-        if (target.closest('.desc-toggle') || target.closest('.code-block-wrapper')) {
-            return;
-        }
-
+        if (target.closest('.desc-toggle') || target.closest('.code-block-wrapper')) return;
         let index = modalCompareSelection.indexOf(name);
-        if (index > -1) {
-            modalCompareSelection.splice(index, 1); 
-        } else {
-            if (modalCompareSelection.length < 2) {
-                modalCompareSelection.push(name); 
-            } else {
-                compareBar.style.transform = 'translateY(-10px)';
-                setTimeout(() => compareBar.style.transform = 'translateY(0)', 150);
-            }
-        }
-        updateModalCompareUI();
-        updateSetupResults(); 
+        if (index > -1) modalCompareSelection.splice(index, 1); 
+        else if (modalCompareSelection.length < 2) modalCompareSelection.push(name); 
+        else { compareBar.style.transform = 'translateY(-10px)'; setTimeout(() => compareBar.style.transform = 'translateY(0)', 150); }
+        updateModalCompareUI(); updateSetupResults(); 
     }
 
     function updateCompareUI() {
@@ -990,10 +830,8 @@
         if (count === 0) document.getElementById('compareStatusText').innerText = "Оберіть 2 сервіси для порівняння";
         else if (count === 1) document.getElementById('compareStatusText').innerText = "Оберіть ще 1 сервіс";
         else document.getElementById('compareStatusText').innerText = "Готово до порівняння!";
-        
         compareExecuteBtn.innerText = `Порівняти (${count}/2)`;
-        if (count === 2) compareExecuteBtn.classList.add('ready');
-        else compareExecuteBtn.classList.remove('ready');
+        if (count === 2) compareExecuteBtn.classList.add('ready'); else compareExecuteBtn.classList.remove('ready');
     }
 
     function updateModalCompareUI() {
@@ -1001,28 +839,20 @@
         if (count === 0) document.getElementById('compareStatusText').innerText = "Оберіть 2 сервіси для порівняння";
         else if (count === 1) document.getElementById('compareStatusText').innerText = "Оберіть ще 1 сервіс";
         else document.getElementById('compareStatusText').innerText = "Готово до порівняння!";
-        
         compareExecuteBtn.innerText = `Порівняти (${count}/2)`;
-        if (count === 2) compareExecuteBtn.classList.add('ready');
-        else compareExecuteBtn.classList.remove('ready');
+        if (count === 2) compareExecuteBtn.classList.add('ready'); else compareExecuteBtn.classList.remove('ready');
     }
 
-    // Витягування властивостей (тільки тих, що є)
     function extractFeaturesList(desc) {
         let features = [];
         if (!desc) return features;
         let lines = desc.replace(/\|/g, '\n').split(/\r?\n/);
-        
         lines.forEach(line => {
             let l = line.trim();
             if (!l || l === "Опис відсутній..." || l.startsWith('+') || l.startsWith('=') || l.includes('---')) return;
-            // Беремо лише позитивні
             if (!l.startsWith('✕') && !l.startsWith('❌') && !l.toLowerCase().startsWith('не покриває ')) {
                 let cleanText = l.replace(/^(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff]|✓|✕|❌|✅|\+|-|\*|•|🔹|⚙️|🛡️|🔑|♻️|🎬|🛠️)\s*/, '').trim();
-                if (cleanText) {
-                    cleanText = cleanText.charAt(0).toUpperCase() + cleanText.slice(1);
-                    features.push(cleanText);
-                }
+                if (cleanText) { cleanText = cleanText.charAt(0).toUpperCase() + cleanText.slice(1); features.push(cleanText); }
             }
         });
         return features;
@@ -1034,59 +864,51 @@
     }
 
     function buildCompareTable(sA, sB, descA, descB) {
-        let listA = extractFeaturesList(descA);
-        let listB = extractFeaturesList(descB);
+        let listA = extractFeaturesList(descA); let listB = extractFeaturesList(descB);
+        
+        // Fallback, якщо немає нормального опису зі списком
+        if (listA.length === 0 && listB.length === 0) {
+            let html = `<div class="compare-wrapper"><table class="compare-table"><thead><tr>`;
+            [sA, sB].forEach(s => {
+                let bLabel = s.brand || (s.cls === 'brand-ekta' ? 'ЕКТА' : (s.cls === 'brand-support' ? 'SUPPORT' : (s.cls === 'brand-epz' ? 'ЕПЗ' : 'СЕРВІС')));
+                html += `<th><div class="brand-tag ${s.cls}" style="display:inline-block; margin-bottom:4px;">${bLabel}</div><br>${s.title}<br><div style="margin-top:4px;">${s.label || s.priceText}</div></th>`;
+            });
+            html += `</tr></thead><tbody><tr>`;
+            html += `<td style="white-space:pre-wrap;">${descA || 'Опис відсутній'}</td>`;
+            html += `<td style="white-space:pre-wrap;">${descB || 'Опис відсутній'}</td>`;
+            html += `</tr></tbody></table></div>`;
+            return html;
+        }
 
-        let common = [];
-        let diffA = [];
-        let diffB = [...listB];
-
+        let common = []; let diffA = []; let diffB = [...listB];
         listA.forEach(featA => {
             let normA = featA.toLowerCase();
             let idxB = diffB.findIndex(featB => featB.toLowerCase() === normA);
-            if (idxB !== -1) {
-                common.push({a: featA, b: diffB[idxB]});
-                diffB.splice(idxB, 1);
-            } else {
-                diffA.push(featA);
-            }
+            if (idxB !== -1) { common.push({a: featA, b: diffB[idxB]}); diffB.splice(idxB, 1); } 
+            else { diffA.push(featA); }
         });
-
-        if (common.length === 0 && diffA.length === 0 && diffB.length === 0) return null;
 
         let html = `<div style="font-size: 12px; color: var(--text-muted); margin-bottom: 15px; text-align: center;">Властивості послуг (відмінності позначені ✨)</div>`;
         html += `<div class="compare-wrapper"><table class="compare-table"><thead><tr>`;
-        
         [sA, sB].forEach(s => {
             let brandLabel = s.brand || (s.cls === 'brand-ekta' ? 'ЕКТА' : (s.cls === 'brand-support' ? 'SUPPORT' : (s.cls === 'brand-epz' ? 'ЕПЗ' : 'СЕРВІС')));
-            html += `<th>
-                        <div class="brand-tag ${s.cls}" style="margin:0 auto 6px auto; display: inline-block;">${brandLabel}</div>
-                        <div style="font-size: 11px; white-space: normal; line-height: 1.2;">${s.title}</div>
-                        <div style="font-size: 13px; font-weight: 900; margin-top: 6px;">${s.label || s.priceText}</div>
-                     </th>`;
+            html += `<th><div class="brand-tag ${s.cls}" style="margin:0 auto 6px auto; display: inline-block;">${brandLabel}</div><div style="font-size: 11px; white-space: normal; line-height: 1.2;">${s.title}</div><div style="font-size: 13px; font-weight: 900; margin-top: 6px;">${s.label || s.priceText}</div></th>`;
         });
         html += `</tr></thead><tbody>`;
 
         if (common.length > 0) {
             html += `<tr><td colspan="2" style="background: var(--feat-bg); font-weight: 800; font-size: 10px; color: var(--text-muted); text-transform: uppercase; padding: 8px;">Спільні властивості</td></tr>`;
             common.forEach(pair => {
-                html += `<tr>
-                    <td><div class="feat-row">${pair.a}</div></td>
-                    <td><div class="feat-row">${pair.b}</div></td>
-                </tr>`;
+                html += `<tr><td><div class="feat-row" style="color:var(--text-muted);">${pair.a}</div></td><td><div class="feat-row" style="color:var(--text-muted);">${pair.b}</div></td></tr>`;
             });
         }
-
         if (diffA.length > 0 || diffB.length > 0) {
             html += `<tr><td colspan="2" style="background: var(--feat-bg); font-weight: 800; font-size: 10px; color: var(--text-muted); text-transform: uppercase; padding: 8px;">Відмінності</td></tr>`;
             let maxDiff = Math.max(diffA.length, diffB.length);
             for (let i = 0; i < maxDiff; i++) {
-                let valA = diffA[i] ? `<span style="margin-right:4px;">✨</span>${diffA[i]}` : "";
-                let valB = diffB[i] ? `<span style="margin-right:4px;">✨</span>${diffB[i]}` : "";
-                html += `<tr>
-                    <td><div class="feat-row" style="font-weight:800; color: var(--text-main);">${valA}</div></td>
-                    <td><div class="feat-row" style="font-weight:800; color: var(--text-main);">${valB}</div></td>
-                </tr>`;
+                let valA = diffA[i] ? `<span style="margin-right:4px;">✨</span>${diffA[i]}` : `<span style="color:var(--text-muted)">-</span>`;
+                let valB = diffB[i] ? `<span style="margin-right:4px;">✨</span>${diffB[i]}` : `<span style="color:var(--text-muted)">-</span>`;
+                html += `<tr><td><div class="feat-row" style="font-weight:700;">${valA}</div></td><td><div class="feat-row" style="font-weight:700;">${valB}</div></td></tr>`;
             }
         }
         html += `</tbody></table></div>`;
@@ -1094,48 +916,31 @@
     }
 
     window.handleExecuteCompare = function() {
-        if (isModalCompareMode) executeModalCompare();
-        else executeCompare();
+        if (isModalCompareMode) executeModalCompare(); else executeCompare();
     }
 
     window.executeCompare = function() {
         if (compareSelection.length !== 2) return;
-        
         let sA = window.lastCalculatedServices.find(s => s.name === compareSelection[0]);
         let sB = window.lastCalculatedServices.find(s => s.name === compareSelection[1]);
         if (!sA || !sB) return;
-
-        let descA = findInDb(db.descriptions, sA.name) || "";
-        let descB = findInDb(db.descriptions, sB.name) || "";
-
-        let html = buildCompareTable(sA, sB, descA, descB);
-        if (!html) { alert("Немає детального опису для порівняння."); return; }
+        let html = buildCompareTable(sA, sB, findInDb(db.descriptions, sA.name), findInDb(db.descriptions, sB.name));
         showCompareModal(html);
     };
 
     window.executeModalCompare = function() {
         if (modalCompareSelection.length !== 2) return;
-        
         let sA = window.lastModalServices.find(s => s.service === modalCompareSelection[0]);
         let sB = window.lastModalServices.find(s => s.service === modalCompareSelection[1]);
         if (!sA || !sB) return;
-
         let mappedA = { name: sA.service, title: sA.service.replace(/^\[.*?\]\s*/, ''), label: sA.priceText, cls: "brand-settings" };
         let mappedB = { name: sB.service, title: sB.service.replace(/^\[.*?\]\s*/, ''), label: sB.priceText, cls: "brand-settings" };
-
-        let descA = findInDb(db.descriptions, sA.service) || "";
-        let descB = findInDb(db.descriptions, sB.service) || "";
-
-        let html = buildCompareTable(mappedA, mappedB, descA, descB);
-        if (!html) { alert("Немає детального опису для порівняння."); return; }
+        let html = buildCompareTable(mappedA, mappedB, findInDb(db.descriptions, sA.service), findInDb(db.descriptions, sB.service));
         showCompareModal(html);
     };
 
     function showCompareModal(html) {
-        scrollPos = window.pageYOffset; 
-        document.body.style.top = `-${scrollPos}px`; 
-        document.body.classList.add('modal-open');
-        
+        scrollPos = window.pageYOffset; document.body.style.top = `-${scrollPos}px`; document.body.classList.add('modal-open');
         document.getElementById('compareModalBody').innerHTML = html;
         document.getElementById('compareModal').classList.add('show');
     }
@@ -1143,65 +948,40 @@
     window.closeCompareModal = function() {
         document.getElementById('compareModal').classList.remove('show');
         if (!document.getElementById('descModal').classList.contains('show')) {
-            document.body.classList.remove('modal-open');
-            document.body.style.top = '';
-            window.scrollTo(0, scrollPos);
+            document.body.classList.remove('modal-open'); document.body.style.top = ''; window.scrollTo(0, scrollPos);
         }
     }
 
     function renderServices() {
         renderTechInfo(); 
-
         const p = parseFloat(elPriceInput.value) || 0; 
         if (!currentCategoryData || !currentCategoryData.service) {
-            window.lastCalculatedServices = [];
-            toggleCompareBtn.style.display = 'none';
-            if (isCompareMode) toggleCompareMode();
-            return;
+            window.lastCalculatedServices = []; toggleCompareBtn.style.display = 'none';
+            if (isCompareMode) toggleCompareMode(); return;
         }
 
         const focusList = currentCategoryData.focusServices ? currentCategoryData.focusServices.split('|').map(s => normalizeServiceName(s)) : [];
         const servicesNames = currentCategoryData.service.split('|').map(s => s.trim()).filter(s => s);
         
         const dataForSort = servicesNames.map(name => {
-            const brandMatch = name.match(brandRegex);
-            const brand = brandMatch ? brandMatch[1] : "";
+            const brandMatch = name.match(brandRegex); const brand = brandMatch ? brandMatch[1] : "";
             let title = brandMatch ? name.replace(brandMatch[0], "").trim() : name;
+            let nameClean = normalizeServiceName(name); let isFocus = false;
             
-            let nameClean = normalizeServiceName(name);
-            let isFocus = false;
+            if(title.includes('🔥')) { isFocus = true; title = title.replace('🔥', '').trim(); } 
+            else if (focusList.includes(nameClean)) isFocus = true;
             
-            if(title.includes('🔥')) {
-                isFocus = true;
-                title = title.replace('🔥', '').trim();
-            } else if (focusList.includes(nameClean)) {
-                isFocus = true;
-            }
-            
-            const matchingTariffs = db.tariffs.filter(x => 
-                normalizeServiceName(x.service) === nameClean || 
-                (x.serviceRu && normalizeServiceName(x.serviceRu) === nameClean)
-            );
-            
-            let t = null;
-            let isPackage = false;
+            const matchingTariffs = db.tariffs.filter(x => normalizeServiceName(x.service) === nameClean || (x.serviceRu && normalizeServiceName(x.serviceRu) === nameClean));
+            let t = null; let isPackage = false;
 
-            if (p > 0) {
-                t = matchingTariffs.find(x => p >= x.minPrice && p <= x.maxPrice);
-            } 
+            if (p > 0) t = matchingTariffs.find(x => p >= x.minPrice && p <= x.maxPrice);
             if (!t && matchingTariffs.length > 0) {
                 t = matchingTariffs.find(x => p >= x.minPrice && p <= x.maxPrice || (p === 0 && x.minPrice === 0));
                 if (!t) t = matchingTariffs[0];
             }
 
             let uName = name.toUpperCase();
-            
-            let isStaticEpz = (uName.includes('WINDOWS') || uName.includes('OFFICE') || uName.includes('OFFICE 365') || uName.includes('OFFICE 2024') || uName.includes('ESD') || uName.includes('[ESD]')) 
-                && !uName.includes('НАЛАШТУВАННЯ') 
-                && !uName.includes('ВСТАНОВЛЕННЯ') 
-                && !uName.includes('АНТИВІРУС') 
-                && !uName.includes('ESET')
-                && !uName.includes('PARALLELS');
+            let isStaticEpz = (uName.includes('WINDOWS') || uName.includes('OFFICE') || uName.includes('OFFICE 365') || uName.includes('OFFICE 2024') || uName.includes('ESD') || uName.includes('[ESD]')) && !uName.includes('НАЛАШТУВАННЯ') && !uName.includes('ВСТАНОВЛЕННЯ') && !uName.includes('АНТИВІРУС') && !uName.includes('ESET') && !uName.includes('PARALLELS');
 
             if (!isStaticEpz) {
                 if (uName.includes('МОНТАЖ') || uName.includes('ПІДКЛЮЧЕННЯ') || (uName.includes('ВСТАНОВЛЕННЯ') && !uName.includes('WINDOWS') && !uName.includes('ЗАХИСН'))) isPackage = true;
@@ -1211,32 +991,21 @@
                 if (uName.includes('ПОКЛЕЙКА')) isPackage = true;
                 if (uName.includes('НАЛАШТУВАННЯ') && !uName.includes('WINDOWS') && !uName.includes('ОФІС') && !uName.includes('OFFICE')) isPackage = true;
                 if (uName.includes('ГОДИНА РОБОТИ')) isPackage = true;
-                
-                if (!isPackage && db.tariffs.some(x => x.cat && normalizeServiceName(x.cat) === nameClean)) {
-                    isPackage = true;
-                }
+                if (!isPackage && db.tariffs.some(x => x.cat && normalizeServiceName(x.cat) === nameClean)) isPackage = true;
             }
             
-            let numCost = 0;
-            let label = "Дізнатись<br>вартість";
-            let serviceCode = t && t.code ? t.code : findInDb(db.serviceCodes, name); 
+            let numCost = 0; let label = "Дізнатись<br>вартість"; let serviceCode = t && t.code ? t.code : findInDb(db.serviceCodes, name); 
             
-            if (isPackage) {
-                label = "Обрати пакет";
-            } else if (t && t.cost) {
+            if (isPackage) { label = "Обрати пакет"; } 
+            else if (t && t.cost) {
                 let rawCost = t.cost.toString().trim();
                 if (rawCost.includes('%')) {
-                    if (p > 0) {
-                        numCost = Math.round(p * parseFloat(rawCost.replace(',', '.'))/100);
-                        label = numCost.toLocaleString('uk-UA') + " ₴";
-                    } else label = rawCost; 
+                    if (p > 0) { numCost = Math.round(p * parseFloat(rawCost.replace(',', '.'))/100); label = numCost.toLocaleString('uk-UA') + " ₴"; } 
+                    else label = rawCost; 
                 } else {
                     let cleanCost = rawCost.replace(/\s+/g, '').replace(/[^\d.,]/g, '').replace(',', '.');
                     if (cleanCost === '') label = rawCost;
-                    else {
-                        numCost = parseFloat(cleanCost);
-                        label = isNaN(numCost) ? rawCost : numCost.toLocaleString('uk-UA') + " ₴";
-                    }
+                    else { numCost = parseFloat(cleanCost); label = isNaN(numCost) ? rawCost : numCost.toLocaleString('uk-UA') + " ₴"; }
                 }
             }
             
@@ -1247,31 +1016,27 @@
             else if (isPackage || uName.includes('НАЛАШТУВАННЯ')) cls = 'brand-settings'; 
             else if (uName.includes('МОНТАЖ') || uName.includes('ПІДКЛЮЧЕННЯ') || uName.includes('ВСТАНОВЛЕННЯ')) cls = 'brand-install';
             
-            return { name, brand, title, numCost, label, cls, isFocus, code: serviceCode };
+            return { name, brand, title, numCost, label, cls, isFocus, code: serviceCode, isPackage };
         });
 
         dataForSort.sort((a, b) => {
-            if (a.isFocus && !b.isFocus) return -1;
-            if (!a.isFocus && b.isFocus) return 1;
-            return b.numCost - a.numCost;
+            if (a.isFocus && !b.isFocus) return -1; if (!a.isFocus && b.isFocus) return 1; return b.numCost - a.numCost;
         });
 
         window.lastCalculatedServices = dataForSort;
-
-        if (dataForSort.length >= 2) toggleCompareBtn.style.display = 'flex';
-        else {
-            toggleCompareBtn.style.display = 'none';
-            if (isCompareMode) toggleCompareMode();
-        }
+        
+        let compareableCount = dataForSort.filter(s => !s.isPackage).length;
+        if (compareableCount >= 2) toggleCompareBtn.style.display = 'flex';
+        else { toggleCompareBtn.style.display = 'none'; if (isCompareMode) toggleCompareMode(); }
 
         requestAnimationFrame(() => {
             elServiceList.innerHTML = dataForSort.map(s => {
                 let isSelected = compareSelection.includes(s.name);
-                let cardClass = s.cls + (isCompareMode ? ' compare-mode' : '') + (isSelected ? ' selected-for-compare' : '');
+                let cardClass = s.cls + (isCompareMode && !s.isPackage ? ' compare-mode' : '') + (isSelected ? ' selected-for-compare' : '');
                 
                 return `
-                <div class="service-card ${cardClass}" onclick="handleServiceClick('${s.name.replace(/'/g, "\\'")}', '${s.code || ''}')">
-                    ${isCompareMode ? `<div class="compare-checkbox"></div>` : ''}
+                <div class="service-card ${cardClass}" onclick="handleServiceClick('${s.name.replace(/'/g, "\\'")}', '${s.code || ''}', ${s.isPackage})">
+                    ${isCompareMode && !s.isPackage ? `<div class="compare-checkbox"></div>` : ''}
                     <div class="service-content-left">
                         ${s.isFocus && !isSelected ? `<div class="focus-icon">🔥</div>` : ''}
                         <div>
@@ -1290,47 +1055,22 @@
     window.cityStatusMap = new Map();
 
     function renderMontazhModal() {
-        if (!db.montazhData || !db.montazhData.cities || db.montazhData.cities.length === 0) {
-            elModalBody.innerHTML = `<div style="text-align:center; padding: 20px; color:#ef4444; font-weight: 800;">Помилка: Міста для монтажу не завантажено.</div>`;
-            return;
-        }
-
+        if (!db.montazhData || !db.montazhData.cities || db.montazhData.cities.length === 0) { elModalBody.innerHTML = `<div style="text-align:center; padding: 20px; color:#ef4444; font-weight: 800;">Помилка: Міста для монтажу не завантажено.</div>`; return; }
         const cities = db.montazhData.cities.sort((a, b) => a.localeCompare(b));
         const services = db.montazhData.services;
 
         window.cityStatusMap = new Map();
         cities.forEach(city => {
-            let hasAny = services.some(s => {
-                let avail = s.availability[city];
-                return avail && avail !== "-" && avail !== "✖" && !avail.toLowerCase().includes("немає");
-            });
+            let hasAny = services.some(s => { let avail = s.availability[city]; return avail && avail !== "-" && avail !== "✖" && !avail.toLowerCase().includes("немає"); });
             window.cityStatusMap.set(city, hasAny);
         });
 
         const categories = [...new Set(services.map(s => s.cat).filter(Boolean))];
 
         elModalBody.innerHTML = `
-            <div style="margin-bottom: 20px;">
-                <span class="montazh-label">В якому місті шукаємо?</span>
-                <select id="montazhCity" class="montazh-select">
-                    <option value="">-- Оберіть місто --</option>
-                    ${cities.map(c => {
-                        let emoji = window.cityStatusMap.get(c) ? "🟢" : "🔴";
-                        return `<option value="${c}">${emoji} ${c}</option>`;
-                    }).join('')}
-                </select>
-            </div>
-            <div style="margin-bottom: 20px;">
-                <span class="montazh-label">Яку техніку потрібно встановити?</span>
-                <select id="montazhCat" class="montazh-select">
-                    <option value="">-- Оберіть категорію --</option>
-                    ${categories.map(c => `<option value="${c}">${c}</option>`).join('')}
-                </select>
-            </div>
-            <div id="montazhSubCatWrapper" style="display:none; margin-bottom: 20px;">
-                <span class="montazh-label">Виберіть підкатегорію (потужність тощо):</span>
-                <select id="montazhSubCat" class="montazh-select"></select>
-            </div>
+            <div style="margin-bottom: 20px;"><span class="montazh-label">В якому місті шукаємо?</span><select id="montazhCity" class="montazh-select"><option value="">-- Оберіть місто --</option>${cities.map(c => { let emoji = window.cityStatusMap.get(c) ? "🟢" : "🔴"; return `<option value="${c}">${emoji} ${c}</option>`; }).join('')}</select></div>
+            <div style="margin-bottom: 20px;"><span class="montazh-label">Яку техніку потрібно встановити?</span><select id="montazhCat" class="montazh-select"><option value="">-- Оберіть категорію --</option>${categories.map(c => `<option value="${c}">${c}</option>`).join('')}</select></div>
+            <div id="montazhSubCatWrapper" style="display:none; margin-bottom: 20px;"><span class="montazh-label">Виберіть підкатегорію (потужність тощо):</span><select id="montazhSubCat" class="montazh-select"></select></div>
             <div id="montazhResults" style="margin-top: 24px;"></div>
         `;
 
@@ -1339,212 +1079,92 @@
             let targetCat = currentCategoryData.category.toLowerCase();
             for (let i = 0; i < catSelect.options.length; i++) {
                 if (catSelect.options[i].value.toLowerCase().includes(targetCat) || targetCat.includes(catSelect.options[i].value.toLowerCase())) {
-                    catSelect.selectedIndex = i;
-                    setTimeout(() => catSelect.dispatchEvent(new Event('change')), 50);
-                    break;
+                    catSelect.selectedIndex = i; setTimeout(() => catSelect.dispatchEvent(new Event('change')), 50); break;
                 }
             }
         }
 
         document.getElementById('montazhCity').addEventListener('change', updateMontazhResults);
-        
         document.getElementById('montazhCat').addEventListener('change', (e) => {
-            const cat = e.target.value;
-            const subCatSelect = document.getElementById('montazhSubCat');
-            const subCatWrapper = document.getElementById('montazhSubCatWrapper');
-            
+            const cat = e.target.value; const subCatSelect = document.getElementById('montazhSubCat'); const subCatWrapper = document.getElementById('montazhSubCatWrapper');
             const subcats = [...new Set(services.filter(s => s.cat === cat).map(s => s.subcat).filter(c => c && c.trim() !== ""))];
-            
-            if (subcats.length > 0) {
-                subCatSelect.innerHTML = `<option value="">-- Всі послуги --</option>` + subcats.map(sc => `<option value="${sc}">${sc}</option>`).join('');
-                subCatWrapper.style.display = 'block';
-            } else {
-                subCatSelect.innerHTML = '';
-                subCatWrapper.style.display = 'none';
-            }
+            if (subcats.length > 0) { subCatSelect.innerHTML = `<option value="">-- Всі послуги --</option>` + subcats.map(sc => `<option value="${sc}">${sc}</option>`).join(''); subCatWrapper.style.display = 'block'; } 
+            else { subCatSelect.innerHTML = ''; subCatWrapper.style.display = 'none'; }
             updateMontazhResults();
         });
-        
         document.getElementById('montazhSubCat').addEventListener('change', updateMontazhResults);
     }
 
     function updateMontazhResults() {
-        const city = document.getElementById('montazhCity').value;
-        const cat = document.getElementById('montazhCat').value;
-        const subcatWrapper = document.getElementById('montazhSubCatWrapper');
-        const subcat = subcatWrapper.style.display !== 'none' ? document.getElementById('montazhSubCat').value : "";
+        const city = document.getElementById('montazhCity').value; const cat = document.getElementById('montazhCat').value;
+        const subcatWrapper = document.getElementById('montazhSubCatWrapper'); const subcat = subcatWrapper.style.display !== 'none' ? document.getElementById('montazhSubCat').value : "";
         const resultsContainer = document.getElementById('montazhResults');
         
-        if (!city || !cat) {
-            resultsContainer.innerHTML = "";
-            return;
-        }
-
+        if (!city || !cat) { resultsContainer.innerHTML = ""; return; }
         const matches = db.montazhData.services.filter(s => s.cat === cat && (!subcatWrapper.style.display || subcatWrapper.style.display === 'none' || !subcat || s.subcat === subcat));
-
-        if (matches.length === 0) {
-            resultsContainer.innerHTML = `<div style="text-align:center; padding: 20px; color:#94a3b8;">Послуг не знайдено</div>`;
-            return;
-        }
+        if (matches.length === 0) { resultsContainer.innerHTML = `<div style="text-align:center; padding: 20px; color:var(--text-muted);">Послуг не знайдено</div>`; return; }
 
         let renderItems = [];
-
         matches.forEach(s => {
-             let availability = s.availability[city] || "";
-             let isUnavailable = (!availability || availability.toLowerCase().includes("немає") || availability === "-" || availability === "✖");
+             let availability = s.availability[city] || ""; let isUnavailable = (!availability || availability.toLowerCase().includes("немає") || availability === "-" || availability === "✖");
+             let bgClass = "brand-other", badgeCls = "brand-other"; let displayProv = ""; let matchProv = s.name.match(/^\[(.*?)\]/);
+             if (matchProv) { displayProv = matchProv[1].trim(); let pUpper = displayProv.toUpperCase(); if (pUpper === 'ЕКТА' || pUpper === 'EKTA') { bgClass = "brand-ekta"; badgeCls = "brand-ekta"; } else if (pUpper === 'НАШ СЕРВІС' || pUpper === 'SUPPORT' || pUpper === 'МІЙ СЕРВІС') { bgClass = "brand-support"; badgeCls = "brand-support"; } }
 
-             let bgClass = "montazh-card-other", badgeCls = "brand-other";
-             let displayProv = "";
-             
-             let matchProv = s.name.match(/^\[(.*?)\]/);
-             if (matchProv) {
-                 displayProv = matchProv[1].trim(); 
-                 let pUpper = displayProv.toUpperCase();
-                 if (pUpper === 'ЕКТА' || pUpper === 'EKTA') {
-                     bgClass = "montazh-card-ekta"; 
-                     badgeCls = "brand-ekta";
-                 } else if (pUpper === 'НАШ СЕРВІС' || pUpper === 'SUPPORT' || pUpper === 'МІЙ СЕРВІС') {
-                     bgClass = "montazh-card-myservice"; 
-                     badgeCls = "brand-support";
-                 }
-             }
-
-             let descE = findInDb(db.descriptions, s.name);
-             let codeF = findInDb(db.serviceCodes, s.name);
+             let descE = findInDb(db.descriptions, s.name); let codeF = findInDb(db.serviceCodes, s.name);
              let descToggleHTML = generateDescToggleHTML(descE, codeF);
              
              let price = s.price;
-             if (!price) {
-                 let nameClean = normalizeServiceName(s.name);
-                 const t = db.tariffs.find(x => normalizeServiceName(x.service) === nameClean || (x.serviceRu && normalizeServiceName(x.serviceRu) === nameClean));
-                 if (t && t.cost) price = t.cost;
-             }
+             if (!price) { let nameClean = normalizeServiceName(s.name); const t = db.tariffs.find(x => normalizeServiceName(x.service) === nameClean || (x.serviceRu && normalizeServiceName(x.serviceRu) === nameClean)); if (t && t.cost) price = t.cost; }
+             let cleanCost = price.toString().replace(/\s+/g, '').replace(/[^\d.,]/g, '').replace(',', '.'); let priceVal = parseFloat(cleanCost) || 0; let priceText = isNaN(priceVal) || cleanCost === '' ? price : priceVal.toLocaleString('uk-UA') + " ₴";
              
-             let cleanCost = price.toString().replace(/\s+/g, '').replace(/[^\d.,]/g, '').replace(',', '.');
-             let priceVal = parseFloat(cleanCost) || 0;
-             let priceText = isNaN(priceVal) || cleanCost === '' ? price : priceVal.toLocaleString('uk-UA') + " ₴";
-             
-             renderItems.push({
-                 isUnavailable: isUnavailable,
-                 priceVal: priceVal,
-                 displayProv: displayProv,
-                 serviceName: s.name,
-                 priceText: priceText,
-                 descToggleHTML: descToggleHTML,
-                 bgClass: bgClass,
-                 badgeCls: badgeCls,
-                 availability: availability
-             });
+             renderItems.push({ isUnavailable, priceVal, displayProv, serviceName: s.name, priceText, descToggleHTML, bgClass, badgeCls, availability });
         });
 
-        renderItems.sort((a, b) => {
-            if (a.isUnavailable !== b.isUnavailable) return a.isUnavailable ? 1 : -1; 
-            return b.priceVal - a.priceVal; 
-        });
+        renderItems.sort((a, b) => { if (a.isUnavailable !== b.isUnavailable) return a.isUnavailable ? 1 : -1; return b.priceVal - a.priceVal; });
 
-        let resultsHTML = "";
-        let hasVisibleServices = renderItems.length > 0;
-        let seenUnavailable = new Set(); 
-
+        let resultsHTML = ""; let hasVisibleServices = renderItems.length > 0; let seenUnavailable = new Set(); 
         renderItems.forEach(item => {
             let brandTagHTML = item.displayProv ? `<div style="align-self: flex-start;" class="brand-tag ${item.badgeCls}">${item.displayProv}</div>` : '';
             let cleanName = item.serviceName.replace(/^\[.*?\]\s*/, '');
-            
             if (item.isUnavailable) {
                 const provKey = item.displayProv.toUpperCase();
-                if (!seenUnavailable.has(provKey) && item.displayProv) {
-                    seenUnavailable.add(provKey);
-                    resultsHTML += `
-                        <div class="montazh-card ${item.bgClass}">
-                            ${brandTagHTML}
-                            <div style="font-size: 13px; font-weight: 600; color: #ef4444; margin-top: 5px; line-height: 1.4;">На жаль, в цьому місті неможливий монтаж підрядником ${item.displayProv}</div>
-                        </div>
-                    `;
-                }
+                if (!seenUnavailable.has(provKey) && item.displayProv) { seenUnavailable.add(provKey); resultsHTML += `<div class="montazh-card">${brandTagHTML}<div style="font-size: 13px; font-weight: 600; color: #ef4444; margin-top: 5px; line-height: 1.4;">На жаль, в цьому місті неможливий монтаж підрядником ${item.displayProv}</div></div>`; }
             } else {
-                 let extraInfoHTML = "";
-                 let text = item.availability;
-                 let availLower = text.toLowerCase();
-                 let displayText = text;
-                 
-                 if (availLower === "так" || availLower === "+") {
-                     displayText = "В межах міста";
-                 }
-                 
+                 let extraInfoHTML = ""; let text = item.availability; let availLower = text.toLowerCase(); let displayText = text;
+                 if (availLower === "так" || availLower === "+") displayText = "В межах міста";
                  if (text && availLower !== "так" && availLower !== "+") {
                      let badgeClass = "availability-badge brand-other";
-                     
-                     if (availLower.includes("тільки місто") || availLower.includes("до 20 км")) {
-                         badgeClass = "availability-badge status-city-limit";
-                     } else if (availLower.includes("передмістя") || availLower.includes("платно")) {
-                         badgeClass = "availability-badge status-fee-zone";
-                     } else if (availLower.includes("в межах міста")) {
-                         badgeClass = "availability-badge status-full-coverage";
-                     }
-
-                     extraInfoHTML = `
-                     <div class="${badgeClass}">
-                         <span style="font-size: 14px;">📍</span> ${displayText}
-                     </div>`;
+                     if (availLower.includes("тільки місто") || availLower.includes("до 20 км")) badgeClass = "availability-badge status-city-limit";
+                     else if (availLower.includes("передмістя") || availLower.includes("платно")) badgeClass = "availability-badge status-fee-zone";
+                     else if (availLower.includes("в межах міста")) badgeClass = "availability-badge status-full-coverage";
+                     extraInfoHTML = `<div class="${badgeClass}"><span style="font-size: 14px;">📍</span> ${displayText}</div>`;
                  }
-
-                 resultsHTML += `
-                     <div class="montazh-card ${item.bgClass}">
-                         ${brandTagHTML}
-                         <div style="display: flex; justify-content: space-between; gap: 10px; align-items: flex-start; margin-bottom: 5px;">
-                             <div style="font-size: 14px; font-weight: 700; line-height: 1.3; flex: 1;">${cleanName}</div>
-                             <div style="font-size: 17px; font-weight: 800; white-space: nowrap;">${item.priceText}</div>
-                         </div>
-                         ${extraInfoHTML}
-                         ${item.descToggleHTML}
-                     </div>
-                 `;
+                 resultsHTML += `<div class="montazh-card">${brandTagHTML}<div style="display: flex; justify-content: space-between; gap: 10px; align-items: flex-start; margin-bottom: 5px;"><div style="font-size: 14px; font-weight: 700; line-height: 1.3; flex: 1; color: var(--text-main);">${cleanName}</div><div style="font-size: 17px; font-weight: 800; white-space: nowrap; color: var(--text-main);">${item.priceText}</div></div>${extraInfoHTML}${item.descToggleHTML}</div>`;
             }
         });
-
-        resultsContainer.innerHTML = hasVisibleServices ? resultsHTML : `<div style="text-align:center; padding: 20px; color:#94a3b8;">Послуг не знайдено</div>`;
+        resultsContainer.innerHTML = hasVisibleServices ? resultsHTML : `<div style="text-align:center; padding: 20px; color:var(--text-muted);">Послуг не знайдено</div>`;
     }
 
     function renderDirectListModal(targetCategories) {
         if (!Array.isArray(targetCategories)) targetCategories = [targetCategories];
-        
         let matches = db.tariffs.filter(t => {
-            let c = t.cat ? normalizeServiceName(t.cat) : "";
-            let sName = t.service ? normalizeServiceName(t.service) : "";
-            return targetCategories.some(tc => {
-                let ntc = normalizeServiceName(tc);
-                return c.includes(ntc) || sName.includes(ntc);
-            });
+            let c = t.cat ? normalizeServiceName(t.cat) : ""; let sName = t.service ? normalizeServiceName(t.service) : "";
+            return targetCategories.some(tc => { let ntc = normalizeServiceName(tc); return c.includes(ntc) || sName.includes(ntc); });
         });
-        
-        if(matches.length === 0) {
-             elModalBody.innerHTML = `<div style="text-align:center; padding: 20px; color:#94a3b8;">Послуг не знайдено</div>`;
-             return;
-        }
+        if(matches.length === 0) { elModalBody.innerHTML = `<div style="text-align:center; padding: 20px; color:var(--text-muted);">Послуг не знайдено</div>`; return; }
         
         const p = parseFloat(elPriceInput.value) || 0; 
-        
         let processedMatches = matches.map(m => {
-            let numCost = 0;
-            let priceText = "Дізнатись вартість";
-            
+            let numCost = 0; let priceText = "Дізнатись вартість";
             if (m.cost) {
                 let rawCost = m.cost.toString().trim();
                 if (rawCost.includes('%')) {
-                    if (p > 0) {
-                        numCost = Math.round(p * parseFloat(rawCost.replace(',', '.'))/100);
-                        priceText = numCost.toLocaleString('uk-UA') + " ₴";
-                    } else {
-                        priceText = rawCost;
-                    }
+                    if (p > 0) { numCost = Math.round(p * parseFloat(rawCost.replace(',', '.'))/100); priceText = numCost.toLocaleString('uk-UA') + " ₴"; } 
+                    else priceText = rawCost; 
                 } else {
                     let cleanCost = rawCost.replace(/\s+/g, '').replace(/[^\d.,]/g, '').replace(',', '.');
-                    if (cleanCost === '') {
-                        priceText = rawCost;
-                    } else {
-                        numCost = parseFloat(cleanCost);
-                        priceText = isNaN(numCost) ? rawCost : numCost.toLocaleString('uk-UA') + " ₴";
-                    }
+                    if (cleanCost === '') priceText = rawCost; 
+                    else { numCost = parseFloat(cleanCost); priceText = isNaN(numCost) ? rawCost : numCost.toLocaleString('uk-UA') + " ₴"; }
                 }
             }
             return { ...m, numCost, priceText, service: m.service };
@@ -1561,25 +1181,20 @@
         </div>`;
 
         let html = processedMatches.map(m => {
-             let descE = findInDb(db.descriptions, m.service);
-             let descToggleHTML = generateDescToggleHTML(descE, m.code);
-             let cleanName = m.service.replace(/^\[.*?\]\s*/, '');
-             
+             let descE = findInDb(db.descriptions, m.service); let descToggleHTML = generateDescToggleHTML(descE, m.code); let cleanName = m.service.replace(/^\[.*?\]\s*/, '');
              let isSelected = modalCompareSelection.includes(m.service);
              let cardClass = "montazh-card brand-settings" + (isModalCompareMode ? ' compare-mode' : '') + (isSelected ? ' selected-for-compare' : '');
              let clickAction = isModalCompareMode ? `onclick="handleModalServiceClick(event, '${m.service.replace(/'/g, "\\'")}')"` : "";
              let checkboxHTML = isModalCompareMode ? `<div class="compare-checkbox"></div>` : "";
              
-             return `
-             <div class="${cardClass}" style="background-color: var(--feat-bg); border: 1px solid var(--border); overflow:hidden; position:relative;" ${clickAction}>
+             return `<div class="${cardClass}" style="background-color: var(--feat-bg); border: 1px solid var(--border); overflow:hidden; position:relative;" ${clickAction}>
                  ${checkboxHTML}
                  <div style="display: flex; justify-content: space-between; gap: 10px; align-items: flex-start; margin-bottom: 5px; position:relative; z-index:2; ${isModalCompareMode ? 'cursor:pointer;' : ''}">
                      <div style="font-size: 14px; font-weight: 700; line-height: 1.3; flex: 1; color: var(--text-main); ${isModalCompareMode ? 'pointer-events:none;' : ''}">${cleanName}</div>
                      <div style="font-size: 17px; font-weight: 900; white-space: nowrap; color: var(--text-main); ${isModalCompareMode ? 'pointer-events:none;' : ''}">${m.priceText}</div>
                  </div>
                  <div style="position:relative; z-index:2;">${descToggleHTML}</div>
-             </div>
-             `;
+             </div>`;
         }).join('');
         
         elModalBody.innerHTML = headerHtml + `<div id="setupResults" style="margin-top: 5px;">${html}</div>`;
@@ -1587,66 +1202,33 @@
 
     function renderSetupModal(targetName, mode = "setup") {
         let setupCats = [...new Set(db.tariffs.filter(t => {
-            if (!t.cat) return false;
-            let c = t.cat.toLowerCase();
-            
-            if (mode === "antivirus") {
-                return c.includes('антивірус') || c.includes('eset');
-            } else {
-                return !c.includes('монтаж') && 
-                       !c.includes('кухонна') && 
-                       !c.includes('перевірка') && 
-                       !c.includes('поклейка') && 
-                       !c.includes('скло') && 
-                       !c.includes('антивірус') && 
-                       !c.includes('eset') && 
-                       !c.includes('кінотеатр') && 
-                       !c.includes('sweet') && 
-                       !c.includes('сервіси support') && 
-                       !c.includes('сервіси екта');
-            }
+            if (!t.cat) return false; let c = t.cat.toLowerCase();
+            if (mode === "antivirus") return c.includes('антивірус') || c.includes('eset');
+            else return !c.includes('монтаж') && !c.includes('кухонна') && !c.includes('перевірка') && !c.includes('поклейка') && !c.includes('скло') && !c.includes('антивірус') && !c.includes('eset') && !c.includes('кінотеатр') && !c.includes('sweet') && !c.includes('сервіси support') && !c.includes('сервіси екта');
         }).map(t => t.cat))];
         
         let labelText = mode === "antivirus" ? "Оберіть тип антивірусу:" : "Оберіть тип сервісу:";
 
         elModalBody.innerHTML = `
-            <div style="margin-bottom: 20px;">
-                <span class="montazh-label">${labelText}</span>
-                <select id="setupCat" class="montazh-select">
-                    <option value="">-- Оберіть категорію --</option>
-                    ${setupCats.map(c => `<option value="${c}">${c}</option>`).join('')}
-                </select>
-            </div>
+            <div style="margin-bottom: 20px;"><span class="montazh-label">${labelText}</span><select id="setupCat" class="montazh-select"><option value="">-- Оберіть категорію --</option>${setupCats.map(c => `<option value="${c}">${c}</option>`).join('')}</select></div>
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
                 <span class="montazh-label" style="margin:0;">Доступні пакети:</span>
-                <button id="modalCompareBtn" onclick="toggleModalCompareMode()" class="compare-toggle-btn" style="display: none;">
-                    <span style="font-size: 14px;">⚖️</span> Порівняти
-                </button>
+                <button id="modalCompareBtn" onclick="toggleModalCompareMode()" class="compare-toggle-btn" style="display: none;"><span style="font-size: 14px;">⚖️</span> Порівняти</button>
             </div>
             <div id="setupResults"></div>
         `;
         
-        let catSelect = document.getElementById('setupCat');
-        let targetClean = normalizeServiceName(targetName);
-        
+        let catSelect = document.getElementById('setupCat'); let targetClean = normalizeServiceName(targetName);
         let targetTariff = db.tariffs.find(t => normalizeServiceName(t.service) === targetClean || (t.serviceRu && normalizeServiceName(t.serviceRu) === targetClean));
-        let catToSelect = targetName;
-        
-        if (targetTariff && targetTariff.cat) {
-            catToSelect = targetTariff.cat;
-        }
-
+        let catToSelect = targetName; if (targetTariff && targetTariff.cat) catToSelect = targetTariff.cat;
         let cleanCatToSelect = normalizeServiceName(catToSelect);
 
         for (let i = 0; i < catSelect.options.length; i++) {
             let optClean = normalizeServiceName(catSelect.options[i].value);
             if (optClean === cleanCatToSelect || optClean.includes(cleanCatToSelect) || cleanCatToSelect.includes(optClean)) {
-                catSelect.selectedIndex = i;
-                setTimeout(() => catSelect.dispatchEvent(new Event('change')), 50);
-                break;
+                catSelect.selectedIndex = i; setTimeout(() => catSelect.dispatchEvent(new Event('change')), 50); break;
             }
         }
-        
         catSelect.addEventListener('change', updateSetupResults);
     }
     
@@ -1656,41 +1238,22 @@
         if(!container) return;
         if(!cat && document.getElementById('setupCat')) { container.innerHTML = ""; return; }
         
-        // If there's no select, we are in direct modal list which doesn't use select, we just re-render
         let matches = db.tariffs.filter(t => t.cat === cat);
-        if(matches.length === 0 && document.getElementById('setupCat')) {
-             container.innerHTML = `<div style="text-align:center; padding: 20px; color:#94a3b8;">Послуг не знайдено</div>`;
-             return;
-        }
-        
-        // If we don't have matches from select, try using lastModalServices (for direct list mode)
-        if (matches.length === 0) {
-            matches = window.lastModalServices;
-        }
+        if(matches.length === 0 && document.getElementById('setupCat')) { container.innerHTML = `<div style="text-align:center; padding: 20px; color:var(--text-muted);">Послуг не знайдено</div>`; return; }
+        if (matches.length === 0) matches = window.lastModalServices;
         
         const p = parseFloat(elPriceInput.value) || 0; 
-        
         let processedMatches = matches.map(m => {
-            let numCost = 0;
-            let priceText = "Дізнатись вартість";
-            
+            let numCost = 0; let priceText = "Дізнатись вартість";
             if (m.cost) {
                 let rawCost = m.cost.toString().trim();
                 if (rawCost.includes('%')) {
-                    if (p > 0) {
-                        numCost = Math.round(p * parseFloat(rawCost.replace(',', '.'))/100);
-                        priceText = numCost.toLocaleString('uk-UA') + " ₴";
-                    } else {
-                        priceText = rawCost;
-                    }
+                    if (p > 0) { numCost = Math.round(p * parseFloat(rawCost.replace(',', '.'))/100); priceText = numCost.toLocaleString('uk-UA') + " ₴"; } 
+                    else priceText = rawCost; 
                 } else {
                     let cleanCost = rawCost.replace(/\s+/g, '').replace(/[^\d.,]/g, '').replace(',', '.');
-                    if (cleanCost === '') {
-                        priceText = rawCost;
-                    } else {
-                        numCost = parseFloat(cleanCost);
-                        priceText = isNaN(numCost) ? rawCost : numCost.toLocaleString('uk-UA') + " ₴";
-                    }
+                    if (cleanCost === '') priceText = rawCost; 
+                    else { numCost = parseFloat(cleanCost); priceText = isNaN(numCost) ? rawCost : numCost.toLocaleString('uk-UA') + " ₴"; }
                 }
             }
             return { ...m, numCost, priceText, service: m.service };
@@ -1702,193 +1265,65 @@
         let modalCompBtn = document.getElementById('modalCompareBtn');
         if (modalCompBtn) {
             if (processedMatches.length >= 2) modalCompBtn.style.display = 'flex';
-            else {
-                modalCompBtn.style.display = 'none';
-                if (isModalCompareMode) toggleModalCompareMode();
-            }
+            else { modalCompBtn.style.display = 'none'; if (isModalCompareMode) toggleModalCompareMode(); }
         }
         
         let html = processedMatches.map(m => {
-             let descE = findInDb(db.descriptions, m.service);
-             let descToggleHTML = generateDescToggleHTML(descE, m.code);
-             let cleanName = m.service.replace(/^\[.*?\]\s*/, '');
-             
+             let descE = findInDb(db.descriptions, m.service); let descToggleHTML = generateDescToggleHTML(descE, m.code); let cleanName = m.service.replace(/^\[.*?\]\s*/, '');
              let isSelected = modalCompareSelection.includes(m.service);
              let cardClass = "montazh-card brand-settings" + (isModalCompareMode ? ' compare-mode' : '') + (isSelected ? ' selected-for-compare' : '');
              let clickAction = isModalCompareMode ? `onclick="handleModalServiceClick(event, '${m.service.replace(/'/g, "\\'")}')"` : "";
              let checkboxHTML = isModalCompareMode ? `<div class="compare-checkbox"></div>` : "";
              
-             return `
-             <div class="${cardClass}" style="background-color: var(--feat-bg); border: 1px solid var(--border); overflow:hidden; position:relative;" ${clickAction}>
+             return `<div class="${cardClass}" style="background-color: var(--feat-bg); border: 1px solid var(--border); overflow:hidden; position:relative;" ${clickAction}>
                  ${checkboxHTML}
                  <div style="display: flex; justify-content: space-between; gap: 10px; align-items: flex-start; margin-bottom: 5px; position:relative; z-index:2; ${isModalCompareMode ? 'cursor:pointer;' : ''}">
                      <div style="font-size: 14px; font-weight: 700; line-height: 1.3; flex: 1; color: var(--text-main); ${isModalCompareMode ? 'pointer-events:none;' : ''}">${cleanName}</div>
                      <div style="font-size: 17px; font-weight: 900; white-space: nowrap; color: var(--text-main); ${isModalCompareMode ? 'pointer-events:none;' : ''}">${m.priceText}</div>
                  </div>
                  <div style="position:relative; z-index:2;">${descToggleHTML}</div>
-             </div>
-             `;
+             </div>`;
         }).join('');
-        
         container.innerHTML = html;
-    }
-
-    function openModal(name, code = "") {
-        scrollPos = window.pageYOffset; 
-        document.body.style.top = `-${scrollPos}px`; 
-        document.body.classList.add('modal-open');
-        isModalCompareMode = false;
-        modalCompareSelection = [];
-        compareBar.classList.remove('show');
-        
-        let nameClean = normalizeServiceName(name);
-        let u = name.toUpperCase(); 
-
-        let isSetupCategory = db.tariffs.some(t => t.cat && normalizeServiceName(t.cat) === nameClean);
-
-        let isStaticEpz = (u.includes('WINDOWS') || u.includes('OFFICE') || u.includes('OFFICE 365') || u.includes('OFFICE 2024') || u.includes('ESD') || u.includes('[ESD]')) 
-            && !u.includes('НАЛАШТУВАННЯ') 
-            && !u.includes('ВСТАНОВЛЕННЯ') 
-            && !u.includes('АНТИВІРУС') 
-            && !u.includes('ESET')
-            && !u.includes('PARALLELS');
-
-        if (!isStaticEpz) {
-            if (u.includes('МОНТАЖ') || u.includes('ПІДКЛЮЧЕННЯ') || (u.includes('ВСТАНОВЛЕННЯ') && !u.includes('ЗАХИСН'))) {
-                document.getElementById('modalTitle').innerText = "Монтаж ВПТ";
-                renderMontazhModal();
-                elModal.classList.add('show');
-                return;
-            } 
-            else if (u.includes('ПЕРЕВІРКА') || u.includes('ПІКСЕЛ')) {
-                document.getElementById('modalTitle').innerText = "Перевірка на биті пікселі";
-                renderDirectListModal(["перевірка", "піксел"]);
-                elModal.classList.add('show');
-                return;
-            } 
-            else if (u.includes('ПОКЛЕЙКА') || u.includes('ЗАХИСН') || u.includes('СКЛО') || u.includes('ПЛІВК')) {
-                document.getElementById('modalTitle').innerText = "Поклейка скла та плівок";
-                renderDirectListModal(["поклейка", "скло", "плівк", "захисн"]);
-                elModal.classList.add('show');
-                return;
-            }
-            else if (u.includes('АНТИВІРУС') || u.includes('ESET')) {
-                document.getElementById('modalTitle').innerText = "Антивіруси";
-                renderSetupModal(name, "antivirus");
-                elModal.classList.add('show');
-                return;
-            }
-            else if (u.includes('КІНОТЕАТР') || u.includes('SWEET') || u.includes('PARALLELS')) { 
-                document.getElementById('modalTitle').innerText = u.includes('PARALLELS') ? "Parallels Desktop" : "Онлайн кінотеатри";
-                renderDirectListModal(u.includes('PARALLELS') ? ["parallels"] : ["sweet", "кінотеатр"]);
-                elModal.classList.add('show');
-                return;
-            }
-            else if (isSetupCategory || u.includes('НАЛАШТУВАННЯ') || u.includes('ПЗ') || u.includes('ПОСЛУГИ') || u.includes('ГОДИНА РОБОТИ')) {
-                document.getElementById('modalTitle').innerText = "Налаштування та сервіси";
-                renderSetupModal(name, "setup");
-                elModal.classList.add('show');
-                return;
-            }
-        }
-
-        let title = name.replace(/🇺🇦\s*/g, '').replace(/^UA\s+/i, ''); 
-        title = title.replace(/^\[.*?\]\s*/, '');
-        document.getElementById('modalTitle').innerText = title;
-        
-        const raw = findInDb(db.descriptions, name) || "";
-        
-        let isValidCode = false;
-        if (code) {
-            let cStr = code.toString().trim();
-            let nStr = name.toString().trim();
-            if (cStr !== "" && cStr.toLowerCase() !== nStr.toLowerCase() && /\d/.test(cStr)) {
-                isValidCode = true;
-            }
-        }
-        
-        let codeBlock = isValidCode ? `
-            <div class="code-block-wrapper" onclick="copyCode(event, this, '${code}')">
-                <span class="code-label-text">Код сервісу:</span>
-                <span class="code-value-text">${code} <span style="font-size:16px;">📋</span></span>
-            </div>` : '';
-            
-        elModalBody.innerHTML = codeBlock + parseDescriptionLines(raw);
-        elModal.classList.add('show'); 
     }
 
     function parseChangelogLines(text) {
         if (!text) return '<div style="text-align:center; color:var(--text-muted);">Опис змін відсутній...</div>';
-        
         text = text.replace(/^"|"$/g, '').trim();
         let lines = text.split('\n');
         let html = '<div style="display:flex; flex-direction:column; gap:8px;">';
-        
         lines.forEach(line => {
             const l = line.trim();
             if (l) {
                 let hasEmoji = /^(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])/.test(l);
                 let prefix = hasEmoji ? "" : "<span style='color:var(--primary); font-weight:bold; margin-right:6px;'>•</span>";
-                
-                html += `
-                <div style="display:flex; align-items:flex-start; font-size:13px; line-height:1.4; color:var(--text-main);">
-                    ${prefix}<span style="flex:1;">${l}</span>
-                </div>`;
+                html += `<div style="display:flex; align-items:flex-start; font-size:13px; line-height:1.4; color:var(--text-main);">${prefix}<span style="flex:1;">${l}</span></div>`;
             }
         });
-        
         html += '</div>';
         return html;
     }
 
     window.showChangelogModal = function(version, changelogText) {
-        scrollPos = window.pageYOffset; 
-        document.body.style.top = `-${scrollPos}px`; 
-        document.body.classList.add('modal-open');
-        
+        scrollPos = window.pageYOffset; document.body.style.top = `-${scrollPos}px`; document.body.classList.add('modal-open');
         document.getElementById('modalTitle').innerHTML = `<div class="update-title-wrapper"><div class="update-icon-circle">🚀</div><div class="update-text-wrapper"><span class="update-title">Додаток оновлено!</span><span class="update-version">Версія v${version}</span></div></div>`;
-        
-        let changelogLinesHTML = parseChangelogLines(changelogText);
-        
-        let html = `
-        <div style="text-align: center; margin-bottom: 15px;">
-            <span style="font-size: 30px;">🎉</span>
-            <h3 style="margin: 10px 0 5px 0; color: var(--text-main); font-weight: 800;">Ось що нового у цій версії:</h3>
-        </div>
-        <div class="changelog-panel">
-            ${changelogLinesHTML}
-        </div>
-        <div style="text-align: center; margin-top: 15px; font-size: 11px; color: var(--text-muted); font-weight: 500; opacity: 0.8;">
-            Вдалих продажів! 💙
-        </div>
-        `;
-        
-        document.getElementById('modalBody').innerHTML = html;
-        document.getElementById('descModal').classList.add('show');
+        let html = `<div style="text-align: center; margin-bottom: 15px;"><span style="font-size: 30px;">🎉</span><h3 style="margin: 10px 0 5px 0; color: var(--text-main); font-weight: 800;">Ось що нового у цій версії:</h3></div>
+        <div class="changelog-panel">${parseChangelogLines(changelogText)}</div>
+        <div style="text-align: center; margin-top: 15px; font-size: 11px; color: var(--text-muted); font-weight: 500; opacity: 0.8;">Вдалих продажів! 💙</div>`;
+        document.getElementById('modalBody').innerHTML = html; document.getElementById('descModal').classList.add('show');
     };
 
     function closeModal() { 
         elModal.classList.remove('show'); 
-        if(isModalCompareMode) {
-            isModalCompareMode = false;
-            compareBar.classList.remove('show');
-        }
-        document.body.classList.remove('modal-open');
-        document.body.style.top = '';
-        window.scrollTo(0, scrollPos);
+        if(isModalCompareMode) { isModalCompareMode = false; compareBar.classList.remove('show'); }
+        document.body.classList.remove('modal-open'); document.body.style.top = ''; window.scrollTo(0, scrollPos);
         document.getElementById('modalTitle').innerHTML = "Опис"; 
     }
-    
-    document.getElementById('closeModalBtn').onclick = closeModal;
-    elModal.onclick = (e) => { if(e.target.id === 'descModal') closeModal(); };
+    document.getElementById('closeModalBtn').onclick = closeModal; elModal.onclick = (e) => { if(e.target.id === 'descModal') closeModal(); };
 
     init();
 
-    if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-            navigator.serviceWorker.register('./sw.js').catch(console.error);
-        });
-    }
+    if ('serviceWorker' in navigator) { window.addEventListener('load', () => { navigator.serviceWorker.register('./sw.js').catch(console.error); }); }
 </script>
 </body>
 </html>
