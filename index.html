@@ -29,6 +29,7 @@
             --clr-other-bg: #e2e2e8; --clr-other-text: #1e293b;
             --gradient-primary: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
             --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
         }
 
         body.modal-open { overflow: hidden; position: fixed; width: 100%; }
@@ -147,7 +148,6 @@
         .service-card.brand-install:not(.selected-for-compare) { background: var(--clr-install-bg); color: var(--clr-install-text); box-shadow: 0 6px 15px rgba(167, 139, 250, 0.4); }
         .service-card.brand-other:not(.selected-for-compare) { background: #ffffff; color: var(--text-main); }
         
-        /* Якщо вибрано, текст має залишатися читабельним (скидаємо білий колір) */
         .service-card.selected-for-compare .service-title { color: #0f172a; }
         .service-card.selected-for-compare .brand-tag { color: #0f172a; background: rgba(37,99,235,0.1) !important; }
         .service-card.selected-for-compare .price-badge { color: #0f172a; background: rgba(255,255,255,0.9); }
@@ -223,6 +223,7 @@
         .float-btn.primary:active { transform: scale(0.92) translateZ(0); box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2); }
         .float-btn.primary svg { width: 24px; height: 24px; }
 
+        /* --- КРАСИВЕ МОДАЛЬНЕ ОКНО ОНОВЛЕННЯ --- */
         .update-title-wrapper { display: flex; align-items: center; gap: 12px; width: 100%; text-align: left;}
         .update-icon-circle { width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px; background: #eff6ff; border: 1px solid #bfdbfe; box-shadow: inset 0 2px 4px rgba(0,0,0,0.05); }
         .update-text-wrapper { display: flex; flex-direction: column; flex: 1;}
@@ -244,17 +245,15 @@
         .compare-execute-btn.ready { background: var(--gradient-primary); color: #ffffff; cursor: pointer; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2); }
         .compare-execute-btn.ready:active { transform: scale(0.96); }
 
-        .compare-wrapper { overflow-x: auto; margin-top: 10px; border-radius: 14px; border: 1px solid #e2e8f0; box-shadow: 0 4px 10px rgba(0,0,0,0.03); -webkit-overflow-scrolling: touch; width: 100%; }
-        .compare-table { width: 100%; border-collapse: collapse; font-size: 12px; text-align: center; background: #fff; table-layout: auto; }
-        .compare-table th { padding: 12px 10px; font-weight: 800; font-size: 10px; text-transform: uppercase; border-bottom: 2px solid #e2e8f0; background: #f8fafc; min-width: 100px; vertical-align: top; }
-        .compare-table td { padding: 14px 10px; border-bottom: 1px solid #f1f5f9; color: #475569; font-weight: 600; line-height: 1.3; }
+        .compare-wrapper { overflow-y: auto; margin-top: 10px; border-radius: 14px; border: 1px solid #e2e8f0; box-shadow: 0 4px 10px rgba(0,0,0,0.03); max-height: 50vh; }
+        .compare-table { width: 100%; border-collapse: collapse; font-size: 12px; background: #fff; }
+        .compare-table th { padding: 12px 10px; border-bottom: 2px solid #e2e8f0; background: #f8fafc; text-align: center; position: sticky; top: 0; z-index: 2; width: 50%; }
+        .compare-table td { padding: 14px 10px; border-bottom: 1px solid #f1f5f9; color: #475569; font-weight: 600; line-height: 1.4; vertical-align: middle; text-align: center; }
         .compare-table tr:last-child td { border-bottom: none; }
-        .compare-table tr td:first-child { text-align: left; font-weight: 700; color: #0f172a; position: sticky; left: 0; background: #fff; z-index: 1; box-shadow: 2px 0 5px rgba(0,0,0,0.04); padding-left: 14px; min-width: 120px;}
-        .compare-table th:first-child { position: sticky; left: 0; z-index: 2; background: #f8fafc; padding-left: 14px; text-align: left; vertical-align: middle; }
-        .check-yes { color: #22c55e; font-size: 18px; font-weight: 900; }
-        .check-no { color: #ef4444; font-size: 18px; font-weight: 900; }
-        .diff-highlight { background-color: #dcfce7 !important; border-radius: 8px; } /* Зелена підсвітка переваги */
-
+        
+        .diff-highlight { background-color: rgba(34, 197, 94, 0.15) !important; color: #166534 !important; border-radius: 8px;} /* Зелена підсвітка */
+        .feat-row { position: relative; }
+        
     </style>
 </head>
 <body>
@@ -356,7 +355,7 @@
 </div>
 
 <script>
-    const API_URL = 'https://script.google.com/macros/s/AKfycbyLU2HRmJ9vtPkWqGpEUj85zeJJtSy-XtCTfKNxtdgYfOiPTPt6k_N95aENitTUXZMEqg/exec';
+    const API_URL = 'https://script.google.com/macros/s/AKfycbzZJgug9WwuaooRtNoPjRvR7mAJe56GO7YJnpZYCJxPHwbayxFT5WQpt8h5rkdcWVaDlw/exec';
     
     const CACHE_KEY = 'skillhub_v1000_drive_fix'; 
     const SEEN_VERSION_KEY = 'skillhub_seen_version';
@@ -570,7 +569,6 @@
         });
     }, 100));
 
-    // Оновлена функція очищення - скидаємо режим порівняння
     elClearBtn.onclick = () => { 
         elCatInput.value = ""; 
         elPriceInput.value = ""; 
@@ -580,7 +578,7 @@
         elResultBox.style.display = "none"; 
         currentCategoryData = null; 
         elCatInput.focus();
-        if(isCompareMode) toggleCompareMode(); // Вимикаємо порівняння
+        if(isCompareMode) toggleCompareMode(); 
         toggleCompareBtn.style.display = 'none';
     };
     elOkBtn.onclick = () => elPriceInput.blur();
@@ -593,7 +591,7 @@
         elItemCategory.innerText = item.category || "";
         elPriceWrapper.style.display = 'flex';
         elResultBox.style.display = 'block';
-        if(isCompareMode) toggleCompareMode(); // скинути, якщо було активно з попереднього пошуку
+        if(isCompareMode) toggleCompareMode(); 
         
         renderServices(); 
     }
@@ -857,162 +855,6 @@
         return `<div style="background: rgba(0,0,0,0.02); border-radius: 16px; padding: 16px; border: 1px solid rgba(0,0,0,0.04);">${codeBlockHTML}${descContentText}</div>`;
     }
 
-    // --- ЛОГІКА ПОРІВНЯННЯ ---
-    function toggleCompareMode() {
-        isCompareMode = !isCompareMode;
-        compareSelection = []; // скидаємо вибрані
-        
-        if (isCompareMode) {
-            toggleCompareBtn.classList.add('active');
-            toggleCompareBtn.innerHTML = '<span style="font-size: 14px;">✕</span> Скасувати';
-            compareBar.classList.add('show');
-            floatBtnsGroup.style.display = 'none'; // Ховаємо плаваючі кнопки
-        } else {
-            toggleCompareBtn.classList.remove('active');
-            toggleCompareBtn.innerHTML = '<span style="font-size: 14px;">⚖️</span> Порівняти';
-            compareBar.classList.remove('show');
-            floatBtnsGroup.style.display = 'flex';
-        }
-        
-        updateCompareUI();
-        renderServices(); // Перемальовуємо сервіси
-    }
-
-    function handleServiceClick(name, code) {
-        if (isCompareMode) {
-            // Режим порівняння: клік виділяє картку
-            let index = compareSelection.indexOf(name);
-            if (index > -1) {
-                compareSelection.splice(index, 1); // знімаємо галочку
-            } else {
-                if (compareSelection.length < 2) {
-                    compareSelection.push(name); // ставимо галочку
-                } else {
-                    // Якщо вже 2 вибрано, ігноруємо або можна трусити панель
-                    compareBar.style.transform = 'translateY(-10px)';
-                    setTimeout(() => compareBar.style.transform = 'translateY(0)', 150);
-                }
-            }
-            updateCompareUI();
-            renderServices(); // Перемальовуємо, щоб оновити чекбокси
-        } else {
-            // Стандартний режим: клік відкриває модалку
-            openModal(name, code);
-        }
-    }
-
-    function updateCompareUI() {
-        let count = compareSelection.length;
-        if (count === 0) document.getElementById('compareStatusText').innerText = "Оберіть 2 сервіси для порівняння";
-        else if (count === 1) document.getElementById('compareStatusText').innerText = "Оберіть ще 1 сервіс";
-        else document.getElementById('compareStatusText').innerText = "Готово до порівняння!";
-        
-        compareExecuteBtn.innerText = `Порівняти (${count}/2)`;
-        
-        if (count === 2) {
-            compareExecuteBtn.classList.add('ready');
-        } else {
-            compareExecuteBtn.classList.remove('ready');
-        }
-    }
-
-    // Допоміжна функція для витягування характеристик сервісу для таблиці порівняння
-    function extractFeaturesForCompare(desc) {
-        let features = {};
-        if (!desc) return features;
-        let lines = desc.replace(/\|/g, '\n').split(/\r?\n/);
-        
-        lines.forEach(line => {
-            let l = line.trim();
-            if (!l || l === "Опис відсутній..." || l.startsWith('+') || l.startsWith('=') || l.includes('---')) return;
-            
-            let isNegative = l.startsWith('✕') || l.startsWith('❌');
-            let cleanText = l.replace(/^(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff]|✓|✕|❌|✅|\+|-|\*|•|🔹|⚙️|🛡️|🔑|♻️|🎬|🛠️)\s*/, '').trim();
-            
-            if (cleanText.toLowerCase().startsWith('не покриває ')) {
-                cleanText = cleanText.substring(12).trim();
-                isNegative = true;
-            }
-            
-            if (cleanText) {
-                cleanText = cleanText.charAt(0).toUpperCase() + cleanText.slice(1);
-                let norm = cleanText.toLowerCase();
-                features[norm] = { text: cleanText, isPositive: !isNegative };
-            }
-        });
-        return features;
-    }
-
-    window.executeCompare = function() {
-        if (compareSelection.length !== 2) return;
-        
-        let sA = window.lastCalculatedServices.find(s => s.name === compareSelection[0]);
-        let sB = window.lastCalculatedServices.find(s => s.name === compareSelection[1]);
-        
-        if (!sA || !sB) return;
-
-        let descA = findInDb(db.descriptions, sA.name) || "";
-        let descB = findInDb(db.descriptions, sB.name) || "";
-
-        let featA = extractFeaturesForCompare(descA);
-        let featB = extractFeaturesForCompare(descB);
-
-        // Збираємо всі унікальні ключі (властивості) обох сервісів
-        let allKeys = [...new Set([...Object.keys(featA), ...Object.keys(featB)])];
-
-        if (allKeys.length === 0) {
-            alert("Немає детального опису для порівняння цих сервісів.");
-            return;
-        }
-
-        let html = `<div style="font-size: 12px; color: #64748b; margin-bottom: 15px; text-align: center;">Порівняння обраних сервісів</div>`;
-        html += `<div class="compare-wrapper"><table class="compare-table"><thead><tr><th>Що покриває?</th>`;
-        
-        // Шапка таблиці
-        [sA, sB].forEach(s => {
-            let brandLabel = s.brand || (s.cls === 'brand-ekta' ? 'ЕКТА' : (s.cls === 'brand-support' ? 'SUPPORT' : (s.cls === 'brand-epz' ? 'ЕПЗ' : 'СЕРВІС')));
-            html += `<th>
-                        <div class="brand-tag ${s.cls}" style="margin:0 auto 6px auto; display: inline-block;">${brandLabel}</div>
-                        <div style="font-size: 11px; white-space: normal; line-height: 1.2;">${s.title}</div>
-                        <div style="font-size: 13px; font-weight: 900; color: #1e293b; margin-top: 6px;">${s.label}</div>
-                     </th>`;
-        });
-        html += `</tr></thead><tbody>`;
-
-        // Тіло таблиці
-        allKeys.forEach(k => {
-            let valA = featA[k] ? featA[k].isPositive : false;
-            let valB = featB[k] ? featB[k].isPositive : false;
-            
-            // Витягуємо оригінальний текст з того об'єкту, де він є
-            let originalText = featA[k] ? featA[k].text : featB[k].text;
-
-            // Логіка підсвічування зеленим
-            let isDiff = valA !== valB;
-            let classA = valA ? "check-yes" : "check-no";
-            let classB = valB ? "check-yes" : "check-no";
-            
-            let bgClassA = (isDiff && valA) ? "diff-highlight" : "";
-            let bgClassB = (isDiff && valB) ? "diff-highlight" : "";
-
-            html += `<tr>
-                <td>${originalText}</td>
-                <td class="${classA} ${bgClassA}">${valA ? '✓' : '✕'}</td>
-                <td class="${classB} ${bgClassB}">${valB ? '✓' : '✕'}</td>
-            </tr>`;
-        });
-
-        html += `</tbody></table></div>`;
-
-        scrollPos = window.pageYOffset; 
-        document.body.style.top = `-${scrollPos}px`; 
-        document.body.classList.add('modal-open');
-        
-        document.getElementById('modalTitle').innerText = "Порівняння";
-        document.getElementById('modalBody').innerHTML = html;
-        document.getElementById('descModal').classList.add('show');
-    };
-
     function generateDescToggleHTML(descE, codeF) {
         let descContentText = "";
         let raw = descE ? descE.toString().trim() : "";
@@ -1035,6 +877,157 @@
             </div>
         `;
     }
+
+    // --- ЛОГІКА ПОРІВНЯННЯ ---
+    function toggleCompareMode() {
+        isCompareMode = !isCompareMode;
+        compareSelection = []; 
+        
+        if (isCompareMode) {
+            toggleCompareBtn.classList.add('active');
+            toggleCompareBtn.innerHTML = '<span style="font-size: 14px;">✕</span> Скасувати';
+            compareBar.classList.add('show');
+            floatBtnsGroup.style.display = 'none'; 
+        } else {
+            toggleCompareBtn.classList.remove('active');
+            toggleCompareBtn.innerHTML = '<span style="font-size: 14px;">⚖️</span> Порівняти';
+            compareBar.classList.remove('show');
+            floatBtnsGroup.style.display = 'flex';
+        }
+        
+        updateCompareUI();
+        renderServices(); 
+    }
+
+    function handleServiceClick(name, code) {
+        if (isCompareMode) {
+            let index = compareSelection.indexOf(name);
+            if (index > -1) {
+                compareSelection.splice(index, 1); 
+            } else {
+                if (compareSelection.length < 2) {
+                    compareSelection.push(name); 
+                } else {
+                    compareBar.style.transform = 'translateY(-10px)';
+                    setTimeout(() => compareBar.style.transform = 'translateY(0)', 150);
+                }
+            }
+            updateCompareUI();
+            renderServices(); 
+        } else {
+            openModal(name, code);
+        }
+    }
+
+    function updateCompareUI() {
+        let count = compareSelection.length;
+        if (count === 0) document.getElementById('compareStatusText').innerText = "Оберіть 2 сервіси для порівняння";
+        else if (count === 1) document.getElementById('compareStatusText').innerText = "Оберіть ще 1 сервіс";
+        else document.getElementById('compareStatusText').innerText = "Готово до порівняння!";
+        
+        compareExecuteBtn.innerText = `Порівняти (${count}/2)`;
+        
+        if (count === 2) compareExecuteBtn.classList.add('ready');
+        else compareExecuteBtn.classList.remove('ready');
+    }
+
+    // Збираємо список властивостей як масив рядків
+    function extractFeaturesList(desc) {
+        let features = [];
+        if (!desc) return features;
+        let lines = desc.replace(/\|/g, '\n').split(/\r?\n/);
+        
+        lines.forEach(line => {
+            let l = line.trim();
+            if (!l || l === "Опис відсутній..." || l.startsWith('+') || l.startsWith('=') || l.includes('---')) return;
+            // Беремо лише позитивні властивості (ті, що є)
+            if (!l.startsWith('✕') && !l.startsWith('❌') && !l.toLowerCase().startsWith('не покриває ')) {
+                let cleanText = l.replace(/^(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff]|✓|✕|❌|✅|\+|-|\*|•|🔹|⚙️|🛡️|🔑|♻️|🎬|🛠️)\s*/, '').trim();
+                if (cleanText) {
+                    cleanText = cleanText.charAt(0).toUpperCase() + cleanText.slice(1);
+                    features.push(cleanText);
+                }
+            }
+        });
+        return features;
+    }
+
+    // Перевіряємо чи властивість A є схожою на властивість B (ігноруємо регістр)
+    function hasSimilarFeature(feature, list) {
+        let fNorm = feature.toLowerCase();
+        return list.some(item => item.toLowerCase() === fNorm);
+    }
+
+    window.executeCompare = function() {
+        if (compareSelection.length !== 2) return;
+        
+        let sA = window.lastCalculatedServices.find(s => s.name === compareSelection[0]);
+        let sB = window.lastCalculatedServices.find(s => s.name === compareSelection[1]);
+        
+        if (!sA || !sB) return;
+
+        let descA = findInDb(db.descriptions, sA.name) || "";
+        let descB = findInDb(db.descriptions, sB.name) || "";
+
+        let listA = extractFeaturesList(descA);
+        let listB = extractFeaturesList(descB);
+
+        if (listA.length === 0 && listB.length === 0) {
+            alert("Немає детального опису для порівняння цих сервісів.");
+            return;
+        }
+
+        let maxRows = Math.max(listA.length, listB.length);
+
+        let html = `<div style="font-size: 12px; color: #64748b; margin-bottom: 15px; text-align: center;">Порівняння властивостей (унікальні підсвічені зеленим)</div>`;
+        html += `<div class="compare-wrapper"><table class="compare-table"><thead><tr>`;
+        
+        [sA, sB].forEach(s => {
+            let brandLabel = s.brand || (s.cls === 'brand-ekta' ? 'ЕКТА' : (s.cls === 'brand-support' ? 'SUPPORT' : (s.cls === 'brand-epz' ? 'ЕПЗ' : 'СЕРВІС')));
+            html += `<th>
+                        <div class="brand-tag ${s.cls}" style="margin:0 auto 6px auto; display: inline-block;">${brandLabel}</div>
+                        <div style="font-size: 11px; white-space: normal; line-height: 1.2;">${s.title}</div>
+                        <div style="font-size: 13px; font-weight: 900; color: #1e293b; margin-top: 6px;">${s.label}</div>
+                     </th>`;
+        });
+        html += `</tr></thead><tbody>`;
+
+        for (let i = 0; i < maxRows; i++) {
+            html += `<tr>`;
+            
+            // Колонка 1
+            if (i < listA.length) {
+                let textA = listA[i];
+                let isUniqueA = !hasSimilarFeature(textA, listB);
+                let bgClass = isUniqueA ? "diff-highlight" : "";
+                html += `<td class="${bgClass}"><div class="feat-row">${isUniqueA ? '<span style="margin-right:4px;">✨</span>' : ''}${textA}</div></td>`;
+            } else {
+                html += `<td></td>`;
+            }
+
+            // Колонка 2
+            if (i < listB.length) {
+                let textB = listB[i];
+                let isUniqueB = !hasSimilarFeature(textB, listA);
+                let bgClass = isUniqueB ? "diff-highlight" : "";
+                html += `<td class="${bgClass}"><div class="feat-row">${isUniqueB ? '<span style="margin-right:4px;">✨</span>' : ''}${textB}</div></td>`;
+            } else {
+                html += `<td></td>`;
+            }
+
+            html += `</tr>`;
+        }
+
+        html += `</tbody></table></div>`;
+
+        scrollPos = window.pageYOffset; 
+        document.body.style.top = `-${scrollPos}px`; 
+        document.body.classList.add('modal-open');
+        
+        document.getElementById('modalTitle').innerText = "Порівняння";
+        document.getElementById('modalBody').innerHTML = html;
+        document.getElementById('descModal').classList.add('show');
+    };
 
     function renderServices() {
         renderTechInfo(); 
@@ -1145,10 +1138,8 @@
 
         window.lastCalculatedServices = dataForSort;
 
-        // Показуємо кнопку "Порівняти" тільки якщо є хоча б 2 сервіси
-        if (dataForSort.length >= 2) {
-            toggleCompareBtn.style.display = 'flex';
-        } else {
+        if (dataForSort.length >= 2) toggleCompareBtn.style.display = 'flex';
+        else {
             toggleCompareBtn.style.display = 'none';
             if (isCompareMode) toggleCompareMode();
         }
@@ -1591,12 +1582,9 @@
         lines.forEach(line => {
             const l = line.trim();
             if (l) {
-                let hasEmoji = /^(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])/.test(l);
-                let prefix = hasEmoji ? "" : "<span style='color:#2563eb; font-weight:bold; margin-right:6px;'>•</span>";
-                
                 html += `
                 <div style="display:flex; align-items:flex-start; font-size:13px; line-height:1.4; color:#1e293b;">
-                    ${prefix}<span style="flex:1;">${l}</span>
+                    <span style="flex:1;">${l}</span>
                 </div>`;
             }
         });
