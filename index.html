@@ -71,12 +71,14 @@
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         @keyframes pulseText { 0%, 100% { transform: scale(0.95); opacity: 0.6; } 50% { transform: scale(1.05); opacity: 1; } }
 
-        .container { width: 94%; max-width: 480px; background: var(--card-bg); padding: 24px; border-radius: 30px; box-shadow: 0 15px 40px -5px rgba(0, 0, 0, 0.1); margin-top: 5vh; margin-bottom: 120px; border: 1px solid var(--border); transition: background 0.3s, border 0.3s; }
+        .container { position: relative; width: 94%; max-width: 480px; background: var(--card-bg); padding: 24px; border-radius: 30px; box-shadow: 0 15px 40px -5px rgba(0, 0, 0, 0.1); margin-top: 5vh; margin-bottom: 120px; border: 1px solid var(--border); transition: background 0.3s, border 0.3s; }
         
-        .header-wrapper { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-        h2 { color: var(--primary); margin: 0; font-size: 24px; font-weight: 800; letter-spacing: -0.7px;}
-        .theme-btn { background: var(--box-bg); border: 1px solid var(--border); font-size: 18px; cursor: pointer; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: var(--shadow-md); transition: 0.2s; }
-        .theme-btn:active { transform: scale(0.9); }
+        /* Акуратні кнопки в правому верхньому куті */
+        .top-right-controls { position: absolute; top: 22px; right: 24px; display: flex; gap: 14px; align-items: center; z-index: 10; }
+        .top-btn { background: none; border: none; font-size: 20px; cursor: pointer; padding: 0; opacity: 0.7; transition: 0.2s; color: var(--text-main); text-decoration: none; display: flex; align-items: center; justify-content: center;}
+        .top-btn:active { transform: scale(0.85); opacity: 1; }
+        
+        h2 { color: var(--primary); margin: 0 0 20px 0; font-size: 24px; font-weight: 800; letter-spacing: -0.7px;}
         
         .status-container { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
         .status-wrapper { display: flex; align-items: center; gap: 8px; }
@@ -143,7 +145,7 @@
         .gallery-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 100000; display: flex; flex-direction: column; align-items: center; justify-content: center; opacity: 0; visibility: hidden; transition: opacity 0.3s; touch-action: none; overscroll-behavior: none; }
         .gallery-modal.show { opacity: 1; visibility: visible; }
         .gallery-content { position: relative; width: 100%; height: 75vh; max-width: 100%; display: flex; align-items: center; justify-content: center; padding: 0; box-sizing: border-box; overflow: hidden; }
-        .gallery-content img { max-width: 100%; max-height: 100%; border-radius: 8px; object-fit: contain; transform-origin: center; will-change: transform; }
+        .gallery-content img { max-width: 100%; max-height: 100%; border-radius: 8px; object-fit: contain; transform-origin: center; will-change: transform; pointer-events: auto; }
         .gallery-nav { background: rgba(255,255,255,0.15); color: white; border: 1px solid rgba(255,255,255,0.2); border-radius: 50%; width: 44px; height: 44px; font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; position: absolute; top: 50%; transform: translateY(-50%); z-index: 50; }
         .gallery-nav.prev { left: 15px; }
         .gallery-nav.next { right: 15px; }
@@ -212,13 +214,13 @@
         .desc-content { margin-top: 10px; padding: 14px; background: var(--feat-bg); border-radius: 14px; border: 1px solid var(--border);}
         
         .footer { margin-top: 25px; text-align: center; font-size: 10px; color: var(--text-muted); font-weight: 600; padding-bottom: 20px;}
-        .app-version { display: block; font-size: 10px; font-weight: 700; margin-top: 4px; color: var(--primary); }
+        .app-version { display: inline-block; font-size: 10px; font-weight: 700; margin-top: 8px; color: var(--primary); padding: 4px 8px; background: var(--feat-bg); border-radius: 8px; cursor: pointer; transition: 0.2s;}
+        .app-version:active { transform: scale(0.95); background: var(--border); }
 
         .floating-btns { position: fixed; bottom: 24px; right: 24px; display: flex; flex-direction: column; gap: 16px; z-index: 99999; }
         .float-btn { width: 52px; height: 52px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; text-decoration: none; background: var(--box-bg); border: 1px solid var(--border); box-shadow: var(--shadow-lg); transition: 0.2s; }
         #scrollTopBtn { color: var(--primary); opacity: 0; visibility: hidden; transform: translateY(20px); }
         #scrollTopBtn.show { opacity: 1; visibility: visible; transform: translateY(0); }
-        .float-btn.primary { background: var(--primary); color: #fff; border: none; }
 
         /* --- КРАСИВЕ МОДАЛЬНЕ ОКНО ОНОВЛЕННЯ --- */
         .update-title-wrapper { display: flex; align-items: center; gap: 12px; width: 100%; text-align: left;}
@@ -259,10 +261,12 @@
 </div>
 
 <div class="container">
-    <div class="header-wrapper">
-        <h2>SkillHUB Assistant</h2>
-        <button id="themeToggle" class="theme-btn">🌙</button>
+    <div class="top-right-controls">
+        <a href="https://forms.gle/z4wz9XcSLT5pGXkp8" target="_blank" class="top-btn" title="Зворотній зв'язок">💬</a>
+        <button id="themeToggle" class="top-btn" title="Змінити тему">🌙</button>
     </div>
+
+    <h2>SkillHUB Assistant</h2>
     
     <div class="status-container">
         <div class="status-wrapper">
@@ -303,8 +307,8 @@
     </div>
     
     <div class="footer">
-        🇺🇦 ROZETKA KHARKIV REGION • 2026
-        <span id="appVersionDisp" class="app-version"></span>
+        🇺🇦 ROZETKA KHARKIV REGION • 2026<br>
+        <span id="appVersionDisp" class="app-version" onclick="if(db.appVersion) showChangelogModal(db.appVersion, db.changelog)">Оновлення відсутні</span>
     </div>
 </div>
 
@@ -340,13 +344,6 @@
             <polyline points="18 15 12 9 6 15"></polyline>
         </svg>
     </button>
-    
-    <a href="https://forms.gle/z4wz9XcSLT5pGXkp8" target="_blank" class="float-btn primary" title="Зворотній зв'язок">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
-            <polygon points="12 7 13.5 10.5 17 11 14.5 13.5 15 17 12 15.5 9 17 9.5 13.5 7 11 10.5 10.5 12 7"></polygon>
-        </svg>
-    </a>
 </div>
 
 <script>
@@ -553,7 +550,9 @@
 
     function enableUI() { 
         elCatInput.disabled = false; 
-        if (db.appVersion) elAppVersion.innerText = "Версія v" + db.appVersion;
+        if (db.appVersion) {
+            elAppVersion.innerText = "Версія v" + db.appVersion + " (що нового?)";
+        }
         if (elLoader) elLoader.classList.add('hidden'); 
     }
 
@@ -958,6 +957,12 @@
         return features;
     }
 
+    // Перевіряємо чи властивість A є схожою на властивість B
+    function hasSimilarFeature(feature, list) {
+        let fNorm = feature.toLowerCase();
+        return list.some(item => item.toLowerCase() === fNorm);
+    }
+
     window.executeCompare = function() {
         if (compareSelection.length !== 2) return;
         
@@ -993,7 +998,7 @@
             return;
         }
 
-        let html = `<div style="font-size: 12px; color: var(--text-muted); margin-bottom: 15px; text-align: center;">Властивості послуг (відмінності позначені ✨)</div>`;
+        let html = `<div style="font-size: 12px; color: var(--text-muted); margin-bottom: 15px; text-align: center;">Властивості послуг (унікальні відмічені ✨)</div>`;
         html += `<div class="compare-wrapper"><table class="compare-table"><thead><tr>`;
         
         [sA, sB].forEach(s => {
@@ -1007,22 +1012,28 @@
         html += `</tr></thead><tbody>`;
 
         // Спільні
-        common.forEach(pair => {
-            html += `<tr>
-                <td><div class="feat-row">${pair.a}</div></td>
-                <td><div class="feat-row">${pair.b}</div></td>
-            </tr>`;
-        });
+        if (common.length > 0) {
+            html += `<tr><td colspan="2" style="background: var(--feat-bg); font-weight: 800; font-size: 10px; color: var(--text-muted); text-transform: uppercase; padding: 8px;">Спільні властивості</td></tr>`;
+            common.forEach(pair => {
+                html += `<tr>
+                    <td><div class="feat-row">${pair.a}</div></td>
+                    <td><div class="feat-row">${pair.b}</div></td>
+                </tr>`;
+            });
+        }
 
-        // Відмінні (пліч-о-пліч)
-        let maxDiff = Math.max(diffA.length, diffB.length);
-        for (let i = 0; i < maxDiff; i++) {
-            let valA = diffA[i] ? `<span style="margin-right:4px;">✨</span>${diffA[i]}` : "";
-            let valB = diffB[i] ? `<span style="margin-right:4px;">✨</span>${diffB[i]}` : "";
-            html += `<tr>
-                <td><div class="feat-row" style="font-weight:800; color: var(--primary);">${valA}</div></td>
-                <td><div class="feat-row" style="font-weight:800; color: var(--primary);">${valB}</div></td>
-            </tr>`;
+        // Відмінні
+        if (diffA.length > 0 || diffB.length > 0) {
+            html += `<tr><td colspan="2" style="background: var(--feat-bg); font-weight: 800; font-size: 10px; color: var(--text-muted); text-transform: uppercase; padding: 8px;">Відмінності</td></tr>`;
+            let maxDiff = Math.max(diffA.length, diffB.length);
+            for (let i = 0; i < maxDiff; i++) {
+                let valA = diffA[i] ? `<span style="margin-right:4px;">✨</span>${diffA[i]}` : "";
+                let valB = diffB[i] ? `<span style="margin-right:4px;">✨</span>${diffB[i]}` : "";
+                html += `<tr>
+                    <td><div class="feat-row" style="font-weight:800; color: var(--text-main);">${valA}</div></td>
+                    <td><div class="feat-row" style="font-weight:800; color: var(--text-main);">${valB}</div></td>
+                </tr>`;
+            }
         }
 
         html += `</tbody></table></div>`;
@@ -1579,87 +1590,6 @@
         container.innerHTML = html;
     }
 
-    function openModal(name, code = "") {
-        scrollPos = window.pageYOffset; 
-        document.body.style.top = `-${scrollPos}px`; 
-        document.body.classList.add('modal-open');
-        
-        let nameClean = normalizeServiceName(name);
-        let u = name.toUpperCase(); 
-
-        let isSetupCategory = db.tariffs.some(t => t.cat && normalizeServiceName(t.cat) === nameClean);
-
-        let isStaticEpz = (u.includes('WINDOWS') || u.includes('OFFICE') || u.includes('OFFICE 365') || u.includes('OFFICE 2024') || u.includes('ESD') || u.includes('[ESD]')) 
-            && !u.includes('НАЛАШТУВАННЯ') 
-            && !u.includes('ВСТАНОВЛЕННЯ') 
-            && !u.includes('АНТИВІРУС') 
-            && !u.includes('ESET')
-            && !u.includes('PARALLELS');
-
-        if (!isStaticEpz) {
-            if (u.includes('МОНТАЖ') || u.includes('ПІДКЛЮЧЕННЯ') || (u.includes('ВСТАНОВЛЕННЯ') && !u.includes('ЗАХИСН'))) {
-                document.getElementById('modalTitle').innerText = "Монтаж ВПТ";
-                renderMontazhModal();
-                elModal.classList.add('show');
-                return;
-            } 
-            else if (u.includes('ПЕРЕВІРКА') || u.includes('ПІКСЕЛ')) {
-                document.getElementById('modalTitle').innerText = "Перевірка на биті пікселі";
-                renderDirectListModal(["перевірка", "піксел"]);
-                elModal.classList.add('show');
-                return;
-            } 
-            else if (u.includes('ПОКЛЕЙКА') || u.includes('ЗАХИСН') || u.includes('СКЛО') || u.includes('ПЛІВК')) {
-                document.getElementById('modalTitle').innerText = "Поклейка скла та плівок";
-                renderDirectListModal(["поклейка", "скло", "плівк", "захисн"]);
-                elModal.classList.add('show');
-                return;
-            }
-            else if (u.includes('АНТИВІРУС') || u.includes('ESET')) {
-                document.getElementById('modalTitle').innerText = "Антивіруси";
-                renderSetupModal(name, "antivirus");
-                elModal.classList.add('show');
-                return;
-            }
-            else if (u.includes('КІНОТЕАТР') || u.includes('SWEET') || u.includes('PARALLELS')) { 
-                document.getElementById('modalTitle').innerText = u.includes('PARALLELS') ? "Parallels Desktop" : "Онлайн кінотеатри";
-                renderDirectListModal(u.includes('PARALLELS') ? ["parallels"] : ["sweet", "кінотеатр"]);
-                elModal.classList.add('show');
-                return;
-            }
-            else if (isSetupCategory || u.includes('НАЛАШТУВАННЯ') || u.includes('ПЗ') || u.includes('ПОСЛУГИ') || u.includes('ГОДИНА РОБОТИ')) {
-                document.getElementById('modalTitle').innerText = "Налаштування та сервіси";
-                renderSetupModal(name, "setup");
-                elModal.classList.add('show');
-                return;
-            }
-        }
-
-        let title = name.replace(/🇺🇦\s*/g, '').replace(/^UA\s+/i, ''); 
-        title = title.replace(/^\[.*?\]\s*/, '');
-        document.getElementById('modalTitle').innerText = title;
-        
-        const raw = findInDb(db.descriptions, name) || "";
-        
-        let isValidCode = false;
-        if (code) {
-            let cStr = code.toString().trim();
-            let nStr = name.toString().trim();
-            if (cStr !== "" && cStr.toLowerCase() !== nStr.toLowerCase() && /\d/.test(cStr)) {
-                isValidCode = true;
-            }
-        }
-        
-        let codeBlock = isValidCode ? `
-            <div class="code-block-wrapper" onclick="copyCode(event, this, '${code}')">
-                <span class="code-label-text">Код сервісу:</span>
-                <span class="code-value-text">${code} <span style="font-size:16px;">📋</span></span>
-            </div>` : '';
-            
-        elModalBody.innerHTML = codeBlock + parseDescriptionLines(raw);
-        elModal.classList.add('show'); 
-    }
-
     function parseChangelogLines(text) {
         if (!text) return '<div style="text-align:center; color:#94a3b8;">Опис змін відсутній...</div>';
         
@@ -1670,12 +1600,9 @@
         lines.forEach(line => {
             const l = line.trim();
             if (l) {
-                let hasEmoji = /^(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])/.test(l);
-                let prefix = hasEmoji ? "" : "<span style='color:var(--primary); font-weight:bold; margin-right:6px;'>•</span>";
-                
                 html += `
                 <div style="display:flex; align-items:flex-start; font-size:13px; line-height:1.4; color:var(--text-main);">
-                    ${prefix}<span style="flex:1;">${l}</span>
+                    <span style="flex:1;">${l}</span>
                 </div>`;
             }
         });
