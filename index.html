@@ -21,7 +21,7 @@
         }
 
         :root {
-            /* Світла тема (оригінальні кольори) */
+            /* Світла тема */
             --primary: #2563eb; 
             --bg: transparent; 
             --card-bg: #f0f4f8; 
@@ -61,69 +61,33 @@
             --clr-other-text: #f8fafc;
         }
 
-        body.modal-open { 
-            overflow: hidden; 
-            position: fixed; 
-            width: 100%; 
-        }
+        body.modal-open { overflow: hidden; position: fixed; width: 100%; }
         
         body { 
-            font-family: 'Inter', sans-serif; 
-            background: var(--bg); 
-            color: var(--text-main); 
-            margin: 0; 
-            padding: 0; 
-            display: flex; 
-            justify-content: center; 
-            align-items: flex-start; 
-            min-height: 100vh; 
-            -webkit-font-smoothing: antialiased; 
-            transition: background 0.3s ease, color 0.3s ease; 
+            font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text-main); 
+            margin: 0; padding: 0; display: flex; justify-content: center; align-items: flex-start; 
+            min-height: 100vh; -webkit-font-smoothing: antialiased; transition: background 0.3s ease, color 0.3s ease; 
         }
         
         .app-loader {
-            position: fixed; 
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: var(--box-bg); 
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
-            z-index: 999999; 
-            transition: opacity 0.4s ease, visibility 0.4s ease;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--box-bg); display: flex; flex-direction: column; justify-content: center; align-items: center;
+            z-index: 999999; transition: opacity 0.4s ease, visibility 0.4s ease;
         }
-        
-        .app-loader.hidden { 
-            opacity: 0; 
-            visibility: hidden; 
-            pointer-events: none; 
-        }
-        
-        .spinner-box { 
-            position: relative; width: 70px; height: 70px; display: flex; 
-            justify-content: center; align-items: center; margin-bottom: 20px; 
-        }
-        
+        .app-loader.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+        .spinner-box { position: relative; width: 70px; height: 70px; display: flex; justify-content: center; align-items: center; margin-bottom: 20px; }
         .spinner-ring {
             position: absolute; width: 100%; height: 100%; border-radius: 50%; 
-            border: 4px solid transparent; border-top-color: var(--primary); 
-            border-bottom-color: var(--primary); 
+            border: 4px solid transparent; border-top-color: var(--primary); border-bottom-color: var(--primary); 
             animation: spin 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
         }
-        
         .spinner-ring::before {
             content: ''; position: absolute; top: 8px; left: 8px; right: 8px; bottom: 8px; 
             border-radius: 50%; border: 4px solid transparent; border-left-color: #7dd3fc; 
             border-right-color: #7dd3fc; animation: spin 0.8s ease-in-out infinite reverse;
         }
-        
-        .spinner-logo { 
-            font-size: 24px; animation: pulseText 1.5s ease-in-out infinite; 
-        }
-        
-        .loader-text { 
-            font-size: 13px; font-weight: 700; color: var(--text-muted); 
-            text-transform: uppercase; letter-spacing: 1px; 
-            animation: pulseText 1.5s ease-in-out infinite; 
-            text-align: center; padding: 0 20px; line-height: 1.4;
-        }
+        .spinner-logo { font-size: 24px; animation: pulseText 1.5s ease-in-out infinite; }
+        .loader-text { font-size: 13px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; animation: pulseText 1.5s ease-in-out infinite; text-align: center; padding: 0 20px; line-height: 1.4; }
         
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         @keyframes pulseText { 0%, 100% { transform: scale(0.95); opacity: 0.6; } 50% { transform: scale(1.05); opacity: 1; } }
@@ -135,84 +99,35 @@
             border: 1px solid var(--border); transition: background 0.3s, border 0.3s; 
         }
         
-        /* --- ПЕРЕМИКАЧ ТЕМИ (iOS Style) --- */
-        .top-right-controls { 
-            position: absolute; top: 22px; right: 24px; 
-            display: flex; align-items: center; z-index: 10; 
-        }
-        
+        /* --- ПЕРЕМИКАЧ ТЕМИ --- */
+        .top-right-controls { position: absolute; top: 22px; right: 24px; display: flex; align-items: center; z-index: 10; }
         .theme-switch {
-            position: relative;
-            width: 64px;
-            height: 32px;
-            background: #60a5fa; /* День */
-            border-radius: 32px;
-            cursor: pointer;
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
-            transition: background 0.4s ease;
-            overflow: hidden;
-            border: 1px solid rgba(0,0,0,0.05);
+            position: relative; width: 64px; height: 32px; background: #60a5fa; border-radius: 32px;
+            cursor: pointer; box-shadow: inset 0 2px 4px rgba(0,0,0,0.1); transition: background 0.4s ease;
+            overflow: hidden; border: 1px solid rgba(0,0,0,0.05);
         }
-        
-        [data-theme="dark"] .theme-switch {
-            background: #1e293b; /* Ніч */
-            border-color: #334155;
-        }
-
+        [data-theme="dark"] .theme-switch { background: #1e293b; border-color: #334155; }
         .theme-slider {
-            position: absolute;
-            top: 3px;
-            left: 3px;
-            width: 24px;
-            height: 24px;
-            background: #fcd34d; /* Сонце */
-            border-radius: 50%;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.4s;
-            z-index: 2;
-            pointer-events: none; /* Щоб клік працював по всьому блоку */
+            position: absolute; top: 3px; left: 3px; width: 24px; height: 24px; background: #fcd34d; 
+            border-radius: 50%; box-shadow: 0 2px 5px rgba(0,0,0,0.2); transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.4s;
+            z-index: 2; pointer-events: none; 
         }
-
-        [data-theme="dark"] .theme-slider {
-            transform: translateX(32px);
-            background: #e2e8f0; /* Місяць */
-            box-shadow: inset -4px -2px 0 0 #cbd5e1; /* Ефект місяця */
-        }
-        
-        /* Хмарки для дня */
-        .ts-cloud { 
-            position: absolute; background: white; border-radius: 10px; 
-            opacity: 0.9; transition: 0.4s; z-index: 1; pointer-events: none;
-        }
+        [data-theme="dark"] .theme-slider { transform: translateX(32px); background: #e2e8f0; box-shadow: inset -4px -2px 0 0 #cbd5e1; }
+        .ts-cloud { position: absolute; background: white; border-radius: 10px; opacity: 0.9; transition: 0.4s; z-index: 1; pointer-events: none; }
         .ts-c1 { width: 14px; height: 5px; top: 6px; right: 8px; }
         .ts-c2 { width: 10px; height: 4px; bottom: 6px; right: 18px; }
-        
-        /* Зірки для ночі */
-        .ts-star { 
-            position: absolute; background: white; border-radius: 50%; 
-            opacity: 0; transition: 0.4s; z-index: 1; pointer-events: none;
-        }
+        .ts-star { position: absolute; background: white; border-radius: 50%; opacity: 0; transition: 0.4s; z-index: 1; pointer-events: none; }
         .ts-s1 { width: 2px; height: 2px; top: 8px; left: 12px; }
         .ts-s2 { width: 3px; height: 3px; top: 16px; left: 18px; }
         .ts-s3 { width: 2px; height: 2px; bottom: 6px; left: 10px; }
-
         [data-theme="dark"] .ts-cloud { opacity: 0; transform: translateX(10px); }
         [data-theme="dark"] .ts-star { opacity: 1; }
-        /* -------------------------------- */
 
-        h2 { 
-            color: var(--primary); margin: 0 0 20px 0; 
-            font-size: 24px; font-weight: 800; letter-spacing: -0.7px;
-        }
+        h2 { color: var(--primary); margin: 0 0 20px 0; font-size: 24px; font-weight: 800; letter-spacing: -0.7px; }
         
-        .status-container { 
-            display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; 
-        }
+        .status-container { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
         .status-wrapper { display: flex; align-items: center; gap: 8px; }
-        .status-text { 
-            font-size: 11px; font-weight: 700; color: var(--text-muted); 
-            text-transform: uppercase; letter-spacing: 0.5px; 
-        }
+        .status-text { font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
         .pulse-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
         
         .dot-green { background-color: #22c55e; animation: pulseGreen 2s infinite; }
@@ -223,64 +138,31 @@
         @keyframes pulseRed { 0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); } 70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(239, 68, 68, 0); } 100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); } }
         @keyframes pulseYellow { 0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(234, 179, 8, 0.7); } 70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(234, 179, 8, 0); } 100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(234, 179, 8, 0); } }
 
-        .refresh-db-btn { 
-            background: var(--box-bg); color: var(--primary); border: 1px solid var(--border); 
-            border-radius: 10px; width: 32px; height: 32px; display: flex; align-items: center; 
-            justify-content: center; cursor: pointer; transition: 0.2s; 
-        }
+        .refresh-db-btn { background: var(--box-bg); color: var(--primary); border: 1px solid var(--border); border-radius: 10px; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; }
         .refresh-db-btn:active { transform: scale(0.9); background: var(--feat-bg); }
         .refresh-db-btn.spinning svg { animation: spin 1s linear infinite; }
-
-        /* --- КНОПКА РЕЗЕРВІВ --- */
-        .rezervy-btn { width: 100%; padding: 14px; border-radius: 16px; border: 1px dashed var(--primary); background: rgba(37, 99, 235, 0.05); color: var(--primary); font-weight: 800; font-size: 14px; cursor: pointer; margin-bottom: 15px; display: flex; align-items: center; justify-content: center; gap: 8px; transition: transform 0.2s; box-shadow: 0 2px 5px rgba(37,99,235,0.05); }
-        .rezervy-btn:active { transform: scale(0.98); }
-        [data-theme="dark"] .rezervy-btn { background: #1e3a8a; border-color: #3b82f6; color: #bfdbfe; }
         
         .search-wrapper { position: relative; margin-bottom: 12px; display: flex; align-items: center; }
         
-        input { 
-            width: 100%; padding: 14px 45px 14px 16px; border: 1px solid var(--border); 
-            border-radius: 16px; font-size: 16px; font-family: inherit; outline: none; 
-            transition: 0.2s ease; background: var(--input-bg); color: var(--text-main); 
-            box-shadow: 0 4px 10px rgba(0,0,0,0.04); 
-        }
+        /* КНОПКА РЕЗЕРВІВ ЗБОКУ ВІД ПОШУКУ */
+        .rezervy-btn-small { background: var(--box-bg); border: 1px solid var(--border); color: var(--primary); font-size: 13px; font-weight: 800; padding: 10px 16px; border-radius: 16px; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: 0.2s; box-shadow: var(--shadow-sm); flex-shrink: 0; margin-left: 8px;}
+        .rezervy-btn-small:active { transform: scale(0.95); background: var(--feat-bg); }
+
+        input { width: 100%; padding: 14px 45px 14px 16px; border: 1px solid var(--border); border-radius: 16px; font-size: 16px; font-family: inherit; outline: none; transition: 0.2s ease; background: var(--input-bg); color: var(--text-main); box-shadow: 0 4px 10px rgba(0,0,0,0.04); }
         input:focus { box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.15); border-color: var(--primary); }
         
-        .clear-data-btn { 
-            position: absolute; right: 12px; background: #fee2e2; color: #ef4444; 
-            border: none; width: 28px; height: 28px; border-radius: 50%; font-size: 14px; 
-            font-weight: 800; cursor: pointer; display: none; align-items: center; 
-            justify-content: center; transition: 0.2s; 
-        }
+        .clear-data-btn { position: absolute; right: 12px; background: #fee2e2; color: #ef4444; border: none; width: 28px; height: 28px; border-radius: 50%; font-size: 14px; font-weight: 800; cursor: pointer; display: none; align-items: center; justify-content: center; transition: 0.2s; }
         .clear-data-btn:active { background: #fca5a5; transform: scale(0.9);}
 
         .price-wrapper { display: none; gap: 8px; margin-bottom: 12px; align-items: stretch; animation: fadeIn 0.3s ease; }
-        
-        #devicePrice { 
-            flex-grow: 1; color: var(--primary); font-weight: 900; 
-            background: var(--box-bg); border: 1px solid var(--border); 
-        }
+        #devicePrice { flex-grow: 1; color: var(--primary); font-weight: 900; background: var(--box-bg); border: 1px solid var(--border); }
         #devicePrice::placeholder { color: var(--text-muted); opacity: 0.6; font-weight: 600; }
         
-        .ok-btn { 
-            background: var(--primary); color: white; border: none; padding: 0 20px; 
-            border-radius: 16px; font-weight: 800; font-size: 14px; cursor: pointer; 
-            transition: transform 0.1s ease, opacity 0.1s ease; display: flex; 
-            align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(0,0,0,0.04); 
-        }
+        .ok-btn { background: var(--primary); color: white; border: none; padding: 0 20px; border-radius: 16px; font-weight: 800; font-size: 14px; cursor: pointer; transition: transform 0.1s ease, opacity 0.1s ease; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(0,0,0,0.04); }
         .ok-btn:active { transform: scale(0.95); opacity: 0.9; }
 
-        .suggestions-list { 
-            position: absolute; top: 105%; left: 0; right: 0; background: var(--box-bg); 
-            border: 1px solid var(--border); border-radius: 18px; box-shadow: var(--shadow-lg); 
-            max-height: 250px; overflow-y: auto; z-index: 100; display: none; padding: 5px; 
-            -webkit-overflow-scrolling: touch; 
-        }
-        
-        .suggestion-item { 
-            padding: 12px; cursor: pointer; border-radius: 12px; font-size: 14px; 
-            font-weight: 500; color: var(--text-main); margin-bottom: 2px; transition: background 0.2s ease; 
-        }
+        .suggestions-list { position: absolute; top: 105%; left: 0; right: 0; background: var(--box-bg); border: 1px solid var(--border); border-radius: 18px; box-shadow: var(--shadow-lg); max-height: 250px; overflow-y: auto; z-index: 100; display: none; padding: 5px; -webkit-overflow-scrolling: touch; }
+        .suggestion-item { padding: 12px; cursor: pointer; border-radius: 12px; font-size: 14px; font-weight: 500; color: var(--text-main); margin-bottom: 2px; transition: background 0.2s ease; }
         .suggestion-item:active, .suggestion-item:hover { background: var(--feat-bg); }
         
         .result-box { display: none; border-top: 2px solid var(--border); padding-top: 15px; margin-top: 10px; animation: fadeIn 0.4s ease; }
@@ -290,12 +172,7 @@
         .item-category { font-size: 11px; color: var(--text-muted); font-weight: 700; margin-bottom: 15px; padding-left: 14px; text-transform: uppercase; letter-spacing: 0.5px; }
         
         .tech-info { background: transparent; padding: 0; border: none; display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px;}
-        
-        .tech-item { 
-            display: flex; align-items: center; gap: 12px; background: var(--box-bg); 
-            padding: 10px; border-radius: 16px; border: 1px solid var(--border); 
-            box-shadow: 0 4px 10px rgba(0,0,0,0.02); transform: translateZ(0); 
-        }
+        .tech-item { display: flex; align-items: center; gap: 12px; background: var(--box-bg); padding: 10px; border-radius: 16px; border: 1px solid var(--border); box-shadow: 0 4px 10px rgba(0,0,0,0.02); transform: translateZ(0); }
         .icon-circle { width: 34px; height: 34px; min-width: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; }
         
         .bg-complexity { background-color: #fef9c3; color: #854d0e; } 
@@ -310,18 +187,8 @@
         [data-theme="dark"] .bg-negarant { background-color: #450a0a; color: #fecaca; border: 1px solid #7f1d1d; }
         [data-theme="dark"] .bg-parts { background-color: #3b0764; color: #e9d5ff; border: 1px solid #581c87; }
 
-        .tech-photo-wrapper {
-            display: flex; align-items: center; gap: 14px; margin-top: 6px;
-            background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
-            padding: 14px 16px; border-radius: 16px; border: 1px solid #bfdbfe;
-            cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;
-            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.1);
-        }
-        
-        [data-theme="dark"] .tech-photo-wrapper {
-            background: #1e293b; border-color: #334155;
-        }
-
+        .tech-photo-wrapper { display: flex; align-items: center; gap: 14px; margin-top: 6px; background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%); padding: 14px 16px; border-radius: 16px; border: 1px solid #bfdbfe; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; box-shadow: 0 4px 15px rgba(37, 99, 235, 0.1); }
+        [data-theme="dark"] .tech-photo-wrapper { background: #1e293b; border-color: #334155; }
         .tech-photo-wrapper:active { transform: scale(0.97); }
         .photo-icon { font-size: 24px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1)); }
         .photo-text { flex: 1; display: flex; flex-direction: column; }
@@ -329,64 +196,24 @@
         .photo-subtitle { font-size: 11px; font-weight: 600; color: var(--primary); margin-top: 2px; }
         .photo-arrow { color: var(--primary); font-weight: 900; font-size: 18px; }
 
-        /* ВІДРЕДАГОВАНА ГАЛЕРЕЯ ДЛЯ ПЕРЕГЛЯДУ ФОТО З МУЛЬТИТАЧЕМ */
-        .gallery-modal { 
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-            background: rgba(0,0,0,0.92); z-index: 100000; 
-            display: flex; flex-direction: column; align-items: center; justify-content: center; 
-            opacity: 0; visibility: hidden; transition: opacity 0.3s; 
-            backdrop-filter: blur(10px); 
-            touch-action: none; 
-            overscroll-behavior: none; 
-        }
+        .gallery-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.92); z-index: 100000; display: flex; flex-direction: column; align-items: center; justify-content: center; opacity: 0; visibility: hidden; transition: opacity 0.3s; backdrop-filter: blur(10px); touch-action: none; overscroll-behavior: none; }
         .gallery-modal.show { opacity: 1; visibility: visible; }
-        
         .gallery-content { position: relative; width: 100%; height: 75vh; max-width: 100%; display: flex; align-items: center; justify-content: center; padding: 0; box-sizing: border-box; overflow: hidden; }
-        
-        /* Зображення тепер може зумитись і панорамуватись */
         .gallery-content img { max-width: 100%; max-height: 100%; border-radius: 8px; object-fit: contain; transform-origin: center; will-change: transform; pointer-events: auto; }
-        
         .gallery-nav { background: rgba(255,255,255,0.15); color: white; border: 1px solid rgba(255,255,255,0.2); border-radius: 50%; width: 44px; height: 44px; font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s; position: absolute; top: 50%; transform: translateY(-50%); z-index: 50; backdrop-filter: blur(5px);}
         .gallery-nav:active { background: rgba(255,255,255,0.3); transform: translateY(-50%) scale(0.9); }
         .gallery-nav.prev { left: 15px; }
         .gallery-nav.next { right: 15px; }
-        
         .gallery-counter { color: white; font-size: 14px; font-weight: 700; margin-top: 15px; letter-spacing: 2px; background: rgba(255,255,255,0.15); padding: 6px 16px; border-radius: 20px;}
-        
-        /* НОВА КНОПКА ЗАКРИТТЯ ГАЛЕРЕЇ */
-        .gallery-close-text-btn {
-            margin-top: 20px;
-            background: rgba(255,255,255,0.15);
-            border: 1px solid rgba(255,255,255,0.3);
-            color: #fff;
-            padding: 12px 30px;
-            border-radius: 14px;
-            font-size: 15px;
-            font-weight: 700;
-            cursor: pointer;
-            backdrop-filter: blur(5px);
-            transition: 0.2s;
-            z-index: 50;
-        }
+        .gallery-close-text-btn { margin-top: 20px; background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3); color: #fff; padding: 12px 30px; border-radius: 14px; font-size: 15px; font-weight: 700; cursor: pointer; backdrop-filter: blur(5px); transition: 0.2s; z-index: 50; }
         .gallery-close-text-btn:active { background: rgba(255,255,255,0.3); transform: scale(0.95); }
 
         .service-list { display: flex; flex-direction: column; gap: 12px; }
         
-        /* --- ОРИГІНАЛЬНА КАРТКА СЕРВІСІВ (Гнучка для всіх списків) --- */
-        .service-card { 
-            position: relative; 
-            padding: 16px; border-radius: 20px; cursor: pointer; 
-            transition: transform 0.15s ease, box-shadow 0.15s ease, padding-left 0.3s ease; 
-            border: 2px solid transparent; 
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08); 
-            will-change: transform; transform: translateZ(0); 
-            overflow: hidden;
-            background: var(--box-bg);
-        }
+        .service-card { position: relative; padding: 16px; border-radius: 20px; cursor: pointer; transition: transform 0.15s ease, box-shadow 0.15s ease, padding-left 0.3s ease; border: 2px solid transparent; box-shadow: 0 4px 12px rgba(0,0,0,0.08); will-change: transform; transform: translateZ(0); overflow: hidden; background: var(--box-bg);}
         .service-card:active { transform: scale(0.98); box-shadow: inset 0 2px 4px rgba(0,0,0,0.1); }
         .service-content-left { display: flex; align-items: center; gap: 8px; flex: 1; padding-right: 5px; pointer-events: none; z-index: 2;}
         
-        /* Кольори брендів ДЛЯ КАРТОК (Оригінал) */
         .service-card.brand-support:not(.selected-for-compare) { background: var(--clr-support-bg); color: var(--clr-support-text); }
         .service-card.brand-ekta:not(.selected-for-compare) { background: var(--clr-ekta-bg); color: var(--clr-ekta-text); }
         .service-card.brand-epz:not(.selected-for-compare) { background: var(--clr-epz-bg); color: var(--clr-epz-text); }
@@ -412,11 +239,7 @@
 
         /* --- СТИЛІ ВИБОРУ ДЛЯ ПОРІВНЯННЯ --- */
         .service-card.compare-mode { padding-left: 45px; }
-        .compare-checkbox { 
-            position: absolute; left: -30px; top: 18px; width: 22px; height: 22px; 
-            border-radius: 50%; border: 2px solid var(--text-muted); background: var(--box-bg); 
-            transition: 0.3s ease; z-index: 1; display: flex; align-items: center; justify-content: center; 
-        }
+        .compare-checkbox { position: absolute; left: -30px; top: 18px; width: 22px; height: 22px; border-radius: 50%; border: 2px solid var(--text-muted); background: var(--box-bg); transition: 0.3s ease; z-index: 1; display: flex; align-items: center; justify-content: center; }
         .service-card.compare-mode .compare-checkbox { left: 12px; }
         
         .service-card.selected-for-compare { border: 2px solid var(--primary) !important; background-color: rgba(37, 99, 235, 0.05) !important; }
@@ -426,7 +249,6 @@
         .service-card.selected-for-compare .service-title { color: var(--text-main); }
         .service-card.selected-for-compare .brand-tag { color: var(--text-main); background: var(--border) !important; }
         .service-card.selected-for-compare .price-badge { color: var(--text-main); background: var(--box-bg); }
-        /* ---------------------------------- */
 
         .modal-body .brand-tag, .montazh-card .brand-tag { font-size: 10px; font-weight: 900; text-transform: uppercase; padding: 4px 10px; border-radius: 10px; margin-bottom: 5px; display: inline-block; box-shadow: var(--shadow-sm); }
         .brand-support { background: var(--clr-support-bg); color: var(--clr-support-text); }
@@ -474,7 +296,7 @@
         .rezervy-cat { font-size: 10px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; }
         .rezervy-price { font-size: 16px; font-weight: 900; color: var(--primary); white-space: nowrap; }
 
-        /* ФУТЕР І ВЕРСІЯ */
+        /* ФУТЕР І ВЕРСІЯ (Клікабельно, без підкреслення) */
         .footer { margin-top: 25px; text-align: center; font-size: 10px; color: var(--text-muted); font-weight: 600; line-height: 1.5; padding-bottom: 20px;}
         .app-version { display: inline-block; font-size: 11px; font-weight: 800; margin-top: 6px; color: var(--primary); cursor: pointer; padding: 6px 12px; background: var(--feat-bg); border-radius: 12px; transition: 0.2s; border: 1px solid transparent; text-decoration: none;}
         .app-version:active { transform: scale(0.95); opacity: 0.8; border-color: var(--border);}
@@ -488,7 +310,7 @@
         #scrollTopBtn.show { opacity: 1; visibility: visible; transform: translateY(0) scale(1); }
         #scrollTopBtn:active { transform: scale(0.92); background: var(--feat-bg); box-shadow: var(--shadow-sm); }
         
-        /* Зелена кнопка відгуку */
+        /* Зелена кнопка відгуку (Як на скріншоті) */
         .float-btn.primary { background: #10b981; color: #ffffff; border: none; box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4); }
         .float-btn.primary:active { transform: scale(0.92); box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2); }
 
@@ -559,10 +381,9 @@
         </button>
     </div>
 
-    <button class="rezervy-btn" onclick="openRezervyModal()">📦 Резерви магазинів</button>
-    
     <div class="search-wrapper">
         <input type="text" id="catInput" placeholder="Яку техніку шукаємо?" autocomplete="off" disabled>
+        <button class="rezervy-btn-small" onclick="openRezervyModal()">📦 Резерви</button>
         <button id="clearAllBtn" class="clear-data-btn">✕</button>
         <div id="customSuggestions" class="suggestions-list">
             <div id="matchesContainer"></div>
@@ -677,7 +498,7 @@
 </div>
 
 <script>
-    const API_URL = 'https://script.google.com/macros/s/AKfycbx85TsIdQYtpUktNJrMQu3nmUAo_8mry26Oh2gq7twkY-5Th_M7EZy5nb23IsrY-imJUw/exec';
+    const API_URL = 'https://script.google.com/macros/s/AKfycbw_LgBeu74jN8g7AKAQzuPWx5C7beRm7adGM22AeMV5OGaNuujMWNwAhKju49zrATg30Q/exec;
     
     const CACHE_KEY = 'skillhub_v1000_drive_fix'; 
     const SEEN_VERSION_KEY = 'skillhub_seen_version';
@@ -912,7 +733,7 @@
 
     window.closeRezervyModal = function() {
         document.getElementById('rezervyModal').classList.remove('show');
-        // Розблоковуємо екран тільки якщо під низом немає відкритої модалки опису (хоча наврядчи вона там буде)
+        // Розблоковуємо екран тільки якщо під низом немає відкритої модалки опису
         if (!document.getElementById('rezervItemModal').classList.contains('show')) {
             document.body.classList.remove('modal-open');
             document.body.style.top = '';
@@ -1020,6 +841,18 @@
     elCatInput.addEventListener('input', debounce(() => {
         const val = normalize(elCatInput.value); 
         elClearBtn.style.display = val.length > 0 ? 'flex' : 'none';
+        
+        // Скидаємо результати при очищенні вводу
+        if (val.length === 0) {
+            elSuggList.style.display = "none"; 
+            elPriceWrapper.style.display = "none"; 
+            elResultBox.style.display = "none"; 
+            currentCategoryData = null;
+            if(isCompareMode) toggleCompareMode(); 
+            toggleCompareBtn.style.display = 'none';
+            return;
+        }
+        
         if (val.length < 2) { elSuggList.style.display = 'none'; return; }
         
         const matches = db.categories.filter(c => normalize(c.ua).includes(val) || normalize(c.ru).includes(val) || normalize(c.en).includes(val)).slice(0, 10);
@@ -1420,7 +1253,7 @@
     }
 
 
-    // --- УНІВЕРСАЛЬНИЙ ГЕНЕРАТОР КАРТОК СЕРВІСІВ ---
+    // --- УНІВЕРСАЛЬНИЙ ГЕНЕРАТОР КАРТОК СЕРВІСІВ (Для всіх списків) ---
     function generateServiceCardHTML(s, isModalCtx = false, disableCompare = false) {
         let isSelected = false;
         let compareModeActive = false;
@@ -1453,6 +1286,7 @@
         let brandHtml = s.brand ? `<div class="brand-tag" style="display: inline-block;">${s.brand}</div>` : `<div class="brand-tag" style="display: none;"></div>`;
         let checkboxHtml = (compareModeActive && !s.isPackage) ? `<div class="compare-checkbox"></div>` : '';
         
+        // В модальних вікнах картки стають вертикальними блоками
         let wrapperStyle = isModalCtx ? "display:flex; flex-direction:column; align-items:stretch;" : "display:flex; justify-content:space-between; align-items:center;";
 
         return `
