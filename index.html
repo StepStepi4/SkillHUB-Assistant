@@ -15,16 +15,31 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
         
-        *, *::before, *::after { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        *, *::before, *::after { 
+            box-sizing: border-box; 
+            -webkit-tap-highlight-color: transparent; 
+        }
 
         :root {
-            --primary: #2563eb; --bg: transparent; --card-bg: #f0f4f8; --box-bg: #ffffff;
-            --input-bg: #ffffff; --feat-bg: #f8fafc; --text-main: #0f172a; --text-muted: #475569; 
-            --border: #e2e8f0; --modal-overlay: rgba(15,23,42,0.5);
-            --clr-support-bg: #fde047; --clr-support-text: #854d0e; --clr-ekta-bg: #3b82f6; 
-            --clr-ekta-text: #ffffff; --clr-epz-bg: #7dd3fc; --clr-epz-text: #0369a1;    
-            --clr-settings-bg: #4ade80; --clr-settings-text: #064e3b; --clr-install-bg: #a78bfa; 
-            --clr-install-text: #ffffff; --clr-other-bg: #e2e2e8; --clr-other-text: #1e293b;
+            /* Світла тема */
+            --primary: #2563eb; 
+            --bg: transparent; 
+            --card-bg: #f0f4f8; 
+            --box-bg: #ffffff;
+            --input-bg: #ffffff;
+            --feat-bg: #f8fafc;
+            --text-main: #0f172a; 
+            --text-muted: #475569; 
+            --border: #e2e8f0;
+            --modal-overlay: rgba(15,23,42,0.5);
+            
+            --clr-support-bg: #fde047; --clr-support-text: #854d0e; 
+            --clr-ekta-bg: #3b82f6; --clr-ekta-text: #ffffff;    
+            --clr-epz-bg: #7dd3fc; --clr-epz-text: #0369a1;    
+            --clr-settings-bg: #4ade80; --clr-settings-text: #064e3b; 
+            --clr-install-bg: #a78bfa; --clr-install-text: #ffffff; 
+            --clr-other-bg: #e2e2e8; --clr-other-text: #1e293b;
+            
             --gradient-primary: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
             --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
             --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
@@ -32,9 +47,19 @@
         }
 
         [data-theme="dark"] {
-            --bg: #020617; --card-bg: #0f172a; --box-bg: #1e293b; --input-bg: #0f172a;
-            --feat-bg: #334155; --text-main: #f8fafc; --text-muted: #94a3b8; --border: #334155;
-            --modal-overlay: rgba(0,0,0,0.8); --clr-other-bg: #334155; --clr-other-text: #f8fafc;
+            /* Темна тема */
+            --bg: #020617; 
+            --card-bg: #0f172a; 
+            --box-bg: #1e293b;
+            --input-bg: #0f172a;
+            --feat-bg: #334155;
+            --text-main: #f8fafc; 
+            --text-muted: #94a3b8; 
+            --border: #334155;
+            --modal-overlay: rgba(0,0,0,0.8);
+            
+            --clr-other-bg: #334155; 
+            --clr-other-text: #f8fafc;
         }
 
         body.modal-open { overflow: hidden; position: fixed; width: 100%; }
@@ -198,6 +223,7 @@
         .gallery-close-text-btn:active { background: rgba(255,255,255,0.3); transform: scale(0.95); }
 
         .service-list { display: flex; flex-direction: column; gap: 12px; }
+        
         .service-card { position: relative; padding: 16px; border-radius: 20px; cursor: pointer; transition: transform 0.15s ease, box-shadow 0.15s ease, padding-left 0.3s ease; border: 2px solid transparent; box-shadow: 0 4px 12px rgba(0,0,0,0.08); will-change: transform; transform: translateZ(0); overflow: hidden; background: var(--box-bg);}
         .service-card:active { transform: scale(0.98); box-shadow: inset 0 2px 4px rgba(0,0,0,0.1); }
         .service-content-left { display: flex; align-items: center; gap: 8px; flex: 1; padding-right: 5px; pointer-events: none; z-index: 2;}
@@ -210,6 +236,7 @@
         .service-card.brand-other:not(.selected-for-compare) { background: var(--box-bg); color: var(--text-main); }
 
         .service-title { font-size: 14px; font-weight: 800; line-height: 1.2; color: inherit; }
+
         .service-card .brand-tag { font-size: 10px; font-weight: 900; text-transform: uppercase; padding: 4px 8px; border-radius: 8px; margin-bottom: 6px; display: inline-block; background: rgba(255,255,255,0.3); color: inherit; box-shadow: none; }
         .service-card.brand-support .brand-tag { background: rgba(255,255,255,0.6); } 
         .service-card.brand-install .brand-tag { background: rgba(255,255,255,0.2) !important; color: transparent !important; width: 30px; height: 8px; border-radius: 10px; padding: 0 !important; margin-bottom: 6px !important; }
@@ -217,18 +244,22 @@
         .price-badge { font-size: 14px; font-weight: 900; background: rgba(255,255,255,0.9); color: #475569; padding: 8px 14px; border-radius: 14px; min-width: 95px; text-align: center; line-height: 1.1; pointer-events: none; box-shadow: 0 2px 5px rgba(0,0,0,0.05); z-index: 2;}
         .service-card.brand-support .price-badge { color: #854d0e; }
         .service-card.brand-install .price-badge { background: rgba(255,255,255,0.25); color: #ffffff; box-shadow: none; font-size: 12px; }
+        
         [data-theme="dark"] .price-badge { background: var(--box-bg); color: var(--text-main); }
         [data-theme="dark"] .service-card.brand-support .price-badge { background: #fff; color: #854d0e;}
 
         .focus-icon { font-size: 20px; filter: drop-shadow(0px 2px 4px rgba(255, 100, 0, 0.4)); animation: pulseFocus 2s infinite ease-in-out; margin-left: -2px; }
         @keyframes pulseFocus { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
 
+        /* --- СТИЛІ ВИБОРУ ДЛЯ ПОРІВНЯННЯ --- */
         .service-card.compare-mode { padding-left: 45px; }
         .compare-checkbox { position: absolute; left: -30px; top: 18px; width: 22px; height: 22px; border-radius: 50%; border: 2px solid var(--text-muted); background: var(--box-bg); transition: 0.3s ease; z-index: 1; display: flex; align-items: center; justify-content: center; }
         .service-card.compare-mode .compare-checkbox { left: 12px; }
+        
         .service-card.selected-for-compare { border: 2px solid var(--primary) !important; background-color: rgba(37, 99, 235, 0.05) !important; }
         .service-card.selected-for-compare .compare-checkbox { border-color: var(--primary); background: var(--primary); }
         .service-card.selected-for-compare .compare-checkbox::after { content: '✓'; color: #fff; font-size: 14px; font-weight: 900; }
+        
         .service-card.selected-for-compare .service-title { color: var(--text-main); }
         .service-card.selected-for-compare .brand-tag { color: var(--text-main); background: var(--border) !important; }
         .service-card.selected-for-compare .price-badge { color: var(--text-main); background: var(--box-bg); }
@@ -286,10 +317,13 @@
 
         /* ПЛАВАЮЧІ КНОПКИ ЗНИЗУ */
         .floating-btns { position: fixed; bottom: 24px; right: 24px; display: flex; flex-direction: column; gap: 16px; z-index: 99999; transform: translateZ(0); pointer-events: none; }
+        
         .float-btn { width: 56px; height: 56px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; text-decoration: none; outline: none; pointer-events: auto; border: 1px solid var(--border); box-shadow: var(--shadow-lg); transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); background: var(--box-bg);}
+        
         #scrollTopBtn { color: var(--primary); opacity: 0; visibility: hidden; transform: translateY(20px) scale(0.8); }
         #scrollTopBtn.show { opacity: 1; visibility: visible; transform: translateY(0) scale(1); }
         #scrollTopBtn:active { transform: scale(0.92); background: var(--feat-bg); box-shadow: var(--shadow-sm); }
+        
         .float-btn.primary { background: #10b981; color: #ffffff; border: none; box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4); }
         .float-btn.primary:active { transform: scale(0.92); box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2); }
 
@@ -300,6 +334,7 @@
         .update-title { font-size: 16px; font-weight: 900; color: var(--text-main); margin-bottom: 2px;}
         .update-version { font-size: 12px; font-weight: 800; color: var(--primary); text-transform: uppercase; letter-spacing: 0.5px;}
         .changelog-panel { background: var(--feat-bg); border-radius: 16px; padding: 16px; border: 1px solid var(--border); box-shadow: inset 0 2px 4px rgba(0,0,0,0.02); margin-bottom: 20px;}
+        
         .modal-confirm-btn { width: 100%; padding: 16px; border-radius: 16px; border: none; background: var(--gradient-primary); color: #fff; font-weight: 800; cursor: pointer; font-size: 16px; margin-top: 10px; box-shadow: var(--shadow-md); transition: 0.2s ease; }
         .modal-confirm-btn:active { transform: scale(0.98); box-shadow: none; }
 
@@ -308,12 +343,14 @@
         .compare-toggle-btn { background: var(--feat-bg); color: var(--primary); border: 1px solid var(--border); padding: 8px 14px; border-radius: 12px; font-size: 12px; font-weight: 800; cursor: pointer; display: flex; align-items: center; gap: 6px; box-shadow: var(--shadow-sm); transition: 0.2s; }
         .compare-toggle-btn.active { background: #fee2e2; color: #ef4444; border-color: #fca5a5; }
         [data-theme="dark"] .compare-toggle-btn.active { background: #450a0a; color: #fca5a5; border-color: #7f1d1d; }
+        
         .compare-action-bar { position: fixed; bottom: 0; left: 0; width: 100%; background: var(--box-bg); padding: 16px 24px 30px 24px; box-shadow: 0 -10px 30px rgba(0,0,0,0.2); display: flex; justify-content: space-between; align-items: center; transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1); z-index: 9998; border-radius: 30px 30px 0 0; border-top: 1px solid var(--border); }
         .compare-action-bar.show { transform: translateY(0); }
         .compare-status-text { font-size: 14px; font-weight: 800; color: var(--text-main); }
         .compare-execute-btn { background: var(--box-bg); border: 1px solid var(--border); color: var(--text-muted); padding: 12px 24px; border-radius: 16px; font-size: 14px; font-weight: 800; cursor: not-allowed; transition: 0.2s; }
         .compare-execute-btn.ready { background: var(--gradient-primary); color: #ffffff; cursor: pointer; border: none; box-shadow: var(--shadow-md); }
         .compare-execute-btn.ready:active { transform: scale(0.96); }
+
         .compare-wrapper { overflow-x: auto; margin-top: 10px; border-radius: 14px; border: 1px solid var(--border); max-height: 60vh; background: var(--box-bg); }
         .compare-table { width: 100%; border-collapse: collapse; font-size: 12px; text-align: center; }
         .compare-table th { padding: 16px 12px; border-bottom: 2px solid var(--border); background: var(--box-bg); vertical-align: top; width: 50%; color: var(--text-main); position: sticky; top: 0; z-index: 2;}
@@ -1122,7 +1159,6 @@
         }
     });
 
-    // --- Універсальна функція для побудови TechInfo ---
     function buildTechInfoHTML(item, p) {
         let techHTML = `<div style="font-size: 10px; font-weight: 800; color: var(--primary); text-transform: uppercase;">🛠️ Технічна довідка</div>`;
         let hasInfo = false;
@@ -1252,7 +1288,6 @@
         `;
     }
 
-    // --- УНІВЕРСАЛЬНА ФУНКЦІЯ РОЗРАХУНКУ СЕРВІСІВ ---
     function calculateServicesArray(item, p) {
         const focusList = item.focusServices ? item.focusServices.split('|').map(s => normalizeServiceName(s)) : [];
         const servicesNames = item.service.split('|').map(s => s.trim()).filter(s => s);
@@ -1349,8 +1384,6 @@
         return dataForSort;
     }
 
-
-    // --- УНІВЕРСАЛЬНИЙ ГЕНЕРАТОР КАРТОК СЕРВІСІВ (Для всіх списків) ---
     function generateServiceCardHTML(s, isModalCtx = false, disableCompare = false) {
         let isSelected = false;
         let compareModeActive = false;
@@ -1383,7 +1416,6 @@
         let brandHtml = s.brand ? `<div class="brand-tag" style="display: inline-block;">${s.brand}</div>` : `<div class="brand-tag" style="display: none;"></div>`;
         let checkboxHtml = (compareModeActive && !s.isPackage) ? `<div class="compare-checkbox"></div>` : '';
         
-        // В модальних вікнах картки стають вертикальними блоками
         let wrapperStyle = isModalCtx ? "display:flex; flex-direction:column; align-items:stretch;" : "display:flex; justify-content:space-between; align-items:center;";
 
         return `
@@ -1406,7 +1438,6 @@
         </div>`;
     }
 
-    // --- ГОЛОВНИЙ РЕНДЕР СЕРВІСІВ ---
     function renderServices() {
         const p = parseFloat(elPriceInput.value) || 0; 
         if (!currentCategoryData || !currentCategoryData.service) {
@@ -1441,7 +1472,6 @@
 
     elPriceInput.addEventListener('input', debounce(renderServices, 50));
 
-    // --- СИСТЕМА ПОРІВНЯННЯ ---
     window.toggleCompareMode = function() {
         isCompareMode = !isCompareMode;
         compareSelection = []; 
@@ -1713,7 +1743,6 @@
         }
     }
 
-    // --- МОНТАЖ ТА ІНШІ МОДАЛКИ ---
     function renderMontazhModal() {
         if (!db.montazhData || !db.montazhData.cities || db.montazhData.cities.length === 0) {
             elModalBody.innerHTML = `<div style="text-align:center; padding: 20px; color:var(--text-muted); font-weight: 800;">Помилка: Міста для монтажу не завантажено.</div>`;
