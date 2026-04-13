@@ -17,32 +17,32 @@
         *, *::before, *::after { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
         :root {
-            /* Світла тема */
+            /* Базові змінні зі збереженням ВАШИХ оригінальних кольорів */
             --primary: #2563eb; 
             --bg: transparent; 
             --card-bg: #f0f4f8; 
-            --box-bg: #ffffff;
-            --input-bg: #ffffff;
-            --feat-bg: #f8fafc;
             --text-main: #0f172a; 
             --text-muted: #475569; 
             --border: #e2e8f0;
-            --modal-overlay: rgba(15,23,42,0.5);
+            --box-bg: #ffffff;
+            --feat-bg: #f8fafc;
+            --input-bg: #ffffff;
+            --grad-photo: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+            --grad-border: #bfdbfe;
             
             --clr-support-bg: #fde047; --clr-support-text: #854d0e; 
             --clr-ekta-bg: #3b82f6; --clr-ekta-text: #ffffff;    
             --clr-epz-bg: #7dd3fc; --clr-epz-text: #0369a1;    
             --clr-settings-bg: #4ade80; --clr-settings-text: #064e3b; 
             --clr-install-bg: #a78bfa; --clr-install-text: #ffffff; 
-            --clr-other-bg: #e2e2e8; --clr-other-text: #1e293b;
-            
+            --clr-other-bg: #e2e8f0; --clr-other-text: #1e293b;
             --gradient-primary: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
             --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --modal-overlay: rgba(15,23,42,0.5);
         }
 
+        /* Темна тема */
         [data-theme="dark"] {
-            /* Темна тема */
             --bg: #020617; 
             --card-bg: #0f172a; 
             --box-bg: #1e293b;
@@ -51,6 +51,8 @@
             --text-main: #f8fafc; 
             --text-muted: #94a3b8; 
             --border: #334155;
+            --grad-photo: #1e293b;
+            --grad-border: #334155;
             --modal-overlay: rgba(0,0,0,0.8);
             
             --clr-other-bg: #334155; 
@@ -58,29 +60,15 @@
         }
 
         body.modal-open { overflow: hidden; position: fixed; width: 100%; }
-        
-        body { 
-            font-family: 'Inter', sans-serif; 
-            background: var(--bg); 
-            color: var(--text-main); 
-            margin: 0; 
-            padding: 0; 
-            display: flex; 
-            justify-content: center; 
-            align-items: flex-start; 
-            min-height: 100vh; 
-            -webkit-font-smoothing: antialiased; 
-            transition: background 0.3s ease, color 0.3s ease; 
-        }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text-main); margin: 0; padding: 0; display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; -webkit-font-smoothing: antialiased; transition: background 0.3s ease, color 0.3s ease; }
         
         .app-loader {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: var(--box-bg); display: flex; flex-direction: column; justify-content: center; align-items: center;
-            z-index: 999999; transition: opacity 0.4s ease, visibility 0.4s ease;
+            z-index: 999999; transition: opacity 0.4s ease, visibility 0.4s ease; will-change: opacity;
         }
         .app-loader.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
-        
-        .spinner-box { position: relative; width: 70px; height: 70px; display: flex; justify-content: center; align-items: center; margin-bottom: 20px; }
+        .spinner-box { position: relative; width: 70px; height: 70px; display: flex; justify-content: center; align-items: center; margin-bottom: 20px; transform: translateZ(0); }
         .spinner-ring {
             position: absolute; width: 100%; height: 100%; border-radius: 50%; border: 4px solid transparent;
             border-top-color: var(--primary); border-bottom-color: var(--primary); animation: spin 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
@@ -88,73 +76,36 @@
         .spinner-ring::before {
             content: ''; position: absolute; top: 8px; left: 8px; right: 8px; bottom: 8px; border-radius: 50%; border: 4px solid transparent; border-left-color: #7dd3fc; border-right-color: #7dd3fc; animation: spin 0.8s ease-in-out infinite reverse;
         }
-        .spinner-logo { font-size: 24px; animation: pulseText 1.5s ease-in-out infinite; }
-        .loader-text { font-size: 13px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; animation: pulseText 1.5s ease-in-out infinite; text-align: center; padding: 0 20px; line-height: 1.4;}
+        .spinner-logo { font-size: 24px; animation: pulseText 1.5s ease-in-out infinite; will-change: transform; }
+        .loader-text { font-size: 13px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; animation: pulseText 1.5s ease-in-out infinite; will-change: transform, opacity; text-align: center; padding: 0 20px; line-height: 1.4;}
         
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         @keyframes pulseText { 0%, 100% { transform: scale(0.95); opacity: 0.6; } 50% { transform: scale(1.05); opacity: 1; } }
 
-        .container { 
-            position: relative; width: 94%; max-width: 480px; background: var(--card-bg); padding: 24px; border-radius: 30px; box-shadow: 0 15px 40px -5px rgba(0, 0, 0, 0.1); margin-top: 5vh; margin-bottom: 120px; transform: translateZ(0); border: 1px solid var(--border); transition: background 0.3s, border 0.3s; 
-        }
+        .container { position: relative; width: 94%; max-width: 480px; background: var(--card-bg); padding: 24px; border-radius: 30px; box-shadow: 0 15px 40px -5px rgba(0, 0, 0, 0.1); margin-top: 5vh; margin-bottom: 80px; transform: translateZ(0); border: 1px solid var(--border); transition: background 0.3s, border 0.3s;}
         
-        /* ПЕРЕМИКАЧ ТЕМИ IOS STYLE */
+        /* --- ПЕРЕМИКАЧ ТЕМИ (iOS Style) --- */
         .top-right-controls { position: absolute; top: 22px; right: 24px; display: flex; align-items: center; z-index: 10; }
-        
         .theme-switch {
-            position: relative;
-            width: 56px;
-            height: 30px;
-            background: #87CEEB; /* День */
-            border-radius: 30px;
-            cursor: pointer;
-            box-shadow: inset 0 2px 5px rgba(0,0,0,0.1);
-            transition: background 0.4s ease;
-            overflow: hidden;
-            border: 1px solid rgba(0,0,0,0.05);
+            position: relative; width: 56px; height: 30px; background: #87CEEB; border-radius: 30px; cursor: pointer; box-shadow: inset 0 2px 5px rgba(0,0,0,0.1); transition: background 0.4s ease; overflow: hidden; border: 1px solid rgba(0,0,0,0.05);
         }
-        
-        [data-theme="dark"] .theme-switch {
-            background: #1e293b; /* Ніч */
-        }
-
+        [data-theme="dark"] .theme-switch { background: #1e293b; }
         .theme-slider {
-            position: absolute;
-            top: 2px;
-            left: 2px;
-            width: 24px;
-            height: 24px;
-            background: #FCD34D; /* Сонце */
-            border-radius: 50%;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.4s;
-            z-index: 2;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            position: absolute; top: 2px; left: 2px; width: 24px; height: 24px; background: #FCD34D; border-radius: 50%; box-shadow: 0 2px 4px rgba(0,0,0,0.2); transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.4s; display: flex; align-items: center; justify-content: center; z-index: 2;
         }
+        [data-theme="dark"] .theme-slider { transform: translateX(26px); background: #f8fafc; box-shadow: inset -3px -2px 0 0px #cbd5e1, 0 2px 4px rgba(0,0,0,0.2); }
+        .ts-cloud { position: absolute; background: white; border-radius: 10px; opacity: 0.8; transition: opacity 0.3s; z-index: 1;}
+        .ts-c1 { width: 14px; height: 5px; top: 6px; right: 8px; }
+        .ts-c2 { width: 10px; height: 4px; bottom: 6px; right: 18px; }
+        .ts-star { position: absolute; background: white; border-radius: 50%; opacity: 0; transition: opacity 0.3s; z-index: 1;}
+        .ts-s1 { width: 2px; height: 2px; top: 6px; left: 10px; }
+        .ts-s2 { width: 3px; height: 3px; top: 14px; left: 16px; }
+        .ts-s3 { width: 2px; height: 2px; bottom: 6px; left: 8px; }
+        [data-theme="dark"] .ts-cloud { opacity: 0; }
+        [data-theme="dark"] .ts-star { opacity: 1; }
+        /* -------------------------------- */
 
-        [data-theme="dark"] .theme-slider {
-            transform: translateX(26px);
-            background: #f8fafc; /* Місяць */
-            box-shadow: inset -3px -2px 0 0px #cbd5e1, 0 2px 4px rgba(0,0,0,0.2);
-        }
-        
-        /* Хмарки для дня */
-        .theme-cloud { position: absolute; background: white; border-radius: 10px; opacity: 0.8; transition: opacity 0.3s; }
-        .cloud-1 { width: 14px; height: 6px; top: 6px; right: 8px; }
-        .cloud-2 { width: 10px; height: 4px; bottom: 6px; right: 16px; }
-        
-        /* Зірки для ночі */
-        .theme-star { position: absolute; background: white; border-radius: 50%; opacity: 0; transition: opacity 0.3s; }
-        .star-1 { width: 2px; height: 2px; top: 6px; left: 10px; }
-        .star-2 { width: 3px; height: 3px; top: 14px; left: 16px; }
-        .star-3 { width: 2px; height: 2px; bottom: 6px; left: 8px; }
-
-        [data-theme="dark"] .theme-cloud { opacity: 0; }
-        [data-theme="dark"] .theme-star { opacity: 1; }
-
-        h2 { color: var(--primary); margin: 0 0 20px 0; font-size: 24px; font-weight: 800; letter-spacing: -0.7px;}
+        h2 { color: var(--primary); margin: 0 0 15px 0; font-size: 24px; font-weight: 800; letter-spacing: -0.7px;}
         
         .status-container { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
         .status-wrapper { display: flex; align-items: center; gap: 8px; }
@@ -174,23 +125,18 @@
         .refresh-db-btn.spinning svg { animation: spin 1s linear infinite; }
         
         .search-wrapper { position: relative; margin-bottom: 12px; display: flex; align-items: center; }
-        
-        input { 
-            width: 100%; padding: 14px 45px 14px 16px; border: 1px solid var(--border); border-radius: 16px; font-size: 16px; font-family: inherit; outline: none; transition: 0.2s ease; background: var(--input-bg); color: var(--text-main); box-shadow: 0 4px 10px rgba(0,0,0,0.04); 
-        }
+        input { width: 100%; padding: 14px 45px 14px 16px; border: 1px solid var(--border); border-radius: 16px; font-size: 16px; font-family: inherit; outline: none; transition: 0.2s; background: var(--input-bg); color: var(--text-main); box-shadow: 0 4px 10px rgba(0,0,0,0.04); }
         input:focus { box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.15); border-color: var(--primary); }
-        
         .clear-data-btn { position: absolute; right: 12px; background: #fee2e2; color: #ef4444; border: none; width: 28px; height: 28px; border-radius: 50%; font-size: 14px; font-weight: 800; cursor: pointer; display: none; align-items: center; justify-content: center; transition: 0.2s; }
-        .clear-data-btn:active { background: #fca5a5; transform: scale(0.9);}
+        .clear-data-btn:active { background: #fca5a5; transform: scale(0.9); }
 
         .price-wrapper { display: none; gap: 8px; margin-bottom: 12px; align-items: stretch; animation: fadeIn 0.3s ease; }
-        #devicePrice { flex-grow: 1; color: var(--primary); font-weight: 900; }
+        #devicePrice { flex-grow: 1; color: var(--primary); font-weight: 900; background: var(--box-bg); border: 1px solid var(--border); }
         #devicePrice::placeholder { color: var(--text-muted); opacity: 0.6; font-weight: 600; }
-        
         .ok-btn { background: var(--primary); color: white; border: none; padding: 0 20px; border-radius: 16px; font-weight: 800; font-size: 14px; cursor: pointer; transition: transform 0.1s ease, opacity 0.1s ease; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(0,0,0,0.04); }
         .ok-btn:active { transform: scale(0.95); opacity: 0.9; }
 
-        .suggestions-list { position: absolute; top: 105%; left: 0; right: 0; background: var(--box-bg); border: 1px solid var(--border); border-radius: 18px; box-shadow: var(--shadow-lg); max-height: 250px; overflow-y: auto; z-index: 100; display: none; padding: 5px; -webkit-overflow-scrolling: touch; }
+        .suggestions-list { position: absolute; top: 105%; left: 0; right: 0; background: var(--box-bg); border: 1px solid var(--border); border-radius: 18px; box-shadow: 0 15px 30px rgba(0,0,0,0.15); max-height: 250px; overflow-y: auto; z-index: 100; display: none; padding: 5px; -webkit-overflow-scrolling: touch; }
         .suggestion-item { padding: 12px; cursor: pointer; border-radius: 12px; font-size: 14px; font-weight: 500; color: var(--text-main); margin-bottom: 2px; transition: background 0.2s ease; }
         .suggestion-item:active, .suggestion-item:hover { background: var(--feat-bg); }
         
@@ -201,14 +147,14 @@
         .item-category { font-size: 11px; color: var(--text-muted); font-weight: 700; margin-bottom: 15px; padding-left: 14px; text-transform: uppercase; letter-spacing: 0.5px; }
         
         .tech-info { background: transparent; padding: 0; border: none; display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px;}
-        .tech-item { display: flex; align-items: center; gap: 12px; background: var(--box-bg); padding: 10px; border-radius: 16px; border: 1px solid var(--border); box-shadow: var(--shadow-sm); transform: translateZ(0); }
+        .tech-item { display: flex; align-items: center; gap: 12px; background: var(--box-bg); padding: 10px; border-radius: 16px; border: 1px solid var(--border); box-shadow: 0 4px 10px rgba(0,0,0,0.02); transform: translateZ(0); }
         .icon-circle { width: 34px; height: 34px; min-width: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; }
         
-        .bg-complexity { background-color: #fef9c3; color: #854d0e; } 
-        .bg-price { background-color: #dcfce7; color: #166534; } 
-        .bg-garant { background-color: #dbeafe; color: #1e3a8a; } 
-        .bg-negarant { background-color: #fee2e2; border: 1px solid #fca5a5; color: #991b1b; }
-        .bg-parts { background-color: #f3e8ff; color: #6b21a8; } 
+        .bg-complexity { background-color: #fef9c3; color: #854d0e;} 
+        .bg-price { background-color: #dcfce7; color: #166534;} 
+        .bg-garant { background-color: #dbeafe; color: #1e3a8a;} 
+        .bg-negarant { background-color: #fee2e2; border: 1px solid #fca5a5; color: #991b1b;}
+        .bg-parts { background-color: #f3e8ff; color: #6b21a8;} 
 
         [data-theme="dark"] .bg-complexity { background-color: #422006; color: #fde047; border: 1px solid #713f12; }
         [data-theme="dark"] .bg-price { background-color: #064e3b; color: #6ee7b7; border: 1px solid #065f46; }
@@ -216,7 +162,13 @@
         [data-theme="dark"] .bg-negarant { background-color: #450a0a; color: #fecaca; border: 1px solid #7f1d1d; }
         [data-theme="dark"] .bg-parts { background-color: #3b0764; color: #e9d5ff; border: 1px solid #581c87; }
 
-        .tech-photo-wrapper { display: flex; align-items: center; gap: 14px; margin-top: 6px; background: var(--feat-bg); padding: 14px 16px; border-radius: 16px; border: 1px solid var(--border); cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; box-shadow: var(--shadow-sm); }
+        .tech-photo-wrapper {
+            display: flex; align-items: center; gap: 14px; margin-top: 6px;
+            background: var(--grad-photo);
+            padding: 14px 16px; border-radius: 16px; border: 1px solid var(--grad-border);
+            cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.1);
+        }
         .tech-photo-wrapper:active { transform: scale(0.97); }
         .photo-icon { font-size: 24px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1)); }
         .photo-text { flex: 1; display: flex; flex-direction: column; }
@@ -224,7 +176,14 @@
         .photo-subtitle { font-size: 11px; font-weight: 600; color: var(--primary); margin-top: 2px; }
         .photo-arrow { color: var(--primary); font-weight: 900; font-size: 18px; }
 
-        .gallery-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.92); z-index: 100000; display: flex; flex-direction: column; align-items: center; justify-content: center; opacity: 0; visibility: hidden; transition: opacity 0.3s; backdrop-filter: blur(10px); touch-action: none; overscroll-behavior: none; }
+        /* ВІДРЕДАГОВАНА ГАЛЕРЕЯ ДЛЯ ПЕРЕГЛЯДУ ФОТО З МУЛЬТИТАЧЕМ */
+        .gallery-modal { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(0,0,0,0.92); z-index: 100000; 
+            display: flex; flex-direction: column; align-items: center; justify-content: center; 
+            opacity: 0; visibility: hidden; transition: opacity 0.3s; 
+            backdrop-filter: blur(10px); touch-action: none; overscroll-behavior: none; 
+        }
         .gallery-modal.show { opacity: 1; visibility: visible; }
         
         .gallery-content { position: relative; width: 100%; height: 75vh; max-width: 100%; display: flex; align-items: center; justify-content: center; padding: 0; box-sizing: border-box; overflow: hidden; }
@@ -242,18 +201,18 @@
 
         .service-list { display: flex; flex-direction: column; gap: 12px; }
         
-        .service-card { position: relative; display: flex; justify-content: space-between; align-items: center; padding: 16px; border-radius: 20px; cursor: pointer; transition: transform 0.15s ease, box-shadow 0.15s ease, border 0.2s ease; border: 2px solid transparent; box-shadow: var(--shadow-sm); overflow: hidden; background: var(--box-bg);}
-        .service-card:active { transform: scale(0.98); box-shadow: none; }
-        .service-content-left { display: flex; align-items: center; gap: 8px; flex: 1; padding-right: 5px; pointer-events: none; z-index: 2;}
+        .service-card { position: relative; display: flex; justify-content: space-between; align-items: center; padding: 16px; border-radius: 20px; cursor: pointer; transition: transform 0.15s ease, box-shadow 0.15s ease, padding-left 0.3s ease; border: 2px solid transparent; box-shadow: 0 4px 12px rgba(0,0,0,0.08); will-change: transform; transform: translateZ(0); background: var(--box-bg); overflow: hidden; }
+        .service-card:active { transform: scale(0.98); box-shadow: inset 0 2px 4px rgba(0,0,0,0.1); }
+        .service-content-left { display: flex; align-items: center; gap: 8px; flex: 1; padding-right: 5px; pointer-events: none; z-index: 2; }
         
-        /* Стилі вибору для порівняння */
+        /* СТИЛІ ВИБОРУ ДЛЯ ПОРІВНЯННЯ */
         .service-card.compare-mode { padding-left: 45px; }
         .compare-checkbox { position: absolute; left: -30px; top: 50%; transform: translateY(-50%); width: 22px; height: 22px; border-radius: 50%; border: 2px solid var(--text-muted); background: var(--box-bg); transition: 0.3s ease; z-index: 1; display: flex; align-items: center; justify-content: center; }
         .service-card.compare-mode .compare-checkbox { left: 12px; }
         .service-card.selected-for-compare { border: 2px solid var(--primary) !important; background-color: rgba(37,99,235,0.05) !important; }
         .service-card.selected-for-compare .compare-checkbox { border-color: var(--primary); background: var(--primary); }
         .service-card.selected-for-compare .compare-checkbox::after { content: '✓'; color: #fff; font-size: 14px; font-weight: 900; }
-        
+
         .service-card.brand-support:not(.selected-for-compare) { background: var(--clr-support-bg); color: var(--clr-support-text); }
         .service-card.brand-ekta:not(.selected-for-compare) { background: var(--clr-ekta-bg); color: var(--clr-ekta-text); }
         .service-card.brand-epz:not(.selected-for-compare) { background: var(--clr-epz-bg); color: var(--clr-epz-text); }
@@ -271,21 +230,20 @@
         .service-card.brand-support .brand-tag { background: rgba(255,255,255,0.6); } 
         .service-card.brand-install .brand-tag { background: rgba(255,255,255,0.2) !important; color: transparent !important; width: 30px; height: 8px; border-radius: 10px; padding: 0 !important; margin-bottom: 6px !important; }
 
-        .price-badge { font-size: 14px; font-weight: 900; background: var(--box-bg); color: var(--text-main); padding: 8px 14px; border-radius: 14px; min-width: 95px; text-align: center; line-height: 1.1; pointer-events: none; box-shadow: var(--shadow-sm); z-index: 2;}
+        .price-badge { font-size: 14px; font-weight: 900; background: var(--box-bg); color: var(--text-main); padding: 8px 14px; border-radius: 14px; min-width: 95px; text-align: center; line-height: 1.1; pointer-events: none; box-shadow: 0 2px 5px rgba(0,0,0,0.05); z-index: 2;}
         .service-card.brand-support .price-badge { color: #854d0e; background: #fff;}
         .service-card.brand-install .price-badge { background: rgba(255,255,255,0.25); color: #ffffff; box-shadow: none; font-size: 12px; }
 
         .focus-icon { font-size: 20px; filter: drop-shadow(0px 2px 4px rgba(255, 100, 0, 0.4)); animation: pulseFocus 2s infinite ease-in-out; margin-left: -2px; }
         @keyframes pulseFocus { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
 
-        .modal-body .brand-tag, .montazh-card .brand-tag { font-size: 10px; font-weight: 900; text-transform: uppercase; padding: 4px 10px; border-radius: 10px; margin-bottom: 5px; display: inline-block; box-shadow: var(--shadow-sm); }
+        .modal-body .brand-tag, .montazh-card .brand-tag { font-size: 10px; font-weight: 900; text-transform: uppercase; padding: 4px 10px; border-radius: 10px; margin-bottom: 5px; display: inline-block; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
         .brand-support { background: var(--clr-support-bg); color: var(--clr-support-text); }
         .brand-ekta { background: var(--clr-ekta-bg); color: var(--clr-ekta-text); }
         .brand-epz { background: var(--clr-epz-bg); color: var(--clr-epz-text); }
 
-        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--modal-overlay); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); display: flex; align-items: flex-end; justify-content: center; z-index: 9999; overscroll-behavior: contain; opacity: 0; visibility: hidden; pointer-events: none; transition: opacity 0.3s ease, visibility 0.3s ease; }
-        .modal.show { opacity: 1; visibility: visible; pointer-events: auto; }
-        
+        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--modal-overlay); backdrop-filter: blur(4px); display: none; align-items: flex-end; justify-content: center; z-index: 9999; opacity: 0; transition: opacity 0.3s; }
+        .modal.show { display: flex; opacity: 1; }
         .modal-content { background: var(--box-bg); width: 100%; max-width: 480px; border-radius: 24px 24px 0 0; padding: 24px; padding-bottom: 40px; display: flex; flex-direction: column; max-height: 90vh; min-height: 45vh; transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1); margin: 0 auto; box-shadow: 0 -10px 40px rgba(0,0,0,0.2);}
         .modal.show .modal-content { transform: translateY(0); }
         
@@ -295,23 +253,25 @@
         .modal-section-title { font-size: 15px; font-weight: 800; color: var(--primary); margin: 15px 0 8px 0; line-height: 1.3;}
         .modal-cost-header { font-size: 10px; font-weight: 900; color: var(--primary); text-transform: uppercase; margin: 12px 0 6px 5px; letter-spacing: 1px;}
         .modal-divider { height: 2px; background: var(--border); margin: 12px 0; border-radius: 2px; width: 100%; }
-        
         .modal-item { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; background: var(--feat-bg); padding: 10px; border-radius: 15px; border: 1px solid var(--border); }
-        .modal-icon-circle { width: 36px; height: 36px; min-width: 36px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; background: var(--box-bg); box-shadow: var(--shadow-sm); border: 1px solid var(--border);}
+        .modal-icon-circle { width: 36px; height: 36px; min-width: 36px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; background: var(--box-bg); box-shadow: 0 4px 10px rgba(0,0,0,0.05); border: 1px solid var(--border);}
         .modal-text { font-size: 11px; line-height: 1.4; color: var(--text-main); font-weight: 500; }
         
-        .code-block-wrapper { background: var(--box-bg); border: 2px dashed var(--border); border-radius: 16px; padding: 12px 18px; margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; transition: all 0.2s ease; }
+        .code-block-wrapper { background: var(--feat-bg); border: 2px dashed var(--border); border-radius: 16px; padding: 12px 18px; margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; transition: all 0.2s ease; }
         .code-block-wrapper:active { transform: scale(0.97); border-color: var(--primary); }
         .code-label-text { font-size: 14px; font-weight: 700; color: var(--text-muted); }
-        .code-value-text { font-size: 16px; font-weight: 900; color: var(--primary); display: flex; align-items: center; gap: 8px; background: var(--box-bg); padding: 8px 14px; border-radius: 12px; box-shadow: var(--shadow-sm); border: 1px solid var(--border); transition: background 0.2s ease; }
+        .code-value-text { font-size: 16px; font-weight: 900; color: var(--primary); display: flex; align-items: center; gap: 8px; background: var(--box-bg); padding: 8px 14px; border-radius: 12px; box-shadow: 0 2px 6px rgba(0,0,0,0.04); border: 1px solid var(--border); transition: background 0.2s ease; }
 
         .montazh-label { font-size: 13px; color: var(--text-muted); margin-bottom: 8px; display: block; font-weight: 600; text-align: left; padding-left: 8px; }
-        .montazh-select { width: 100%; padding: 16px 20px; border-radius: 16px; background: var(--input-bg); border: 1px solid var(--border); font-size: 16px; font-weight: 700; color: var(--text-main); margin-bottom: 20px; text-align: left; cursor: pointer; outline: none; transition: 0.2s; box-shadow: var(--shadow-sm); }
-        .montazh-select:focus { border-color: var(--primary); background: var(--box-bg);}
+        .montazh-select { width: 100%; padding: 16px 20px; border-radius: 16px; background: var(--input-bg); border: 1px solid var(--border); font-size: 16px; font-weight: 700; color: var(--text-main); margin-bottom: 20px; text-align: left; cursor: pointer; outline: none; transition: 0.2s; }
+        .montazh-select:focus { box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1); border-color: var(--primary); background: var(--box-bg);}
         
-        .montazh-card { border-radius: 18px; padding: 18px; margin-bottom: 14px; display: flex; flex-direction: column; animation: fadeIn 0.3s ease; border: 1px solid var(--border); box-shadow: var(--shadow-sm); background: var(--box-bg);}
+        .montazh-card { position: relative; border-radius: 18px; padding: 18px; margin-bottom: 14px; display: flex; flex-direction: column; animation: fadeIn 0.3s ease; border: 1px solid var(--border); background: var(--box-bg); transition: padding-left 0.3s;}
+        .montazh-card.compare-mode { padding-left: 45px; cursor: pointer; }
+        .montazh-card-ekta { border-color: var(--border); } 
+        .montazh-card-myservice { border-color: var(--border); } 
 
-        .availability-badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 8px; border-radius: 8px; font-size: 11px; font-weight: 700; text-transform: uppercase; margin-top: 8px; line-height: 1; box-shadow: var(--shadow-sm); border: 1px solid var(--border);}
+        .availability-badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 8px; border-radius: 8px; font-size: 11px; font-weight: 700; text-transform: uppercase; margin-top: 8px; line-height: 1; border: 1px solid var(--border); background: var(--feat-bg);}
         .status-city-limit { background-color: #fee2e2; color: #991b1b; }
         .status-fee-zone { background-color: #fef08a; color: #854d0e; }
         .status-full-coverage { background-color: #dcfce7; color: #166534; }
@@ -323,44 +283,43 @@
         
         /* ФУТЕР І ВЕРСІЯ */
         .footer { margin-top: 25px; text-align: center; font-size: 10px; color: var(--text-muted); font-weight: 600; line-height: 1.5; padding-bottom: 20px;}
-        
-        .app-version { display: inline-block; font-size: 11px; font-weight: 800; margin-top: 6px; color: var(--primary); text-decoration: none; cursor: pointer; padding: 6px 12px; background: var(--feat-bg); border-radius: 12px; transition: 0.2s; border: 1px solid transparent;}
-        .app-version:active { transform: scale(0.95); opacity: 0.8; border-color: var(--border);}
+        .app-version { display: block; font-size: 11px; font-weight: 700; opacity: 0.8; margin-top: 8px; color: var(--primary); cursor: pointer; text-decoration: none; padding: 6px; border-radius: 8px; transition: 0.2s;}
+        .app-version:active { background: var(--feat-bg); transform: scale(0.95); }
 
         /* ПЛАВАЮЧІ КНОПКИ ЗНИЗУ */
-        .floating-btns { position: fixed; bottom: 24px; right: 24px; display: flex; flex-direction: column; gap: 16px; z-index: 99999; transform: translateZ(0); pointer-events: none; }
-        
-        .float-btn { width: 52px; height: 52px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; text-decoration: none; outline: none; pointer-events: auto; border: 1px solid var(--border); box-shadow: var(--shadow-lg); transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); background: var(--box-bg);}
+        .floating-btns { position: fixed; bottom: 24px; right: 24px; display: flex; flex-direction: column; gap: 16px; z-index: 99999; }
+        .float-btn { width: 56px; height: 56px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; text-decoration: none; outline: none; border: 1px solid var(--border); box-shadow: var(--shadow-lg); transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); background: var(--box-bg);}
         
         #scrollTopBtn { color: var(--primary); opacity: 0; visibility: hidden; transform: translateY(20px) scale(0.8); }
         #scrollTopBtn.show { opacity: 1; visibility: visible; transform: translateY(0) scale(1); }
-        #scrollTopBtn:active { transform: scale(0.92); background: var(--feat-bg); box-shadow: var(--shadow-sm); }
-        
-        /* Зелена кнопка відгуку (Нова) */
-        .float-btn.primary { background: #10b981; color: #ffffff; border: none; box-shadow: 0 6px 20px rgba(16, 185, 129, 0.3); }
+        #scrollTopBtn:active { transform: scale(0.92); background: var(--feat-bg); }
+
+        /* Зелена кнопка відгуку як на картинці */
+        .float-btn.primary { background: #10b981; color: #ffffff; border: none; box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4); }
         .float-btn.primary:active { transform: scale(0.92); box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2); }
 
         /* --- КРАСИВЕ МОДАЛЬНЕ ОКНО ОНОВЛЕННЯ --- */
         .update-title-wrapper { display: flex; align-items: center; gap: 12px; width: 100%; text-align: left;}
-        .update-icon-circle { width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px; background: var(--feat-bg); border: 1px solid var(--border); box-shadow: var(--shadow-sm); }
+        .update-icon-circle { width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px; background: var(--feat-bg); border: 1px solid var(--border); }
         .update-text-wrapper { display: flex; flex-direction: column; flex: 1;}
         .update-title { font-size: 16px; font-weight: 900; color: var(--text-main); margin-bottom: 2px;}
-        .update-version { font-size: 12px; font-weight: 800; color: var(--primary); text-transform: uppercase; letter-spacing: 0.5px;}
-        .changelog-panel { background: var(--feat-bg); border-radius: 16px; padding: 16px; border: 1px solid var(--border); box-shadow: inset 0 2px 4px rgba(0,0,0,0.02); margin-bottom: 20px;}
+        .update-version { font-size: 12px; font-weight: 800; color: var(--primary); text-transform: uppercase;}
+        .changelog-panel { background: var(--feat-bg); border-radius: 16px; padding: 16px; border: 1px solid var(--border); margin-bottom: 20px;}
         
-        .modal-confirm-btn { width: 100%; padding: 16px; border-radius: 16px; border: none; background: var(--gradient-primary); color: #fff; font-weight: 800; cursor: pointer; font-size: 16px; margin-top: 10px; box-shadow: var(--shadow-md); transition: 0.2s ease, transform 0.1s ease; }
+        /* Кнопка Ок в модалках */
+        .modal-confirm-btn { width: 100%; padding: 16px; border-radius: 16px; border: none; background: var(--gradient-primary); color: #fff; font-weight: 800; cursor: pointer; font-size: 16px; margin-top: 10px; box-shadow: var(--shadow-md); transition: 0.2s ease; }
         .modal-confirm-btn:active { transform: scale(0.98); box-shadow: none; }
 
         /* --- СТИЛІ ДЛЯ ПОРІВНЯННЯ --- */
         .compare-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-        .compare-toggle-btn { background: var(--feat-bg); color: var(--primary); border: 1px solid var(--border); padding: 8px 14px; border-radius: 12px; font-size: 12px; font-weight: 800; cursor: pointer; display: flex; align-items: center; gap: 6px; box-shadow: var(--shadow-sm); transition: 0.2s; }
+        .compare-toggle-btn { background: var(--feat-bg); color: var(--primary); border: 1px solid var(--border); padding: 8px 14px; border-radius: 12px; font-size: 12px; font-weight: 800; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: 0.2s; }
         .compare-toggle-btn.active { background: #fee2e2; color: #ef4444; border-color: #fca5a5; }
         [data-theme="dark"] .compare-toggle-btn.active { background: #450a0a; color: #fca5a5; border-color: #7f1d1d; }
         
         .compare-action-bar { position: fixed; bottom: 0; left: 0; width: 100%; background: var(--box-bg); padding: 16px 24px 30px 24px; box-shadow: 0 -10px 30px rgba(0,0,0,0.2); display: flex; justify-content: space-between; align-items: center; transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1); z-index: 9998; border-radius: 30px 30px 0 0; border-top: 1px solid var(--border); }
         .compare-action-bar.show { transform: translateY(0); }
         .compare-status-text { font-size: 14px; font-weight: 800; color: var(--text-main); }
-        .compare-execute-btn { background: var(--box-bg); border: 1px solid var(--border); color: var(--text-muted); padding: 12px 24px; border-radius: 16px; font-size: 14px; font-weight: 800; cursor: not-allowed; transition: 0.2s; }
+        .compare-execute-btn { background: var(--feat-bg); border: 1px solid var(--border); color: var(--text-muted); padding: 12px 24px; border-radius: 14px; font-size: 14px; font-weight: 800; cursor: not-allowed; transition: 0.2s; }
         .compare-execute-btn.ready { background: var(--gradient-primary); color: #ffffff; cursor: pointer; border: none; box-shadow: var(--shadow-md); }
         .compare-execute-btn.ready:active { transform: scale(0.96); }
 
@@ -369,6 +328,7 @@
         .compare-table th { padding: 16px 12px; border-bottom: 2px solid var(--border); background: var(--box-bg); vertical-align: top; width: 50%; color: var(--text-main); position: sticky; top: 0; z-index: 2;}
         .compare-table td { padding: 14px 12px; border-bottom: 1px solid var(--border); color: var(--text-main); font-weight: 600; line-height: 1.4; text-align: left;}
         .compare-table tr:last-child td { border-bottom: none; }
+        .feat-row { display: flex; align-items: flex-start; }
         
     </style>
 </head>
@@ -437,7 +397,7 @@
     
     <div class="footer">
         🇺🇦 ROZETKA KHARKIV REGION • 2026<br>
-        <div id="appVersionDisp" class="app-version" style="display:none;" onclick="if(db.appVersion) showChangelogModal(db.appVersion, db.changelog)">Оновлення відсутні</div>
+        <span id="appVersionDisp" class="app-version" style="display:none;" onclick="if(db.appVersion) showChangelogModal(db.appVersion, db.changelog)">Оновлення відсутні</span>
     </div>
 </div>
 
@@ -480,13 +440,13 @@
 
 <div class="floating-btns" id="floatBtnsGroup">
     <button id="scrollTopBtn" class="float-btn" title="Вгору">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" width="24" height="24" stroke-width="2.5">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" width="26" height="26" stroke-width="2.5">
             <polyline points="18 15 12 9 6 15"></polyline>
         </svg>
     </button>
     
     <a href="https://forms.gle/z4wz9XcSLT5pGXkp8" target="_blank" class="float-btn primary" title="Зворотній зв'язок">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" width="24" height="24" stroke-width="2">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" width="26" height="26" stroke-width="2">
             <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
             <path d="M8 10h8"></path>
             <path d="M8 14h4"></path>
@@ -509,7 +469,7 @@
     let compareSelection = [];
     window.lastCalculatedServices = [];
 
-    // State для порівняння (Внутрішні меню налаштувань)
+    // State для порівняння (Внутрішні меню налаштувань та монтажу)
     let isModalCompareMode = false;
     let modalCompareSelection = [];
     window.lastModalServices = [];
@@ -583,7 +543,7 @@
     function showCopied(el, originalCode) {
         const valueBox = el.querySelector('.code-value-text'); if(!valueBox) return; 
         const originalHTML = valueBox.innerHTML;
-        valueBox.innerHTML = "✅ Скопійовано!"; valueBox.style.color = "#10b981"; valueBox.style.background = "var(--box-bg)";
+        valueBox.innerHTML = "✅ Скопійовано!"; valueBox.style.color = "#10b981"; valueBox.style.background = "var(--feat-bg)";
         setTimeout(() => { valueBox.innerHTML = originalHTML; valueBox.style.color = ""; valueBox.style.background = ""; }, 1500);
     }
 
@@ -623,7 +583,7 @@
                 if (savedVersion !== null) setTimeout(() => showChangelogModal(db.appVersion, db.changelog), 1000); 
                 localStorage.setItem(SEEN_VERSION_KEY, db.appVersion); 
             }
-            if (first) enableUI(); else enableUI(); // Оновлюємо версію якщо натиснуто примусове оновлення
+            if (first) enableUI(); else enableUI(); 
         } catch (e) { 
             if (localStorage.getItem(CACHE_KEY)) { setAppStatus('ok', 'Працюю офлайн (З кешу)'); if (first) enableUI(); } 
             else { setAppStatus('error', 'Помилка (немає даних)'); if (first && elLoader) { elLoader.querySelector('.loader-text').innerHTML = "❌ Відсутній інтернет.<br>Немає збережених даних."; elLoader.querySelector('.spinner-ring').style.display = 'none'; } }
@@ -637,7 +597,8 @@
     function enableUI() { 
         elCatInput.disabled = false; 
         if (db.appVersion) {
-            elAppVersion.innerHTML = `ВЕРСІЯ v${db.appVersion} &nbsp;<span style="font-weight: normal; opacity: 0.7;">(що нового?)</span>`;
+            // Без підкреслення, тільки сам текст (підкреслення я забрав у CSS)
+            elAppVersion.innerHTML = `ВЕРСІЯ v${db.appVersion}  <span style="font-weight: normal; opacity: 0.7;">(що нового?)</span>`;
             elAppVersion.style.display = 'inline-block';
         }
         if (elLoader) elLoader.classList.add('hidden'); 
@@ -770,7 +731,7 @@
                 let lower = t.toLowerCase();
                 if (lower.includes('налаштуван') || lower.includes('встановлен') || lower.includes('пк') || lower.includes('gold') || lower.includes('silver')) e = '⚙️'; else if (lower.includes('антивірус') || lower.includes('захист') || lower.includes('eset')) e = '🛡️'; else if (lower.includes('windows') || lower.includes('office') || lower.includes('офіс') || lower.includes('ключ')) e = '🔑'; else if (lower.includes('гарантія') || lower.includes('обмін') || lower.includes('міс.')) e = '♻️'; else if (lower.includes('sweet') || lower.includes('tv') || lower.includes('фільм') || lower.includes('кіно')) e = '🎬'; else if (lower.includes('монтаж') || lower.includes('демонтаж') || lower.includes('підключення')) e = '🛠️'; else e = '🔹';
             }
-            return `<div class="desc-list-item"><div class="desc-icon">${e}</div><div class="desc-text">${t}</div></div>`;
+            return `<div class="modal-item"><div class="modal-icon-circle">${e}</div><div class="modal-text">${t}</div></div>`;
         }).join('');
     }
 
@@ -791,7 +752,7 @@
             ? `onclick="handleModalServiceClick(event, '${s.name.replace(/'/g, "\\'")}', ${s.isPackage}, '${s.code || ''}')"` 
             : `onclick="handleServiceClick('${s.name.replace(/'/g, "\\'")}', '${s.code || ''}', ${s.isPackage})"`;
             
-        let descHtml = s.descToggleHTML ? `<div style="position:relative; z-index:2; width:100%; margin-top:10px;">${s.descToggleHTML}</div>` : '';
+        let descHtml = s.descToggleHTML ? `<div style="position:relative; z-index:2; width:100%; margin-top:5px;">${s.descToggleHTML}</div>` : '';
         
         return `
         <div class="service-card ${cardClass}" style="${isModalCtx ? 'flex-direction:column; align-items:stretch;' : ''}" ${clickHandler}>
@@ -879,21 +840,22 @@
 
         dataForSort.sort((a, b) => { if (a.isFocus && !b.isFocus) return -1; if (!a.isFocus && b.isFocus) return 1; return b.numCost - a.numCost; });
         window.lastCalculatedServices = dataForSort;
-
+        
         let compareableCount = dataForSort.filter(s => !s.isPackage).length;
-        if (compareableCount >= 2) toggleCompareBtn.style.display = 'flex'; else { toggleCompareBtn.style.display = 'none'; if (isCompareMode) toggleCompareMode(); }
+        if (compareableCount >= 2) toggleCompareBtn.style.display = 'flex';
+        else { toggleCompareBtn.style.display = 'none'; if (isCompareMode) toggleCompareMode(); }
 
         requestAnimationFrame(() => { elServiceList.innerHTML = dataForSort.map(s => generateServiceCardHTML(s, false)).join(''); });
     }
 
     elPriceInput.addEventListener('input', debounce(renderServices, 50));
 
-    // --- ЛОГІКА ПОРІВНЯННЯ ---
+    // --- ПОРІВНЯННЯ ---
     function toggleCompareMode() {
         isCompareMode = !isCompareMode; compareSelection = []; 
         if (isCompareMode) {
             toggleCompareBtn.classList.add('active'); toggleCompareBtn.innerHTML = '<span style="font-size: 14px;">✕</span> Скасувати';
-            compareBar.classList.add('show'); floatBtnsGroup.style.display = 'none'; 
+            compareBar.classList.add('show'); compareBar.style.zIndex = '9998'; floatBtnsGroup.style.display = 'none'; 
         } else {
             toggleCompareBtn.classList.remove('active'); toggleCompareBtn.innerHTML = '<span style="font-size: 14px;">⚖️</span> Порівняти';
             compareBar.classList.remove('show'); floatBtnsGroup.style.display = 'flex';
@@ -902,8 +864,7 @@
     }
 
     window.toggleModalCompareMode = function() {
-        isModalCompareMode = !isModalCompareMode; modalCompareSelection = []; 
-        const btn = document.getElementById('modalCompareBtn');
+        isModalCompareMode = !isModalCompareMode; modalCompareSelection = []; const btn = document.getElementById('modalCompareBtn');
         if (isModalCompareMode) {
             btn.classList.add('active'); btn.innerHTML = '<span style="font-size: 14px;">✕</span> Скасувати'; compareBar.classList.add('show'); compareBar.style.zIndex = '100005';
         } else {
@@ -914,12 +875,13 @@
 
     function handleServiceClick(name, code, isPackage) {
         if (isCompareMode) {
-            if (isPackage) { openModal(name, code); return; } // Пакети не порівнюємо
+            if (isPackage) { openModal(name, code); return; } // Пакети не можна порівнювати напряму
             let index = compareSelection.indexOf(name);
-            if (index > -1) { compareSelection.splice(index, 1); } 
-            else { if (compareSelection.length < 2) compareSelection.push(name); else { compareBar.style.transform = 'translateY(-10px)'; setTimeout(() => compareBar.style.transform = 'translateY(0)', 150); } }
+            if (index > -1) compareSelection.splice(index, 1); 
+            else if (compareSelection.length < 2) compareSelection.push(name); 
+            else { compareBar.style.transform = 'translateY(-10px)'; setTimeout(() => compareBar.style.transform = 'translateY(0)', 150); }
             updateCompareUI(); renderServices(); 
-        } else { openModal(name, code); }
+        } else openModal(name, code);
     }
 
     window.handleModalServiceClick = function(e, name, isPackage, code) {
@@ -927,22 +889,25 @@
         if (isModalCompareMode) {
             if (isPackage) { alert("Пакети не порівнюються."); return; }
             let index = modalCompareSelection.indexOf(name);
-            if (index > -1) { modalCompareSelection.splice(index, 1); } 
-            else { if (modalCompareSelection.length < 2) modalCompareSelection.push(name); else { compareBar.style.transform = 'translateY(-10px)'; setTimeout(() => compareBar.style.transform = 'translateY(0)', 150); } }
+            if (index > -1) modalCompareSelection.splice(index, 1); 
+            else if (modalCompareSelection.length < 2) modalCompareSelection.push(name); 
+            else { compareBar.style.transform = 'translateY(-10px)'; setTimeout(() => compareBar.style.transform = 'translateY(0)', 150); }
             updateModalCompareUI(); updateSetupResults(); 
         } 
     }
 
     function updateCompareUI() {
         let count = compareSelection.length;
-        document.getElementById('compareStatusText').innerText = count === 0 ? "Оберіть 2 сервіси для порівняння" : (count === 1 ? "Оберіть ще 1 сервіс" : "Готово до порівняння!");
-        compareExecuteBtn.innerText = `Порівняти (${count}/2)`; if (count === 2) compareExecuteBtn.classList.add('ready'); else compareExecuteBtn.classList.remove('ready');
+        document.getElementById('compareStatusText').innerText = count === 0 ? "Оберіть 2 сервіси" : (count === 1 ? "Оберіть ще 1 сервіс" : "Готово до порівняння!");
+        compareExecuteBtn.innerText = `Порівняти (${count}/2)`;
+        if (count === 2) compareExecuteBtn.classList.add('ready'); else compareExecuteBtn.classList.remove('ready');
     }
 
     function updateModalCompareUI() {
         let count = modalCompareSelection.length;
-        document.getElementById('compareStatusText').innerText = count === 0 ? "Оберіть 2 сервіси для порівняння" : (count === 1 ? "Оберіть ще 1 сервіс" : "Готово до порівняння!");
-        compareExecuteBtn.innerText = `Порівняти (${count}/2)`; if (count === 2) compareExecuteBtn.classList.add('ready'); else compareExecuteBtn.classList.remove('ready');
+        document.getElementById('compareStatusText').innerText = count === 0 ? "Оберіть 2 сервіси" : (count === 1 ? "Оберіть ще 1 сервіс" : "Готово до порівняння!");
+        compareExecuteBtn.innerText = `Порівняти (${count}/2)`;
+        if (count === 2) compareExecuteBtn.classList.add('ready'); else compareExecuteBtn.classList.remove('ready');
     }
 
     function extractFeaturesList(desc) {
@@ -962,8 +927,8 @@
         if (listA.length === 0 && listB.length === 0) {
             let html = `<div class="compare-wrapper"><table class="compare-table"><thead><tr>`;
             [sA, sB].forEach(s => {
-                let brandLabel = s.brand || (s.cls === 'brand-ekta' ? 'ЕКТА' : (s.cls === 'brand-support' ? 'SUPPORT' : (s.cls === 'brand-epz' ? 'ЕПЗ' : 'СЕРВІС')));
-                html += `<th><div class="brand-tag ${s.cls}" style="margin:0 auto 6px auto; display: inline-block;">${brandLabel}</div><br>${s.title}<br><div style="margin-top:6px; font-weight:900;">${s.label || s.priceText}</div></th>`;
+                let bLabel = s.brand || (s.cls === 'brand-ekta' ? 'ЕКТА' : (s.cls === 'brand-support' ? 'SUPPORT' : (s.cls === 'brand-epz' ? 'ЕПЗ' : 'СЕРВІС')));
+                html += `<th><div class="brand-tag ${s.cls}" style="display:inline-block; margin-bottom:4px;">${bLabel}</div><br>${s.title}<br><div style="margin-top:4px;">${s.label || s.priceText}</div></th>`;
             });
             html += `</tr></thead><tbody><tr><td style="white-space:pre-wrap;">${descA || 'Опис відсутній'}</td><td style="white-space:pre-wrap;">${descB || 'Опис відсутній'}</td></tr></tbody></table></div>`;
             return html;
@@ -975,11 +940,11 @@
             if (idxB !== -1) { common.push({a: featA, b: diffB[idxB]}); diffB.splice(idxB, 1); } else diffA.push(featA);
         });
 
-        let html = `<div style="font-size: 11px; font-weight: 800; color: var(--text-muted); margin-bottom: 12px; text-align: center; text-transform: uppercase;">Властивості (унікальні позначені ✨)</div>`;
+        let html = `<div style="font-size: 11px; font-weight: 800; color: var(--text-muted); margin-bottom: 12px; text-align: center; text-transform: uppercase;">Властивості (відмінності позначені ✨)</div>`;
         html += `<div class="compare-wrapper"><table class="compare-table"><thead><tr>`;
         [sA, sB].forEach(s => {
             let brandLabel = s.brand || (s.cls === 'brand-ekta' ? 'ЕКТА' : (s.cls === 'brand-support' ? 'SUPPORT' : (s.cls === 'brand-epz' ? 'ЕПЗ' : 'СЕРВІС')));
-            html += `<th><div class="brand-tag ${s.cls}" style="margin:0 auto 6px auto; display: inline-block;">${brandLabel}</div><div style="font-size: 11px; white-space: normal; line-height: 1.2;">${s.title}</div><div style="font-size: 14px; font-weight: 900; color: var(--primary); margin-top: 6px;">${s.label || s.priceText}</div></th>`;
+            html += `<th><div class="brand-tag ${s.cls}" style="margin:0 auto 6px auto; display: inline-block;">${brandLabel}</div><div style="font-size: 11px; white-space: normal; line-height: 1.2;">${s.title}</div><div style="font-size: 14px; font-weight: 900; margin-top: 6px; color: var(--primary);">${s.label || s.priceText}</div></th>`;
         });
         html += `</tr></thead><tbody>`;
 
@@ -1007,8 +972,7 @@
         let sA = window.lastCalculatedServices.find(s => s.name === compareSelection[0]);
         let sB = window.lastCalculatedServices.find(s => s.name === compareSelection[1]);
         if (!sA || !sB) return;
-        let html = buildCompareTable(sA, sB, findInDb(db.descriptions, sA.name), findInDb(db.descriptions, sB.name));
-        showCompareModal(html);
+        let html = buildCompareTable(sA, sB, findInDb(db.descriptions, sA.name), findInDb(db.descriptions, sB.name)); showCompareModal(html);
     };
 
     window.executeModalCompare = function() {
@@ -1016,13 +980,9 @@
         let sA = window.lastModalServices.find(s => s.name === modalCompareSelection[0] || s.service === modalCompareSelection[0]);
         let sB = window.lastModalServices.find(s => s.name === modalCompareSelection[1] || s.service === modalCompareSelection[1]);
         if (!sA || !sB) return;
-
         let mappedA = { name: sA.name || sA.service, title: (sA.title || sA.service).replace(/^\[.*?\]\s*/, ''), brand: sA.brand || "", label: sA.priceText || sA.label, cls: sA.cls || "brand-settings" };
         let mappedB = { name: sB.name || sB.service, title: (sB.title || sB.service).replace(/^\[.*?\]\s*/, ''), brand: sB.brand || "", label: sB.priceText || sB.label, cls: sB.cls || "brand-settings" };
-
-        let descA = findInDb(db.descriptions, mappedA.name) || ""; let descB = findInDb(db.descriptions, mappedB.name) || "";
-        let html = buildCompareTable(mappedA, mappedB, descA, descB);
-        showCompareModal(html);
+        let html = buildCompareTable(mappedA, mappedB, findInDb(db.descriptions, mappedA.name), findInDb(db.descriptions, mappedB.name)); showCompareModal(html);
     };
 
     function showCompareModal(html) {
@@ -1032,7 +992,7 @@
 
     window.closeCompareModal = function() {
         document.getElementById('compareModal').classList.remove('show');
-        if (!document.getElementById('descModal').classList.contains('show')) {
+        if (!document.getElementById('descModal').classList.contains('show') && !document.getElementById('galleryModal').classList.contains('show')) {
             document.body.classList.remove('modal-open'); document.body.style.top = ''; window.scrollTo(0, scrollPos);
         }
     }
@@ -1040,8 +1000,8 @@
     // --- МОНТАЖ ---
     function renderMontazhModal() {
         if (!db.montazhData || !db.montazhData.cities || db.montazhData.cities.length === 0) { elModalBody.innerHTML = `<div style="text-align:center; padding: 20px; color:var(--text-muted); font-weight: 800;">Помилка: Міста для монтажу не завантажено.</div>`; return; }
-
         const cities = db.montazhData.cities.sort((a, b) => a.localeCompare(b)); const services = db.montazhData.services;
+
         window.cityStatusMap = new Map();
         cities.forEach(city => { window.cityStatusMap.set(city, services.some(s => { let avail = s.availability[city]; return avail && avail !== "-" && avail !== "✖" && !avail.toLowerCase().includes("немає"); })); });
         const categories = [...new Set(services.map(s => s.cat).filter(Boolean))];
@@ -1050,11 +1010,7 @@
             <div style="margin-bottom: 20px;"><span class="montazh-label">В якому місті шукаємо?</span><select id="montazhCity" class="montazh-select"><option value="">-- Оберіть місто --</option>${cities.map(c => { let emoji = window.cityStatusMap.get(c) ? "🟢" : "🔴"; return `<option value="${c}">${emoji} ${c}</option>`; }).join('')}</select></div>
             <div style="margin-bottom: 20px;"><span class="montazh-label">Яку техніку потрібно встановити?</span><select id="montazhCat" class="montazh-select"><option value="">-- Оберіть категорію --</option>${categories.map(c => `<option value="${c}">${c}</option>`).join('')}</select></div>
             <div id="montazhSubCatWrapper" style="display:none; margin-bottom: 20px;"><span class="montazh-label">Виберіть підкатегорію:</span><select id="montazhSubCat" class="montazh-select"></select></div>
-            
-            <div class="compare-header">
-                <span>Доступні послуги</span>
-                <button id="modalCompareBtn" onclick="toggleModalCompareMode()" class="compare-toggle-btn" style="display: none;"><span style="font-size: 14px;">⚖️</span> Порівняти</button>
-            </div>
+            <div class="compare-header"><span>Доступні послуги</span><button id="modalCompareBtn" onclick="toggleModalCompareMode()" class="compare-toggle-btn" style="display: none;"><span style="font-size: 14px;">⚖️</span> Порівняти</button></div>
             <div id="montazhResults" class="service-list"></div>
         `;
 
@@ -1092,20 +1048,20 @@
         matches.forEach(s => {
              let availability = s.availability[city] || ""; let isUnavailable = (!availability || availability.toLowerCase().includes("немає") || availability === "-" || availability === "✖");
              let displayProv = ""; let matchProv = s.name.match(/^\[(.*?)\]/); if (matchProv) displayProv = matchProv[1].trim(); 
-             
              let price = s.price;
              if (!price) { let nameClean = normalizeServiceName(s.name); const t = db.tariffs.find(x => normalizeServiceName(x.service) === nameClean || (x.serviceRu && normalizeServiceName(x.serviceRu) === nameClean)); if (t && t.cost) price = t.cost; }
              let cleanCost = price.toString().replace(/\s+/g, '').replace(/[^\d.,]/g, '').replace(',', '.'); let priceVal = parseFloat(cleanCost) || 0; 
              let priceText = isNaN(priceVal) || cleanCost === '' ? price : priceVal.toLocaleString('uk-UA') + " ₴";
              let descToggleHTML = generateDescToggleHTML(findInDb(db.descriptions, s.name), findInDb(db.serviceCodes, s.name));
-             renderItems.push({ isUnavailable, priceVal, displayProv, serviceName: s.name, priceText, availability, descToggleHTML, code: s.code });
+             renderItems.push({ isUnavailable, priceVal, displayProv, serviceName: s.name, priceText, descToggleHTML, availability, code: s.code });
         });
+
         renderItems.sort((a, b) => { if (a.isUnavailable !== b.isUnavailable) return a.isUnavailable ? 1 : -1; return b.priceVal - a.priceVal; });
 
         window.lastModalServices = renderItems.map(item => {
             let cls = 'brand-other'; let pUpper = item.displayProv.toUpperCase();
             if (pUpper === 'ЕКТА' || pUpper === 'EKTA') cls = "brand-ekta"; else if (pUpper === 'НАШ СЕРВІС' || pUpper === 'SUPPORT' || pUpper === 'МІЙ СЕРВІС') cls = "brand-support";
-            return { name: item.serviceName, title: item.serviceName.replace(/^\[.*?\]\s*/, ''), brand: item.displayProv, cls: cls, priceText: item.priceText, code: item.code };
+            return { name: item.serviceName, title: item.serviceName.replace(/^\[.*?\]\s*/, ''), brand: item.displayProv, cls: cls, priceText: item.priceText };
         });
 
         let modalCompBtn = document.getElementById('modalCompareBtn');
@@ -1118,23 +1074,23 @@
         renderItems.forEach(item => {
             let cls = 'brand-other'; let pUpper = item.displayProv.toUpperCase();
             if (pUpper === 'ЕКТА' || pUpper === 'EKTA') cls = "brand-ekta"; else if (pUpper === 'НАШ СЕРВІС' || pUpper === 'SUPPORT' || pUpper === 'МІЙ СЕРВІС') cls = "brand-support";
-            
             let obj = { name: item.serviceName, title: item.serviceName.replace(/^\[.*?\]\s*/, ''), brand: item.displayProv, cls: cls, label: item.priceText, descToggleHTML: item.descToggleHTML, isPackage: false, code: item.code };
-            
             if (item.isUnavailable) {
                 if (!seenUnavailable.has(pUpper) && item.displayProv) {
                     seenUnavailable.add(pUpper);
-                    resultsHTML += `<div class="montazh-card" style="border:1px solid var(--border); margin-bottom:14px;"><div class="brand-tag ${cls}" style="display:inline-block; padding:4px 8px; border-radius:8px; font-size:10px; font-weight:900;">${item.displayProv}</div><div style="font-size: 13px; font-weight: 600; color: #ef4444; margin-top: 5px;">На жаль, в цьому місті неможливий монтаж підрядником ${item.displayProv}</div></div>`; 
+                    resultsHTML += `<div class="montazh-card" style="border:1px solid var(--border); margin-bottom:14px; cursor:default;"><div class="brand-tag ${cls}" style="display:inline-block; padding:4px 8px; border-radius:8px; font-size:10px; font-weight:900;">${item.displayProv}</div><div style="font-size: 13px; font-weight: 600; color: #ef4444; margin-top: 5px;">На жаль, в цьому місті неможливий монтаж підрядником ${item.displayProv}</div></div>`; 
                 }
             } else {
                  let text = item.availability; let availLower = text.toLowerCase(); let displayText = text;
-                 if (availLower === "так" || availLower === "+") displayText = "В межах міста";
-                 let badgeClass = "availability-badge brand-other";
-                 if (availLower.includes("тільки місто") || availLower.includes("до 20 км")) badgeClass = "availability-badge status-city-limit";
-                 else if (availLower.includes("передмістя") || availLower.includes("платно")) badgeClass = "availability-badge status-fee-zone";
-                 else if (availLower.includes("в межах міста")) badgeClass = "availability-badge status-full-coverage";
-                 
-                 let extraInfoHTML = (text && availLower !== "так" && availLower !== "+") ? `<div class="${badgeClass}" style="margin-top:10px;"><span style="font-size: 14px;">📍</span> ${displayText}</div>` : "";
+                 if (availLower === "так" || availLower === "+") { displayText = "В межах міста"; }
+                 let extraInfoHTML = "";
+                 if (text && availLower !== "так" && availLower !== "+") {
+                     let badgeClass = "availability-badge brand-other";
+                     if (availLower.includes("тільки місто") || availLower.includes("до 20 км")) badgeClass = "availability-badge status-city-limit";
+                     else if (availLower.includes("передмістя") || availLower.includes("платно")) badgeClass = "availability-badge status-fee-zone";
+                     else if (availLower.includes("в межах міста")) badgeClass = "availability-badge status-full-coverage";
+                     extraInfoHTML = `<div class="${badgeClass}" style="margin-top:10px;"><span style="font-size: 14px;">📍</span> ${displayText}</div>`;
+                 }
                  obj.descToggleHTML = obj.descToggleHTML + extraInfoHTML;
                  resultsHTML += generateServiceCardHTML(obj, true); 
             }
@@ -1201,7 +1157,7 @@
         
         let matches = db.tariffs.filter(t => t.cat === cat);
         if(matches.length === 0 && document.getElementById('setupCat')) { container.innerHTML = `<div style="text-align:center; padding: 20px; color:var(--text-muted);">Послуг не знайдено</div>`; return; }
-        if (matches.length === 0) matches = window.lastModalServices; // Для DirectList
+        if (matches.length === 0) matches = window.lastModalServices; 
         
         const p = parseFloat(elPriceInput.value) || 0; 
         let processedMatches = matches.map(m => {
@@ -1227,9 +1183,37 @@
         container.innerHTML = html;
     }
 
+    function openModal(name, code = "") {
+        scrollPos = window.pageYOffset; document.body.style.top = `-${scrollPos}px`; document.body.classList.add('modal-open');
+        isModalCompareMode = false; modalCompareSelection = []; compareBar.classList.remove('show');
+        
+        let nameClean = normalizeServiceName(name); let u = name.toUpperCase(); 
+        let isSetupCategory = db.tariffs.some(t => t.cat && normalizeServiceName(t.cat) === nameClean);
+        let isStaticEpz = (u.includes('WINDOWS') || u.includes('OFFICE') || u.includes('OFFICE 365') || u.includes('OFFICE 2024') || u.includes('ESD') || u.includes('[ESD]')) && !u.includes('НАЛАШТУВАННЯ') && !u.includes('ВСТАНОВЛЕННЯ') && !u.includes('АНТИВІРУС') && !u.includes('ESET') && !u.includes('PARALLELS');
+
+        if (!isStaticEpz) {
+            if (u.includes('МОНТАЖ') || u.includes('ПІДКЛЮЧЕННЯ') || (u.includes('ВСТАНОВЛЕННЯ') && !u.includes('ЗАХИСН'))) { document.getElementById('modalTitle').innerText = "Монтаж ВПТ"; renderMontazhModal(); elModal.classList.add('show'); return; } 
+            else if (u.includes('ПЕРЕВІРКА') || u.includes('ПІКСЕЛ')) { document.getElementById('modalTitle').innerText = "Перевірка на биті пікселі"; renderDirectListModal(["перевірка", "піксел"]); elModal.classList.add('show'); return; } 
+            else if (u.includes('ПОКЛЕЙКА') || u.includes('ЗАХИСН') || u.includes('СКЛО') || u.includes('ПЛІВК')) { document.getElementById('modalTitle').innerText = "Поклейка скла та плівок"; renderDirectListModal(["поклейка", "скло", "плівк", "захисн"]); elModal.classList.add('show'); return; }
+            else if (u.includes('АНТИВІРУС') || u.includes('ESET')) { document.getElementById('modalTitle').innerText = "Антивіруси"; renderSetupModal(name, "antivirus"); elModal.classList.add('show'); return; }
+            else if (u.includes('КІНОТЕАТР') || u.includes('SWEET') || u.includes('PARALLELS')) { document.getElementById('modalTitle').innerText = u.includes('PARALLELS') ? "Parallels Desktop" : "Онлайн кінотеатри"; renderDirectListModal(u.includes('PARALLELS') ? ["parallels"] : ["sweet", "кінотеатр"]); elModal.classList.add('show'); return; }
+            else if (isSetupCategory || u.includes('НАЛАШТУВАННЯ') || u.includes('ПЗ') || u.includes('ПОСЛУГИ') || u.includes('ГОДИНА РОБОТИ')) { document.getElementById('modalTitle').innerText = "Налаштування та сервіси"; renderSetupModal(name, "setup"); elModal.classList.add('show'); return; }
+        }
+
+        let title = name.replace(/🇺🇦\s*/g, '').replace(/^UA\s+/i, '').replace(/^\[.*?\]\s*/, ''); 
+        document.getElementById('modalTitle').innerText = title;
+        
+        const raw = findInDb(db.descriptions, name) || "";
+        let isValidCode = false;
+        if (code) { let cStr = code.toString().trim(); let nStr = name.toString().trim(); if (cStr !== "" && cStr.toLowerCase() !== nStr.toLowerCase() && /\d/.test(cStr)) { isValidCode = true; } }
+        
+        let codeBlock = isValidCode ? `<div class="code-block-wrapper" onclick="copyCode(event, this, '${code}')"><span class="code-label-text">Код сервісу:</span><span class="code-value-text">${code} <span style="font-size:16px;">📋</span></span></div>` : '';
+        elModalBody.innerHTML = codeBlock + parseDescriptionLines(raw); elModal.classList.add('show'); 
+    }
+
     function parseChangelogLines(text) {
         if (!text) return '<div style="text-align:center; color:var(--text-muted);">Опис змін відсутній...</div>';
-        text = text.replace(/^"|"$/g, '').trim(); let lines = text.split('\n'); let html = '<div style="display:flex; flex-direction:column; gap:8px;">';
+        let lines = text.split('\n'); let html = '<div style="display:flex; flex-direction:column; gap:8px;">';
         lines.forEach(line => {
             const l = line.trim(); if (l) {
                 let hasEmoji = /^(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])/.test(l);
