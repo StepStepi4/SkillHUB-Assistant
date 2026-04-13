@@ -43,6 +43,7 @@
             --gradient-primary: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
             --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
             --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --shadow-sm: 0 2px 5px rgba(0,0,0,0.05);
         }
 
         [data-theme="dark"] {
@@ -99,12 +100,11 @@
             border: 1px solid var(--border); transition: background 0.3s, border 0.3s; 
         }
         
-        /* --- ПЕРЕМИКАЧ ТЕМИ --- */
-        .top-right-controls { position: absolute; top: 22px; right: 24px; display: flex; align-items: center; z-index: 10; }
+        /* --- ПЕРЕМИКАЧ ТЕМИ ТА РЕЗЕРВИ --- */
         .theme-switch {
-            position: relative; width: 64px; height: 32px; background: #60a5fa; border-radius: 32px;
+            position: relative; width: 56px; height: 32px; background: #60a5fa; border-radius: 32px;
             cursor: pointer; box-shadow: inset 0 2px 4px rgba(0,0,0,0.1); transition: background 0.4s ease;
-            overflow: hidden; border: 1px solid rgba(0,0,0,0.05);
+            overflow: hidden; border: 1px solid rgba(0,0,0,0.05); flex-shrink: 0;
         }
         [data-theme="dark"] .theme-switch { background: #1e293b; border-color: #334155; }
         .theme-slider {
@@ -112,7 +112,7 @@
             border-radius: 50%; box-shadow: 0 2px 5px rgba(0,0,0,0.2); transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.4s;
             z-index: 2; pointer-events: none; 
         }
-        [data-theme="dark"] .theme-slider { transform: translateX(32px); background: #e2e8f0; box-shadow: inset -4px -2px 0 0 #cbd5e1; }
+        [data-theme="dark"] .theme-slider { transform: translateX(24px); background: #e2e8f0; box-shadow: inset -4px -2px 0 0 #cbd5e1; }
         
         .ts-cloud { position: absolute; background: white; border-radius: 10px; opacity: 0.9; transition: 0.4s; z-index: 1; pointer-events: none; }
         .ts-c1 { width: 14px; height: 5px; top: 6px; right: 8px; }
@@ -124,7 +124,14 @@
         [data-theme="dark"] .ts-cloud { opacity: 0; transform: translateX(10px); }
         [data-theme="dark"] .ts-star { opacity: 1; }
 
-        h2 { color: var(--primary); margin: 0 0 20px 0; font-size: 24px; font-weight: 800; letter-spacing: -0.7px; }
+        .rezervy-header-btn {
+            background: var(--box-bg); color: var(--primary); border: 1px solid var(--border);
+            padding: 8px 12px; border-radius: 16px; font-size: 12px; font-weight: 800; text-transform: uppercase;
+            cursor: pointer; display: flex; align-items: center; gap: 6px;
+            box-shadow: var(--shadow-sm); transition: 0.2s; flex-shrink: 0;
+        }
+        .rezervy-header-btn:active { transform: scale(0.95); background: var(--feat-bg); }
+        [data-theme="dark"] .rezervy-header-btn { background: #1e3a8a; border-color: #3b82f6; color: #bfdbfe; }
         
         .status-container { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
         .status-wrapper { display: flex; align-items: center; gap: 8px; }
@@ -144,15 +151,10 @@
         .refresh-db-btn.spinning svg { animation: spin 1s linear infinite; }
         
         .search-wrapper { position: relative; margin-bottom: 12px; display: flex; align-items: center; }
-
-        /* КНОПКА РЕЗЕРВІВ ЗБОКУ ВІД ПОШУКУ */
-        .rezervy-btn-small { background: var(--box-bg); border: 1px solid var(--border); color: var(--primary); font-size: 13px; font-weight: 800; padding: 10px 16px; border-radius: 16px; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: 0.2s; box-shadow: 0 2px 5px rgba(0,0,0,0.05); flex-shrink: 0; margin-left: 8px;}
-        .rezervy-btn-small:active { transform: scale(0.95); background: var(--feat-bg); }
-        [data-theme="dark"] .rezervy-btn-small { background: #1e3a8a; border-color: #3b82f6; color: #bfdbfe; }
-        
         input { width: 100%; padding: 14px 45px 14px 16px; border: 1px solid var(--border); border-radius: 16px; font-size: 16px; font-family: inherit; outline: none; transition: 0.2s ease; background: var(--input-bg); color: var(--text-main); box-shadow: 0 4px 10px rgba(0,0,0,0.04); }
         input:focus { box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.15); border-color: var(--primary); }
-        .clear-data-btn { position: absolute; right: 110px; background: #fee2e2; color: #ef4444; border: none; width: 28px; height: 28px; border-radius: 50%; font-size: 14px; font-weight: 800; cursor: pointer; display: none; align-items: center; justify-content: center; transition: 0.2s; }
+        
+        .clear-data-btn { position: absolute; right: 12px; background: #fee2e2; color: #ef4444; border: none; width: 28px; height: 28px; border-radius: 50%; font-size: 14px; font-weight: 800; cursor: pointer; display: none; align-items: center; justify-content: center; transition: 0.2s; }
         .clear-data-btn:active { background: #fca5a5; transform: scale(0.9);}
 
         .price-wrapper { display: none; gap: 8px; margin-bottom: 12px; align-items: stretch; animation: fadeIn 0.3s ease; }
@@ -222,7 +224,6 @@
         .service-card.brand-other:not(.selected-for-compare) { background: var(--box-bg); color: var(--text-main); }
 
         .service-title { font-size: 14px; font-weight: 800; line-height: 1.2; color: inherit; }
-
         .service-card .brand-tag { font-size: 10px; font-weight: 900; text-transform: uppercase; padding: 4px 8px; border-radius: 8px; margin-bottom: 6px; display: inline-block; background: rgba(255,255,255,0.3); color: inherit; box-shadow: none; }
         .service-card.brand-support .brand-tag { background: rgba(255,255,255,0.6); } 
         .service-card.brand-install .brand-tag { background: rgba(255,255,255,0.2) !important; color: transparent !important; width: 30px; height: 8px; border-radius: 10px; padding: 0 !important; margin-bottom: 6px !important; }
@@ -230,7 +231,6 @@
         .price-badge { font-size: 14px; font-weight: 900; background: rgba(255,255,255,0.9); color: #475569; padding: 8px 14px; border-radius: 14px; min-width: 95px; text-align: center; line-height: 1.1; pointer-events: none; box-shadow: 0 2px 5px rgba(0,0,0,0.05); z-index: 2;}
         .service-card.brand-support .price-badge { color: #854d0e; }
         .service-card.brand-install .price-badge { background: rgba(255,255,255,0.25); color: #ffffff; box-shadow: none; font-size: 12px; }
-        
         [data-theme="dark"] .price-badge { background: var(--box-bg); color: var(--text-main); }
         [data-theme="dark"] .service-card.brand-support .price-badge { background: #fff; color: #854d0e;}
 
@@ -241,11 +241,9 @@
         .service-card.compare-mode { padding-left: 45px; }
         .compare-checkbox { position: absolute; left: -30px; top: 18px; width: 22px; height: 22px; border-radius: 50%; border: 2px solid var(--text-muted); background: var(--box-bg); transition: 0.3s ease; z-index: 1; display: flex; align-items: center; justify-content: center; }
         .service-card.compare-mode .compare-checkbox { left: 12px; }
-        
         .service-card.selected-for-compare { border: 2px solid var(--primary) !important; background-color: rgba(37, 99, 235, 0.05) !important; }
         .service-card.selected-for-compare .compare-checkbox { border-color: var(--primary); background: var(--primary); }
         .service-card.selected-for-compare .compare-checkbox::after { content: '✓'; color: #fff; font-size: 14px; font-weight: 900; }
-        
         .service-card.selected-for-compare .service-title { color: var(--text-main); }
         .service-card.selected-for-compare .brand-tag { color: var(--text-main); background: var(--border) !important; }
         .service-card.selected-for-compare .price-badge { color: var(--text-main); background: var(--box-bg); }
@@ -303,13 +301,10 @@
 
         /* ПЛАВАЮЧІ КНОПКИ ЗНИЗУ */
         .floating-btns { position: fixed; bottom: 24px; right: 24px; display: flex; flex-direction: column; gap: 16px; z-index: 99999; transform: translateZ(0); pointer-events: none; }
-        
         .float-btn { width: 56px; height: 56px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; text-decoration: none; outline: none; pointer-events: auto; border: 1px solid var(--border); box-shadow: var(--shadow-lg); transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); background: var(--box-bg);}
-        
         #scrollTopBtn { color: var(--primary); opacity: 0; visibility: hidden; transform: translateY(20px) scale(0.8); }
         #scrollTopBtn.show { opacity: 1; visibility: visible; transform: translateY(0) scale(1); }
         #scrollTopBtn:active { transform: scale(0.92); background: var(--feat-bg); box-shadow: var(--shadow-sm); }
-        
         .float-btn.primary { background: #10b981; color: #ffffff; border: none; box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4); }
         .float-btn.primary:active { transform: scale(0.92); box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2); }
 
@@ -320,7 +315,6 @@
         .update-title { font-size: 16px; font-weight: 900; color: var(--text-main); margin-bottom: 2px;}
         .update-version { font-size: 12px; font-weight: 800; color: var(--primary); text-transform: uppercase; letter-spacing: 0.5px;}
         .changelog-panel { background: var(--feat-bg); border-radius: 16px; padding: 16px; border: 1px solid var(--border); box-shadow: inset 0 2px 4px rgba(0,0,0,0.02); margin-bottom: 20px;}
-        
         .modal-confirm-btn { width: 100%; padding: 16px; border-radius: 16px; border: none; background: var(--gradient-primary); color: #fff; font-weight: 800; cursor: pointer; font-size: 16px; margin-top: 10px; box-shadow: var(--shadow-md); transition: 0.2s ease; }
         .modal-confirm-btn:active { transform: scale(0.98); box-shadow: none; }
 
@@ -329,7 +323,6 @@
         .compare-toggle-btn { background: var(--feat-bg); color: var(--primary); border: 1px solid var(--border); padding: 8px 14px; border-radius: 12px; font-size: 12px; font-weight: 800; cursor: pointer; display: flex; align-items: center; gap: 6px; box-shadow: var(--shadow-sm); transition: 0.2s; }
         .compare-toggle-btn.active { background: #fee2e2; color: #ef4444; border-color: #fca5a5; }
         [data-theme="dark"] .compare-toggle-btn.active { background: #450a0a; color: #fca5a5; border-color: #7f1d1d; }
-        
         .compare-action-bar { position: fixed; bottom: 0; left: 0; width: 100%; background: var(--box-bg); padding: 16px 24px 30px 24px; box-shadow: 0 -10px 30px rgba(0,0,0,0.2); display: flex; justify-content: space-between; align-items: center; transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1); z-index: 9998; border-radius: 30px 30px 0 0; border-top: 1px solid var(--border); }
         .compare-action-bar.show { transform: translateY(0); }
         .compare-status-text { font-size: 14px; font-weight: 800; color: var(--text-main); }
@@ -356,18 +349,20 @@
 
 <div class="container">
     
-    <div class="top-right-controls">
-        <div id="themeToggle" class="theme-switch" title="Змінити тему">
-            <div class="ts-cloud ts-c1"></div>
-            <div class="ts-cloud ts-c2"></div>
-            <div class="ts-star ts-s1"></div>
-            <div class="ts-star ts-s2"></div>
-            <div class="ts-star ts-s3"></div>
-            <div class="theme-slider"></div>
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <h2 style="margin: 0; font-size: 24px; letter-spacing: -0.5px;">SkillHUB</h2>
+        <div style="display: flex; align-items: center; gap: 10px;">
+            <button class="rezervy-header-btn" onclick="openRezervyModal()">📦 Резерви</button>
+            <div id="themeToggle" class="theme-switch" title="Змінити тему">
+                <div class="ts-cloud ts-c1"></div>
+                <div class="ts-cloud ts-c2"></div>
+                <div class="ts-star ts-s1"></div>
+                <div class="ts-star ts-s2"></div>
+                <div class="ts-star ts-s3"></div>
+                <div class="theme-slider"></div>
+            </div>
         </div>
     </div>
-
-    <h2>SkillHUB Assistant</h2>
     
     <div class="status-container">
         <div class="status-wrapper">
@@ -381,11 +376,7 @@
 
     <div class="search-wrapper">
         <input type="text" id="catInput" placeholder="Яку техніку шукаємо?" autocomplete="off" disabled>
-        
-        <button class="rezervy-btn-small" onclick="openRezervyModal()">📦 Резерви</button>
-        
-        <button id="clearAllBtn" class="clear-data-btn" style="right: 125px;">✕</button>
-        
+        <button id="clearAllBtn" class="clear-data-btn">✕</button>
         <div id="customSuggestions" class="suggestions-list">
             <div id="matchesContainer"></div>
         </div>
@@ -459,9 +450,9 @@
 
 <div id="rezervItemModal" class="modal" style="z-index: 100001;">
     <div class="modal-content" style="max-height: 95vh;">
-        <div class="modal-header">
-            <b id="rezervItemTitle" style="font-size: 16px; color: var(--text-main); font-weight: 900; line-height: 1.2;"></b>
-            <button onclick="closeRezervItemModal()" style="border:none; background:var(--box-bg); border: 1px solid var(--border); border-radius: 50%; width: 36px; height: 36px; cursor:pointer; font-size:18px; color: var(--text-muted); transition: 0.2s; flex-shrink: 0; margin-left: 10px;">✕</button>
+        <div class="modal-header" style="flex-shrink: 0; align-items: flex-start;">
+            <b id="rezervItemTitle" style="font-size: 16px; color: var(--text-main); font-weight: 900; line-height: 1.3;"></b>
+            <button onclick="closeRezervItemModal()" style="border:none; background:var(--box-bg); border: 1px solid var(--border); border-radius: 50%; width: 36px; height: 36px; cursor:pointer; font-size:18px; color: var(--text-muted); transition: 0.2s; flex-shrink: 0; margin-left: 15px;">✕</button>
         </div>
         <div id="rezervItemBody" class="modal-body">
             <div id="rezervTechInfo" style="margin-bottom:20px; display:none; flex-direction:column; gap:8px;"></div>
@@ -507,17 +498,14 @@
     let currentCategoryData = null;
     let scrollPos = 0;
     
-    // State для порівняння (Головне меню)
     let isCompareMode = false;
     let compareSelection = [];
     window.lastCalculatedServices = [];
 
-    // State для порівняння (Внутрішні меню налаштувань та монтажу)
     let isModalCompareMode = false;
     let modalCompareSelection = [];
     window.lastModalServices = [];
 
-    // --- ЛОГІКА ТЕМИ ---
     let currentTheme = localStorage.getItem('theme') || 'light';
     document.documentElement.setAttribute('data-theme', currentTheme);
 
@@ -547,20 +535,14 @@
     const floatBtnsGroup = document.getElementById('floatBtnsGroup');
 
     window.addEventListener('scroll', () => {
-        if (window.scrollY > 100) {
-            scrollTopBtn.classList.add('show');
-        } else {
-            scrollTopBtn.classList.remove('show');
-        }
+        if (window.scrollY > 100) scrollTopBtn.classList.add('show');
+        else scrollTopBtn.classList.remove('show');
     });
 
-    scrollTopBtn.onclick = () => {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    };
+    scrollTopBtn.onclick = () => window.scrollTo({ top: 0, behavior: 'smooth' });
 
     const normalize = (str) => str ? str.toString().toLowerCase().trim().replace(/[‘’'"`]/g, "") : "";
 
-    // Безпечне екранування тексту для HTML Onclick
     function escapeForJS(str) {
         if (!str) return '';
         return str.toString().replace(/\\/g, "\\\\").replace(/'/g, "\\'").replace(/"/g, "&quot;").replace(/\n/g, "\\n").replace(/\r/g, "\\r");
@@ -593,12 +575,8 @@
         if (e) e.stopPropagation(); 
         const fallbackCopy = () => {
             let textArea = document.createElement("textarea");
-            textArea.value = code;
-            textArea.style.position = "fixed";
-            textArea.style.opacity = "0";
-            document.body.appendChild(textArea);
-            textArea.focus();
-            textArea.select();
+            textArea.value = code; textArea.style.position = "fixed"; textArea.style.opacity = "0";
+            document.body.appendChild(textArea); textArea.focus(); textArea.select();
             try { document.execCommand('copy'); showCopied(el, code); } catch (err) {}
             textArea.remove();
         };
@@ -630,13 +608,9 @@
         if(!dot || !txt) return;
         
         dot.className = 'pulse-dot'; 
-        if (state === 'ok') {
-            dot.classList.add('dot-green');
-        } else if (state === 'error') {
-            dot.classList.add('dot-red');
-        } else {
-            dot.classList.add('dot-loading');
-        }
+        if (state === 'ok') dot.classList.add('dot-green');
+        else if (state === 'error') dot.classList.add('dot-red');
+        else dot.classList.add('dot-loading');
         txt.innerText = text;
     }
 
@@ -662,14 +636,10 @@
             const response = await fetch(API_URL + '?nocache=' + Date.now());
             const dataStr = await response.text();
             
-            if (dataStr.trim().startsWith('<')) {
-                throw new Error("CORS/Auth Error");
-            }
+            if (dataStr.trim().startsWith('<')) throw new Error("CORS/Auth Error");
             
             let newDb = JSON.parse(dataStr);
-            if (newDb.error) {
-                throw new Error(newDb.error);
-            }
+            if (newDb.error) throw new Error(newDb.error);
             
             let savedVersion = localStorage.getItem(SEEN_VERSION_KEY);
             db = newDb;
@@ -677,17 +647,12 @@
             setAppStatus('ok', 'Дані актуальні (Готово до офлайну)');
             
             if (db.appVersion && savedVersion !== db.appVersion) {
-                if (savedVersion !== null) {
-                    setTimeout(() => showChangelogModal(db.appVersion, db.changelog), 1000); 
-                }
+                if (savedVersion !== null) setTimeout(() => showChangelogModal(db.appVersion, db.changelog), 1000); 
                 localStorage.setItem(SEEN_VERSION_KEY, db.appVersion); 
             }
 
-            if (first) {
-                enableUI(); populateStoreFilter();
-            } else {
-                enableUI(); populateStoreFilter();
-            }
+            if (first) { enableUI(); populateStoreFilter(); } 
+            else { enableUI(); populateStoreFilter(); }
         } catch (e) { 
             console.error(e);
             if (localStorage.getItem(CACHE_KEY)) {
@@ -706,9 +671,7 @@
     document.getElementById('forceUpdateBtn').addEventListener('click', async function() {
         this.classList.add('spinning');
         await refreshData(false);
-        setTimeout(() => {
-            this.classList.remove('spinning');
-        }, 500);
+        setTimeout(() => this.classList.remove('spinning'), 500);
     });
 
     function enableUI() { 
@@ -717,9 +680,7 @@
             elAppVersion.innerHTML = `ВЕРСІЯ v${db.appVersion}`;
             elAppVersion.style.display = 'inline-block';
         }
-        if (elLoader) {
-            elLoader.classList.add('hidden');
-        }
+        if (elLoader) elLoader.classList.add('hidden');
     }
 
     // --- ЛОГІКА РЕЗЕРВІВ ---
@@ -733,7 +694,6 @@
 
     window.closeRezervyModal = function() {
         document.getElementById('rezervyModal').classList.remove('show');
-        // Розблоковуємо екран тільки якщо під низом немає відкритої модалки опису
         if (!document.getElementById('rezervItemModal').classList.contains('show')) {
             document.body.classList.remove('modal-open');
             document.body.style.top = '';
@@ -745,7 +705,7 @@
         if (!db.rezervyData || db.rezervyData.length === 0) return;
         const stores = [...new Set(db.rezervyData.map(r => r.store))].sort();
         const select = document.getElementById('storeFilter');
-        select.innerHTML = '<option value="">-- Оберіть магазин --</option>'; // Очищаємо перед додаванням
+        select.innerHTML = '<option value="">-- Оберіть магазин --</option>'; 
         stores.forEach(s => {
             if (s) {
                 let opt = document.createElement('option');
@@ -772,11 +732,10 @@
         matches.sort((a, b) => b.price - a.price);
 
         let html = matches.map(r => {
-            // Прибираємо зайві слова з назви для компактного відображення моделі
-            let shortName = r.name.replace(/^(Телевізор|Ноутбук|Смартфон|Планшет|Холодильник|Пральна машина|Мікрохвильова піч|Кавомашина|Пилосос|Мобільний телефон)\s*/i, '');
-            
+            // Відрізаємо загальні слова з назви моделі
+            let shortName = r.name.replace(/^(Телевізор|Ноутбук|Смартфон|Мобільний телефон|Планшет|Холодильник|Пральна машина|Мікрохвильова піч|Кавомашина|Пилосос)\s*/i, '');
             return `
-            <div class="rezervy-item" onclick="openRezervItemModal('${escapeForJS(r.cat)}', ${r.price}, '${escapeForJS(r.name)}')">
+            <div class="rezervy-item" onclick="openRezervItemModal('${escapeForJS(r.cat)}', ${r.price}, '${escapeForJS(shortName)}')">
                 <div style="flex: 1; padding-right: 15px; overflow: hidden;">
                     <div class="rezervy-name" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${escapeForJS(r.name)}">${shortName}</div>
                     <div class="rezervy-cat">${r.cat}</div>
@@ -789,7 +748,6 @@
         container.innerHTML = html;
     }
 
-    // Відкриття карточки товару в резервах (не збиває основний пошук)
     window.openRezervItemModal = function(catName, price, itemName) {
         let searchVal = normalize(catName);
         let foundItem = null;
@@ -799,10 +757,8 @@
         }
 
         if (foundItem) {
-            document.getElementById('rezervItemTitle').innerText = itemName;
+            document.getElementById('rezervItemTitle').innerText = itemName + ` — ${Math.round(price).toLocaleString('uk-UA')} ₴`;
             document.getElementById('rezervItemModal').classList.add('show');
-            
-            // Рендеримо сервіси всередині нової модалки
             renderRezervItemServices(foundItem, price);
         } else {
             alert(`Увага! Категорію "${catName}" не знайдено в базі сервісів.`);
@@ -811,7 +767,6 @@
 
     window.closeRezervItemModal = function() {
         document.getElementById('rezervItemModal').classList.remove('show');
-        // Якщо закрили товар, але список магазину ще відкритий - не знімаємо modal-open
         if (!document.getElementById('rezervyModal').classList.contains('show')) {
             document.body.classList.remove('modal-open');
             document.body.style.top = '';
@@ -819,7 +774,6 @@
         }
     }
 
-    // Функція, яка рендерить сервіси ДЛЯ МОДАЛКИ РЕЗЕРВУ (без кнопок порівняння)
     function renderRezervItemServices(item, p) {
         let techStr = buildTechInfoHTML(item, p);
         let techEl = document.getElementById('rezervTechInfo');
@@ -846,12 +800,8 @@
         const val = normalize(elCatInput.value); 
         elClearBtn.style.display = val.length > 0 ? 'flex' : 'none';
         
-        // Скидаємо результати при очищенні вводу
         if (val.length === 0) {
-            elSuggList.style.display = "none"; 
-            elPriceWrapper.style.display = "none"; 
-            elResultBox.style.display = "none"; 
-            currentCategoryData = null;
+            elSuggList.style.display = "none"; elPriceWrapper.style.display = "none"; elResultBox.style.display = "none"; currentCategoryData = null;
             if(isCompareMode) toggleCompareMode(); 
             toggleCompareBtn.style.display = 'none';
             return;
@@ -874,8 +824,7 @@
 
     elClearBtn.onclick = () => { 
         elCatInput.value = ""; elPriceInput.value = ""; elClearBtn.style.display = "none"; elSuggList.style.display = "none"; elPriceWrapper.style.display = "none"; elResultBox.style.display = "none"; currentCategoryData = null; elCatInput.focus();
-        if(isCompareMode) toggleCompareMode(); 
-        toggleCompareBtn.style.display = 'none';
+        if(isCompareMode) toggleCompareMode(); toggleCompareBtn.style.display = 'none';
     };
     
     elOkBtn.onclick = () => elPriceInput.blur();
@@ -904,9 +853,7 @@
     function getDirectImageUrl(url) {
         if (!url) return "";
         let driveMatch = url.match(/drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/);
-        if (driveMatch && driveMatch[1]) {
-            return `https://drive.google.com/thumbnail?id=${driveMatch[1]}&sz=w1200`;
-        }
+        if (driveMatch && driveMatch[1]) return `https://drive.google.com/thumbnail?id=${driveMatch[1]}&sz=w1200`;
         return url;
     }
 
