@@ -461,7 +461,7 @@
     <button class="compare-execute-btn" id="compareExecuteBtn" onclick="window.handleExecuteCompare()">Порівняти (0/2)</button>
 </div>
 
-<div id="compareModal" class="modal" style="z-index: 100002;">
+<div id="compareModal" class="modal" style="z-index: 100015;">
     <div class="modal-content">
         <div class="modal-header">
             <b style="font-size: 20px; color: var(--text-main); font-weight: 900;">Результат порівняння</b>
@@ -692,11 +692,11 @@
     window.escapeHTML = function(str) {
         if (!str) return '';
         return str.toString()
-            .replace(/&/g, "&amp;")
-            .replace(/</g, "&lt;")
-            .replace(/>/g, "&gt;")
-            .replace(/"/g, "&quot;")
-            .replace(/'/g, "&#039;");
+            .replace(/&/g, "&")
+            .replace(/</g, "<")
+            .replace(/>/g, ">")
+            .replace(/"/g, """)
+            .replace(/'/g, "'");
     }
 
     window.escapeForJS = function(str) {
@@ -704,7 +704,7 @@
         return str.toString()
             .replace(/\\/g, "\\\\")
             .replace(/'/g, "\\'")
-            .replace(/"/g, "&quot;")
+            .replace(/"/g, """)
             .replace(/\n/g, "\\n")
             .replace(/\r/g, "");
     }
@@ -1536,7 +1536,7 @@
             btn.classList.add('active');
             btn.innerHTML = '<span style="font-size: 14px;">✕</span> Скасувати';
             compareBar.classList.add('show');
-            compareBar.style.zIndex = '100005';
+            compareBar.style.zIndex = '100010';
         } else {
             btn.classList.remove('active');
             btn.innerHTML = '<span style="font-size: 14px;">⚖️</span> Порівняти';
@@ -2165,7 +2165,6 @@
         
         let catInput = document.getElementById('setupCat');
 
-        // Якщо це меню без категорій (викликане через renderDirectListModal, наприклад Антивіруси, перевірки тощо)
         if (!catInput) {
             let modalCompBtn = document.getElementById('modalCompareBtn');
             if (modalCompBtn) {
@@ -2186,7 +2185,6 @@
             return;
         }
         
-        // Звичайна логіка з категоріями (Налаштування)
         let cat = catInput.value;
         if(!cat) {
             container.innerHTML = "";
