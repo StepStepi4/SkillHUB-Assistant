@@ -9,7 +9,7 @@
     <meta name="theme-color" content="#f0f4f8">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <meta name="apple-mobile-web-app-title" content="SkillHUB Assistant">
+    <meta name="apple-mobile-web-app-title" content="SkillHUB">
     <link rel="apple-touch-icon" href="icon-192.png">
 
     <style>
@@ -165,7 +165,7 @@
         .search-wrapper { position: relative; margin-bottom: 12px; display: flex; align-items: center; }
         input { width: 100%; padding: 16px 45px 16px 18px; border: 1px solid var(--border); border-radius: 18px; font-size: 16px; font-family: inherit; outline: none; transition: 0.2s ease; background: var(--input-bg); color: var(--text-main); box-shadow: var(--shadow-sm); }
         input:focus { box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.15); border-color: var(--primary); }
-        .clear-data-btn { position: absolute; right: 14px; background: #fee2e2; color: #ef4444; border: none; width: 28px; height: 28px; border-radius: 50%; font-size: 14px; font-weight: 800; cursor: pointer; display: none; align-items: center; justify-content: center; transition: 0.2s; }
+        .clear-data-btn { position: absolute; right: 14px; background: #fee2e2; color: #ef4444; border: none; width: 28px; height: 28px; border-radius: 50%; font-size: 14px; font-weight: 800; cursor: pointer; display: none; align-items: center; justify-content: center; transition: 0.2s; z-index: 5;}
         .clear-data-btn:active { background: #fca5a5; transform: scale(0.9);}
 
         .price-wrapper { display: none; gap: 8px; margin-bottom: 15px; align-items: stretch; animation: fadeIn 0.3s ease; }
@@ -209,7 +209,7 @@
         .photo-subtitle { font-size: 11px; font-weight: 600; color: var(--primary); margin-top: 2px; }
         .photo-arrow { color: var(--primary); font-weight: 900; font-size: 18px; }
 
-        .gallery-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.92); z-index: 100000; display: flex; flex-direction: column; align-items: center; justify-content: center; opacity: 0; visibility: hidden; transition: opacity 0.3s; backdrop-filter: blur(10px); touch-action: none; overscroll-behavior: none; }
+        .gallery-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.92); z-index: 100030; display: flex; flex-direction: column; align-items: center; justify-content: center; opacity: 0; visibility: hidden; transition: opacity 0.3s; backdrop-filter: blur(10px); touch-action: none; overscroll-behavior: none; }
         .gallery-modal.show { opacity: 1; visibility: visible; }
         .gallery-content { position: relative; width: 100%; height: 75vh; max-width: 100%; display: flex; align-items: center; justify-content: center; padding: 0; box-sizing: border-box; overflow: hidden; }
         .gallery-content img { max-width: 100%; max-height: 100%; border-radius: 8px; object-fit: contain; transform-origin: center; will-change: transform; pointer-events: auto; }
@@ -389,11 +389,12 @@
 <div class="container">
     
     <div class="header-row">
-        <h2>SkillHUB Assistant</h2>
+        <h2>SkillHUB</h2>
         <div class="header-controls">
             <button class="guide-btn" onclick="window.openGuideModal()" title="Як встановити додаток">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/>
+                    <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+                    <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
                 </svg>
             </button>
             <div id="themeToggle" class="theme-switch" title="Змінити тему">
@@ -461,7 +462,7 @@
     <button class="compare-execute-btn" id="compareExecuteBtn" onclick="window.handleExecuteCompare()">Порівняти (0/2)</button>
 </div>
 
-<div id="compareModal" class="modal" style="z-index: 100015;">
+<div id="compareModal" class="modal" style="z-index: 100020;">
     <div class="modal-content">
         <div class="modal-header">
             <b style="font-size: 20px; color: var(--text-main); font-weight: 900;">Результат порівняння</b>
@@ -472,7 +473,7 @@
     </div>
 </div>
 
-<div id="descModal" class="modal" style="z-index: 100005;">
+<div id="descModal" class="modal" style="z-index: 100002;">
     <div class="modal-content">
         <div class="modal-header">
             <b id="modalTitle" style="font-size: 20px; color: var(--text-main); font-weight: 900;">Опис</b>
@@ -510,10 +511,10 @@
     </div>
 </div>
 
-<div id="guideModal" class="modal" style="z-index: 100007;">
+<div id="guideModal" class="modal" style="z-index: 100003;">
     <div class="modal-content" style="padding: 0; overflow: hidden;">
         <div class="modal-header" style="background: var(--card-bg); padding: 16px 20px; margin-bottom: 0; border-bottom: 1px solid var(--border);">
-            <b style="font-size: 16px; color: var(--text-main); font-weight: 900;">Встановлення бота SkillHUB Assistant</b>
+            <b style="font-size: 16px; color: var(--text-main); font-weight: 900;">Встановлення додатка</b>
             <button onclick="window.closeGuideModal()" style="border:none; background:var(--box-bg); border: 1px solid var(--border); border-radius: 50%; width: 32px; height: 32px; cursor:pointer; font-size:16px; color: var(--text-muted); transition: 0.2s;">✕</button>
         </div>
         <div class="modal-body pwa-guide-container" style="padding: 0;">
@@ -603,7 +604,7 @@
     </div>
 </div>
 
-<div id="galleryModal" class="gallery-modal" style="z-index: 100008;">
+<div id="galleryModal" class="gallery-modal" style="z-index: 100030;">
     <div class="gallery-content" id="galleryContent">
         <button class="gallery-nav prev" onclick="event.stopPropagation(); window.changePhoto(-1)">❮</button>
         <img id="galleryImage" src="" alt="Фото пошкодження">
@@ -630,7 +631,7 @@
 </div>
 
 <script>
-    const API_URL = 'https://script.google.com/macros/s/AKfycbw_LgBeu74jN8g7AKAQzuPWx5C7beRm7adGM22AeMV5OGaNuujMWNwAhKju49zrATg30Q/exec';
+    const API_URL = 'https://script.google.com/macros/s/AKfycbxESwA1GOq96Y7RvPEUC4KnlKa0pMUHb5bPXI6LEgUEUocT_NmzXBBCUhTREhvhPihGlg/exec';
     
     const CACHE_KEY = 'skillhub_v1000_drive_fix'; 
     const SEEN_VERSION_KEY = 'skillhub_seen_version';
@@ -692,11 +693,11 @@
     window.escapeHTML = function(str) {
         if (!str) return '';
         return str.toString()
-            .replace(/&/g, "&")
-            .replace(/</g, "<")
-            .replace(/>/g, ">")
-            .replace(/"/g, """)
-            .replace(/'/g, "'");
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#39;");
     }
 
     window.escapeForJS = function(str) {
@@ -704,7 +705,7 @@
         return str.toString()
             .replace(/\\/g, "\\\\")
             .replace(/'/g, "\\'")
-            .replace(/"/g, """)
+            .replace(/"/g, "&quot;")
             .replace(/\n/g, "\\n")
             .replace(/\r/g, "");
     }
@@ -874,7 +875,6 @@
         }
     }
 
-    // --- ЛОГІКА ІНСТРУКЦІЇ ---
     window.openGuideModal = function() {
         scrollPos = window.pageYOffset; 
         document.body.style.top = `-${scrollPos}px`; 
@@ -894,7 +894,6 @@
         }
     }
 
-    // --- ЛОГІКА РЕЗЕРВІВ ---
     window.openRezervyModal = function() {
         scrollPos = window.pageYOffset; 
         document.body.style.top = `-${scrollPos}px`; 
@@ -948,7 +947,7 @@
             <div class="rezervy-item" onclick="window.openRezervItemModal('${window.escapeForJS(r.cat)}', ${r.price}, '${window.escapeForJS(shortName)}')">
                 <div style="flex: 1; padding-right: 15px; overflow: hidden;">
                     <div class="rezervy-name" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${window.escapeHTML(r.name)}">${shortName}</div>
-                    <div class="rezervy-cat">${r.cat}</div>
+                    <div class="rezervy-cat">${window.escapeHTML(r.cat)}</div>
                 </div>
                 <div class="rezervy-price">${Math.round(r.price).toLocaleString('uk-UA')} ₴</div>
             </div>
@@ -1004,8 +1003,6 @@
         });
     }
 
-    // ----------------------------
-
     elCatInput.addEventListener('input', debounce(() => {
         const val = normalize(elCatInput.value); 
         elClearBtn.style.display = val.length > 0 ? 'flex' : 'none';
@@ -1056,7 +1053,6 @@
         renderServices(); 
     }
 
-    // --- ЛОГІКА ГАЛЕРЕЇ ФОТО ТА ЗУМУ ---
     let currentPhotos = [];
     let currentPhotoIndex = 0;
     let scale = 1; let pointX = 0; let pointY = 0; let startX = 0; let startY = 0; let startDistance = 0; let startScale = 1; let panning = false;
@@ -1193,7 +1189,6 @@
         }
     });
 
-    // --- Універсальна функція для побудови TechInfo ---
     function buildTechInfoHTML(item, p) {
         let techHTML = `<div style="font-size: 10px; font-weight: 800; color: var(--primary); text-transform: uppercase;">🛠️ Технічна довідка</div>`;
         let hasInfo = false;
@@ -1290,8 +1285,7 @@
             }
             
             return `
-            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 6px; background: var(--feat-bg); padding: 8px 10px; border-radius: 14px; border: 1px solid var(--border);">
-                <div style="width: 32px; height: 32px; min-width: 32px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; background: var(--box-bg); box-shadow: var(--shadow-sm); border: 1px solid var(--border);">${e}</div>
+            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 6px; background: var(--feat-bg); padding: 8px 10px; border-radius: 14px; border: 1px solid var(--border);">${e ? `<div style="width: 32px; height: 32px; min-width: 32px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; background: var(--box-bg); box-shadow: var(--shadow-sm); border: 1px solid var(--border);">${e}</div>` : ''}
                 <div style="font-size: 12px; line-height: 1.4; color: var(--text-main); font-weight: 500;">${t}</div>
             </div>`;
         }).join('');
@@ -1536,7 +1530,7 @@
             btn.classList.add('active');
             btn.innerHTML = '<span style="font-size: 14px;">✕</span> Скасувати';
             compareBar.classList.add('show');
-            compareBar.style.zIndex = '100010';
+            compareBar.style.zIndex = '100015'; // Поверх descModal
         } else {
             btn.classList.remove('active');
             btn.innerHTML = '<span style="font-size: 14px;">⚖️</span> Порівняти';
@@ -1596,7 +1590,9 @@
             if (document.getElementById('montazhCity')) window.updateMontazhResults();
             else window.updateSetupResults(); 
         } else {
-            window.openModal(name, code);
+            // Клік всередині модалки по звичайному сервісу розгортає опис (акордеон)
+            let toggle = e.currentTarget.querySelector('.desc-toggle');
+            if(toggle) toggle.click();
         }
     }
 
@@ -2160,41 +2156,23 @@
     }
     
     window.updateSetupResults = function() {
+        let cat = document.getElementById('setupCat') ? document.getElementById('setupCat').value : "";
         let container = document.getElementById('setupResults');
         if(!container) return;
         
-        let catInput = document.getElementById('setupCat');
-
-        if (!catInput) {
-            let modalCompBtn = document.getElementById('modalCompareBtn');
-            if (modalCompBtn) {
-                if (window.lastModalServices.length >= 2) {
-                    modalCompBtn.style.display = 'flex';
-                } else {
-                    modalCompBtn.style.display = 'none';
-                    if (isModalCompareMode) window.toggleModalCompareMode();
-                }
-            }
-
-            let html = window.lastModalServices.map(m => {
-                 m.label = m.priceText;
-                 m.descToggleHTML = generateDescToggleHTML(findInDb(db.descriptions, m.name), m.code);
-                 return generateServiceCardHTML(m, true);
-            }).join('');
-            container.innerHTML = html;
-            return;
-        }
-        
-        let cat = catInput.value;
-        if(!cat) {
-            container.innerHTML = "";
-            return;
+        if(!cat && document.getElementById('setupCat')) { 
+            container.innerHTML = ""; 
+            return; 
         }
         
         let matches = db.tariffs.filter(t => t.cat === cat);
-        if(matches.length === 0) {
+        if(matches.length === 0 && document.getElementById('setupCat')) {
              container.innerHTML = `<div style="text-align:center; padding: 20px; color:var(--text-muted);">Послуг не знайдено</div>`;
              return;
+        }
+        
+        if (matches.length === 0) {
+            matches = window.lastModalServices; 
         }
         
         const p = parseFloat(elPriceInput.value) || 0; 
@@ -2282,7 +2260,7 @@
             && !u.includes('PARALLELS');
 
         if (!isStaticEpz) {
-            if (u.includes('МОНТАЖ') || u.includes('ПІДКЛЮЧЕННЯ') || (u.includes('ВСТАНОВЛЕННЯ') && !u.includes('WINDOWS') && !u.includes('ЗАХИСН'))) {
+            if (u.includes('МОНТАЖ') || u.includes('ПІДКЛЮЧЕННЯ') || (u.includes('ВСТАНОВЛЕННЯ') && !u.includes('ЗАХИСН'))) {
                 document.getElementById('modalTitle').innerText = "Монтаж ВПТ";
                 window.renderMontazhModal();
                 document.getElementById('descModal').classList.add('show');
@@ -2397,7 +2375,7 @@
         if (isModalCompareMode) {
             isModalCompareMode = false;
             document.getElementById('compareBar').classList.remove('show');
-            modalCompareSelection = []; // Обов'язкове очищення для усунення "зависань"
+            modalCompareSelection = []; 
         }
         
         if (!document.getElementById('compareModal').classList.contains('show') && 
