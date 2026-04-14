@@ -389,7 +389,7 @@
 <div class="container">
     
     <div class="header-row">
-        <h2>SkillHUB</h2>
+        <h2>SkillHUB Assistant</h2>
         <div class="header-controls">
             <button class="guide-btn" onclick="window.openGuideModal()" title="Як встановити додаток">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -513,7 +513,7 @@
 <div id="guideModal" class="modal" style="z-index: 100007;">
     <div class="modal-content" style="padding: 0; overflow: hidden;">
         <div class="modal-header" style="background: var(--card-bg); padding: 16px 20px; margin-bottom: 0; border-bottom: 1px solid var(--border);">
-            <b style="font-size: 16px; color: var(--text-main); font-weight: 900;">Встановлення бота SkillHUB</b>
+            <b style="font-size: 16px; color: var(--text-main); font-weight: 900;">Встановлення бота SkillHUB Assistant</b>
             <button onclick="window.closeGuideModal()" style="border:none; background:var(--box-bg); border: 1px solid var(--border); border-radius: 50%; width: 32px; height: 32px; cursor:pointer; font-size:16px; color: var(--text-muted); transition: 0.2s;">✕</button>
         </div>
         <div class="modal-body pwa-guide-container" style="padding: 0;">
@@ -689,7 +689,6 @@
 
     const normalize = (str) => str ? str.toString().toLowerCase().trim().replace(/[‘’'"`]/g, "") : "";
 
-    // Безпечне екранування тексту для HTML
     window.escapeHTML = function(str) {
         if (!str) return '';
         return str.toString()
@@ -697,10 +696,9 @@
             .replace(/</g, "&lt;")
             .replace(/>/g, "&gt;")
             .replace(/"/g, "&quot;")
-            .replace(/'/g, "&#39;");
+            .replace(/'/g, "&#039;");
     }
 
-    // Безпечне екранування тексту для JS обробників (onclick="...")
     window.escapeForJS = function(str) {
         if (!str) return '';
         return str.toString()
@@ -823,7 +821,6 @@
             localStorage.setItem(CACHE_KEY, dataStr);
             setAppStatus('ok', 'Дані актуальні (Готово до офлайну)');
             
-            // Логіка показу інструкції при першому запуску
             if (!guideSeen) {
                 setTimeout(() => {
                     window.openGuideModal();
@@ -831,7 +828,6 @@
                     if (db.appVersion) localStorage.setItem(SEEN_VERSION_KEY, db.appVersion); 
                 }, 1000);
             } 
-            // Якщо не перший запуск, перевіряємо оновлення версії
             else if (db.appVersion && savedVersion !== db.appVersion) {
                 if (savedVersion !== null) {
                     setTimeout(() => window.showChangelogModal(db.appVersion, db.changelog), 1000); 
@@ -909,7 +905,6 @@
 
     window.closeRezervyModal = function() {
         document.getElementById('rezervyModal').classList.remove('show');
-        // Розблоковуємо екран тільки якщо під низом немає відкритої модалки опису
         if (!document.getElementById('rezervItemModal').classList.contains('show') && !document.getElementById('guideModal').classList.contains('show')) {
             document.body.classList.remove('modal-open');
             document.body.style.top = '';
@@ -948,7 +943,6 @@
         matches.sort((a, b) => b.price - a.price);
 
         let html = matches.map(r => {
-            // Відрізаємо загальні слова з назви моделі
             let shortName = r.name.replace(/^(Телевізор|Ноутбук|Смартфон|Мобільний телефон|Планшет|Холодильник|Пральна машина|Мікрохвильова піч|Кавомашина|Пилосос)\s*/i, '');
             return `
             <div class="rezervy-item" onclick="window.openRezervItemModal('${window.escapeForJS(r.cat)}', ${r.price}, '${window.escapeForJS(shortName)}')">
@@ -964,7 +958,6 @@
         container.innerHTML = html;
     }
 
-    // Відкриття карточки товару в резервах (не збиває основний пошук)
     window.openRezervItemModal = function(catName, price, itemName) {
         let searchVal = normalize(catName);
         let foundItem = null;
@@ -984,7 +977,6 @@
 
     window.closeRezervItemModal = function() {
         document.getElementById('rezervItemModal').classList.remove('show');
-        // Якщо закрили товар, але список магазину ще відкритий - не знімаємо modal-open
         if (!document.getElementById('rezervyModal').classList.contains('show')) {
             document.body.classList.remove('modal-open');
             document.body.style.top = '';
@@ -992,7 +984,6 @@
         }
     }
 
-    // Функція, яка рендерить сервіси ДЛЯ МОДАЛКИ РЕЗЕРВУ (без кнопок порівняння)
     function renderRezervItemServices(item, p) {
         let techStr = buildTechInfoHTML(item, p);
         let techEl = document.getElementById('rezervTechInfo');
@@ -1009,7 +1000,6 @@
         let dataForSort = calculateServicesArray(item, p);
         
         requestAnimationFrame(() => {
-            // Передаємо параметр disableCompare = true, isModalCtx = true
             listEl.innerHTML = dataForSort.map(s => generateServiceCardHTML(s, true, true)).join('');
         });
     }
@@ -1020,7 +1010,6 @@
         const val = normalize(elCatInput.value); 
         elClearBtn.style.display = val.length > 0 ? 'flex' : 'none';
         
-        // Скидаємо результати при очищенні вводу
         if (val.length === 0) {
             elSuggList.style.display = "none"; 
             elPriceWrapper.style.display = "none"; 
@@ -1462,7 +1451,6 @@
         let brandHtml = s.brand ? `<div class="brand-tag" style="display: inline-block;">${s.brand}</div>` : `<div class="brand-tag" style="display: none;"></div>`;
         let checkboxHtml = (compareModeActive && !s.isPackage) ? `<div class="compare-checkbox"></div>` : '';
         
-        // В модальних вікнах картки стають вертикальними блоками
         let wrapperStyle = isModalCtx ? "display:flex; flex-direction:column; align-items:stretch;" : "display:flex; justify-content:space-between; align-items:center;";
 
         return `
@@ -1608,7 +1596,7 @@
             if (document.getElementById('montazhCity')) window.updateMontazhResults();
             else window.updateSetupResults(); 
         } else {
-            window.openModal(name, code); // ВІДКРИТТЯ ОПИСУ ПРИ КЛІКУ В МОДАЛЦІ
+            window.openModal(name, code);
         }
     }
 
@@ -2172,23 +2160,43 @@
     }
     
     window.updateSetupResults = function() {
-        let cat = document.getElementById('setupCat') ? document.getElementById('setupCat').value : "";
         let container = document.getElementById('setupResults');
         if(!container) return;
         
-        if(!cat && document.getElementById('setupCat')) { 
-            container.innerHTML = ""; 
-            return; 
+        let catInput = document.getElementById('setupCat');
+
+        // Якщо це меню без категорій (викликане через renderDirectListModal, наприклад Антивіруси, перевірки тощо)
+        if (!catInput) {
+            let modalCompBtn = document.getElementById('modalCompareBtn');
+            if (modalCompBtn) {
+                if (window.lastModalServices.length >= 2) {
+                    modalCompBtn.style.display = 'flex';
+                } else {
+                    modalCompBtn.style.display = 'none';
+                    if (isModalCompareMode) window.toggleModalCompareMode();
+                }
+            }
+
+            let html = window.lastModalServices.map(m => {
+                 m.label = m.priceText;
+                 m.descToggleHTML = generateDescToggleHTML(findInDb(db.descriptions, m.name), m.code);
+                 return generateServiceCardHTML(m, true);
+            }).join('');
+            container.innerHTML = html;
+            return;
+        }
+        
+        // Звичайна логіка з категоріями (Налаштування)
+        let cat = catInput.value;
+        if(!cat) {
+            container.innerHTML = "";
+            return;
         }
         
         let matches = db.tariffs.filter(t => t.cat === cat);
-        if(matches.length === 0 && document.getElementById('setupCat')) {
+        if(matches.length === 0) {
              container.innerHTML = `<div style="text-align:center; padding: 20px; color:var(--text-muted);">Послуг не знайдено</div>`;
              return;
-        }
-        
-        if (matches.length === 0) {
-            matches = window.lastModalServices; 
         }
         
         const p = parseFloat(elPriceInput.value) || 0; 
@@ -2391,6 +2399,7 @@
         if (isModalCompareMode) {
             isModalCompareMode = false;
             document.getElementById('compareBar').classList.remove('show');
+            modalCompareSelection = []; // Обов'язкове очищення для усунення "зависань"
         }
         
         if (!document.getElementById('compareModal').classList.contains('show') && 
