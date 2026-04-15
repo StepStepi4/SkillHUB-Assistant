@@ -32,6 +32,7 @@
             --text-muted: #475569; 
             --border: #e2e8f0;
             --modal-overlay: rgba(15,23,42,0.5);
+            --nav-bg: #ffffff;
             
             --clr-support-bg: #fde047; --clr-support-text: #854d0e; 
             --clr-ekta-bg: #3b82f6; --clr-ekta-text: #ffffff;    
@@ -57,6 +58,7 @@
             --text-muted: #94a3b8; 
             --border: #334155;
             --modal-overlay: rgba(0,0,0,0.8);
+            --nav-bg: #1e293b;
             
             --clr-other-bg: #334155; 
             --clr-other-text: #f8fafc;
@@ -68,51 +70,44 @@
             font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text-main); 
             margin: 0; padding: 0; display: flex; justify-content: center; align-items: flex-start; 
             min-height: 100vh; -webkit-font-smoothing: antialiased; transition: background 0.3s ease, color 0.3s ease; 
+            padding-bottom: 80px; /* Місце для Bottom Nav */
         }
         
-        .app-loader {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: var(--box-bg); display: flex; flex-direction: column; justify-content: center; align-items: center;
-            z-index: 999999; transition: opacity 0.4s ease, visibility 0.4s ease;
-        }
-        .app-loader.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
-        .spinner-box { position: relative; width: 70px; height: 70px; display: flex; justify-content: center; align-items: center; margin-bottom: 20px; }
-        .spinner-ring {
-            position: absolute; width: 100%; height: 100%; border-radius: 50%; 
-            border: 4px solid transparent; border-top-color: var(--primary); border-bottom-color: var(--primary); 
-            animation: spin 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
-        }
-        .spinner-ring::before {
-            content: ''; position: absolute; top: 8px; left: 8px; right: 8px; bottom: 8px; 
-            border-radius: 50%; border: 4px solid transparent; border-left-color: #7dd3fc; 
-            border-right-color: #7dd3fc; animation: spin 0.8s ease-in-out infinite reverse;
-        }
-        .spinner-logo { font-size: 24px; animation: pulseText 1.5s ease-in-out infinite; }
-        .loader-text { font-size: 13px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; animation: pulseText 1.5s ease-in-out infinite; text-align: center; padding: 0 20px; line-height: 1.4; }
-        
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        @keyframes pulseText { 0%, 100% { transform: scale(0.95); opacity: 0.6; } 50% { transform: scale(1.05); opacity: 1; } }
+        /* --- СТОРІНКИ --- */
+        .app-page { display: none; width: 94%; max-width: 480px; animation: fadeIn 0.3s ease; }
+        .app-page.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
         .container { 
-            position: relative; width: 94%; max-width: 480px; background: var(--card-bg); 
+            position: relative; width: 100%; background: var(--card-bg); 
             padding: 24px; border-radius: 30px; box-shadow: 0 15px 40px -5px rgba(0, 0, 0, 0.1); 
-            margin-top: 5vh; margin-bottom: 120px; transform: translateZ(0); 
+            margin-top: 5vh; margin-bottom: 20px; transform: translateZ(0); 
             border: 1px solid var(--border); transition: background 0.3s, border 0.3s; 
             min-height: 75vh; display: flex; flex-direction: column;
         }
-        
+
+        /* --- НИЖНЯ НАВІГАЦІЯ --- */
+        .bottom-nav {
+            position: fixed; bottom: 0; left: 0; right: 0; height: 70px;
+            background: var(--nav-bg); display: flex; justify-content: space-around;
+            align-items: center; border-top: 1px solid var(--border);
+            padding-bottom: env(safe-area-inset-bottom); z-index: 9998;
+        }
+        .nav-item {
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            color: var(--text-muted); font-size: 10px; font-weight: 700;
+            cursor: pointer; transition: 0.2s; flex: 1; height: 100%;
+        }
+        .nav-item.active { color: var(--primary); }
+        .nav-item svg, .nav-item img { width: 24px; height: 24px; margin-bottom: 4px; transition: 0.2s; }
+        .nav-item.active svg, .nav-item.active img { transform: translateY(-2px); }
+        [data-theme="dark"] .nav-item img { filter: invert(1); } /* Для темної теми, якщо це PNG */
+
         /* --- ШАПКА --- */
         .header-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
         h2 { color: var(--primary); margin: 0; font-size: 22px; font-weight: 900; letter-spacing: -0.5px;}
 
         .header-controls { display: flex; align-items: center; gap: 8px; }
-        
-        .guide-btn {
-            width: 32px; height: 32px; border-radius: 50%; background: var(--box-bg);
-            border: 1px solid var(--border); display: flex; align-items: center; justify-content: center;
-            cursor: pointer; box-shadow: var(--shadow-sm); transition: 0.2s; color: var(--text-muted); font-weight: 900; font-size: 14px;
-        }
-        .guide-btn:active { transform: scale(0.9); background: var(--feat-bg); }
 
         .theme-switch {
             position: relative; width: 56px; height: 30px; background: #60a5fa; border-radius: 32px;
@@ -136,6 +131,26 @@
         [data-theme="dark"] .ts-cloud { opacity: 0; transform: translateX(10px); }
         [data-theme="dark"] .ts-star { opacity: 1; }
 
+        .app-loader {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--box-bg); display: flex; flex-direction: column; justify-content: center; align-items: center;
+            z-index: 999999; transition: opacity 0.4s ease, visibility 0.4s ease;
+        }
+        .app-loader.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+        .spinner-box { position: relative; width: 70px; height: 70px; display: flex; justify-content: center; align-items: center; margin-bottom: 20px; }
+        .spinner-ring {
+            position: absolute; width: 100%; height: 100%; border-radius: 50%; 
+            border: 4px solid transparent; border-top-color: var(--primary); border-bottom-color: var(--primary); 
+            animation: spin 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+        }
+        .spinner-ring::before {
+            content: ''; position: absolute; top: 8px; left: 8px; right: 8px; bottom: 8px; 
+            border-radius: 50%; border: 4px solid transparent; border-left-color: #7dd3fc; 
+            border-right-color: #7dd3fc; animation: spin 0.8s ease-in-out infinite reverse;
+        }
+        .spinner-logo { font-size: 24px; animation: pulseText 1.5s ease-in-out infinite; }
+        .loader-text { font-size: 13px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; animation: pulseText 1.5s ease-in-out infinite; text-align: center; padding: 0 20px; line-height: 1.4; }
+
         .status-container { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
         .status-wrapper { display: flex; align-items: center; gap: 8px; }
         .status-text { font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
@@ -143,25 +158,11 @@
         .dot-green { background-color: #22c55e; animation: pulseGreen 2s infinite; }
         .dot-red { background-color: #ef4444; animation: pulseRed 2s infinite; }
         .dot-loading { background-color: #eab308; animation: pulseYellow 2s infinite; }
-        @keyframes pulseGreen { 0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7); } 70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(34, 197, 94, 0); } 100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); } }
-        @keyframes pulseRed { 0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); } 70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(239, 68, 68, 0); } 100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); } }
-        @keyframes pulseYellow { 0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(234, 179, 8, 0.7); } 70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(234, 179, 8, 0); } 100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(234, 179, 8, 0); } }
 
         .refresh-db-btn { background: var(--box-bg); color: var(--primary); border: 1px solid var(--border); border-radius: 12px; width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; }
         .refresh-db-btn:active { transform: scale(0.9); background: var(--feat-bg); }
         .refresh-db-btn.spinning svg { animation: spin 1s linear infinite; }
 
-        /* --- КНОПКА РЕЗЕРВІВ --- */
-        .rezervy-btn { 
-            width: 100%; padding: 14px; border-radius: 16px; border: 2px solid var(--border); 
-            background: var(--box-bg); color: var(--primary); font-weight: 800; font-size: 15px; 
-            cursor: pointer; margin-bottom: 20px; display: flex; align-items: center; 
-            justify-content: center; gap: 8px; transition: transform 0.2s, box-shadow 0.2s; 
-            box-shadow: var(--shadow-sm); 
-        }
-        .rezervy-btn:active { transform: scale(0.98); background: var(--feat-bg); }
-        [data-theme="dark"] .rezervy-btn { border-color: #334155; }
-        
         .search-wrapper { position: relative; margin-bottom: 12px; display: flex; align-items: center; }
         input { width: 100%; padding: 16px 45px 16px 18px; border: 1px solid var(--border); border-radius: 18px; font-size: 16px; font-family: inherit; outline: none; transition: 0.2s ease; background: var(--input-bg); color: var(--text-main); box-shadow: var(--shadow-sm); }
         input:focus { box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.15); border-color: var(--primary); }
@@ -179,7 +180,6 @@
         .suggestion-item:active, .suggestion-item:hover { background: var(--feat-bg); }
         
         .result-box { display: none; border-top: 2px solid var(--border); padding-top: 15px; margin-top: 10px; animation: fadeIn 0.4s ease; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
         .ua-name { font-weight: 800; font-size: 19px; margin-bottom: 5px; border-left: 5px solid var(--primary); padding-left: 12px; color: var(--text-main); }
         .item-category { font-size: 11px; color: var(--text-muted); font-weight: 700; margin-bottom: 15px; padding-left: 14px; text-transform: uppercase; letter-spacing: 0.5px; }
@@ -315,7 +315,7 @@
         .app-version:active { transform: scale(0.95); opacity: 0.8; border-color: var(--border);}
 
         /* ПЛАВАЮЧІ КНОПКИ ЗНИЗУ */
-        .floating-btns { position: fixed; bottom: 24px; right: 24px; display: flex; flex-direction: column; gap: 16px; z-index: 99999; transform: translateZ(0); pointer-events: none; }
+        .floating-btns { position: fixed; bottom: 90px; right: 24px; display: flex; flex-direction: column; gap: 16px; z-index: 9999; transform: translateZ(0); pointer-events: none; }
         
         .float-btn { width: 56px; height: 56px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; text-decoration: none; outline: none; pointer-events: auto; border: 1px solid var(--border); box-shadow: var(--shadow-lg); transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); background: var(--box-bg);}
         
@@ -343,7 +343,7 @@
         .compare-toggle-btn.active { background: #fee2e2; color: #ef4444; border-color: #fca5a5; }
         [data-theme="dark"] .compare-toggle-btn.active { background: #450a0a; color: #fca5a5; border-color: #7f1d1d; }
         
-        .compare-action-bar { position: fixed; bottom: 0; left: 0; width: 100%; background: var(--box-bg); padding: 16px 24px 30px 24px; box-shadow: 0 -10px 30px rgba(0,0,0,0.2); display: flex; justify-content: space-between; align-items: center; transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1); z-index: 9998; border-radius: 30px 30px 0 0; border-top: 1px solid var(--border); }
+        .compare-action-bar { position: fixed; bottom: 70px; left: 0; width: 100%; background: var(--box-bg); padding: 16px 24px; box-shadow: 0 -10px 30px rgba(0,0,0,0.2); display: flex; justify-content: space-between; align-items: center; transform: translateY(150%); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1); z-index: 9998; border-radius: 30px 30px 0 0; border-top: 1px solid var(--border); }
         .compare-action-bar.show { transform: translateY(0); }
         .compare-status-text { font-size: 14px; font-weight: 800; color: var(--text-main); }
         .compare-execute-btn { background: var(--box-bg); border: 1px solid var(--border); color: var(--text-muted); padding: 12px 24px; border-radius: 16px; font-size: 14px; font-weight: 800; cursor: not-allowed; transition: 0.2s; }
@@ -386,136 +386,138 @@
     <div class="loader-text">Завантаження даних ...</div>
 </div>
 
-<div class="container">
-    
-    <div class="header-row">
-        <h2>SkillHUB Assistant</h2>
-        <div class="header-controls">
-            <button class="guide-btn" onclick="window.openGuideModal()" title="Як встановити додаток">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
-                    <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
-                </svg>
-            </button>
-            <div id="themeToggle" class="theme-switch" title="Змінити тему">
-                <div class="ts-cloud ts-c1"></div>
-                <div class="ts-cloud ts-c2"></div>
-                <div class="ts-star ts-s1"></div>
-                <div class="ts-star ts-s2"></div>
-                <div class="ts-star ts-s3"></div>
-                <div class="theme-slider"></div>
+<div id="page-home" class="app-page active">
+    <div class="container">
+        
+        <div class="header-row">
+            <h2>SkillHUB Assistant</h2>
+            <div class="header-controls">
+                <div id="themeToggle" class="theme-switch" title="Змінити тему">
+                    <div class="ts-cloud ts-c1"></div>
+                    <div class="ts-cloud ts-c2"></div>
+                    <div class="ts-star ts-s1"></div>
+                    <div class="ts-star ts-s2"></div>
+                    <div class="ts-star ts-s3"></div>
+                    <div class="theme-slider"></div>
+                </div>
             </div>
         </div>
-    </div>
-    
-    <div class="status-container">
-        <div class="status-wrapper">
-            <div id="statusDot" class="pulse-dot dot-loading"></div>
-            <div id="statusText" class="status-text">Синхронізація...</div>
-        </div>
-        <button id="forceUpdateBtn" class="refresh-db-btn" title="Оновити базу">
-            <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"><polyline points="23 4 23 10 17 10"></polyline><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg>
-        </button>
-    </div>
-
-    <button class="rezervy-btn" onclick="window.openRezervyModal()">
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
-        Резерви магазинів
-    </button>
-    
-    <div class="search-wrapper">
-        <input type="text" id="catInput" placeholder="Яку техніку шукаємо?" autocomplete="off" disabled>
-        <button id="clearAllBtn" class="clear-data-btn">✕</button>
-        <div id="customSuggestions" class="suggestions-list">
-            <div id="matchesContainer"></div>
-        </div>
-    </div>
-
-    <div class="price-wrapper" id="priceWrapper">
-        <input type="number" id="devicePrice" placeholder="Вартість техніки ₴" inputmode="numeric">
-        <button class="ok-btn" id="okBtn">ОК</button>
-    </div>
-
-    <div id="result" class="result-box">
-        <div class="ua-name" id="uaTitle"></div>
-        <div id="itemCategory" class="item-category"></div>
-        <div id="techInfo" class="tech-info"></div>
         
-        <div class="compare-header">
-            <span style="font-size: 10px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px;">Доступні сервіси</span>
-            <button id="toggleCompareBtn" onclick="window.toggleCompareMode()" class="compare-toggle-btn" style="display: none;">
-                <span style="font-size: 14px;">⚖️</span> Порівняти
+        <div class="status-container">
+            <div class="status-wrapper">
+                <div id="statusDot" class="pulse-dot dot-loading"></div>
+                <div id="statusText" class="status-text">Синхронізація...</div>
+            </div>
+            <button id="forceUpdateBtn" class="refresh-db-btn" title="Оновити базу">
+                <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"><polyline points="23 4 23 10 17 10"></polyline><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg>
             </button>
         </div>
         
-        <div id="serviceList" class="service-list"></div>
-    </div>
-    
-    <div class="footer">
-        🇺🇦 ROZETKA KHARKIV REGION • 2026<br>
-        <a id="appVersionDisp" class="app-version" style="display:none;" onclick="if(db.appVersion) window.showChangelogModal(db.appVersion, db.changelog)">Оновлення відсутні</a>
-    </div>
-</div>
-
-<div id="compareBar" class="compare-action-bar">
-    <div class="compare-status-text" id="compareStatusText">Оберіть 2 сервіси</div>
-    <button class="compare-execute-btn" id="compareExecuteBtn" onclick="window.handleExecuteCompare()">Порівняти (0/2)</button>
-</div>
-
-<div id="compareModal" class="modal" style="z-index: 100020;">
-    <div class="modal-content">
-        <div class="modal-header">
-            <b style="font-size: 20px; color: var(--text-main); font-weight: 900;">Результат порівняння</b>
-            <button onclick="window.closeCompareModal()" style="border:none; background:var(--box-bg); border: 1px solid var(--border); border-radius: 50%; width: 36px; height: 36px; cursor:pointer; font-size:18px; color: var(--text-muted); transition: 0.2s;">✕</button>
+        <div class="search-wrapper">
+            <input type="text" id="catInput" placeholder="Яку техніку шукаємо?" autocomplete="off" disabled>
+            <button id="clearAllBtn" class="clear-data-btn">✕</button>
+            <div id="customSuggestions" class="suggestions-list">
+                <div id="matchesContainer"></div>
+            </div>
         </div>
-        <div id="compareModalBody" class="modal-body"></div>
-        <button onclick="window.closeCompareModal()" class="modal-confirm-btn">Зрозуміло</button>
+
+        <div class="price-wrapper" id="priceWrapper">
+            <input type="number" id="devicePrice" placeholder="Вартість техніки ₴" inputmode="numeric">
+            <button class="ok-btn" id="okBtn">ОК</button>
+        </div>
+
+        <div id="result" class="result-box">
+            <div class="ua-name" id="uaTitle"></div>
+            <div id="itemCategory" class="item-category"></div>
+            <div id="techInfo" class="tech-info"></div>
+            
+            <div class="compare-header">
+                <span style="font-size: 10px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px;">Доступні сервіси</span>
+                <button id="toggleCompareBtn" onclick="window.toggleCompareMode()" class="compare-toggle-btn" style="display: none;">
+                    <span style="font-size: 14px;">⚖️</span> Порівняти
+                </button>
+            </div>
+            
+            <div id="serviceList" class="service-list"></div>
+        </div>
+        
+        <div class="footer">
+            🇺🇦 ROZETKA KHARKIV REGION • 2026<br>
+            <a id="appVersionDisp" class="app-version" style="display:none;" onclick="if(db.appVersion) window.showChangelogModal(db.appVersion, db.changelog)">Оновлення відсутні</a>
+        </div>
     </div>
 </div>
 
-<div id="descModal" class="modal" style="z-index: 100002;">
-    <div class="modal-content">
-        <div class="modal-header">
-            <b id="modalTitle" style="font-size: 20px; color: var(--text-main); font-weight: 900;">Опис</b>
-            <button id="closeModalBtn" onclick="window.closeModal()" style="border:none; background:var(--box-bg); border: 1px solid var(--border); border-radius: 50%; width: 36px; height: 36px; cursor:pointer; font-size:18px; color: var(--text-muted); transition: 0.2s;">✕</button>
+<div id="page-rezervy" class="app-page">
+    <div class="container">
+        <div class="header-row">
+            <h2 style="display:flex; align-items:center; gap:10px;">
+                <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+                Активні резерви
+            </h2>
         </div>
-        <div id="modalBody" class="modal-body"></div>
-        <button onclick="window.closeModal()" class="modal-confirm-btn">Готово</button>
-    </div>
-</div>
-
-<div id="rezervyModal" class="modal" style="z-index: 100000;">
-    <div class="modal-content" style="max-height: 95vh;">
-        <div class="modal-header">
-            <b style="font-size: 20px; color: var(--text-main); font-weight: 900;">📦 Активні резерви</b>
-            <button onclick="window.closeRezervyModal()" style="border:none; background:var(--box-bg); border: 1px solid var(--border); border-radius: 50%; width: 36px; height: 36px; cursor:pointer; font-size:18px; color: var(--text-muted); transition: 0.2s;">✕</button>
-        </div>
+        
         <select id="storeFilter" class="montazh-select" onchange="window.renderRezervyList()">
             <option value="">-- Оберіть магазин --</option>
         </select>
-        <div id="rezervyList" class="modal-body"></div>
+        
+        <div id="rezervyList" class="modal-body" style="padding-right:0;">
+            </div>
     </div>
 </div>
 
-<div id="rezervItemModal" class="modal" style="z-index: 100001;">
-    <div class="modal-content" style="max-height: 95vh;">
-        <div class="modal-header" style="flex-shrink: 0; align-items: flex-start;">
-            <b id="rezervItemTitle" style="font-size: 16px; color: var(--text-main); font-weight: 900; line-height: 1.3;"></b>
-            <button onclick="window.closeRezervItemModal()" style="border:none; background:var(--box-bg); border: 1px solid var(--border); border-radius: 50%; width: 36px; height: 36px; cursor:pointer; font-size:18px; color: var(--text-muted); transition: 0.2s; flex-shrink: 0; margin-left: 15px;">✕</button>
+<div id="page-categories" class="app-page">
+    <div class="container">
+        <div class="header-row">
+            <h2 style="display:flex; align-items:center; gap:10px;">
+                <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
+                Категорії послуг
+            </h2>
         </div>
-        <div id="rezervItemBody" class="modal-body">
-            <div id="rezervTechInfo" style="margin-bottom:20px; display:none; flex-direction:column; gap:8px;"></div>
-            <span style="font-size: 10px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; display: block;">Рекомендовані сервіси</span>
-            <div id="rezervServiceList" class="service-list"></div>
+
+        <div class="service-list">
+            <div class="service-card brand-support" onclick="window.openModal('SUPPORT', '', true)">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <div class="service-title">Сервіси SUPPORT</div>
+                    <div class="price-badge" style="font-size:12px;">Відкрити</div>
+                </div>
+            </div>
+            
+            <div class="service-card brand-ekta" onclick="window.openModal('EKTA', '', true)">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <div class="service-title">Сервіси EKTA</div>
+                    <div class="price-badge" style="font-size:12px;">Відкрити</div>
+                </div>
+            </div>
+
+            <div class="service-card brand-epz" onclick="window.openModal('WINDOWS', '', true)">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <div class="service-title">Електронні ліцензії (EPZ)</div>
+                    <div class="price-badge" style="font-size:12px;">Відкрити</div>
+                </div>
+            </div>
+
+            <div class="service-card brand-install" onclick="window.openModal('МОНТАЖ', '', true)">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <div class="service-title">Монтаж та Встановлення</div>
+                    <div class="price-badge" style="font-size:12px; background: rgba(255,255,255,0.3); color:#fff;">Пошук по місту</div>
+                </div>
+            </div>
+            
+             <div class="service-card brand-settings" onclick="window.openModal('АНТИВІРУС', '', true)">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <div class="service-title">Антивірусний захист</div>
+                    <div class="price-badge" style="font-size:12px;">Відкрити</div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
 
-<div id="guideModal" class="modal" style="z-index: 100003;">
-    <div class="modal-content" style="padding: 0; overflow: hidden;">
-        <div class="modal-header" style="background: var(--card-bg); padding: 16px 20px; margin-bottom: 0; border-bottom: 1px solid var(--border);">
-            <b style="font-size: 16px; color: var(--text-main); font-weight: 900;">Встановлення додатка</b>
-            <button onclick="window.closeGuideModal()" style="border:none; background:var(--box-bg); border: 1px solid var(--border); border-radius: 50%; width: 32px; height: 32px; cursor:pointer; font-size:16px; color: var(--text-muted); transition: 0.2s;">✕</button>
+<div id="page-guide" class="app-page">
+    <div class="container" style="padding:0; overflow:hidden;">
+        <div class="modal-header" style="background: var(--card-bg); padding: 24px 24px 16px 24px; margin-bottom: 0; border-bottom: 1px solid var(--border);">
+            <b style="font-size: 20px; color: var(--primary); font-weight: 900;">Допомога та Інструкції</b>
         </div>
         <div class="modal-body pwa-guide-container" style="padding: 0;">
           <div class="pwa-alert">
@@ -524,7 +526,7 @@
               Відкрито у месенджері?
             </div>
             <div class="pwa-alert-text">
-              Внутрішні браузери (Telegram, Viber, Instagram) не підтримують встановлення. Спочатку перейдіть у звичайний браузер:
+              Внутрішні браузери (Telegram, Viber, Instagram) не підтримують встановлення додатка. Спочатку перейдіть у звичайний браузер:
               <ul>
                 <li><strong>iOS (iPhone):</strong> Натисніть значок компаса 
                   <span class="pwa-icon-inline">
@@ -598,8 +600,65 @@
             </ol>
           </div>
         </div>
-        <div style="padding: 16px;">
-            <button onclick="window.closeGuideModal()" class="modal-confirm-btn" style="margin-top: 0;">Зрозуміло</button>
+    </div>
+</div>
+
+<nav class="bottom-nav">
+    <div class="nav-item active" onclick="window.switchTab('page-home', this)">
+        <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+        <span>Пошук</span>
+    </div>
+    <div class="nav-item" onclick="window.switchTab('page-rezervy', this)">
+        <svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+        <span>Резерви</span>
+    </div>
+    <div class="nav-item" onclick="window.switchTab('page-categories', this)">
+        <svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
+        <span>Послуги</span>
+    </div>
+    <div class="nav-item" onclick="window.switchTab('page-guide', this)">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+        <span>Допомога</span>
+    </div>
+</nav>
+
+<div id="compareBar" class="compare-action-bar">
+    <div class="compare-status-text" id="compareStatusText">Оберіть 2 сервіси</div>
+    <button class="compare-execute-btn" id="compareExecuteBtn" onclick="window.handleExecuteCompare()">Порівняти (0/2)</button>
+</div>
+
+<div id="compareModal" class="modal" style="z-index: 100020;">
+    <div class="modal-content">
+        <div class="modal-header">
+            <b style="font-size: 20px; color: var(--text-main); font-weight: 900;">Результат порівняння</b>
+            <button onclick="window.closeCompareModal()" style="border:none; background:var(--box-bg); border: 1px solid var(--border); border-radius: 50%; width: 36px; height: 36px; cursor:pointer; font-size:18px; color: var(--text-muted); transition: 0.2s;">✕</button>
+        </div>
+        <div id="compareModalBody" class="modal-body"></div>
+        <button onclick="window.closeCompareModal()" class="modal-confirm-btn">Зрозуміло</button>
+    </div>
+</div>
+
+<div id="descModal" class="modal" style="z-index: 100002;">
+    <div class="modal-content">
+        <div class="modal-header">
+            <b id="modalTitle" style="font-size: 20px; color: var(--text-main); font-weight: 900;">Опис</b>
+            <button id="closeModalBtn" onclick="window.closeModal()" style="border:none; background:var(--box-bg); border: 1px solid var(--border); border-radius: 50%; width: 36px; height: 36px; cursor:pointer; font-size:18px; color: var(--text-muted); transition: 0.2s;">✕</button>
+        </div>
+        <div id="modalBody" class="modal-body"></div>
+        <button onclick="window.closeModal()" class="modal-confirm-btn">Готово</button>
+    </div>
+</div>
+
+<div id="rezervItemModal" class="modal" style="z-index: 100001;">
+    <div class="modal-content" style="max-height: 95vh;">
+        <div class="modal-header" style="flex-shrink: 0; align-items: flex-start;">
+            <b id="rezervItemTitle" style="font-size: 16px; color: var(--text-main); font-weight: 900; line-height: 1.3;"></b>
+            <button onclick="window.closeRezervItemModal()" style="border:none; background:var(--box-bg); border: 1px solid var(--border); border-radius: 50%; width: 36px; height: 36px; cursor:pointer; font-size:18px; color: var(--text-muted); transition: 0.2s; flex-shrink: 0; margin-left: 15px;">✕</button>
+        </div>
+        <div id="rezervItemBody" class="modal-body">
+            <div id="rezervTechInfo" style="margin-bottom:20px; display:none; flex-direction:column; gap:8px;"></div>
+            <span style="font-size: 10px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; display: block;">Рекомендовані сервіси</span>
+            <div id="rezervServiceList" class="service-list"></div>
         </div>
     </div>
 </div>
@@ -648,6 +707,7 @@
     let modalCompareSelection = [];
     window.lastModalServices = [];
 
+    // --- ЛОГІКА ТЕМИ ---
     let currentTheme = localStorage.getItem('theme') || 'light';
     document.documentElement.setAttribute('data-theme', currentTheme);
 
@@ -656,6 +716,17 @@
         document.documentElement.setAttribute('data-theme', currentTheme);
         localStorage.setItem('theme', currentTheme);
     };
+
+    // --- ЛОГІКА НАВІГАЦІЇ (ТАБИ) ---
+    window.switchTab = function(pageId, element) {
+        document.querySelectorAll('.app-page').forEach(p => p.classList.remove('active'));
+        document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+        
+        document.getElementById(pageId).classList.add('active');
+        element.classList.add('active');
+        
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
 
     const brandRegex = /^\[(.*?)\]/;
     const emojiRegex = /^(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])/;
@@ -668,7 +739,7 @@
     const elItemCategory = document.getElementById('itemCategory'), elTechInfo = document.getElementById('techInfo');
     const elServiceList = document.getElementById('serviceList'), elModal = document.getElementById('descModal');
     const elModalTitle = document.getElementById('modalTitle'), elModalBody = document.getElementById('modalBody');
-    const elStatus = document.getElementById('status'), elAppVersion = document.getElementById('appVersionDisp');
+    const elAppVersion = document.getElementById('appVersionDisp');
     const elLoader = document.getElementById('appLoader');
     const scrollTopBtn = document.getElementById('scrollTopBtn');
     const toggleCompareBtn = document.getElementById('toggleCompareBtn');
@@ -693,11 +764,11 @@
     window.escapeHTML = function(str) {
         if (!str) return '';
         return str.toString()
-            .replace(/&/g, "&amp;")
-            .replace(/</g, "&lt;")
-            .replace(/>/g, "&gt;")
-            .replace(/"/g, "&quot;")
-            .replace(/'/g, "&#39;");
+            .replace(/&/g, "&")
+            .replace(/</g, "<")
+            .replace(/>/g, ">")
+            .replace(/"/g, """)
+            .replace(/'/g, "'");
     }
 
     window.escapeForJS = function(str) {
@@ -705,7 +776,7 @@
         return str.toString()
             .replace(/\\/g, "\\\\")
             .replace(/'/g, "\\'")
-            .replace(/"/g, "&quot;")
+            .replace(/"/g, "")
             .replace(/\n/g, "\\n")
             .replace(/\r/g, "");
     }
@@ -789,7 +860,7 @@
         if (cached) { 
             try {
                 db = JSON.parse(cached); 
-                enableUI(); window.populateStoreFilter();
+                enableUI(); window.populateStoreFilter(); window.renderRezervyList();
                 setAppStatus('ok', 'Працюю офлайн (З кешу)');
                 refreshData(); 
             } catch(e) {
@@ -824,7 +895,8 @@
             
             if (!guideSeen) {
                 setTimeout(() => {
-                    window.openGuideModal();
+                    // Перемикаємось на таб інструкції при першому запуску
+                    window.switchTab('page-guide', document.querySelectorAll('.nav-item')[3]);
                     localStorage.setItem('skillhub_guide_seen', 'true');
                     if (db.appVersion) localStorage.setItem(SEEN_VERSION_KEY, db.appVersion); 
                 }, 1000);
@@ -837,15 +909,15 @@
             }
 
             if (first) {
-                enableUI(); window.populateStoreFilter();
+                enableUI(); window.populateStoreFilter(); window.renderRezervyList();
             } else {
-                enableUI(); window.populateStoreFilter();
+                enableUI(); window.populateStoreFilter(); window.renderRezervyList();
             }
         } catch (e) { 
             console.error(e);
             if (localStorage.getItem(CACHE_KEY)) {
                 setAppStatus('ok', 'Працюю офлайн (З кешу)');
-                if (first) { enableUI(); window.populateStoreFilter(); }
+                if (first) { enableUI(); window.populateStoreFilter(); window.renderRezervyList(); }
             } else { 
                 setAppStatus('error', 'Помилка (немає даних)');
                 if (first && elLoader) {
@@ -875,42 +947,7 @@
         }
     }
 
-    window.openGuideModal = function() {
-        scrollPos = window.pageYOffset; 
-        document.body.style.top = `-${scrollPos}px`; 
-        document.body.classList.add('modal-open');
-        document.getElementById('guideModal').classList.add('show');
-    }
-
-    window.closeGuideModal = function() {
-        document.getElementById('guideModal').classList.remove('show');
-        if (!document.getElementById('rezervyModal').classList.contains('show') &&
-            !document.getElementById('descModal').classList.contains('show') && 
-            !document.getElementById('compareModal').classList.contains('show') &&
-            !document.getElementById('rezervItemModal').classList.contains('show')) {
-            document.body.classList.remove('modal-open');
-            document.body.style.top = '';
-            window.scrollTo(0, scrollPos);
-        }
-    }
-
-    window.openRezervyModal = function() {
-        scrollPos = window.pageYOffset; 
-        document.body.style.top = `-${scrollPos}px`; 
-        document.body.classList.add('modal-open');
-        document.getElementById('rezervyModal').classList.add('show');
-        window.renderRezervyList();
-    }
-
-    window.closeRezervyModal = function() {
-        document.getElementById('rezervyModal').classList.remove('show');
-        if (!document.getElementById('rezervItemModal').classList.contains('show') && !document.getElementById('guideModal').classList.contains('show')) {
-            document.body.classList.remove('modal-open');
-            document.body.style.top = '';
-            window.scrollTo(0, scrollPos);
-        }
-    }
-
+    // --- ЛОГІКА РЕЗЕРВІВ ---
     window.populateStoreFilter = function() {
         if (!db.rezervyData || db.rezervyData.length === 0) return;
         const stores = [...new Set(db.rezervyData.map(r => r.store))].sort();
@@ -968,6 +1005,27 @@
         if (foundItem) {
             document.getElementById('rezervItemTitle').innerText = itemName + ` — ${Math.round(price).toLocaleString('uk-UA')} ₴`;
             document.getElementById('rezervItemModal').classList.add('show');
+            
+            // Вираховуємо відсоток від продажу
+            let percentHtml = "";
+            if (price >= 500) {
+                let p_rozetka = Math.round(price * 0.05);
+                let p_e = Math.round(price * 0.05);
+                percentHtml = `
+                    <div style="display:flex; justify-content:space-between; background:var(--feat-bg); padding:10px 15px; border-radius:12px; margin-bottom:15px; border:1px dashed var(--primary);">
+                        <div style="font-size:12px; color:var(--text-muted); font-weight:700;">💰 Е/П 5%: <span style="color:var(--text-main);">${p_e}₴</span></div>
+                        <div style="font-size:12px; color:var(--text-muted); font-weight:700;">📦 Роз. 5%: <span style="color:var(--primary);">${p_rozetka}₴</span></div>
+                    </div>
+                `;
+            }
+
+            document.getElementById('rezervItemBody').innerHTML = `
+                ${percentHtml}
+                <div id="rezervTechInfo" style="margin-bottom:20px; display:none; flex-direction:column; gap:8px;"></div>
+                <span style="font-size: 10px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; display: block;">Рекомендовані сервіси</span>
+                <div id="rezervServiceList" class="service-list"></div>
+            `;
+            
             renderRezervItemServices(foundItem, price);
         } else {
             alert(`Увага! Категорію "${catName}" не знайдено в базі сервісів.`);
@@ -976,11 +1034,9 @@
 
     window.closeRezervItemModal = function() {
         document.getElementById('rezervItemModal').classList.remove('show');
-        if (!document.getElementById('rezervyModal').classList.contains('show')) {
-            document.body.classList.remove('modal-open');
-            document.body.style.top = '';
-            window.scrollTo(0, scrollPos);
-        }
+        document.body.classList.remove('modal-open');
+        document.body.style.top = '';
+        window.scrollTo(0, scrollPos);
     }
 
     function renderRezervItemServices(item, p) {
@@ -999,14 +1055,19 @@
         let dataForSort = calculateServicesArray(item, p);
         
         requestAnimationFrame(() => {
-            listEl.innerHTML = dataForSort.map(s => generateServiceCardHTML(s, true, true)).join('');
+            // Передаємо isModalCtx = false, щоб кліки працювали як на головній,
+            // АЛЕ disableCompare = true, щоб не включався режим порівняння.
+            listEl.innerHTML = dataForSort.map(s => generateServiceCardHTML(s, false, true)).join('');
         });
     }
+
+    // ----------------------------
 
     elCatInput.addEventListener('input', debounce(() => {
         const val = normalize(elCatInput.value); 
         elClearBtn.style.display = val.length > 0 ? 'flex' : 'none';
         
+        // Скидаємо результати при очищенні вводу
         if (val.length === 0) {
             elSuggList.style.display = "none"; 
             elPriceWrapper.style.display = "none"; 
@@ -1053,6 +1114,7 @@
         renderServices(); 
     }
 
+    // --- ЛОГІКА ГАЛЕРЕЇ ФОТО ТА ЗУМУ ---
     let currentPhotos = [];
     let currentPhotoIndex = 0;
     let scale = 1; let pointX = 0; let pointY = 0; let startX = 0; let startY = 0; let startDistance = 0; let startScale = 1; let panning = false;
@@ -1120,8 +1182,6 @@
         
         if (!document.getElementById('descModal').classList.contains('show') && 
             !document.getElementById('compareModal').classList.contains('show') &&
-            !document.getElementById('rezervyModal').classList.contains('show') &&
-            !document.getElementById('guideModal').classList.contains('show') &&
             !document.getElementById('rezervItemModal').classList.contains('show')) {
             document.body.classList.remove('modal-open');
             document.body.style.top = '';
@@ -1189,6 +1249,7 @@
         }
     });
 
+    // --- Універсальна функція для побудови TechInfo ---
     function buildTechInfoHTML(item, p) {
         let techHTML = `<div style="font-size: 10px; font-weight: 800; color: var(--primary); text-transform: uppercase;">🛠️ Технічна довідка</div>`;
         let hasInfo = false;
@@ -1501,6 +1562,7 @@
 
     elPriceInput.addEventListener('input', debounce(renderServices, 50));
 
+    // --- СИСТЕМА ПОРІВНЯННЯ ---
     window.toggleCompareMode = function() {
         isCompareMode = !isCompareMode;
         compareSelection = []; 
@@ -2156,23 +2218,40 @@
     }
     
     window.updateSetupResults = function() {
-        let cat = document.getElementById('setupCat') ? document.getElementById('setupCat').value : "";
+        let catInput = document.getElementById('setupCat');
         let container = document.getElementById('setupResults');
         if(!container) return;
+
+        if (!catInput) {
+            let modalCompBtn = document.getElementById('modalCompareBtn');
+            if (modalCompBtn) {
+                if (window.lastModalServices.length >= 2) {
+                    modalCompBtn.style.display = 'flex';
+                } else {
+                    modalCompBtn.style.display = 'none';
+                    if (isModalCompareMode) window.toggleModalCompareMode();
+                }
+            }
+
+            let html = window.lastModalServices.map(m => {
+                 m.label = m.priceText;
+                 m.descToggleHTML = generateDescToggleHTML(findInDb(db.descriptions, m.name), m.code);
+                 return generateServiceCardHTML(m, true);
+            }).join('');
+            container.innerHTML = html;
+            return;
+        }
         
-        if(!cat && document.getElementById('setupCat')) { 
-            container.innerHTML = ""; 
-            return; 
+        let cat = catInput.value;
+        if(!cat) {
+            container.innerHTML = "";
+            return;
         }
         
         let matches = db.tariffs.filter(t => t.cat === cat);
-        if(matches.length === 0 && document.getElementById('setupCat')) {
+        if(matches.length === 0) {
              container.innerHTML = `<div style="text-align:center; padding: 20px; color:var(--text-muted);">Послуг не знайдено</div>`;
              return;
-        }
-        
-        if (matches.length === 0) {
-            matches = window.lastModalServices; 
         }
         
         const p = parseFloat(elPriceInput.value) || 0; 
@@ -2238,90 +2317,6 @@
         container.innerHTML = html;
     }
 
-    window.openModal = function(name, code = "") {
-        scrollPos = window.pageYOffset; 
-        document.body.style.top = `-${scrollPos}px`; 
-        document.body.classList.add('modal-open');
-        
-        isModalCompareMode = false;
-        modalCompareSelection = [];
-        document.getElementById('compareBar').classList.remove('show');
-        
-        let nameClean = normalizeServiceName(name);
-        let u = name.toUpperCase(); 
-
-        let isSetupCategory = db.tariffs.some(t => t.cat && normalizeServiceName(t.cat) === nameClean);
-
-        let isStaticEpz = (u.includes('WINDOWS') || u.includes('OFFICE') || u.includes('OFFICE 365') || u.includes('OFFICE 2024') || u.includes('ESD') || u.includes('[ESD]')) 
-            && !u.includes('НАЛАШТУВАННЯ') 
-            && !u.includes('ВСТАНОВЛЕННЯ') 
-            && !u.includes('АНТИВІРУС') 
-            && !u.includes('ESET')
-            && !u.includes('PARALLELS');
-
-        if (!isStaticEpz) {
-            if (u.includes('МОНТАЖ') || u.includes('ПІДКЛЮЧЕННЯ') || (u.includes('ВСТАНОВЛЕННЯ') && !u.includes('ЗАХИСН'))) {
-                document.getElementById('modalTitle').innerText = "Монтаж ВПТ";
-                window.renderMontazhModal();
-                document.getElementById('descModal').classList.add('show');
-                return;
-            } 
-            else if (u.includes('ПЕРЕВІРКА') || u.includes('ПІКСЕЛ')) {
-                document.getElementById('modalTitle').innerText = "Перевірка на биті пікселі";
-                window.renderDirectListModal(["перевірка", "піксел"]);
-                document.getElementById('descModal').classList.add('show');
-                return;
-            } 
-            else if (u.includes('ПОКЛЕЙКА') || u.includes('ЗАХИСН') || u.includes('СКЛО') || u.includes('ПЛІВК')) {
-                document.getElementById('modalTitle').innerText = "Поклейка скла та плівок";
-                window.renderDirectListModal(["поклейка", "скло", "плівк", "захисн"]);
-                document.getElementById('descModal').classList.add('show');
-                return;
-            }
-            else if (u.includes('АНТИВІРУС') || u.includes('ESET')) {
-                document.getElementById('modalTitle').innerText = "Антивіруси";
-                window.renderSetupModal(name, "antivirus");
-                document.getElementById('descModal').classList.add('show');
-                return;
-            }
-            else if (u.includes('КІНОТЕАТР') || u.includes('SWEET') || u.includes('PARALLELS')) { 
-                document.getElementById('modalTitle').innerText = u.includes('PARALLELS') ? "Parallels Desktop" : "Онлайн кінотеатри";
-                window.renderDirectListModal(u.includes('PARALLELS') ? ["parallels"] : ["sweet", "кінотеатр"]);
-                document.getElementById('descModal').classList.add('show');
-                return;
-            }
-            else if (isSetupCategory || u.includes('НАЛАШТУВАННЯ') || u.includes('ПЗ') || u.includes('ПОСЛУГИ') || u.includes('ГОДИНА РОБОТИ')) {
-                document.getElementById('modalTitle').innerText = "Налаштування та сервіси";
-                window.renderSetupModal(name, "setup");
-                document.getElementById('descModal').classList.add('show');
-                return;
-            }
-        }
-
-        let title = name.replace(/🇺🇦\s*/g, '').replace(/^UA\s+/i, '').replace(/^\[.*?\]\s*/, ''); 
-        document.getElementById('modalTitle').innerText = title;
-        
-        const raw = findInDb(db.descriptions, name) || "";
-        
-        let isValidCode = false;
-        if (code) {
-            let cStr = code.toString().trim();
-            let nStr = name.toString().trim();
-            if (cStr !== "" && cStr.toLowerCase() !== nStr.toLowerCase() && /\d/.test(cStr)) {
-                isValidCode = true;
-            }
-        }
-        
-        let codeBlock = isValidCode ? `
-            <div class="code-block-wrapper" onclick="window.copyCode(event, this, '${window.escapeForJS(code)}')">
-                <span class="code-label-text">Код сервісу:</span>
-                <span class="code-value-text">${code} <span style="font-size:16px;">📋</span></span>
-            </div>` : '';
-            
-        document.getElementById('modalBody').innerHTML = codeBlock + parseDescriptionLines(raw);
-        document.getElementById('descModal').classList.add('show'); 
-    }
-
     window.parseChangelogLines = function(text) {
         if (!text) return '<div style="text-align:center; color:var(--text-muted);">Опис змін відсутній...</div>';
         
@@ -2377,7 +2372,7 @@
             document.getElementById('compareBar').classList.remove('show');
             modalCompareSelection = []; 
         }
-        
+         
         if (!document.getElementById('compareModal').classList.contains('show') && 
             !document.getElementById('galleryModal').classList.contains('show') && 
             !document.getElementById('rezervyModal').classList.contains('show') &&
