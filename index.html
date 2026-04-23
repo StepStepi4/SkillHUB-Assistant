@@ -413,7 +413,7 @@
             <div id="techInfo"></div>
             
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-                <span style="font-weight:700; font-size:13px; text-transform:uppercase; color:var(--text-muted); letter-spacing: 0.5px;">Сервіси</span>
+                <span style="font-weight:700; font-size:13px; text-transform:uppercase; color:var(--text-muted); letter-spacing: 0.5px;">СервісиРекомендовані сервіси</span>
                 <button id="toggleCompareBtn" class="compare-toggle-btn" style="display:none;" onclick="window.toggleCompareMode()">Порівняти</button>
             </div>
             
@@ -481,7 +481,7 @@
             
             <button class="list-item" onclick="window.openModalBase('guideModal')">
                 <div class="list-item-content">
-                    <span class="list-item-title">Встановлення PWA</span>
+                    <span class="list-item-title">Встановлення додатка</span>
                     <span class="list-item-subtitle">Як додати на екран</span>
                 </div>
                 <div class="list-item-arrow">></div>
@@ -489,7 +489,7 @@
 
             <a href="https://forms.gle/aSYSoVy1ew3voSih7" target="_blank" class="list-item">
                 <div class="list-item-content">
-                    <span class="list-item-title">Зворотній зв'язок</span>
+                    <span class="list-item-title">Надати зворотній зв'язок</span>
                     <span class="list-item-subtitle">Повідомити про помилку</span>
                 </div>
                 <div class="list-item-arrow">></div>
@@ -497,7 +497,7 @@
         </div>
 
         <div style="text-align: center; color: var(--text-muted); font-size: 12px; margin-top: 20px;">
-            ROZETKA KHARKIV REGION<br>
+           🇺🇦 ROZETKA KHARKIV REGION<br>
             <div id="appVersionDisp" style="display:inline-block; margin-top:5px; padding:6px 12px; background:var(--card-bg); border-radius:8px; border:1px solid var(--border); font-weight:bold; cursor:pointer; color:var(--primary);" onclick="if(db.appVersion) window.showChangelogModal(db.appVersion, db.changelog)">v1.0.0</div>
         </div>
     </div>
@@ -1232,7 +1232,7 @@
             else if (t.includes('висок')) s = "color: #f97316; font-weight: 600;";
             else if (t.includes('середн')) s = "color: #eab308; font-weight: 600;";
             else if (t.includes('низьк')) s = "color: #10b981; font-weight: 600;";
-            html += `<div class="tech-row"><div class="tech-icon">⚙️</div><div class="tech-text-wrap"><div class="tech-label">Складність</div><div class="tech-val" style="${s}">${item.complexity}</div></div></div>`;
+            html += `<div class="tech-row"><div class="tech-icon">⚙️</div><div class="tech-text-wrap"><div class="tech-label">Складність пристрою</div><div class="tech-val" style="${s}">${item.complexity}</div></div></div>`;
         }
         
         let calcPrice = item.price ? item.price.toString() : "";
