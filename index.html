@@ -150,7 +150,9 @@
             background-repeat: no-repeat; background-position: right 16px center; cursor: pointer;
         }
         
-        .clear-btn { position: absolute; right: 16px; top: 50%; transform: translateY(-50%); color: var(--text-muted); background: none; border: none; font-size: 18px; cursor: pointer; display: none; padding: 0;}
+        /* КНОПКА СБРОСА ПОИСКА (КРЕСТИК В КРУЖОЧКЕ) */
+        .clear-btn { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); width: 24px; height: 24px; background-color: var(--primary); border: none; border-radius: 50%; cursor: pointer; display: none; padding: 0; transition: background-color 0.2s, transform 0.1s; -webkit-tap-highlight-color: transparent; color: white; font-size: 18px; font-weight: bold; line-height: 24px; text-align: center; }
+        .clear-btn:active { background-color: var(--danger); transform: translateY(-50%) scale(1.1); }
 
         /* КНОПКИ */
         .btn {
@@ -227,7 +229,7 @@
 
         /* АВТОКОМПЛІТ */
         .suggestions { position: absolute; top: calc(100% + 4px); left: 0; width: 100%; background: var(--card-bg); border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); z-index: 100; max-height: 250px; overflow-y: auto; border: 1px solid var(--border); display: none; text-align: left;}
-        .sugg-item { padding: 14px 16px; border-bottom: 1px solid var(--border); font-size: 14px; font-weight: 500; cursor: pointer; }
+        .sugg-item { padding: 14px 16px; border-bottom: 1px solid var(--border); font-size: 14px; font-weight: 500; cursor: pointer; display: flex; align-items: center; gap: 8px;}
         .sugg-item:last-child { border-bottom: none; }
         .sugg-item:active { background: var(--input-bg); }
 
@@ -396,8 +398,8 @@
 
     <div id="tab-search" class="app-tab active">
         <div class="input-group">
-            <input type="text" id="catInput" placeholder="Яку техніку шукаємо?" autocomplete="off" disabled>
-            <button id="clearAllBtn" class="clear-btn">✕</button>
+            <input type="text" id="catInput" placeholder="Яку техніку чи послугу шукаємо?" autocomplete="off" disabled>
+            <button id="clearAllBtn" class="clear-btn">×</button>
             <div id="customSuggestions" class="suggestions"></div>
         </div>
 
@@ -628,7 +630,7 @@
             <div class="pwa-alert">
                 <div class="pwa-alert-title">
                     <svg viewBox="0 0 24 24"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
-                    Відкрито у месенджері або браузері?
+                    Відкрито у месенджері?
                 </div>
                 <div class="pwa-alert-text">
                     Внутрішні браузери (Telegram, Viber, Instagram) не підтримують встановлення. Спочатку перейдіть у звичайний браузер:
@@ -694,6 +696,7 @@
     
     let db = { categories: [], descriptions: {}, tariffs: [], appVersion: "", changelog: "", montazhData: {cities:[], services:[]}, serviceCodes: {}, rezervyData: [], serviceBrands: {}, trainingData: [] };
     let currentCategoryData = null;
+    let currentServiceData = null; // Змінна стану для одиничної послуги
     let savedScrollY = 0; // Для збереження позиції екрану
     
     let isCompareMode = false;
@@ -702,6 +705,65 @@
     let isModalCompareMode = false;
     let modalCompareSelection = [];
     window.lastModalServices = [];
+    window.allServicesSearchList = [];
+
+    // Функція генерації унікального списку послуг для пошуку
+    window.buildServiceSearchList = function() {
+        let uniqueMap = new Map();
+        
+        if(db.tariffs) {
+            db.tariffs.forEach(t => {
+                if(t.service) {
+                    let origName = t.service.trim();
+                    if(!uniqueMap.has(origName)) {
+                        uniqueMap.set(origName, { orig: origName, ru: t.serviceRu || "", en: t.serviceEn || "" });
+                    }
+                }
+            });
+        }
+        if(db.descriptions) {
+            Object.keys(db.descriptions).forEach(k => {
+                let origName = k.trim();
+                if(!uniqueMap.has(origName)) {
+                    uniqueMap.set(origName, { orig: origName, ru: "", en: "" });
+                }
+            });
+        }
+        
+        window.allServicesSearchList = Array.from(uniqueMap.entries()).map(([origName, data]) => {
+            let nameClean = origName.replace(/^\[.*?\]\s*/, '').trim();
+            let u = nameClean.toUpperCase();
+            
+            let icon = '⚙️'; 
+            
+            let exactBrand = db.serviceBrands ? window.findInDb(db.serviceBrands, origName) : "";
+            const brandMatch = origName.match(/^\[(.*?)\]/);
+            let brand = exactBrand || (brandMatch ? brandMatch[1] : "");
+            let uBrand = String(brand).toUpperCase();
+            
+            let cls = 'brand-other';
+            if (uBrand.includes('SUPPORT') || u.includes('SUPPORT') || u.includes('НАШ СЕРВІС')) cls = 'brand-support'; 
+            else if (uBrand.includes('ЕКТА') || uBrand.includes('EKTA') || u.includes('EKTA') || u.includes('ЕКТА')) cls = 'brand-ekta'; 
+            else if (uBrand.includes('EPZ') || u.includes('EPZ') || u.includes('ЕПЗ') || u.includes('ЛІЦЕНЗІЙНЕ') || u.includes('WINDOWS') || u.includes('OFFICE')) cls = 'brand-epz'; 
+            else if (u.includes('НАЛАШТУВАННЯ')) cls = 'brand-settings'; 
+            else if (u.includes('МОНТАЖ') || u.includes('ПІДКЛЮЧЕННЯ') || u.includes('ВСТАНОВЛЕННЯ')) cls = 'brand-install';
+            
+            let displayBrand = brand;
+            if(cls === 'brand-ekta') displayBrand = 'ЕКТА';
+            if(cls === 'brand-support') displayBrand = 'SUPPORT';
+            if(cls === 'brand-epz') displayBrand = 'ЕПЗ';
+            
+            return {
+                origName: origName,
+                name: nameClean, 
+                searchStr: [nameClean, data.ru, data.en].join(' '),
+                icon: icon, 
+                searchType: 'service',
+                brandText: displayBrand,
+                cls: cls
+            };
+        });
+    };
 
     function sanitizeDb(data) {
         if(!data) return { categories: [], descriptions: {}, tariffs: [], montazhData: {cities:[], services:[]}, serviceCodes: {}, rezervyData: [], serviceBrands: {}, trainingData: [] };
@@ -919,6 +981,7 @@
         if (cached) { 
             try {
                 db = sanitizeDb(JSON.parse(cached)); 
+                window.buildServiceSearchList();
                 enableUI(); window.populateFilters();
                 setAppStatus('ok', 'Офлайн (З кешу)');
                 refreshData(false); 
@@ -968,6 +1031,7 @@
             } catch (e) {}
             
             db = sanitizeDb(newDb);
+            window.buildServiceSearchList();
             setAppStatus('ok', 'Дані актуальні');
             
             setTimeout(() => {
@@ -1203,31 +1267,79 @@
             const val = normalize(elCatInput.value); 
             elClearBtn.style.display = val.length > 0 ? 'block' : 'none';
             if (val.length === 0) {
-                elSuggList.style.display = "none"; elPriceWrapper.style.display = "none"; elResultBox.style.display = "none"; currentCategoryData = null;
+                elSuggList.style.display = "none"; elPriceWrapper.style.display = "none"; elResultBox.style.display = "none"; 
+                currentCategoryData = null; currentServiceData = null;
                 if(isCompareMode) window.toggleCompareMode(); document.getElementById('toggleCompareBtn').style.display = 'none';
                 return;
             }
             if (val.length < 2) { elSuggList.style.display = 'none'; return; }
             
-            const matches = db.categories.filter(c => normalize(c.ua).includes(val) || normalize(c.ru).includes(val) || normalize(c.en).includes(val)).slice(0, 10);
+            let catMatches = db.categories.filter(c => 
+                (c.ua && normalize(c.ua).includes(val)) || 
+                (c.ru && normalize(c.ru).includes(val)) || 
+                (c.en && normalize(c.en).includes(val))
+            ).map(c => ({...c, searchType: 'category', icon: '📦'}));
+            
+            let servMatches = window.allServicesSearchList.filter(s => normalize(s.searchStr).includes(val));
+            
+            let matches = [...catMatches, ...servMatches].slice(0, 15);
+
             requestAnimationFrame(() => {
                 if (matches.length > 0) {
                     elSuggList.style.display = 'block';
-                    elSuggList.innerHTML = matches.map(m => `<div class="sugg-item">${m.ua}</div>`).join('');
-                    Array.from(elSuggList.children).forEach((el, i) => el.onmousedown = () => selectItem(matches[i]));
+                    elSuggList.innerHTML = matches.map((m, idx) => {
+                        let text = m.searchType === 'category' ? m.ua : m.name;
+                        let brandBadge = '';
+                        if (m.searchType === 'service' && m.brandText) {
+                            brandBadge = `<div class="sc-brand ${m.cls}" style="margin: 0; font-size: 9px; padding: 2px 6px; flex-shrink: 0;">${m.brandText}</div>`;
+                        }
+                        return `<div class="sugg-item" data-idx="${idx}">
+                            <span style="flex-shrink:0;">${m.icon}</span> 
+                            ${brandBadge} 
+                            <span style="flex:1; line-height:1.3; margin-left: 6px;">${text}</span>
+                        </div>`;
+                    }).join('');
+                    
+                    Array.from(elSuggList.children).forEach((el) => {
+                        el.onmousedown = () => selectItem(matches[el.getAttribute('data-idx')]);
+                    });
                 } else elSuggList.style.display = 'none'; 
             });
         } catch(e) { console.error(e); }
     }, 100));
 
     elClearBtn.onclick = () => { 
-        elCatInput.value = ""; elPriceInput.value = ""; elClearBtn.style.display = "none"; elSuggList.style.display = "none"; elPriceWrapper.style.display = "none"; elResultBox.style.display = "none"; currentCategoryData = null; elCatInput.focus();
+        elCatInput.value = ""; elPriceInput.value = ""; 
+        elClearBtn.style.display = "none"; elSuggList.style.display = "none"; 
+        elPriceWrapper.style.display = "none"; elResultBox.style.display = "none"; 
+        currentCategoryData = null; currentServiceData = null; 
+        elCatInput.focus();
         if(isCompareMode) window.toggleCompareMode(); document.getElementById('toggleCompareBtn').style.display = 'none';
     };
+    
     elOkBtn.onclick = () => elPriceInput.blur();
 
     function selectItem(item) {
-        currentCategoryData = item; elCatInput.value = item.ua; elSuggList.style.display = 'none'; document.getElementById('uaTitle').innerText = item.ua; document.getElementById('itemCategory').innerText = item.category || ""; elPriceWrapper.style.display = 'flex'; elResultBox.style.display = 'block';
+        if(item.searchType === 'service') {
+            currentCategoryData = null;
+            
+            // Тепер ми передаємо оригінальну назву (з брендом), щоб вивести саме ту послугу, яку клікнули
+            currentServiceData = { name: item.name, origName: item.origName, icon: item.icon };
+            
+            elCatInput.value = item.name;
+            document.getElementById('uaTitle').innerText = item.icon + " " + item.name;
+            document.getElementById('itemCategory').innerText = item.brandText ? "Послуга від " + item.brandText : "Окрема послуга";
+        } else {
+            currentCategoryData = item;
+            currentServiceData = null;
+            elCatInput.value = item.ua; 
+            document.getElementById('uaTitle').innerText = item.icon + " " + item.ua; 
+            document.getElementById('itemCategory').innerText = item.category || ""; 
+        }
+        
+        elSuggList.style.display = 'none'; 
+        elPriceWrapper.style.display = 'flex'; 
+        elResultBox.style.display = 'block';
         if(isCompareMode) window.toggleCompareMode(); 
         renderServices(); 
     }
@@ -1451,27 +1563,63 @@
     function renderServices() {
         try {
             const p = parseFloat(elPriceInput.value) || 0; 
-            if (!currentCategoryData || !currentCategoryData.service) {
+            
+            if (currentCategoryData && currentCategoryData.service) {
+                // Відмальовка стандартної категорії (телевізори, телефони і тд)
+                renderTechInfo(); 
+                let dataForSort = calculateServicesArray(currentCategoryData, p);
+                window.lastCalculatedServices = dataForSort;
+
+                let compareableCount = dataForSort.filter(s => !s.isPackage).length;
+                
+                const btnCompare = document.getElementById('toggleCompareBtn');
+                if (compareableCount >= 2) {
+                    btnCompare.style.display = 'block';
+                    if (isCompareMode) btnCompare.classList.add('active');
+                } else { 
+                    btnCompare.style.display = 'none'; 
+                    if (isCompareMode) window.toggleCompareMode(); 
+                }
+
+                requestAnimationFrame(() => { elServiceList.innerHTML = dataForSort.map(s => generateServiceCardHTML(s, false)).join(''); });
+                
+            } else if (currentServiceData) {
+                // Відмальовка прямого пошуку одиничної послуги (монтаж, подовження і тд)
+                elTechInfo.style.display = 'none'; elTechInfo.innerHTML = '';
+                
+                // Використовуємо точне ім'я (з брендом) з того, що вибрали
+                let fakeCat = { service: currentServiceData.origName, focusServices: currentServiceData.name };
+                let dataForSort = calculateServicesArray(fakeCat, p);
+                
+                // Додаємо описи всередині карток (для розгортання)
+                dataForSort.forEach(s => {
+                    s.descToggleHTML = generateDescToggleHTML(window.findInDb(db.descriptions, s.name), s.code);
+                });
+                
+                window.lastCalculatedServices = dataForSort;
+                
+                // Для прямого пошуку послуг ховаємо загальну кнопку порівняння, оскільки це не логічно
+                document.getElementById('toggleCompareBtn').style.display = 'none';
+                if (isCompareMode) window.toggleCompareMode();
+
+                requestAnimationFrame(() => { 
+                    // Виводимо знайдену послугу (саме ту, яку клікнули)
+                    elServiceList.innerHTML = dataForSort.map(s => generateServiceCardHTML(s, false, false)).join(''); 
+                    
+                    // Автоматично розгортаємо опис для зручності
+                    setTimeout(() => {
+                        let toggleWrapper = elServiceList.querySelector('.desc-toggle-wrapper');
+                        if (toggleWrapper && !toggleWrapper.nextElementSibling.classList.contains('show')) {
+                            toggleWrapper.click();
+                        }
+                    }, 50);
+                });
+                
+            } else {
                 window.lastCalculatedServices = []; document.getElementById('toggleCompareBtn').style.display = 'none';
                 if (isCompareMode) window.toggleCompareMode();
                 elTechInfo.style.display = 'none'; elTechInfo.innerHTML = ''; elServiceList.innerHTML = ''; return;
             }
-            renderTechInfo(); 
-            let dataForSort = calculateServicesArray(currentCategoryData, p);
-            window.lastCalculatedServices = dataForSort;
-
-            let compareableCount = dataForSort.filter(s => !s.isPackage).length;
-            
-            const btnCompare = document.getElementById('toggleCompareBtn');
-            if (compareableCount >= 2) {
-                btnCompare.style.display = 'block';
-                if (isCompareMode) btnCompare.classList.add('active');
-            } else { 
-                btnCompare.style.display = 'none'; 
-                if (isCompareMode) window.toggleCompareMode(); 
-            }
-
-            requestAnimationFrame(() => { elServiceList.innerHTML = dataForSort.map(s => generateServiceCardHTML(s, false)).join(''); });
         } catch(e) { console.error(e); }
     }
 
@@ -1684,7 +1832,7 @@
             btn.classList.remove('active');
         });
 
-        if (currentCategoryData) renderServices();
+        if (currentCategoryData || currentServiceData) renderServices();
         if (document.getElementById('montazhCity')) window.updateMontazhResults();
         else if (document.querySelector('#rezervItemModal.show')) window.updateRezervResults();
         else window.updateSetupResults();
