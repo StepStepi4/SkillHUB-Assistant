@@ -413,8 +413,8 @@
             <div id="techInfo"></div>
             
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-                <span style="font-weight:700; font-size:13px; text-transform:uppercase; color:var(--text-muted); letter-spacing: 0.5px;">Рекомендовані сервіси</span>
-                <button id="toggleCompareBtn" class="compare-toggle-btn" style="display:none;" onclick="window.toggleCompareMode()">⚖️ Порівняти</button>
+                <span style="font-weight:700; font-size:13px; text-transform:uppercase; color:var(--text-muted); letter-spacing: 0.5px;">Сервіси</span>
+                <button id="toggleCompareBtn" class="compare-toggle-btn" style="display:none;" onclick="window.toggleCompareMode()">Порівняти</button>
             </div>
             
             <div id="serviceList" style="display:flex; flex-direction:column; gap:12px;"></div>
@@ -453,7 +453,7 @@
             
             <div class="list-item" style="flex-direction:column; align-items:flex-start;">
                 <div class="list-item-content" style="margin-bottom: 10px; width:100%;">
-                    <span class="list-item-title">Магазин на якому Ви працюєте?</span>
+                    <span class="list-item-title">🏪 Магазин на якому Ви працюєте?</span>
                     <span class="list-item-subtitle">Для швидкого доступу до резервів</span>
                 </div>
                 <select id="defaultStoreSelect" onchange="window.saveDefaultStore()" style="background: var(--input-bg); margin-bottom: 0;"></select>
@@ -463,7 +463,7 @@
         <div class="list-group">
             <button class="list-item" id="forceUpdateBtn">
                 <div class="list-item-content">
-                    <span class="list-item-title">Оновити базу</span>
+                    <span class="list-item-title">🔄 Оновити базу даних</span>
                     <span class="list-item-subtitle">Очистити кеш та завантажити свіжі дані</span>
                 </div>
                 <div class="list-item-arrow">
@@ -473,31 +473,40 @@
             
             <button class="list-item" onclick="window.openSellerModal()">
                 <div class="list-item-content">
-                    <span class="list-item-title">Подати заявку на заміну продавця</span>
-                    <span class="list-item-subtitle">Форма для зміни магазину/продавця</span>
+                    <span class="list-item-title">🔂 Подати заявку на заміну продавця</span>
+                    <span class="list-item-subtitle">Форма для заповнення</span>
                 </div>
                 <div class="list-item-arrow">></div>
             </button>
             
             <button class="list-item" onclick="window.openModalBase('guideModal')">
                 <div class="list-item-content">
-                    <span class="list-item-title">Встановлення додатка</span>
-                    <span class="list-item-subtitle">Як додати на екран</span>
+                    <span class="list-item-title">📗 Інструкція</span>
+                    <span class="list-item-subtitle">Як встановити додаток</span>
                 </div>
                 <div class="list-item-arrow">></div>
             </button>
 
+            <a href="https://sites.google.com/view/skillhub-kh-reg/%D0%B3%D0%BE%D0%BB%D0%BE%D0%B2%D0%BD%D0%B0" target="_blank" class="list-item">
+                <div class="list-item-content">
+                    <span class="list-item-title">🌐 SkillHUB</span>
+                    <span class="list-item-subtitle">Перейти на портал</span>
+                </div>
+                <div style="display: flex; align-items: center; flex-shrink: 0; margin-left: 10px;">
+                    <img src="Logo v3.png" alt="Skillhub Logo" style="height: 34px; width: auto; border-radius: 6px; display: block; object-fit: contain;">
+                </div>
+            </a>
             <a href="https://forms.gle/aSYSoVy1ew3voSih7" target="_blank" class="list-item">
                 <div class="list-item-content">
-                    <span class="list-item-title">Надати зворотній зв'язок</span>
-                    <span class="list-item-subtitle">Повідомити про помилку</span>
+                    <span class="list-item-title">💬 Зворотній зв'язок</span>
+                    <span class="list-item-subtitle">Надіслати відгук, зауваження або оцінити додаток</span>
                 </div>
                 <div class="list-item-arrow">></div>
             </a>
         </div>
 
         <div style="text-align: center; color: var(--text-muted); font-size: 12px; margin-top: 20px;">
-           🇺🇦 ROZETKA KHARKIV REGION<br>
+            🇺🇦 ROZETKA KHARKIV REGION<br>
             <div id="appVersionDisp" style="display:inline-block; margin-top:5px; padding:6px 12px; background:var(--card-bg); border-radius:8px; border:1px solid var(--border); font-weight:bold; cursor:pointer; color:var(--primary);" onclick="if(db.appVersion) window.showChangelogModal(db.appVersion, db.changelog)">v1.0.0</div>
         </div>
     </div>
@@ -619,13 +628,13 @@
             <div class="pwa-alert">
                 <div class="pwa-alert-title">
                     <svg viewBox="0 0 24 24"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
-                    Відкрито у месенджері?
+                    Відкрито у месенджері або браузері?
                 </div>
                 <div class="pwa-alert-text">
                     Внутрішні браузери (Telegram, Viber, Instagram) не підтримують встановлення. Спочатку перейдіть у звичайний браузер:
                     <ul>
                         <li><strong>iOS (iPhone):</strong> Натисніть значок компаса <span class="pwa-icon-inline"><svg viewBox="0 0 24 24" fill="none" stroke="#007AFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon></svg></span> у правому нижньому куті екрана.</li>
-                        <li><strong>Android:</strong> Натисніть три крапки <span class="pwa-icon-inline"><svg class="color-chrome-gray" viewBox="0 0 24 24"><path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg></span> у правому верхньому куті та виберіть <strong>«Відкрити у браузері»</strong>.</li>
+                        <li><strong>Android:</strong> Натисніть три крапки <span class="pwa-icon-inline"><svg class="color-chrome-gray" viewBox="0 0 24 24"><path d="M12 8c1.1 0-2 .9-2 2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg></span> у правому верхньому куті та виберіть <strong>«Відкрити у браузері»</strong>.</li>
                     </ul>
                 </div>
             </div>
@@ -1232,7 +1241,7 @@
             else if (t.includes('висок')) s = "color: #f97316; font-weight: 600;";
             else if (t.includes('середн')) s = "color: #eab308; font-weight: 600;";
             else if (t.includes('низьк')) s = "color: #10b981; font-weight: 600;";
-            html += `<div class="tech-row"><div class="tech-icon">⚙️</div><div class="tech-text-wrap"><div class="tech-label">Складність пристрою</div><div class="tech-val" style="${s}">${item.complexity}</div></div></div>`;
+            html += `<div class="tech-row"><div class="tech-icon">⚙️</div><div class="tech-text-wrap"><div class="tech-label">Складність</div><div class="tech-val" style="${s}">${item.complexity}</div></div></div>`;
         }
         
         let calcPrice = item.price ? item.price.toString() : "";
