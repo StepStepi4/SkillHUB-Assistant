@@ -318,6 +318,7 @@
         #rezervItemModal { z-index: 100010; }
         #sellerModal { z-index: 100020; }
         #descModal { z-index: 100030; }
+        #certManualModal { z-index: 100035; }
         #compareModal { z-index: 100040; }
         #guideModal { z-index: 100050; }
         #galleryModal { z-index: 100060; }
@@ -363,6 +364,126 @@
             display: none; text-align: center; padding: 30px 20px; background: var(--card-bg);
             border: 2px solid var(--rozetka-green-dark); border-radius: 16px; margin-top: 20px;
         }
+
+/* ІНСТРУКЦІЯ ОБ'ЄДНАННЯ СЕРТИФІКАТІВ */
+        .cert-manual-wrapper {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            color: #334155;
+            line-height: 1.4;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 12px;
+            background-color: #f8fafc;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            text-align: left;
+            font-size: 12px;
+        }
+        .cert-header {
+            color: #1e293b;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 8px;
+            margin-top: 0;
+            font-size: 15px;
+            font-weight: 700;
+        }
+        .cert-alert {
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            border-left: 4px solid;
+            font-size: 12px;
+        }
+        .cert-alert.warning {
+            background-color: #fffbeb;
+            border-color: #f59e0b;
+            color: #92400e;
+        }
+        .cert-alert.info {
+            background-color: #ecfdf5;
+            border-color: #10b981;
+            color: #065f46;
+        }
+        .cert-example {
+            background-color: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 12px;
+        }
+        .cert-example h3 {
+            margin-top: 0;
+            color: #0f172a;
+            font-size: 13px;
+            margin-bottom: 8px;
+        }
+        .cert-steps {
+            margin: 10px 0 0 0;
+            padding-left: 0;
+            list-style-type: none;
+            counter-reset: step-counter;
+        }
+        .cert-steps li {
+            position: relative;
+            padding-left: 32px;
+            margin-bottom: 12px;
+            font-size: 12px;
+        }
+        .cert-steps li::before {
+            content: counter(step-counter);
+            counter-increment: step-counter;
+            position: absolute;
+            left: 0;
+            top: -2px;
+            background-color: #3b82f6;
+            color: white;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 11px;
+            box-shadow: 0 2px 4px rgba(59, 130, 246, 0.3);
+        }
+        .cert-highlight {
+            font-weight: 600;
+            color: #111827;
+            background-color: #f1f5f9;
+            padding: 2px 4px;
+            border-radius: 4px;
+            font-size: 11px;
+            white-space: nowrap;
+        }
+        .brace-highlight {
+            position: relative;
+            display: inline-block;
+            padding-bottom: 6px;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+        .brace-highlight::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 100%;
+            height: 8px;
+            background-image: url("data:image/svg+xml,%3Csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg' preserveAspectRatio='none' viewBox='0 0 100 20'%3E%3Cpath d='M0,0 Q0,10 10,10 L45,10 Q50,10 50,20 Q50,10 55,10 L90,10 Q100,10 100,0' fill='none' stroke='%23dc2626' stroke-width='2' vector-effect='non-scaling-stroke'/%3E%3C/svg%3E");
+            background-size: 100% 100%;
+            background-repeat: no-repeat;
+        }
+        
+        /* Адаптація сертифікату під темну тему */
+        [data-theme="dark"] .cert-manual-wrapper { background-color: var(--card-bg); color: var(--text-main); box-shadow: none; border: 1px solid var(--border); }
+        [data-theme="dark"] .cert-header { color: var(--text-main); border-color: var(--border); }
+        [data-theme="dark"] .cert-example { background-color: var(--input-bg); border-color: var(--border); }
+        [data-theme="dark"] .cert-example h3 { color: var(--text-main); }
+        [data-theme="dark"] .cert-alert.warning { background-color: rgba(245, 158, 11, 0.1); border-color: #f59e0b; color: #fcd34d; }
+        [data-theme="dark"] .cert-alert.info { background-color: rgba(16, 185, 129, 0.1); border-color: #10b981; color: #6ee7b7; }
+        [data-theme="dark"] .cert-highlight { background-color: var(--bg); color: var(--text-main); }
+
     </style>
 </head>
 <body>
@@ -483,8 +604,16 @@
             
             <button class="list-item" onclick="window.openModalBase('guideModal')">
                 <div class="list-item-content">
-                    <span class="list-item-title">📗 Інструкція</span>
+                    <span class="list-item-title">📗 Інструкція PWA</span>
                     <span class="list-item-subtitle">Як встановити додаток</span>
+                </div>
+                <div class="list-item-arrow">></div>
+            </button>
+
+            <button class="list-item" onclick="window.openModalBase('certManualModal')">
+                <div class="list-item-content">
+                    <span class="list-item-title">🧩 Об'єднання сертифікатів</span>
+                    <span class="list-item-subtitle">Коли немає на залишку або потрібна знижка</span>
                 </div>
                 <div class="list-item-arrow">></div>
             </button>
@@ -567,6 +696,39 @@
         </div>
         <div id="modalBody" class="modal-body" style="padding-bottom: 20px;"></div>
         <button class="btn btn-primary" onclick="window.closeModalBase('descModal')">Зрозуміло</button>
+    </div>
+</div>
+
+<div id="certManualModal" class="modal">
+    <div class="modal-content" style="max-height: 90vh;">
+        <div class="modal-header">
+            <div class="modal-title">Довідка</div>
+            <button class="modal-close" onclick="window.closeModalBase('certManualModal')">✕</button>
+        </div>
+        <div class="modal-body">
+            <div class="cert-manual-wrapper">
+              <h2 class="cert-header">Об'єднання декількох сертифікатів</h2>
+
+              <div class="cert-alert warning">
+                <strong>⚠️ Проблема:</strong> Бувають випадки, коли при продажі електронних послуг виникає помилка <em>«Немає на залишках...»</em>, або Ви хочете зробити знижку клієнту. В такому випадку потрібно об'єднати декілька позицій в один рахунок.
+              </div>
+
+              <div class="cert-example">
+                <h3>📋 Приклад вирішення</h3>
+                <p>Товар коштує <span class="cert-highlight">17 499 ₴</span>. Ідеально до нього продати <em>Сервіс (15 001 - 20 000)</em>, але його немає на залишку. Робимо наступні кроки:</p>
+
+                <ul class="cert-steps">
+                  <li><strong>Обираємо декілька менших за діапазоном позицій</strong><br> Наприклад: <em>Сервіс (10 001 - <span class="brace-highlight">15 000</span>)</em> та <em>Сервіс (2 001 - <span class="brace-highlight">3 000</span>)</em>.</li>
+                  <li><strong>Перевіряємо суму діапазонів</strong><br> У нас виходить сума крайніх діапазонів: <span class="brace-highlight">15 000 + 3 000</span> = <span class="cert-highlight">18 000</span>. Оскільки товар коштує 17 499, тобто діапазон повністю підходить.</li>
+                  <li><strong>Завершуємо продаж</strong><br> Проводимо продаж і видаємо клієнту тікети.</li>
+                </ul>
+              </div>
+
+              <div class="cert-alert info">
+                <strong>✅ Важливо:</strong> Скидати фото тікетів в групу <em>«Support» / «Екта»</em> не потрібно, ключі автоматично активуються по API.
+              </div>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -869,7 +1031,7 @@
             window.scrollTo(0, savedScrollY); // Повертаємо позицію скролу
         }
         
-        if (modalId === 'descModal' || modalId === 'rezervItemModal' || modalId === 'sellerModal') {
+        if (modalId === 'descModal' || modalId === 'rezervItemModal' || modalId === 'sellerModal' || modalId === 'certManualModal') {
             if (isModalCompareMode) {
                 isModalCompareMode = false;
                 modalCompareSelection = [];
@@ -886,8 +1048,9 @@
         }
     }
 
+    // ДОДАНО НОВУ МОДАЛКУ В МАСИВ КОНТРОЛЮ
     function checkOpenModals() {
-        const modals = ['guideModal', 'descModal', 'compareModal', 'rezervItemModal', 'galleryModal', 'sellerModal'];
+        const modals = ['guideModal', 'descModal', 'compareModal', 'rezervItemModal', 'galleryModal', 'sellerModal', 'certManualModal'];
         for (let id of modals) {
             let el = document.getElementById(id);
             if (el && el.classList.contains('show')) return true;
