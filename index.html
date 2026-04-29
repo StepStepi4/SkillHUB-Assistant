@@ -1,0 +1,2327 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>SkillHUB Assistant</title>
+    
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#f2f2f7">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="SkillHUB">
+    <link rel="apple-touch-icon" href="icon-192.png">
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+        
+        *, *::before, *::after { 
+            box-sizing: border-box; 
+            -webkit-tap-highlight-color: transparent; 
+        }
+
+        :root {
+            /* СВІТЛА ТЕМА */
+            --bg: #f2f2f7; 
+            --card-bg: #ffffff;
+            --text-main: #000000; 
+            --text-muted: #8e8e93; 
+            --primary: #10b981; 
+            --primary-light: #d1fae5;
+            --border: #e5e5ea;
+            --nav-bg: rgba(255, 255, 255, 0.85);
+            --input-bg: #f9fafb;
+            --danger: #ef4444;
+            --danger-bg: rgba(239, 68, 68, 0.08);
+            --modal-overlay: rgba(0, 0, 0, 0.5);
+            --nav-height: 76px;
+
+            --clr-support-bg: #fef9c3; --clr-support-text: #854d0e;
+            --clr-ekta-bg: #dbeafe; --clr-ekta-text: #1e40af;
+            --clr-epz-bg: #e0f2fe; --clr-epz-text: #075985;
+            --clr-install-bg: #f3e8ff; --clr-install-text: #6b21a8;
+            
+            --rozetka-green-light: #00c65d;
+            --rozetka-green-dark: #00a046;
+        }
+
+        [data-theme="dark"] {
+            /* ТЕМНА ТЕМА */
+            --bg: #000000; 
+            --card-bg: #1c1c1e;
+            --text-main: #ffffff; 
+            --text-muted: #98989d; 
+            --primary: #10b981;
+            --primary-light: rgba(16, 185, 129, 0.2);
+            --border: #38383a;
+            --nav-bg: rgba(28, 28, 30, 0.85);
+            --input-bg: #2c2c2e;
+            --danger: #ff453a;
+            --danger-bg: rgba(255, 69, 58, 0.15);
+            --modal-overlay: rgba(0, 0, 0, 0.8);
+
+            --clr-support-bg: #422006; --clr-support-text: #fde047;
+            --clr-ekta-bg: #1e3a8a; --clr-ekta-text: #bfdbfe;
+            --clr-epz-bg: #0c4a6e; --clr-epz-text: #bae6fd;
+            --clr-install-bg: #3b0764; --clr-install-text: #e9d5ff;
+        }
+
+        body.modal-open { overflow: hidden; position: fixed; width: 100%; }
+        
+        body { 
+            font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text-main); 
+            margin: 0; padding: 0; display: flex; justify-content: center; align-items: flex-start; 
+            min-height: 100vh; -webkit-font-smoothing: antialiased; transition: background 0.3s ease, color 0.3s ease; 
+        }
+
+        /* ЗАВАНТАЖУВАЧ */
+        .app-loader {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--bg); display: flex; flex-direction: column; justify-content: center; align-items: center;
+            z-index: 999999; transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+        .app-loader.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+        .spinner { width: 40px; height: 40px; border: 4px solid var(--border); border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 15px; }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+        .loader-text { font-size: 14px; font-weight: 600; color: var(--text-muted); margin-bottom: 15px; text-align: center; padding: 0 20px; line-height: 1.4;}
+        .progress-container { width: 220px; height: 6px; background: var(--border); border-radius: 4px; overflow: hidden; display: none; }
+        .progress-bar { height: 100%; width: 0%; background: var(--primary); transition: width 0.3s ease; }
+
+        .container { 
+            position: relative; width: 100%; max-width: 480px; 
+            padding: 20px 16px; margin-bottom: calc(var(--nav-height) + 40px); 
+            display: flex; flex-direction: column;
+        }
+
+        .app-tab { display: none; animation: fade 0.2s ease; }
+        .app-tab.active { display: block; }
+        @keyframes fade { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* ШАПКА ТА СТАТУС */
+        .header-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        h2 { margin: 0; font-size: 26px; font-weight: 800; letter-spacing: -0.5px; }
+        
+        .status-container { display: flex; justify-content: flex-end; margin-bottom: 15px; }
+        .status-badge { 
+            display: flex; align-items: center; gap: 6px; padding: 6px 10px; 
+            background: var(--card-bg); border-radius: 20px; border: 1px solid var(--border);
+            font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; 
+        }
+        .dot { width: 8px; height: 8px; border-radius: 50%; }
+        .dot.green { background: #34d399; }
+        .dot.red { background: var(--danger); }
+        .dot.yellow { background: #fbbf24; }
+
+        /* ПЛАВАЮЧЕ МЕНЮ (М'яка підсвітка без овалів) */
+        .bottom-nav {
+            position: fixed; 
+            bottom: calc(env(safe-area-inset-bottom) + 16px); 
+            left: 50%; 
+            transform: translateX(-50%);
+            width: calc(100% - 32px); 
+            max-width: 420px;
+            height: var(--nav-height);
+            background: var(--nav-bg); 
+            border: 1px solid var(--border);
+            border-radius: 40px; 
+            backdrop-filter: blur(25px); 
+            -webkit-backdrop-filter: blur(25px);
+            display: flex; 
+            justify-content: space-around; 
+            align-items: center;
+            z-index: 9990; 
+            box-shadow: 0 8px 32px rgba(0,0,0,0.08); /* М'якша тінь */
+            padding: 0 16px;
+        }
+        [data-theme="dark"] .bottom-nav { 
+            box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+            background: rgba(28, 28, 30, 0.85);
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .nav-item {
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            gap: 5px; 
+            flex: 1; 
+            height: 100%;
+            background: transparent; border: none; outline: none;
+            color: var(--text-muted); cursor: pointer; 
+            transition: all 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
+            padding: 0;
+            margin: 0;
+        }
+
+        .nav-icon {
+            width: 24px; height: 24px; 
+            background-color: currentColor;
+            -webkit-mask-size: contain; mask-size: contain;
+            -webkit-mask-position: center; mask-position: center;
+            -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
+            transition: all 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
+        }
+
+        .icon-search { -webkit-mask-image: url('search.svg'); mask-image: url('search.svg'); }
+        .icon-rezerv { -webkit-mask-image: url('Rezerv.svg'); mask-image: url('Rezerv.svg'); }
+        .icon-bulb { -webkit-mask-image: url('bulb.svg'); mask-image: url('bulb.svg'); width: 28px; height: 28px; } 
+        .icon-settings { -webkit-mask-image: url('settings.svg'); mask-image: url('settings.svg'); }
+
+        .nav-item span { 
+            font-size: 11px; 
+            font-weight: 500; 
+            transition: all 0.3s cubic-bezier(0.25, 0.1, 0.25, 1); 
+        }
+        
+        /* АКТИВНИЙ СТАН: КОЛІР, ТІНЬ І ЖИРНИЙ ТЕКСТ */
+        .nav-item.active { 
+            color: var(--rozetka-green-dark); 
+        }
+        [data-theme="dark"] .nav-item.active { 
+            color: var(--primary); 
+        }
+        
+        .nav-item.active .nav-icon { 
+            transform: translateY(-2px) scale(1.15); 
+            filter: drop-shadow(0px 4px 8px rgba(0, 160, 70, 0.35)); /* Легка зелена підсвітка іконки */
+        }
+        [data-theme="dark"] .nav-item.active .nav-icon { 
+            filter: drop-shadow(0px 4px 8px rgba(16, 185, 129, 0.35));
+        }
+        
+        .nav-item.active span { 
+            font-weight: 800; 
+            transform: translateY(-1px); 
+            text-shadow: 0px 2px 6px rgba(0, 160, 70, 0.2); /* Легка зелена підсвітка тексту */
+        }
+        [data-theme="dark"] .nav-item.active span {
+            text-shadow: 0px 2px 6px rgba(16, 185, 129, 0.2);
+        }
+
+        /* ЕЛЕМЕНТИ ВВОДУ ТА ФОРМИ */
+        .input-group { position: relative; margin-bottom: 16px; }
+        input, select, textarea { 
+            width: 100%; padding: 16px 20px; border-radius: 12px; 
+            font-size: 16px; font-family: inherit; font-weight: 500; 
+            background: var(--input-bg); color: var(--text-main); 
+            border: 1px solid var(--border); 
+            outline: none; transition: 0.2s; -webkit-appearance: none; appearance: none;
+        }
+        input:focus, select:focus, textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-light); }
+        
+        select {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%238e8e93' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat; background-position: right 16px center; cursor: pointer;
+        }
+        
+        .clear-btn { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); width: 24px; height: 24px; background-color: var(--primary); border: none; border-radius: 50%; cursor: pointer; display: none; padding: 0; transition: background-color 0.2s, transform 0.1s; -webkit-tap-highlight-color: transparent; color: white; font-size: 18px; font-weight: bold; line-height: 24px; text-align: center; }
+        .clear-btn:active { background-color: var(--danger); transform: translateY(-50%) scale(1.1); }
+
+        .btn {
+            width: 100%; padding: 16px; border-radius: 12px; font-size: 16px; font-weight: 600;
+            cursor: pointer; border: none; transition: 0.2s; text-align: center; display: flex; justify-content: center; align-items: center; gap: 8px;
+        }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-primary:active { opacity: 0.8; transform: scale(0.98); }
+
+        .compare-toggle-btn {
+            background: transparent; color: var(--primary); border: 1.5px solid var(--primary);
+            padding: 8px 16px; border-radius: 10px; font-size: 13px; font-weight: 700; 
+            cursor: pointer; transition: 0.2s; display: none; align-items: center; gap: 6px;
+        }
+        .compare-toggle-btn.active { background: var(--primary); color: white; }
+
+        .list-group {
+            background: var(--card-bg); border-radius: 16px; overflow: hidden; margin-bottom: 24px;
+            border: 1px solid var(--border); display: flex; flex-direction: column;
+        }
+        
+        .list-item {
+            padding: 16px; display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 1px solid var(--border); text-decoration: none; color: var(--text-main);
+            background: transparent; border-left: none; border-right: none; border-top: none; width: 100%; text-align: left; cursor: pointer; transition: 0.15s;
+            outline: none; font-family: inherit;
+        }
+        .list-group > :last-child, #dynamicSkillHubButtons > :last-child { border-bottom: none !important; }
+        .list-item:active { background: var(--input-bg); }
+        
+        .list-item-content { display: flex; flex-direction: column; gap: 4px; flex: 1; padding-right: 10px; overflow: hidden; }
+        .list-item-title { font-size: 16px; font-weight: 600; line-height: 1.3;}
+        .list-item-subtitle { font-size: 13px; color: var(--text-muted); }
+        .list-item-value { font-size: 16px; font-weight: 600; color: var(--text-muted); display: flex; align-items: center; gap: 8px; flex-shrink:0;}
+        
+        .list-item-arrow { color: var(--text-muted); display: flex; align-items: center; justify-content: center; margin-left: auto; }
+        .list-item-arrow svg { width: 18px; height: 18px; stroke-width: 2.5; stroke: currentColor; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+
+        .toggle-switch {
+            width: 50px; height: 30px; background: var(--border); border-radius: 30px;
+            position: relative; cursor: pointer; transition: 0.3s; border: none; flex-shrink: 0;
+        }
+        .toggle-switch.active { background: var(--primary); }
+        .toggle-knob {
+            position: absolute; top: 2px; left: 2px; width: 26px; height: 26px;
+            background: white; border-radius: 50%; transition: 0.3s; box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        .toggle-switch.active .toggle-knob { transform: translateX(20px); }
+
+        .service-card {
+            background: var(--card-bg); border-radius: 16px; padding: 16px; margin-bottom: 12px;
+            border: 1px solid var(--border); position: relative; overflow: hidden; cursor: pointer; transition: 0.2s; text-align: left;
+        }
+        .service-card:active { background: var(--input-bg); transform: scale(0.98); }
+        
+        .sc-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; gap: 10px;}
+        
+        .sc-brand { 
+            font-size: 10px; font-weight: 800; text-transform: uppercase; padding: 4px 8px; 
+            border-radius: 6px; display: inline-block; width: max-content; margin-bottom: 8px;
+        }
+        
+        .sc-price { font-size: 15px; font-weight: 700; color: var(--primary); flex-shrink: 0; background: var(--input-bg); padding: 6px 12px; border-radius: 10px; border: 1px solid var(--border); height: fit-content; text-align: right;}
+        
+        .sc-title { font-size: 15px; font-weight: 600; line-height: 1.4; color: var(--text-main); display: flex; align-items: center; gap: 6px;}
+        
+        .brand-support { background: var(--clr-support-bg); color: var(--clr-support-text); }
+        .brand-ekta { background: var(--clr-ekta-bg); color: var(--clr-ekta-text); }
+        .brand-epz { background: var(--clr-epz-bg); color: var(--clr-epz-text); }
+        .brand-install { background: var(--clr-install-bg); color: var(--clr-install-text); }
+        .brand-settings { background: var(--input-bg); color: var(--text-muted); }
+        .brand-other { background: var(--input-bg); color: var(--text-muted); }
+
+        .suggestions { position: absolute; top: calc(100% + 4px); left: 0; width: 100%; background: var(--card-bg); border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); z-index: 100; max-height: 250px; overflow-y: auto; border: 1px solid var(--border); display: none; text-align: left;}
+        .sugg-item { padding: 14px 16px; border-bottom: 1px solid var(--border); font-size: 14px; font-weight: 500; cursor: pointer; display: flex; align-items: center; gap: 8px;}
+        .sugg-item:last-child { border-bottom: none; }
+        .sugg-item:active { background: var(--input-bg); }
+
+        /* МОДАЛЬНІ ВІКНА (МАКСИМАЛЬНА ПЛОЩА) */
+        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--modal-overlay); display: none; align-items: flex-end; justify-content: center; z-index: 100000; opacity: 0; transition: opacity 0.2s ease; -webkit-overflow-scrolling: touch;}
+        .modal.show { display: flex; opacity: 1; }
+        .modal-content { 
+            background: var(--bg); width: 100%; max-width: 480px; margin: 0 auto;
+            border-radius: 24px 24px 0 0; 
+            padding: 20px 16px calc(env(safe-area-inset-bottom) + 20px) 16px; 
+            display: flex; flex-direction: column; 
+            height: 96vh; max-height: 96vh; 
+            transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.1, 0.9, 0.2, 1);
+            text-align: left; overscroll-behavior: contain;
+        }
+        .modal.show .modal-content { transform: translateY(0); }
+        
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-shrink: 0; }
+        .modal-title { font-size: 18px; font-weight: 700; color: var(--text-main); line-height: 1.3;}
+        
+        /* ПРЕМІАЛЬНА КНОПКА ЗАКРИТТЯ "Х" */
+        .modal-close { 
+            background: var(--card-bg); border: 1px solid var(--border); 
+            width: 36px; height: 36px; border-radius: 50%; 
+            color: var(--text-muted); font-size: 0; 
+            display: flex; justify-content: center; align-items: center; 
+            cursor: pointer; transition: 0.2s;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+            position: relative; flex-shrink: 0;
+        }
+        .modal-close::before, .modal-close::after {
+            content: ''; position: absolute;
+            width: 14px; height: 2px;
+            background-color: currentColor;
+            border-radius: 2px; transition: 0.2s;
+        }
+        .modal-close::before { transform: rotate(45deg); }
+        .modal-close::after { transform: rotate(-45deg); }
+        .modal-close:active { transform: scale(0.85); background: var(--input-bg); color: var(--danger) !important; border-color: rgba(239, 68, 68, 0.3); }
+        
+        .modal-body { overflow-y: auto; flex: 1; padding-bottom: 20px; text-align: left; -webkit-overflow-scrolling: touch;}
+        
+        .tech-info-block { background: var(--card-bg); border-radius: 16px; margin-bottom: 24px; border: 1px solid var(--border); overflow: hidden; padding: 4px; }
+        .tech-row { display: flex; align-items: center; gap: 14px; padding: 12px 16px; border-bottom: 1px solid var(--border); }
+        .tech-row:last-child { border-bottom: none; }
+        .tech-row.negarant { background: var(--danger-bg); border-radius: 12px; border: 1px solid rgba(239, 68, 68, 0.2); border-bottom: none; margin: 4px; padding: 12px 12px;}
+        .tech-icon { font-size: 22px; width: 26px; text-align: center; flex-shrink: 0;} 
+        .tech-text-wrap { display: flex; flex-direction: column; gap: 2px; flex: 1;}
+        .tech-label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px;}
+        .tech-val { font-size: 14px; font-weight: 600; color: var(--text-main); line-height: 1.4;}
+
+        .tech-photo-wrapper { display: flex; align-items: center; gap: 14px; margin-top: 16px; background: var(--input-bg); padding: 16px; border-radius: 16px; border: 1px solid var(--border); cursor: pointer; transition: 0.2s; }
+        .tech-photo-wrapper:active { transform: scale(0.97); background: var(--border); }
+        .photo-icon { font-size: 26px; flex-shrink: 0;}
+        .photo-text { flex: 1; display: flex; flex-direction: column; text-align: left; }
+        .photo-title { font-size: 14px; font-weight: 700; color: var(--text-main); margin-bottom: 2px;}
+        .photo-subtitle { font-size: 12px; font-weight: 600; color: var(--primary); }
+        .photo-arrow { color: var(--text-muted); font-weight: bold; font-family: monospace; font-size: 18px; }
+
+        .compare-bar { 
+            position: fixed; bottom: calc(var(--nav-height) + 26px); left: 0; width: 100%; 
+            background: var(--card-bg); border-top: 1px solid var(--border); padding: 16px 24px; 
+            display: flex; justify-content: space-between; align-items: center; 
+            transform: translateY(20px); opacity: 0; pointer-events: none; transition: 0.3s; z-index: 9980;
+        }
+        .compare-bar.show { transform: translateY(0); opacity: 1; pointer-events: auto; }
+        
+        .checkbox { width: 24px; height: 24px; border-radius: 50%; border: 2px solid var(--text-muted); background: transparent; display: inline-flex; align-items: center; justify-content: center; transition: 0.2s; position: absolute; left: -40px; top: 50%; transform: translateY(-50%); pointer-events: none;}
+        .service-card.compare-mode { padding-left: 50px; }
+        .service-card.compare-mode .checkbox { left: 16px; }
+        
+        .service-card.selected { border-color: var(--primary); background: var(--primary-light); }
+        .service-card.selected .checkbox { border-color: var(--primary); background: var(--primary); }
+        .service-card.selected .checkbox::after { content: '✓'; color: white; font-size: 14px; font-weight: bold; }
+
+        .desc-toggle-wrapper {
+            display: inline-flex; align-items: center; gap: 4px; padding: 6px 0; cursor: pointer; font-weight: 700; font-size: 13px; color: var(--primary); transition: 0.2s; margin-top: 4px;
+        }
+        .desc-toggle-wrapper svg { width: 16px; height: 16px; stroke: currentColor; stroke-width: 2.5; transition: transform 0.3s ease; }
+        .desc-content { display: none; padding-top: 12px; margin-top: 8px; border-top: 1px dashed var(--border); }
+        .desc-content.show { display: block; animation: fadeIn 0.2s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .desc-code { display: flex; justify-content: space-between; background: var(--input-bg); padding: 12px 16px; border-radius: 12px; margin-bottom: 16px; font-weight: 600; cursor: pointer; border: 1px solid var(--border);}
+        
+        .desc-line { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px solid rgba(0,0,0,0.05); }
+        [data-theme="dark"] .desc-line { border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .desc-line:last-child { border-bottom: none; }
+        .desc-icon-box { display: flex; align-items: center; justify-content: center; font-size: 18px; width: 24px; min-width: 24px; background: transparent; border: none; }
+
+        .floating-top { position: fixed; bottom: calc(var(--nav-height) + 30px); right: 16px; width: 44px; height: 44px; background: var(--card-bg); border: 1px solid var(--border); border-radius: 50%; display: flex; justify-content: center; align-items: center; box-shadow: 0 4px 10px rgba(0,0,0,0.1); cursor: pointer; z-index: 9900; opacity: 0; transition: 0.3s; color: var(--text-main); pointer-events: none;}
+        .floating-top.show { opacity: 1; pointer-events: auto;}
+        .floating-top:active { transform: scale(0.9); }
+
+        .rezervy-name { font-size: 14px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.4;}
+        .rezervy-cat { font-size: 12px; color: var(--text-muted); text-transform: uppercase; margin-top: 4px;}
+        .rezervy-price { font-size: 15px; font-weight: 800; color: var(--primary); background: var(--input-bg); padding: 6px 10px; border-radius: 8px; border: 1px solid var(--border); white-space: nowrap;}
+        
+        #rezervItemModal { z-index: 100010; }
+        #sellerModal { z-index: 100020; }
+        #descModal { z-index: 100030; }
+        #certManualModal { z-index: 100035; }
+        #compareModal { z-index: 100040; }
+        #ratingModal { z-index: 100045; }
+        #galleryModal { z-index: 100060; }
+        
+        .gallery-nav { background: rgba(255,255,255,0.2); border: none; color: white; font-size: 24px; padding: 10px; cursor: pointer; border-radius: 50%; position: absolute; top: 50%; transform: translateY(-50%); z-index: 10; }
+        .gallery-nav.prev { left: 10px; }
+        .gallery-nav.next { right: 10px; }
+        
+        .btn-submit-glow { 
+            background: linear-gradient(135deg, var(--rozetka-green-light) 0%, var(--rozetka-green-dark) 100%);
+            color: white; border: none; font-weight: 800; width: 100%; padding: 16px; border-radius: 12px;
+            font-size: 16px; margin-top: 10px; box-shadow: 0 10px 25px rgba(0, 198, 93, 0.35);
+            transition: all 0.2s ease; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center;
+        }
+        .btn-submit-glow::before {
+            content: ""; position: absolute; top: 0; left: -100%; width: 50%; height: 100%;
+            background: linear-gradient(to right, transparent, rgba(255,255,255,0.4), transparent);
+            transform: skewX(-25deg); animation: shine 3.5s infinite;
+        }
+        @keyframes shine { 0% { left: -100%; } 20% { left: 150%; } 100% { left: 150%; } }
+        .btn-submit-glow:active { transform: scale(0.96); }
+
+        #sellerStatusOverlay {
+            display: none; text-align: center; padding: 30px 20px; background: var(--card-bg);
+            border: 2px solid var(--rozetka-green-dark); border-radius: 16px; margin-top: 20px;
+        }
+
+        .cert-manual-wrapper {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            color: #334155; line-height: 1.4; max-width: 800px;
+            margin: 0 auto; padding: 12px; background-color: #f8fafc;
+            border-radius: 10px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            text-align: left; font-size: 12px;
+        }
+        .cert-header { color: #1e293b; border-bottom: 2px solid #e2e8f0; padding-bottom: 8px; margin-top: 0; font-size: 15px; font-weight: 700; }
+        .cert-alert { padding: 10px; border-radius: 8px; margin-bottom: 12px; border-left: 4px solid; font-size: 12px; }
+        .cert-alert.warning { background-color: #fffbeb; border-color: #f59e0b; color: #92400e; }
+        .cert-alert.info { background-color: #ecfdf5; border-color: #10b981; color: #065f46; }
+        .cert-example { background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px; margin-bottom: 12px; }
+        .cert-example h3 { margin-top: 0; color: #0f172a; font-size: 13px; margin-bottom: 8px; }
+        .cert-steps { margin: 10px 0 0 0; padding-left: 0; list-style-type: none; counter-reset: step-counter; }
+        .cert-steps li { position: relative; padding-left: 32px; margin-bottom: 12px; font-size: 12px; }
+        .cert-steps li::before {
+            content: counter(step-counter); counter-increment: step-counter; position: absolute;
+            left: 0; top: -2px; background-color: #3b82f6; color: white; width: 22px; height: 22px;
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            font-weight: 600; font-size: 11px; box-shadow: 0 2px 4px rgba(59, 130, 246, 0.3);
+        }
+        .cert-highlight { font-weight: 600; color: #111827; background-color: #f1f5f9; padding: 2px 4px; border-radius: 4px; font-size: 11px; white-space: nowrap; }
+        .brace-highlight { position: relative; display: inline-block; padding-bottom: 6px; font-weight: 600; white-space: nowrap; }
+        .brace-highlight::after {
+            content: ''; position: absolute; left: 0; bottom: 0; width: 100%; height: 8px;
+            background-image: url("data:image/svg+xml,%3Csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg' preserveAspectRatio='none' viewBox='0 0 100 20'%3E%3Cpath d='M0,0 Q0,10 10,10 L45,10 Q50,10 50,20 Q50,10 55,10 L90,10 Q100,10 100,0' fill='none' stroke='%23dc2626' stroke-width='2' vector-effect='non-scaling-stroke'/%3E%3C/svg%3E");
+            background-size: 100% 100%; background-repeat: no-repeat;
+        }
+        
+        /* БЛІДІ КОЛЬОРИ ТА СТРУКТУРА РЕЙТИНГУ */
+        .rating-group {
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid rgba(0,0,0,0.06);
+        }
+        [data-theme="dark"] .rating-group {
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+        }
+        .rating-group:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .rating-item {
+            display: flex; align-items: center;
+            padding: 12px 16px; background: var(--card-bg);
+            border: 1px solid var(--border); border-radius: 12px; margin-bottom: 8px;
+        }
+        .rating-item.top-1 { border-color: #fcd34d; background-color: rgba(251, 191, 36, 0.15); border-left: 4px solid #fbbf24; }
+        .rating-item.top-2 { border-color: #cbd5e1; background-color: rgba(148, 163, 184, 0.15); border-left: 4px solid #94a3b8; }
+        .rating-item.top-3 { border-color: #fdba74; background-color: rgba(249, 115, 22, 0.15); border-left: 4px solid #d97706; }
+        
+        .rating-rank { font-size: 24px; font-weight: 800; width: 35px; text-align: center; color: var(--text-muted); }
+        .top-1 .rating-rank { color: #d97706; }
+        .top-2 .rating-rank { color: #64748b; }
+        .top-3 .rating-rank { color: #b45309; }
+        
+        .rating-info { flex: 1; display: flex; flex-direction: column; padding-left: 8px; gap: 2px; }
+        .rating-header-row { display: flex; justify-content: space-between; align-items: center; width: 100%; }
+        .rating-name { font-size: 15px; font-weight: 700; color: var(--text-main); }
+        .rating-score { font-size: 15px; font-weight: 800; color: var(--primary); }
+        .rating-desc { font-size: 12px; font-weight: 500; color: var(--text-muted); }
+
+    </style>
+</head>
+<body>
+
+<div id="appLoader" class="app-loader">
+    <div class="spinner" id="loaderSpinner"></div>
+    <div class="loader-text" id="mainLoaderText">Синхронізація з базою...</div>
+    <div class="progress-container" id="progressContainer">
+        <div class="progress-bar" id="progressBar"></div>
+    </div>
+</div>
+
+<div class="container">
+    
+    <div style="display: flex; gap: 12px; margin-bottom: 16px; align-items: stretch;">
+        <div style="width: 4px; background: linear-gradient(to bottom, #0057b7 50%, #ffd700 50%); border-radius: 2px; flex-shrink: 0;"></div>
+        <div style="display: flex; flex-direction: column; justify-content: center; gap: 4px; padding: 2px 0;">
+            <div class="header-row" id="mainHeader" style="margin-bottom: 0; justify-content: flex-start;">
+                <h2 id="headerTitle" style="line-height: 1;">SkillHUB Assistant</h2>
+            </div>
+            <div style="font-size: 13px; font-weight: 600; color: var(--text-muted); display: flex; align-items: center;">
+                Харківський регіон <span style="font-size: 14px; margin-left: 4px;">🫶</span>
+            </div>
+        </div>
+    </div>
+    
+    <div class="status-container" id="statusContainer">
+        <div class="status-badge">
+            <div id="statusDot" class="dot yellow"></div>
+            <span id="statusText">Підключення</span>
+        </div>
+    </div>
+
+    <div id="tab-search" class="app-tab active">
+        <div class="input-group">
+            <input type="text" id="catInput" placeholder="Яку техніку чи послугу шукаємо?" autocomplete="off" disabled>
+            <button id="clearAllBtn" class="clear-btn">×</button>
+            <div id="customSuggestions" class="suggestions"></div>
+        </div>
+
+        <div id="priceWrapper" class="input-group" style="display:none; gap:10px; flex-direction:row;">
+            <input type="number" id="devicePrice" placeholder="Вартість техніки ₴" inputmode="numeric" style="flex:1; margin-bottom:0;">
+            <button class="btn btn-primary" id="okBtn" style="width: auto; padding: 0 24px;">ОК</button>
+        </div>
+
+        <div id="result" style="display:none;">
+            <div class="ua-name" id="uaTitle" style="font-size:20px; font-weight:800; margin-bottom:5px; text-align: left;"></div>
+            <div class="item-category" id="itemCategory" style="margin-bottom:20px; opacity:0.7; font-size:13px; text-transform: uppercase; font-weight: 700; text-align: left;"></div>
+            
+            <div id="techInfo"></div>
+            
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+                <span style="font-weight:700; font-size:13px; text-transform:uppercase; color:var(--text-muted); letter-spacing: 0.5px;">Сервіси</span>
+                <button id="toggleCompareBtn" class="compare-toggle-btn" style="display:none;" onclick="window.toggleCompareMode()">Порівняти</button>
+            </div>
+            
+            <div id="serviceList" style="display:flex; flex-direction:column; gap:12px;"></div>
+        </div>
+    </div>
+
+    <div id="tab-reserves" class="app-tab">
+        <div class="input-group">
+            <select id="storeFilter" onchange="window.renderRezervyList()">
+                <option value="">-- Оберіть магазин --</option>
+            </select>
+        </div>
+        <div id="rezervyList" class="list-group"></div>
+    </div>
+
+    <div id="tab-skillhub" class="app-tab">
+        <div class="list-group">
+            
+            <button class="list-item" style="background: rgba(16, 185, 129, 0.08); width: 100%; border: none; border-bottom: 1px solid var(--border); font-family: inherit; outline: none; display: flex; align-items: center;" onclick="window.open('https://sites.google.com/view/skillhub-kh-reg/%D0%B3%D0%BE%D0%BB%D0%BE%D0%B2%D0%BD%D0%B0', '_blank')">
+                <div style="font-size: 32px; display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; margin-right: 12px;">
+                    🌐
+                </div>
+                <div class="list-item-content" style="flex:1; text-align:left;">
+                    <span class="list-item-title" style="color: var(--rozetka-green-dark);">ПОРТАЛ SkillHUB</span>
+                    <span class="list-item-subtitle">Перейти на головну сторінку</span>
+                </div>
+                <div class="list-item-arrow" style="margin-left: 10px;">
+                    <img src="Logo v3.png" alt="Skillhub Logo" style="height: 32px; width: auto; border-radius: 6px; display: block; object-fit: contain;">
+                </div>
+            </button>
+
+            <div id="dynamicSkillHubButtons"></div>
+            
+        </div>
+    </div>
+
+    <div id="tab-settings" class="app-tab">
+        <div class="list-group">
+            <div class="list-item">
+                <div class="list-item-content">
+                    <span class="list-item-title">Темна тема</span>
+                    <span class="list-item-subtitle">Змінити оформлення додатку</span>
+                </div>
+                <button id="themeToggle" class="toggle-switch">
+                    <div class="toggle-knob"></div>
+                </button>
+            </div>
+            
+            <div class="list-item" style="flex-direction:column; align-items:flex-start;">
+                <div class="list-item-content" style="margin-bottom: 10px; width:100%;">
+                    <span class="list-item-title">🏪 Магазин на якому Ви працюєте?</span>
+                    <span class="list-item-subtitle">Для швидкого доступу до резервів</span>
+                </div>
+                <select id="defaultStoreSelect" onchange="window.saveDefaultStore()" style="background: var(--input-bg); margin-bottom: 0;"></select>
+            </div>
+        </div>
+
+        <div class="list-group">
+            <button class="list-item" id="forceUpdateBtn">
+                <div class="list-item-content">
+                    <span class="list-item-title">🔄 Оновити базу даних</span>
+                    <span class="list-item-subtitle">Очистити кеш та завантажити свіжі дані</span>
+                </div>
+                <div class="list-item-arrow">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" style="width:18px; height:18px; stroke-width: 2.5;"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.92-10.24l5.58 5.58"/></svg>
+                </div>
+            </button>
+            
+            <button class="list-item" onclick="window.open('https://forms.gle/aSYSoVy1ew3voSih7', '_blank')">
+                <div class="list-item-content">
+                    <span class="list-item-title">💬 Зворотній зв'язок</span>
+                    <span class="list-item-subtitle">Надіслати відгук, зауваження або оцінити додаток</span>
+                </div>
+                <div class="list-item-arrow">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" style="width:18px; height:18px; stroke-width: 2.5;"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                </div>
+            </button>
+        </div>
+
+        <div style="text-align: center; color: var(--text-muted); font-size: 12px; margin-top: 20px; display: flex; flex-direction: column; align-items: center; gap: 6px;">
+            <div style="display: flex; align-items: center; gap: 6px; justify-content: center; font-weight: 600;">
+                <img src="ukraine.svg" alt="UA" style="width: 16px; height: 16px;">
+                <span>ROZETKA KHARKIV REGION</span>
+            </div>
+            <div id="appVersionDisp" style="display:inline-block; padding:6px 12px; background:var(--card-bg); border-radius:8px; border:1px solid var(--border); font-weight:bold; cursor:pointer; color:var(--primary);" onclick="if(db.appVersion) window.showChangelogModal(db.appVersion, db.changelog)">v1.0.0</div>
+        </div>
+    </div>
+</div>
+
+<nav class="bottom-nav">
+    <button class="nav-item active" onclick="window.switchTab('tab-search')">
+        <div class="nav-icon icon-search"></div>
+        <span>Пошук</span>
+    </button>
+    <button class="nav-item" onclick="window.switchTab('tab-reserves')">
+        <div class="nav-icon icon-rezerv"></div>
+        <span>Резерви</span>
+    </button>
+    <button class="nav-item" onclick="window.switchTab('tab-skillhub')">
+        <div class="nav-icon icon-bulb"></div>
+        <span>SkillHUB</span>
+    </button>
+    <button class="nav-item" onclick="window.switchTab('tab-settings')">
+        <div class="nav-icon icon-settings"></div>
+        <span>Опції</span>
+    </button>
+</nav>
+
+<div id="compareBar" class="compare-bar">
+    <div style="font-weight:600; font-size: 15px; color: var(--text-main);" id="compareStatusText">Оберіть 2 сервіси</div>
+    <button class="btn btn-primary" id="compareExecuteBtn" onclick="window.handleExecuteCompare()" style="width:auto; padding: 10px 20px; border-radius: 12px;">Порівняти</button>
+</div>
+
+<div class="floating-top" id="scrollTopBtn">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg>
+</div>
+
+<div id="rezervItemModal" class="modal">
+    <div class="modal-content" style="max-height: 95vh;">
+        <div class="modal-header" style="align-items:flex-start;">
+            <div class="modal-title" id="rezervItemTitle" style="color:var(--primary); line-height:1.3;"></div>
+            <button class="modal-close" onclick="window.closeModalBase('rezervItemModal')"></button>
+        </div>
+        <div id="rezervItemBody" class="modal-body">
+            <div id="rezervTechInfo"></div>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+                <span style="font-weight:700; font-size:12px; text-transform:uppercase; color:var(--text-muted);">Рекомендовані сервіси</span>
+                <button id="rezervCompareBtn" class="compare-toggle-btn" style="display:none;" onclick="window.toggleModalCompareMode()">Порівняти</button>
+            </div>
+            <div id="rezervServiceList" style="display:flex; flex-direction:column; gap:12px;"></div>
+        </div>
+    </div>
+</div>
+
+<div id="descModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <div class="modal-title" id="modalTitle">Опис</div>
+            <button class="modal-close" onclick="window.closeModalBase('descModal')"></button>
+        </div>
+        <div id="modalBody" class="modal-body" style="padding-bottom: 20px;"></div>
+        <button class="btn btn-primary" onclick="window.closeModalBase('descModal')">Зрозуміло</button>
+    </div>
+</div>
+
+<div id="certManualModal" class="modal">
+    <div class="modal-content" style="max-height: 90vh;">
+        <div class="modal-header">
+            <div class="modal-title">Довідка</div>
+            <button class="modal-close" onclick="window.closeModalBase('certManualModal')"></button>
+        </div>
+        <div class="modal-body">
+            <div class="cert-manual-wrapper">
+              <h2 class="cert-header">Об'єднання декількох сертифікатів</h2>
+
+              <div class="cert-alert warning">
+                <strong>⚠️ Проблема:</strong> Бувають випадки, коли при продажі електронних послуг виникає помилка <em>«Немає на залишках...»</em>, або Ви хочете зробити знижку клієнту. В такому випадку потрібно об'єднати декілька позицій в один рахунок.
+              </div>
+
+              <div class="cert-example">
+                <h3>📋 Приклад вирішення</h3>
+                <p>Товар коштує <span class="cert-highlight">17 499 ₴</span>. Ідеально до нього продати <em>Сервіс (15 001 - 20 000)</em>, але його немає на залишку. Робимо наступні кроки:</p>
+
+                <ul class="cert-steps">
+                  <li><strong>Обираємо декілька менших за діапазоном позицій</strong><br> Наприклад: <em>Сервіс (10 001 - <span class="brace-highlight">15 000</span>)</em> та <em>Сервіс (2 001 - <span class="brace-highlight">3 000</span>)</em>.</li>
+                  <li><strong>Перевіряємо суму діапазонів</strong><br> У нас виходить сума крайніх діапазонів: <span class="brace-highlight">15 000 + 3 000</span> = <span class="cert-highlight">18 000</span>. Оскільки товар коштує 17 499, тобто діапазон повністю підходить.</li>
+                  <li><strong>Завершуємо продаж</strong><br> Проводимо продаж і видаємо клієнту тікети.</li>
+                </ul>
+              </div>
+
+              <div class="cert-alert info">
+                <strong>✅ Важливо:</strong> Скидати фото тікетів в групу <em>«Support» / «Екта»</em> не потрібно, ключі автоматично активуються по API.
+              </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="ratingModal" class="modal">
+    <div class="modal-content" style="max-height: 85vh;">
+        <div class="modal-header">
+            <div class="modal-title">🏆 Рейтинг продавців</div>
+            <button class="modal-close" onclick="window.closeModalBase('ratingModal')"></button>
+        </div>
+        <div class="modal-body" id="ratingModalBody">
+            </div>
+        <button class="btn btn-primary" style="margin-top: 10px;" onclick="window.closeModalBase('ratingModal')">Супер!</button>
+    </div>
+</div>
+
+<div id="compareModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <div class="modal-title">Результат порівняння</div>
+            <button class="modal-close" onclick="window.closeCompareModal()"></button>
+        </div>
+        <div id="compareModalBody" class="modal-body"></div>
+        <button class="btn btn-primary" onclick="window.closeCompareModal()">Закрити</button>
+    </div>
+</div>
+
+<div id="sellerModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <div class="modal-title" style="color: var(--text-main);">Зміна продавця</div>
+            <button class="modal-close" onclick="window.closeModalBase('sellerModal')"></button>
+        </div>
+        <div class="modal-body">
+            <form id="sellerFormSubmit">
+                <div class="input-group">
+                    <span style="font-weight:600; display:block; margin-bottom:8px; font-size:14px; color:var(--text-muted);">Магазин</span>
+                    <select id="sellerStore" name="store" required>
+                        <option value="" disabled selected>Завантаження списку...</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <span style="font-weight:600; display:block; margin-bottom:8px; font-size:14px; color:var(--text-muted);">Ваше ПІБ</span>
+                    <input type="text" id="sellerFio" name="fio" placeholder="Прізвище Ім'я" required>
+                </div>
+                <div class="input-group">
+                    <span style="font-weight:600; display:block; margin-bottom:8px; font-size:14px; color:var(--text-muted);">Номер рахунку</span>
+                    <input type="text" id="sellerBill" name="bill" placeholder="РО3________" required>
+                </div>
+                <div class="input-group">
+                    <span style="font-weight:600; display:block; margin-bottom:8px; font-size:14px; color:var(--text-muted);">Причина зміни</span>
+                    <select id="sellerReason" name="reason" required>
+                        <option value="" disabled selected>Завантаження причин...</option>
+                    </select>
+                </div>
+                <button type="submit" id="submitSellerBtn" class="btn-submit-glow">ВІДПРАВИТИ</button>
+            </form>
+            <div id="sellerStatusOverlay">
+                <div style="font-size: 3rem; margin-bottom: 10px;">✅</div>
+                <h5 style="color: var(--rozetka-green-dark); font-weight: 800; margin: 0; font-size: 1.2rem;">УСПІШНО ВІДПРАВЛЕНО!</h5>
+                <p style="font-size: 1rem; color: var(--text-muted); margin-top: 10px; margin-bottom: 0; line-height: 1.4;">Заявка прийнята, очікуйте на виконання 2-3 дні, а може швидше 😉</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="galleryModal" class="modal" style="background: rgba(0,0,0,0.9); z-index: 100060;">
+    <div class="modal-content" style="background:transparent; box-shadow:none; padding:0; height:100%; max-width:100%; justify-content:center; align-items:center;">
+        <div style="position:absolute; top:20px; right:20px; z-index:1000000;">
+            <button class="modal-close" onclick="window.closeGallery()" style="background:rgba(255,255,255,0.2); border:none; box-shadow:none; color:white;"></button>
+        </div>
+        <div class="gallery-content" id="galleryContent" style="display:flex; justify-content:center; align-items:center; height:100%; width:100%; position:relative;">
+            <button class="gallery-nav prev" onclick="event.stopPropagation(); window.changePhoto(-1)">❮</button>
+            <img id="galleryImage" src="" alt="Фото" style="max-width:100%; max-height:80vh; object-fit:contain; border-radius:12px;">
+            <button class="gallery-nav next" onclick="event.stopPropagation(); window.changePhoto(1)">❯</button>
+        </div>
+        <div id="galleryCounter" style="position:absolute; bottom:40px; color:white; font-weight:bold; background:rgba(0,0,0,0.5); padding:6px 16px; border-radius:20px;">1 / 3</div>
+    </div>
+</div>
+
+<script>
+    window.addEventListener('error', function(e) {
+        const elLoader = document.getElementById('appLoader');
+        if (elLoader && !elLoader.classList.contains('hidden')) {
+            elLoader.querySelector('.loader-text').innerHTML = "Критична помилка HTML:<br>" + e.message + "<br><br><span style='font-size:10px; opacity:0.7'>Скиньте кеш браузера</span>";
+            elLoader.querySelector('.spinner').style.display = 'none';
+        }
+    });
+
+    const API_URL = 'https://script.google.com/macros/s/AKfycbxgt2leNwwSrDVmnu3JetM2uvhP7_OQ50DE8dk6e_L3uqKD2sGk1cAMb5rdIeTRcMIP5Q/exec';
+    const CACHE_KEY = 'skillhub_v1_flat'; 
+    const SEEN_VERSION_KEY = 'skillhub_version_flat';
+    
+    let db = { categories: [], descriptions: {}, tariffs: [], appVersion: "", changelog: "", montazhData: {cities:[], services:[]}, serviceCodes: {}, rezervyData: [], serviceBrands: {}, trainingData: [], skillHubButtons: [], sellerRatings: [] };
+    let currentCategoryData = null;
+    let currentServiceData = null; 
+    let savedScrollY = 0; 
+    
+    let isCompareMode = false;
+    let compareSelection = [];
+    window.lastCalculatedServices = [];
+    let isModalCompareMode = false;
+    let modalCompareSelection = [];
+    window.lastModalServices = [];
+    window.allServicesSearchList = [];
+
+    window.buildServiceSearchList = function() {
+        let uniqueMap = new Map();
+        
+        if(db.tariffs) {
+            db.tariffs.forEach(t => {
+                if(t.service) {
+                    let origName = t.service.trim();
+                    if(!uniqueMap.has(origName)) {
+                        uniqueMap.set(origName, { orig: origName, ru: t.serviceRu || "", en: t.serviceEn || "" });
+                    }
+                }
+            });
+        }
+        if(db.descriptions) {
+            Object.keys(db.descriptions).forEach(k => {
+                let origName = k.trim();
+                if(!uniqueMap.has(origName)) {
+                    uniqueMap.set(origName, { orig: origName, ru: "", en: "" });
+                }
+            });
+        }
+        
+        window.allServicesSearchList = Array.from(uniqueMap.entries()).map(([origName, data]) => {
+            let nameClean = origName.replace(/^\[.*?\]\s*/, '').trim();
+            let u = nameClean.toUpperCase();
+            
+            let icon = '⚙️'; 
+            
+            let exactBrand = db.serviceBrands ? window.findInDb(db.serviceBrands, origName) : "";
+            const brandMatch = origName.match(/^\[(.*?)\]/);
+            let brand = exactBrand || (brandMatch ? brandMatch[1] : "");
+            let uBrand = String(brand).toUpperCase();
+            
+            let cls = 'brand-other';
+            if (uBrand.includes('SUPPORT') || u.includes('SUPPORT') || u.includes('НАШ СЕРВІС')) cls = 'brand-support'; 
+            else if (uBrand.includes('ЕКТА') || uBrand.includes('EKTA') || u.includes('EKTA') || u.includes('ЕКТА')) cls = 'brand-ekta'; 
+            else if (uBrand.includes('EPZ') || u.includes('EPZ') || u.includes('ЕПЗ') || u.includes('ЛІЦЕНЗІЙНЕ') || u.includes('WINDOWS') || u.includes('OFFICE')) cls = 'brand-epz'; 
+            else if (u.includes('НАЛАШТУВАННЯ')) cls = 'brand-settings'; 
+            else if (u.includes('МОНТАЖ') || u.includes('ПІДКЛЮЧЕННЯ') || u.includes('ВСТАНОВЛЕННЯ')) cls = 'brand-install';
+            
+            let displayBrand = brand;
+            if(cls === 'brand-ekta') displayBrand = 'ЕКТА';
+            if(cls === 'brand-support') displayBrand = 'SUPPORT';
+            if(cls === 'brand-epz') displayBrand = 'ЕПЗ';
+            
+            return {
+                origName: origName,
+                name: nameClean, 
+                searchStr: [nameClean, data.ru, data.en].join(' '),
+                icon: icon, 
+                searchType: 'service',
+                brandText: displayBrand,
+                cls: cls
+            };
+        });
+    };
+
+    function sanitizeDb(data) {
+        if(!data) return { categories: [], descriptions: {}, tariffs: [], montazhData: {cities:[], services:[]}, serviceCodes: {}, rezervyData: [], serviceBrands: {}, trainingData: [], skillHubButtons: [], sellerRatings: [] };
+        data.categories = data.categories || [];
+        data.descriptions = data.descriptions || {};
+        data.tariffs = data.tariffs || [];
+        data.montazhData = data.montazhData || { cities: [], services: [] };
+        if (!data.montazhData.cities) data.montazhData.cities = [];
+        if (!data.montazhData.services) data.montazhData.services = [];
+        data.serviceCodes = data.serviceCodes || {};
+        data.rezervyData = data.rezervyData || [];
+        data.serviceBrands = data.serviceBrands || {};
+        data.trainingData = data.trainingData || [];
+        data.skillHubButtons = data.skillHubButtons || [];
+        data.sellerRatings = data.sellerRatings || [];
+        return data;
+    }
+
+    const tabTitles = {
+        'tab-search': 'SkillHUB Assistant',
+        'tab-reserves': 'Активні резерви',
+        'tab-skillhub': 'SkillHUB',
+        'tab-settings': 'Налаштування'
+    };
+
+    const elCatInput = document.getElementById('catInput');
+    const elClearBtn = document.getElementById('clearAllBtn');
+    const elSuggList = document.getElementById('customSuggestions');
+    const elPriceInput = document.getElementById('devicePrice');
+    const elPriceWrapper = document.getElementById('priceWrapper');
+    const elOkBtn = document.getElementById('okBtn');
+    const elResultBox = document.getElementById('result');
+    const elTechInfo = document.getElementById('techInfo');
+    const elServiceList = document.getElementById('serviceList');
+    const scrollTopBtn = document.getElementById('scrollTopBtn');
+    const compareBar = document.getElementById('compareBar');
+
+    let currentTheme = localStorage.getItem('theme') || 'light';
+    document.documentElement.setAttribute('data-theme', currentTheme);
+    updateToggleUI();
+
+    document.getElementById('themeToggle').onclick = () => {
+        currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', currentTheme);
+        localStorage.setItem('theme', currentTheme);
+        updateToggleUI();
+    };
+
+    function updateToggleUI() {
+        const toggle = document.getElementById('themeToggle');
+        if(currentTheme === 'dark') toggle.classList.add('active');
+        else toggle.classList.remove('active');
+    }
+
+    const brandRegex = /^\[(.*?)\]/;
+
+    window.switchTab = function(tabId) {
+        document.querySelectorAll('.app-tab').forEach(tab => tab.classList.remove('active'));
+        document.querySelectorAll('.nav-item').forEach(btn => btn.classList.remove('active'));
+        
+        document.getElementById(tabId).classList.add('active');
+        
+        let activeNavBtn = document.querySelector(`.nav-item[onclick*="${tabId}"]`);
+        if (activeNavBtn) activeNavBtn.classList.add('active');
+
+        document.getElementById('headerTitle').innerText = tabTitles[tabId];
+        document.getElementById('statusContainer').style.display = (tabId === 'tab-search') ? 'flex' : 'none';
+
+        if (isCompareMode) toggleCompareMode();
+        if (isModalCompareMode) toggleModalCompareMode();
+        
+        if (compareBar) compareBar.classList.remove('show');
+        
+        if (tabId === 'tab-reserves') window.renderRezervyList();
+        
+        window.scrollTo(0, 0);
+    }
+
+    window.openModalBase = function(modalId, name = "", code = "") {
+        try {
+            if (name && modalId === 'descModal') {
+                let title = name.replace(/🇺🇦\s*/g, '').replace(/^UA\s+/i, '').replace(/^\[.*?\]\s*/, ''); 
+                document.getElementById('modalTitle').innerText = title;
+                const raw = window.findInDb(db.descriptions, name) || "";
+                document.getElementById('modalBody').innerHTML = generateDescToggleHTML(raw, code).replace('display: none;', 'display: block;').replace('Детальніше', 'Опис сервісу');
+                let dc = document.getElementById('modalBody').querySelector('.desc-content');
+                if(dc) dc.classList.add('show');
+            }
+
+            if (!document.body.classList.contains('modal-open')) {
+                savedScrollY = window.scrollY;
+                document.body.style.top = `-${savedScrollY}px`;
+                document.body.classList.add('modal-open');
+            }
+            document.getElementById(modalId).classList.add('show');
+        } catch(e) { console.error(e); }
+    }
+
+    window.closeModalBase = function(modalId) {
+        document.getElementById(modalId).classList.remove('show');
+        
+        if (!checkOpenModals()) {
+            document.body.classList.remove('modal-open');
+            document.body.style.top = '';
+            window.scrollTo(0, savedScrollY);
+        }
+        
+        if (modalId === 'descModal' || modalId === 'rezervItemModal' || modalId === 'sellerModal' || modalId === 'certManualModal' || modalId === 'ratingModal') {
+            if (isModalCompareMode) {
+                isModalCompareMode = false;
+                modalCompareSelection = [];
+                if (compareBar) compareBar.classList.remove('show');
+                document.querySelectorAll('.compare-toggle-btn').forEach(btn => {
+                    btn.innerText = 'Порівняти';
+                    btn.classList.remove('active');
+                });
+                
+                if (document.getElementById('montazhCity')) window.updateMontazhResults(); 
+                else if (document.querySelector('#rezervItemModal.show')) window.updateRezervResults();
+                else window.updateSetupResults();
+            }
+        }
+    }
+
+    window.openRatingModal = function() {
+        window.renderRatingModalContent();
+        window.openModalBase('ratingModal');
+    }
+
+    function checkOpenModals() {
+        const modals = ['descModal', 'compareModal', 'rezervItemModal', 'galleryModal', 'sellerModal', 'certManualModal', 'ratingModal'];
+        for (let id of modals) {
+            let el = document.getElementById(id);
+            if (el && el.classList.contains('show')) return true;
+        }
+        return false;
+    }
+
+    let isScrolling = false;
+    window.addEventListener('scroll', () => {
+        if (!isScrolling) {
+            window.requestAnimationFrame(() => {
+                if (window.scrollY > 200) scrollTopBtn.classList.add('show');
+                else scrollTopBtn.classList.remove('show');
+                isScrolling = false;
+            });
+            isScrolling = true;
+        }
+    });
+
+    scrollTopBtn.onclick = () => window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    const normalize = (str) => str ? String(str).toLowerCase().trim().replace(/[‘’'"`]/g, "") : "";
+
+    window.escapeHTML = function(str) {
+        if (!str) return '';
+        return String(str)
+            .replace(/&/g, '\u0026amp;')
+            .replace(/</g, '\u0026lt;')
+            .replace(/>/g, '\u0026gt;')
+            .replace(/"/g, '\u0026quot;')
+            .replace(/'/g, '\u0026#39;');
+    }
+    
+    window.escapeForJS = function(str) {
+        if (!str) return '';
+        return String(str).replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '\\"').replace(/\n/g, '\\n').replace(/\r/g, '');
+    }
+
+    function normalizeServiceName(s) {
+        if (!s) return "";
+        return String(s).replace(/^\[.*?\]\s*/, '').replace(/[«»"'”`\u00A0\s]/g, '').trim().toLowerCase();
+    }
+
+    window.findInDb = function(dict, key) {
+        if (!key || !dict) return "";
+        if (dict[key]) return dict[key];
+        let clean = normalizeServiceName(key);
+        for (let k in dict) { if (normalizeServiceName(k) === clean) return dict[k]; }
+        return "";
+    }
+
+    function debounce(func, wait) {
+        let timeout;
+        return function(...args) { clearTimeout(timeout); timeout = setTimeout(() => func.apply(this, args), wait); };
+    }
+
+    window.copyCode = function(e, el, code) {
+        if (e) e.stopPropagation(); 
+        const fallbackCopy = () => {
+            let t = document.createElement("textarea"); t.value = code;
+            t.style.position = "fixed"; t.style.opacity = "0"; document.body.appendChild(t);
+            t.focus(); t.select();
+            try { document.execCommand('copy'); window.showCopied(el); } catch (err) {}
+            t.remove();
+        };
+        if (navigator.clipboard && window.isSecureContext) navigator.clipboard.writeText(code).then(() => window.showCopied(el)).catch(() => fallbackCopy());
+        else fallbackCopy();
+    }
+
+    window.showCopied = function(el) {
+        const og = el.innerHTML;
+        el.innerHTML = "Скопійовано ✓"; el.style.color = "var(--primary)";
+        setTimeout(() => { el.innerHTML = og; el.style.color = ""; }, 1500);
+    }
+
+    function setAppStatus(state, text) {
+        const dot = document.getElementById('statusDot');
+        const txt = document.getElementById('statusText');
+        if(!dot || !txt) return;
+        dot.className = 'dot'; 
+        if (state === 'ok') dot.classList.add('green');
+        else if (state === 'error') dot.classList.add('red');
+        else dot.classList.add('yellow');
+        txt.innerText = text;
+    }
+
+    // --- ДИНАМІЧНИЙ РЕНДЕР КНОПОК SKILLHUB ---
+    window.renderSkillHubTab = function() {
+        const container = document.getElementById('dynamicSkillHubButtons');
+        if (!container || !db.skillHubButtons) return;
+
+        let html = db.skillHubButtons.map(btn => {
+            let actionStr = '';
+            let linkStr = String(btn.link).trim();
+            let nm = String(btn.name).toLowerCase();
+            
+            // Якщо є маркер з таблиці
+            if (linkStr === "--") {
+                actionStr = `onclick="window.openSellerModal()"`;
+            } else if (linkStr === "%") {
+                actionStr = `onclick="window.openRatingModal()"`;
+            } else if (linkStr === "@@") {
+                actionStr = `onclick="window.openModalBase('certManualModal')"`;
+            } else if (linkStr !== "" && linkStr !== "#") {
+                actionStr = `onclick="window.open('${linkStr}', '_blank')"`;
+            } else {
+                if (nm.includes("замін") || nm.includes("замен") || nm.includes("продавц")) {
+                    actionStr = `onclick="window.openSellerModal()"`;
+                } else if (nm.includes("об'єдн") || nm.includes("объед") || nm.includes("сертиф")) {
+                    actionStr = `onclick="window.openModalBase('certManualModal')"`;
+                } else if (nm.includes("рейтинг")) {
+                    actionStr = `onclick="window.openRatingModal()"`;
+                }
+            }
+
+            return `
+            <button class="list-item" ${actionStr} style="width:100%; border:none; border-bottom:1px solid var(--border); font-family:inherit; outline:none; display:flex; align-items:center; background: transparent;">
+                <div style="font-size: 32px; display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; margin-right: 12px;">
+                    ${btn.emoji}
+                </div>
+                <div class="list-item-content" style="flex:1; text-align:left;">
+                    <span class="list-item-title">${btn.name}</span>
+                    <span class="list-item-subtitle">${btn.desc}</span>
+                </div>
+                <div class="list-item-arrow" style="margin-left: auto;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" style="width:18px; height:18px; stroke-width: 2.5;"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                </div>
+            </button>`;
+        }).join('');
+        
+        container.innerHTML = html;
+    };
+
+    // --- ДИНАМІЧНИЙ РЕНДЕР РЕЙТИНГУ ---
+    window.renderRatingModalContent = function() {
+        const container = document.getElementById('ratingModalBody');
+        if (!container) return;
+        
+        if (!db.sellerRatings || db.sellerRatings.length === 0) {
+            container.innerHTML = '<div style="text-align:center; padding:20px; color:var(--text-muted); font-weight:600;">Дані оновлюються...</div>';
+            return;
+        }
+
+        let groups = {};
+        db.sellerRatings.forEach(r => {
+            let nom = r.nomination || "Загальний рейтинг";
+            let cleanNom = nom.replace(/\s*#\d+\s*$/, '').trim(); 
+            if (!groups[cleanNom]) groups[cleanNom] = [];
+            groups[cleanNom].push(r);
+        });
+
+        let html = "";
+        for (let nom in groups) {
+            
+            html += `<div class="rating-group">`;
+            
+            let sorted = groups[nom].sort((a, b) => {
+                let valA = parseFloat(String(a.result).replace(/[^\d.,-]/g, '').replace(',', '.')) || 0;
+                let valB = parseFloat(String(b.result).replace(/[^\d.,-]/g, '').replace(',', '.')) || 0;
+                return valB - valA;
+            });
+
+            sorted.forEach((item, index) => {
+                let rank = index + 1;
+                let topClass = rank === 1 ? "top-1" : (rank === 2 ? "top-2" : (rank === 3 ? "top-3" : ""));
+                let rankDisplay = rank === 1 ? "🥇" : (rank === 2 ? "🥈" : (rank === 3 ? "🥉" : rank));
+                
+                html += `
+                <div class="rating-item ${topClass}">
+                    <div class="rating-rank">${rankDisplay}</div>
+                    <div class="rating-info">
+                        <div class="rating-header-row">
+                            <span class="rating-name">${item.name}</span>
+                            <span class="rating-score">${item.result}</span>
+                        </div>
+                        <div class="rating-desc">${item.nomination}</div>
+                    </div>
+                </div>`;
+            });
+            
+            html += `</div>`;
+        }
+        container.innerHTML = html;
+    };
+
+    async function init() {
+        let cached = null;
+        try { cached = localStorage.getItem(CACHE_KEY); } catch (e) {}
+        
+        if (cached) { 
+            try {
+                db = sanitizeDb(JSON.parse(cached)); 
+                window.buildServiceSearchList();
+                enableUI(); window.populateFilters();
+                window.renderSkillHubTab();
+                setAppStatus('ok', 'Офлайн (З кешу)');
+                refreshData(false); 
+            } catch(e) { await refreshData(true); }
+        } else await refreshData(true); 
+    }
+    
+    window.init = init;
+
+    async function refreshData(first = false) {
+        setAppStatus('loading', 'Оновлення...');
+        let pInt; 
+        try {
+            const controller = new AbortController();
+            
+            const pBar = document.getElementById('progressBar');
+            const pCont = document.getElementById('progressContainer');
+            if (first || document.getElementById('appLoader').classList.contains('hidden') === false) {
+                document.getElementById('loaderSpinner').style.display = 'none';
+                pCont.style.display = 'block';
+                pBar.style.width = '10%';
+            }
+
+            let progress = 10;
+            pInt = setInterval(() => {
+                if (progress < 90) { progress += Math.random() * 15; pBar.style.width = progress + '%'; }
+            }, 300);
+
+            const timeoutId = setTimeout(() => controller.abort(), 15000);
+            const response = await fetch(API_URL + '?nocache=' + Date.now(), { signal: controller.signal });
+            clearTimeout(timeoutId);
+            
+            const dataStr = await response.text();
+            
+            if (pInt) clearInterval(pInt);
+            pBar.style.width = '100%';
+
+            if (dataStr.trim().startsWith('<')) throw new Error("Помилка доступу до бази. Перевірте Google Apps Script.");
+            let newDb = JSON.parse(dataStr);
+            if (newDb.error) throw new Error(newDb.error);
+            
+            let savedVersion = null;
+            try {
+                savedVersion = localStorage.getItem(SEEN_VERSION_KEY);
+                localStorage.setItem(CACHE_KEY, dataStr);
+            } catch (e) {}
+            
+            db = sanitizeDb(newDb);
+            window.buildServiceSearchList();
+            setAppStatus('ok', 'Дані актуальні');
+            
+            setTimeout(() => {
+                if (db.appVersion && savedVersion !== db.appVersion) {
+                    if (savedVersion !== null) window.showChangelogModal(db.appVersion, db.changelog); 
+                    try { localStorage.setItem(SEEN_VERSION_KEY, db.appVersion); } catch(e){}
+                }
+                enableUI(); window.populateFilters();
+                window.renderSkillHubTab();
+            }, 400); 
+            
+        } catch (e) { 
+            if (pInt) clearInterval(pInt);
+            console.error("Refresh Error:", e);
+            let cached = null; try { cached = localStorage.getItem(CACHE_KEY); } catch (err) {}
+            if (cached) { 
+                setAppStatus('ok', 'Офлайн (З кешу)'); 
+                if (first) { enableUI(); window.populateFilters(); window.renderSkillHubTab(); } 
+            } else { 
+                setAppStatus('error', 'Помилка');
+                if (first) {
+                    document.getElementById('loaderSpinner').style.display = 'none';
+                    document.getElementById('progressContainer').style.display = 'none';
+                    document.getElementById('mainLoaderText').innerHTML = "Помилка завантаження.<br><span style='color:var(--danger)'>" + e.message + "</span><br><button onclick='window.init()' class='btn btn-primary' style='margin-top:20px; padding: 10px; font-size:14px; width:fit-content; margin-left:auto; margin-right:auto;'>Спробувати ще раз</button>";
+                }
+            }
+        }
+    }
+
+    document.getElementById('forceUpdateBtn').addEventListener('click', async function() { 
+        try { localStorage.removeItem(CACHE_KEY); } catch(e){} 
+        document.getElementById('appLoader').classList.remove('hidden');
+        document.getElementById('loaderSpinner').style.display = 'none';
+        document.getElementById('progressContainer').style.display = 'block';
+        document.getElementById('progressBar').style.width = '0%';
+        document.getElementById('mainLoaderText').innerText = "Оновлення бази...";
+        await refreshData(true); 
+    });
+
+    function enableUI() { 
+        elCatInput.disabled = false; 
+        if (db.appVersion && !db.appVersion.startsWith("Error")) {
+            document.getElementById('appVersionDisp').innerText = `Версія ${db.appVersion}`;
+            document.getElementById('appVersionDisp').style.display = 'inline-block';
+        }
+        document.getElementById('appLoader').classList.add('hidden');
+    }
+
+    window.saveDefaultStore = function() {
+        const val = document.getElementById('defaultStoreSelect').value;
+        try { localStorage.setItem('skillhub_default_store', val); } catch(e){}
+        const reserveFilter = document.getElementById('storeFilter');
+        if (reserveFilter) {
+            reserveFilter.value = val;
+            if (document.getElementById('tab-reserves').classList.contains('active')) window.renderRezervyList();
+        }
+    }
+
+    window.populateFilters = function() {
+        const storeSel = document.getElementById('storeFilter');
+        const defaultSel = document.getElementById('defaultStoreSelect');
+        
+        if (db.rezervyData) {
+            const stores = [...new Set(db.rezervyData.map(r => r.store))].sort();
+            let h = '<option value="">-- Оберіть магазин --</option>';
+            stores.forEach(s => { if (s && s !== "Не вказано") h += `<option value="${s}">${s}</option>`; });
+            storeSel.innerHTML = h; defaultSel.innerHTML = h.replace('Оберіть магазин', 'Не вибрано');
+            
+            let savedStore = null; try { savedStore = localStorage.getItem('skillhub_default_store'); } catch(e){}
+            if (savedStore) { storeSel.value = savedStore; defaultSel.value = savedStore; }
+        }
+    }
+
+    window.renderRezervyList = function() {
+        const store = document.getElementById('storeFilter').value;
+        const cont = document.getElementById('rezervyList');
+        if (!store) { cont.innerHTML = '<div style="padding:20px; text-align:center; color:var(--text-muted); font-weight:600;">Оберіть магазин вище</div>'; return; }
+        
+        const matches = db.rezervyData.filter(r => r.store === store);
+        if (matches.length === 0) { cont.innerHTML = `<div style="padding:20px; text-align:center; color:var(--text-muted); font-weight:600;">Немає товарів</div>`; return; }
+
+        matches.sort((a, b) => b.price - a.price);
+
+        cont.innerHTML = matches.map(r => {
+            let shortName = r.name.replace(/^(Телевізор|Ноутбук|Смартфон|Мобільний телефон|Планшет|Холодильник|Пральна машина|Мікрохвильова піч|Кавомашина|Пилосос)\s*/i, '');
+            return `
+            <div class="list-item" onclick="window.openRezervItemModal('${window.escapeForJS(r.cat)}', ${r.price}, '${window.escapeForJS(shortName)}')">
+                <div class="list-item-content">
+                    <span class="list-item-title rezervy-name">${window.escapeHTML(shortName)}</span>
+                    <span class="list-item-subtitle rezervy-cat">${window.escapeHTML(r.cat)}</span>
+                </div>
+                <div class="list-item-value rezervy-price">${Math.round(r.price).toLocaleString('uk-UA')} ₴</div>
+            </div>`;
+        }).join('');
+    }
+
+    window.openRezervItemModal = function(catName, price, itemName) {
+        let searchVal = normalize(catName); let foundItem = null;
+        if (db.categories && db.categories.length > 0) foundItem = db.categories.find(c => normalize(c.ua).includes(searchVal) || searchVal.includes(normalize(c.ua)));
+
+        if (foundItem) {
+            document.getElementById('rezervItemTitle').innerText = itemName + ` — ${Math.round(price).toLocaleString('uk-UA')} ₴`;
+            window.openModalBase('rezervItemModal');
+            renderRezervItemServices(foundItem, price);
+        } else {
+            alert(`Категорію "${catName}" не знайдено.`);
+        }
+    }
+
+    window.closeRezervItemModal = function() { window.closeModalBase('rezervItemModal'); }
+
+    let currentPhotos = [];
+    let currentPhotoIndex = 0;
+
+    function getDirectImageUrl(url) {
+        if (!url) return "";
+        let driveMatch = String(url).match(/drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/);
+        if (driveMatch && driveMatch[1]) return `https://drive.google.com/thumbnail?id=${driveMatch[1]}&sz=w1200`;
+        return url;
+    }
+
+    window.openGallery = function(photosStr) {
+        currentPhotos = photosStr.split(',').filter(p => p.trim() !== "");
+        if (currentPhotos.length === 0) return;
+
+        if (currentPhotos[0].includes('photos.app.goo.gl') || currentPhotos[0].includes('photos.google.com')) {
+            document.getElementById('modalTitle').innerText = "Приклади пошкоджень";
+            let linksHtml = currentPhotos.map((url, i) => `<button onclick="window.open('${url}', '_blank')" class="btn btn-primary" style="margin-bottom:10px; text-decoration:none;">📸 Відкрити Фото ${i+1}</button>`).join('');
+            document.getElementById('modalBody').innerHTML = `<div class="desc-block" style="text-align:center;">Посилання відкриваються у новій вкладці</div>${linksHtml}`;
+            window.openModalBase('descModal');
+            return;
+        }
+
+        currentPhotoIndex = 0;
+        updateGalleryImage();
+        window.openModalBase('galleryModal');
+    };
+
+    window.closeGallery = function() { window.closeModalBase('galleryModal'); };
+
+    window.changePhoto = function(dir) {
+        currentPhotoIndex += dir;
+        if (currentPhotoIndex < 0) currentPhotoIndex = currentPhotos.length - 1;
+        if (currentPhotoIndex >= currentPhotos.length) currentPhotoIndex = 0;
+        updateGalleryImage();
+    };
+
+    function updateGalleryImage() {
+        document.getElementById('galleryImage').src = getDirectImageUrl(currentPhotos[currentPhotoIndex].trim()); 
+        document.getElementById('galleryCounter').innerText = `${currentPhotoIndex + 1} / ${currentPhotos.length}`;
+        document.querySelector('.gallery-nav.prev').style.display = currentPhotos.length > 1 ? 'block' : 'none';
+        document.querySelector('.gallery-nav.next').style.display = currentPhotos.length > 1 ? 'block' : 'none';
+    }
+
+    function renderRezervItemServices(item, p) {
+        try {
+            let techStr = buildTechInfoHTML(item, p);
+            document.getElementById('rezervTechInfo').innerHTML = techStr;
+            document.getElementById('rezervTechInfo').style.display = techStr ? 'block' : 'none';
+
+            let listEl = document.getElementById('rezervServiceList');
+            if (!item.service) { listEl.innerHTML = '<div style="color:var(--text-muted);">Немає сервісів</div>'; return; }
+
+            let dataForSort = calculateServicesArray(item, p);
+            
+            dataForSort.forEach(s => {
+                s.descToggleHTML = generateDescToggleHTML(window.findInDb(db.descriptions, s.name), s.code);
+            });
+
+            window.lastModalServices = dataForSort;
+            
+            let btn = document.getElementById('rezervCompareBtn');
+            if (btn) {
+                if (dataForSort.filter(s => !s.isPackage).length >= 2) btn.style.display = 'block';
+                else btn.style.display = 'none';
+            }
+
+            requestAnimationFrame(() => { listEl.innerHTML = dataForSort.map(s => generateServiceCardHTML(s, true, false)).join(''); });
+        } catch(e) { console.error(e); }
+    }
+
+    window.updateRezervResults = function() {
+        let listEl = document.getElementById('rezervServiceList');
+        if (!listEl) return;
+        listEl.innerHTML = window.lastModalServices.map(s => generateServiceCardHTML(s, true, false)).join('');
+    }
+
+    elCatInput.addEventListener('input', debounce(() => {
+        try {
+            const val = normalize(elCatInput.value); 
+            elClearBtn.style.display = val.length > 0 ? 'block' : 'none';
+            if (val.length === 0) {
+                elSuggList.style.display = "none"; elPriceWrapper.style.display = "none"; elResultBox.style.display = "none"; 
+                currentCategoryData = null; currentServiceData = null;
+                if(isCompareMode) window.toggleCompareMode(); document.getElementById('toggleCompareBtn').style.display = 'none';
+                return;
+            }
+            if (val.length < 2) { elSuggList.style.display = 'none'; return; }
+            
+            let catMatches = db.categories.filter(c => 
+                (c.ua && normalize(c.ua).includes(val)) || 
+                (c.ru && normalize(c.ru).includes(val)) || 
+                (c.en && normalize(c.en).includes(val))
+            ).map(c => ({...c, searchType: 'category', icon: '📦'}));
+            
+            let servMatches = window.allServicesSearchList.filter(s => normalize(s.searchStr).includes(val));
+            
+            let matches = [...catMatches, ...servMatches].slice(0, 15);
+
+            requestAnimationFrame(() => {
+                if (matches.length > 0) {
+                    elSuggList.style.display = 'block';
+                    elSuggList.innerHTML = matches.map((m, idx) => {
+                        let text = m.searchType === 'category' ? m.ua : m.name;
+                        let brandBadge = '';
+                        if (m.searchType === 'service' && m.brandText) {
+                            brandBadge = `<div class="sc-brand ${m.cls}" style="margin: 0; font-size: 9px; padding: 2px 6px; flex-shrink: 0;">${m.brandText}</div>`;
+                        }
+                        return `<div class="sugg-item" data-idx="${idx}">
+                            <span style="flex-shrink:0;">${m.icon}</span> 
+                            ${brandBadge} 
+                            <span style="flex:1; line-height:1.3; margin-left: 6px;">${text}</span>
+                        </div>`;
+                    }).join('');
+                    
+                    Array.from(elSuggList.children).forEach((el) => {
+                        el.onmousedown = () => selectItem(matches[el.getAttribute('data-idx')]);
+                    });
+                } else elSuggList.style.display = 'none'; 
+            });
+        } catch(e) { console.error(e); }
+    }, 100));
+
+    elClearBtn.onclick = () => { 
+        elCatInput.value = ""; elPriceInput.value = ""; 
+        elClearBtn.style.display = "none"; elSuggList.style.display = "none"; 
+        elPriceWrapper.style.display = "none"; elResultBox.style.display = "none"; 
+        currentCategoryData = null; currentServiceData = null; 
+        elCatInput.focus();
+        if(isCompareMode) window.toggleCompareMode(); document.getElementById('toggleCompareBtn').style.display = 'none';
+    };
+    
+    elOkBtn.onclick = () => elPriceInput.blur();
+
+    function selectItem(item) {
+        if(item.searchType === 'service') {
+            currentCategoryData = null;
+            
+            currentServiceData = { name: item.name, origName: item.origName, icon: item.icon };
+            
+            elCatInput.value = item.name;
+            document.getElementById('uaTitle').innerText = item.icon + " " + item.name;
+            document.getElementById('itemCategory').innerText = item.brandText ? "Послуга від " + item.brandText : "Окрема послуга";
+        } else {
+            currentCategoryData = item;
+            currentServiceData = null;
+            elCatInput.value = item.ua; 
+            document.getElementById('uaTitle').innerText = item.icon + " " + item.ua; 
+            document.getElementById('itemCategory').innerText = item.category || ""; 
+        }
+        
+        elSuggList.style.display = 'none'; 
+        elPriceWrapper.style.display = 'flex'; 
+        elResultBox.style.display = 'block';
+        if(isCompareMode) window.toggleCompareMode(); 
+        renderServices(); 
+    }
+
+    function buildTechInfoHTML(item, p) {
+        if(!item) return "";
+        let html = `<div class="tech-info-block">`; let hasInfo = false;
+        if (item.complexity) {
+            hasInfo = true; let s = "color: var(--text-muted); font-weight: 500;"; const t = String(item.complexity).toLowerCase();
+            if (t.includes('критич')) s = "color: var(--danger); font-weight: 700;";
+            else if (t.includes('висок')) s = "color: #f97316; font-weight: 600;";
+            else if (t.includes('середн')) s = "color: #eab308; font-weight: 600;";
+            else if (t.includes('низьк')) s = "color: #10b981; font-weight: 600;";
+            html += `<div class="tech-row"><div class="tech-icon">⚙️</div><div class="tech-text-wrap"><div class="tech-label">Складність</div><div class="tech-val" style="${s}">${item.complexity}</div></div></div>`;
+        }
+        
+        let calcPrice = item.price ? item.price.toString() : "";
+        if (calcPrice.includes('%') && p > 0) {
+            let uah = calcPrice.replace(/(\d+(?:\.\d+)?)%/g, (match, p1) => { return Math.round(p * parseFloat(p1) / 100).toLocaleString('uk-UA') + " ₴"; });
+            calcPrice = `${calcPrice} <span style="color:var(--primary); font-weight:bold;">(${uah})</span>`;
+        }
+        
+        const fields = [
+            ['💵', 'Платний ремонт', calcPrice], ['🔧', 'Найдорожчі деталі', item.expensiveParts],
+            ['✅', 'Гарантійні випадки', item.garant], ['❌', 'Негарантійні випадки', item.negarant]
+        ];
+        
+        fields.forEach(f => {
+            if (f[2] && f[2].toString().trim() !== "") { 
+                hasInfo = true;
+                let isNegarant = f[1].includes('Негарантійні');
+                let rowClasses = isNegarant ? 'tech-row negarant' : 'tech-row';
+                html += `<div class="${rowClasses}"><div class="tech-icon">${f[0]}</div><div class="tech-text-wrap"><div class="tech-label">${f[1]}</div><div class="tech-val">${f[2]}</div></div></div>`;
+            }
+        });
+
+        let photosArray = [];
+        if (item.photo1) photosArray.push(item.photo1);
+        if (item.photo2) photosArray.push(item.photo2);
+        if (item.photo3) photosArray.push(item.photo3);
+
+        if (photosArray.length > 0) {
+            hasInfo = true;
+            let photosStr = photosArray.join(',');
+            html += `
+            <div class="tech-photo-wrapper" onclick="window.openGallery('${photosStr}')">
+                <div class="photo-icon">📸</div>
+                <div class="photo-text">
+                    <span class="photo-title">Приклади пошкоджень</span>
+                    <span class="photo-subtitle">Переглянути фото (${photosArray.length})</span>
+                </div>
+                <div class="photo-arrow">❯</div>
+            </div>`;
+        }
+
+        html += `</div>`; return hasInfo ? html : "";
+    }
+
+    function renderTechInfo() {
+        if (!currentCategoryData) return;
+        const p = parseFloat(elPriceInput.value) || 0;
+        let html = buildTechInfoHTML(currentCategoryData, p);
+        elTechInfo.innerHTML = html; elTechInfo.style.display = html ? 'block' : 'none';
+    }
+
+    function parseDescriptionLines(descE) {
+        let safeDesc = descE ? String(descE).trim() : "";
+        if (!safeDesc || safeDesc === "Опис відсутній...") return `<div class="desc-line" style="color: var(--text-muted); font-style: italic; justify-content: center;">Опис відсутній...</div>`;
+        let html = ``;
+        html += safeDesc.replace(/\|/g, '\n').split(/\r?\n/).map(line => {
+            const l = line.trim(); if (!l) return '';
+            if (l.startsWith('+')) return `<div style="font-weight:700; font-size:14px; color:var(--text-main); margin: 12px 0 6px 0;">${l.substring(1).trim()}</div>`;
+            if (l.startsWith('=')) return `<div style="font-size:11px; font-weight:700; text-transform:uppercase; color:var(--text-muted); margin: 12px 0 6px 0;">${l.substring(1).trim()}</div>`;
+            
+            let match = l.match(/^(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])/); 
+            let e = match ? match[0] : "🔹"; let t = match ? l.replace(e, '').trim() : l;
+            
+            if (!match) {
+                let lower = t.toLowerCase();
+                if (lower.includes('налаштуван') || lower.includes('встановлен') || lower.includes('пк')) e = '⚙️';
+                else if (lower.includes('антивірус') || lower.includes('захист')) e = '🛡️';
+                else if (lower.includes('windows') || lower.includes('office') || lower.includes('офіс')) e = '🔑';
+                else if (lower.includes('гарантія') || lower.includes('обмін')) e = '♻️';
+                else if (lower.includes('sweet') || lower.includes('tv') || lower.includes('кіно')) e = '🎬';
+                else if (lower.includes('монтаж') || lower.includes('демонтаж')) e = '🛠️';
+                else e = '🔹';
+            }
+
+            return `
+            <div class="desc-line">
+                <div class="desc-icon-box">${e}</div>
+                <div style="font-size: 13px; line-height: 1.4; color: var(--text-main); font-weight: 500; flex: 1;">${t}</div>
+            </div>`;
+        }).join('');
+        return html;
+    }
+
+    function generateDescToggleHTML(descE, codeF) {
+        let descText = parseDescriptionLines(descE); 
+        let codeHtml = codeF ? `
+            <div class="desc-code" onclick="window.copyCode(event, this, '${window.escapeForJS(codeF)}')">
+                <span style="color:var(--text-muted); font-weight:500;">Код:</span>
+                <span style="font-size:15px; font-weight:700; color:var(--primary);">${codeF} 📋</span>
+            </div>` : '';
+
+        if (!descText && !codeHtml) return '';
+
+        return `
+            <div style="margin-top: 4px;">
+                <div class="desc-toggle-wrapper" onclick="const c = this.nextElementSibling; const a = this.querySelector('svg'); c.classList.toggle('show'); if(c.classList.contains('show')){a.style.transform='rotate(180deg)';}else{a.style.transform='rotate(0deg)';}">
+                    <span>Детальніше</span>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                </div>
+                <div class="desc-content">
+                    ${codeHtml}
+                    ${descText}
+                </div>
+            </div>
+        `;
+    }
+
+    function calculateServicesArray(item, p) {
+        if(!item) return [];
+        const focusList = item.focusServices ? String(item.focusServices).split('|').map(s => normalizeServiceName(s)) : [];
+        const servicesNames = item.service ? String(item.service).split('|').map(s => s.trim()).filter(s => s) : [];
+        
+        const dataForSort = servicesNames.map(name => {
+            let exactBrand = db.serviceBrands ? window.findInDb(db.serviceBrands, name) : "";
+            const brandMatch = name.match(brandRegex); const brand = exactBrand || (brandMatch ? brandMatch[1] : "");
+            let title = name.replace(/^\[(.*?)\]\s*/, "").trim(); let nameClean = normalizeServiceName(name); let isFocus = false;
+            
+            if(title.includes('🔥')) { isFocus = true; title = title.replace('🔥', '').trim(); } else if (focusList.includes(nameClean)) isFocus = true;
+            
+            const matchingTariffs = db.tariffs.filter(x => { return normalizeServiceName(x.service) === nameClean || (x.serviceRu && normalizeServiceName(x.serviceRu) === nameClean); });
+            let t = null; let isPackage = false;
+
+            if (p > 0) t = matchingTariffs.find(x => p >= x.minPrice && p <= x.maxPrice);
+            if (!t && matchingTariffs.length > 0) { t = matchingTariffs.find(x => p >= x.minPrice && p <= x.maxPrice || (p === 0 && x.minPrice === 0)); if (!t) t = matchingTariffs[0]; }
+
+            let uName = String(name).toUpperCase();
+            let isStaticEpz = (uName.includes('WINDOWS') || uName.includes('OFFICE') || uName.includes('ESD') || uName.includes('[ESD]')) && !uName.includes('НАЛАШТУВАННЯ') && !uName.includes('ВСТАНОВЛЕННЯ') && !uName.includes('АНТИВІРУС');
+
+            if (!isStaticEpz) {
+                if (uName.includes('МОНТАЖ') || uName.includes('ПІДКЛЮЧЕННЯ') || (uName.includes('ВСТАНОВЛЕННЯ') && !uName.includes('WINDOWS') && !uName.includes('ЗАХИСН'))) isPackage = true;
+                if (uName.includes('SWEET') || uName.includes('КІНОТЕАТР') || uName.includes('PARALLELS')) isPackage = true; 
+                if (uName.includes('АНТИВІРУС') || uName.includes('ESET')) isPackage = true;
+                if (uName.includes('ПІКСЕЛ') || uName.includes('ПЕРЕВІРКА')) isPackage = true;
+                if (uName.includes('ПОКЛЕЙКА')) isPackage = true;
+                if (uName.includes('НАЛАШТУВАННЯ') && !uName.includes('WINDOWS') && !uName.includes('ОФІС') && !uName.includes('OFFICE')) isPackage = true;
+                if (uName.includes('ГОДИНА РОБОТИ')) isPackage = true;
+                if (!isPackage && db.tariffs.some(x => x.cat && normalizeServiceName(x.cat) === nameClean)) isPackage = true;
+            }
+            
+            let numCost = 0; let label = "Дізнатись"; let serviceCode = t && t.code ? t.code : window.findInDb(db.serviceCodes, name); 
+            
+            if (isPackage) { label = "Обрати пакет"; } 
+            else if (t && t.cost) {
+                let rawCost = t.cost.toString().trim();
+                if (rawCost.includes('%')) {
+                    if (p > 0) { numCost = Math.round(p * parseFloat(rawCost.replace(',', '.'))/100); label = numCost.toLocaleString('uk-UA') + " ₴"; } else label = rawCost; 
+                } else {
+                    let cleanCost = rawCost.replace(/\s+/g, '').replace(/[^\d.,]/g, '').replace(',', '.');
+                    if (cleanCost === '') label = rawCost;
+                    else { numCost = parseFloat(cleanCost); label = isNaN(numCost) ? rawCost : numCost.toLocaleString('uk-UA') + " ₴"; }
+                }
+            }
+            
+            let cls = 'brand-other'; let uBrand = String(brand).toUpperCase();
+            if (uBrand.includes('SUPPORT') || uName.includes('SUPPORT') || uName.includes('НАШ СЕРВІС')) cls = 'brand-support'; 
+            else if (uBrand.includes('ЕКТА') || uBrand.includes('EKTA') || uName.includes('EKTA') || uName.includes('ЕКТА')) cls = 'brand-ekta'; 
+            else if (uBrand.includes('EPZ') || uName.includes('EPZ') || uName.includes('ЕПЗ') || isStaticEpz) cls = 'brand-epz'; 
+            else if (isPackage || uName.includes('НАЛАШТУВАННЯ')) cls = 'brand-settings'; 
+            else if (uName.includes('МОНТАЖ') || uName.includes('ПІДКЛЮЧЕННЯ') || uName.includes('ВСТАНОВЛЕННЯ')) cls = 'brand-install';
+            
+            return { name, brand, title, numCost, label, cls, isFocus, code: serviceCode, isPackage, descToggleHTML: '' };
+        });
+
+        dataForSort.sort((a, b) => { if (a.isFocus && !b.isFocus) return -1; if (!a.isFocus && b.isFocus) return 1; return b.numCost - a.numCost; });
+        return dataForSort;
+    }
+
+    function generateServiceCardHTML(s, isModalCtx = false, disableCompare = false) {
+        if(!s) return '';
+        let isSelected = false; let compareModeActive = false;
+        if (!disableCompare) {
+            isSelected = isModalCtx ? modalCompareSelection.includes(s.name) : compareSelection.includes(s.name);
+            compareModeActive = isModalCtx ? isModalCompareMode : isCompareMode;
+        }
+        
+        let cardClass = "service-card";
+        if (compareModeActive && !s.isPackage) cardClass += ' compare-mode';
+        if (isSelected) cardClass += ' selected';
+        
+        let safeName = window.escapeForJS(s.name); let safeCode = window.escapeForJS(s.code);
+        let clickHandler = '';
+        if (disableCompare) clickHandler = `onclick="window.handleServiceClick(event, '${safeName}', '${safeCode}', ${s.isPackage}, true)"`;
+        else if (isModalCtx) clickHandler = `onclick="window.handleModalServiceClick(event, '${safeName}', ${s.isPackage}, '${safeCode}')"`;
+        else clickHandler = `onclick="window.handleServiceClick(event, '${safeName}', '${safeCode}', ${s.isPackage})"`;
+            
+        let descHtml = s.descToggleHTML || '';
+        let availHtml = s.availabilityHTML ? `<div style="margin-top:8px;">${s.availabilityHTML}</div>` : '';
+        let focusHtml = (s.isFocus && !isSelected) ? `<span style="color:#f59e0b; font-size:16px; flex-shrink:0; line-height:1.2;">🔥</span>` : '';
+        let brandHtml = s.brand ? `<div class="sc-brand ${s.cls}">${s.brand}</div>` : '';
+        let checkboxHtml = (compareModeActive && !s.isPackage) ? `<div class="checkbox"></div>` : '';
+
+        return `
+        <div class="${cardClass}" ${clickHandler}>
+            ${checkboxHtml}
+            <div class="sc-header" style="align-items: center;">
+                <div style="display:flex; flex-direction:column; align-items:flex-start; flex:1; padding-right:10px;">
+                    ${brandHtml}
+                    <div class="sc-title">${focusHtml} <span style="flex:1;">${s.title}</span></div>
+                </div>
+                <div class="sc-price">${s.label}</div>
+            </div>
+            ${availHtml}
+            ${descHtml}
+        </div>`;
+    }
+
+    function renderServices() {
+        try {
+            const p = parseFloat(elPriceInput.value) || 0; 
+            
+            if (currentCategoryData && currentCategoryData.service) {
+                renderTechInfo(); 
+                let dataForSort = calculateServicesArray(currentCategoryData, p);
+                window.lastCalculatedServices = dataForSort;
+
+                let compareableCount = dataForSort.filter(s => !s.isPackage).length;
+                
+                const btnCompare = document.getElementById('toggleCompareBtn');
+                if (compareableCount >= 2) {
+                    btnCompare.style.display = 'block';
+                    if (isCompareMode) btnCompare.classList.add('active');
+                } else { 
+                    btnCompare.style.display = 'none'; 
+                    if (isCompareMode) window.toggleCompareMode(); 
+                }
+
+                requestAnimationFrame(() => { elServiceList.innerHTML = dataForSort.map(s => generateServiceCardHTML(s, false)).join(''); });
+                
+            } else if (currentServiceData) {
+                elTechInfo.style.display = 'none'; elTechInfo.innerHTML = '';
+                
+                let fakeCat = { service: currentServiceData.origName, focusServices: currentServiceData.name };
+                let dataForSort = calculateServicesArray(fakeCat, p);
+                
+                dataForSort.forEach(s => {
+                    s.descToggleHTML = generateDescToggleHTML(window.findInDb(db.descriptions, s.name), s.code);
+                });
+                
+                window.lastCalculatedServices = dataForSort;
+                
+                document.getElementById('toggleCompareBtn').style.display = 'none';
+                if (isCompareMode) window.toggleCompareMode();
+
+                requestAnimationFrame(() => { 
+                    elServiceList.innerHTML = dataForSort.map(s => generateServiceCardHTML(s, false, false)).join(''); 
+                    
+                    setTimeout(() => {
+                        let toggleWrapper = elServiceList.querySelector('.desc-toggle-wrapper');
+                        if (toggleWrapper && !toggleWrapper.nextElementSibling.classList.contains('show')) {
+                            toggleWrapper.click();
+                        }
+                    }, 50);
+                });
+                
+            } else {
+                window.lastCalculatedServices = []; document.getElementById('toggleCompareBtn').style.display = 'none';
+                if (isCompareMode) window.toggleCompareMode();
+                elTechInfo.style.display = 'none'; elTechInfo.innerHTML = ''; elServiceList.innerHTML = ''; return;
+            }
+        } catch(e) { console.error(e); }
+    }
+
+    elPriceInput.addEventListener('input', debounce(renderServices, 50));
+
+    window.toggleCompareMode = function() {
+        isCompareMode = !isCompareMode; compareSelection = []; 
+        const btn = document.getElementById('toggleCompareBtn');
+        if (isCompareMode) { 
+            btn.innerText = 'Скасувати'; btn.classList.add('active');
+            compareBar.classList.add('show'); 
+        } else { 
+            btn.innerText = 'Порівняти'; btn.classList.remove('active');
+            compareBar.classList.remove('show'); 
+        }
+        updateCompareUI(); renderServices(); 
+    }
+
+    window.toggleModalCompareMode = function() {
+        isModalCompareMode = !isModalCompareMode; modalCompareSelection = []; 
+        
+        const btn = document.querySelector('.modal.show .compare-toggle-btn');
+        if (btn) {
+            if (isModalCompareMode) btn.innerText = 'Скасувати порівняння';
+            else btn.innerText = 'Порівняти';
+        }
+
+        if (isModalCompareMode) { 
+            compareBar.classList.add('show'); 
+            compareBar.style.zIndex = '100035'; 
+        } else { 
+            compareBar.classList.remove('show'); 
+        }
+        
+        updateModalCompareUI();
+
+        if (document.getElementById('montazhCity')) window.updateMontazhResults(); 
+        else if (document.querySelector('#rezervItemModal.show')) window.updateRezervResults();
+        else window.updateSetupResults(); 
+    }
+
+    window.handleServiceClick = function(e, name, code, isPackage, forceNoCompare = false) {
+        let target = e.target;
+        if (target.closest('.desc-toggle-wrapper') || target.closest('.desc-content')) return;
+
+        if (isCompareMode && !forceNoCompare) {
+            if (isPackage) { alert("Пакети послуг не порівнюються."); return; }
+            
+            let index = compareSelection.indexOf(name);
+            if (index > -1) {
+                compareSelection.splice(index, 1);
+            } else if (compareSelection.length < 2) {
+                compareSelection.push(name);
+            }
+            updateCompareUI(); renderServices(); 
+        } else {
+            window.openModal(name, code);
+        }
+    }
+
+    window.handleModalServiceClick = function(e, name, isPackage, code) {
+        let target = e.target;
+        if (target.closest('.desc-toggle-wrapper') || target.closest('.desc-content')) return; 
+        
+        if (isModalCompareMode) {
+            if (isPackage) { alert("Пакети не порівнюються."); return; }
+            
+            let index = modalCompareSelection.indexOf(name);
+            if (index > -1) {
+                modalCompareSelection.splice(index, 1);
+            } else if (modalCompareSelection.length < 2) {
+                modalCompareSelection.push(name);
+            }
+            updateModalCompareUI();
+            
+            if (document.getElementById('montazhCity')) window.updateMontazhResults(); 
+            else if (document.querySelector('#rezervItemModal.show')) window.updateRezervResults();
+            else window.updateSetupResults(); 
+        } else {
+            if (isPackage) {
+                window.openModal(name, code);
+            } else {
+                let toggle = e.currentTarget.querySelector('.desc-toggle-wrapper'); 
+                if(toggle) toggle.click();
+            }
+        }
+    }
+
+    function updateCompareUI() {
+        let count = compareSelection.length;
+        let text = count === 0 ? "Оберіть 2 сервіси" : (count === 1 ? "Ще 1 сервіс..." : "Готово!");
+        document.getElementById('compareStatusText').innerText = text;
+        
+        let btn = document.getElementById('compareExecuteBtn');
+        btn.innerText = `Порівняти (${count}/2)`;
+        if (count === 2) { btn.style.opacity = '1'; btn.style.pointerEvents = 'auto'; } 
+        else { btn.style.opacity = '0.5'; btn.style.pointerEvents = 'none'; }
+    }
+
+    function updateModalCompareUI() {
+        let count = modalCompareSelection.length;
+        let text = count === 0 ? "Оберіть 2 сервіси" : (count === 1 ? "Ще 1 сервіс..." : "Готово!");
+        document.getElementById('compareStatusText').innerText = text;
+        
+        let btn = document.getElementById('compareExecuteBtn');
+        btn.innerText = `Порівняти (${count}/2)`;
+        if (count === 2) { btn.style.opacity = '1'; btn.style.pointerEvents = 'auto'; } 
+        else { btn.style.opacity = '0.5'; btn.style.pointerEvents = 'none'; }
+    }
+
+    function extractFeaturesList(desc) {
+        let features = []; if (!desc) return features;
+        let lines = String(desc).replace(/\|/g, '\n').split(/\r?\n/);
+        lines.forEach(line => {
+            let l = line.trim();
+            if (!l || l === "Опис відсутній..." || l.startsWith('+') || l.startsWith('=') || l.includes('---')) return;
+            if (!l.startsWith('✕') && !l.startsWith('❌') && !l.toLowerCase().startsWith('не покриває ')) {
+                let cleanText = l.replace(/^(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff]|✓|✕|❌|✅|\+|-|\*|•|🔹|⚙️|🛡️|🔑|♻️|🎬|🛠️)\s*/, '').trim();
+                if (cleanText) { cleanText = cleanText.charAt(0).toUpperCase() + cleanText.slice(1); features.push(cleanText); }
+            }
+        }); return features;
+    }
+
+    function buildCompareTable(sA, sB, descA, descB) {
+        let listA = extractFeaturesList(descA); let listB = extractFeaturesList(descB);
+
+        if (listA.length === 0 && listB.length === 0) {
+            let html = `<div style="overflow-x:auto; border-radius:12px; border:1px solid var(--border);"><table style="width:100%; border-collapse:collapse; font-size:13px; background:var(--card-bg);"><thead><tr>`;
+            [sA, sB].forEach(s => {
+                let brandLabel = s.brand || (s.cls === 'brand-ekta' ? 'ЕКТА' : (s.cls === 'brand-support' ? 'SUPPORT' : (s.cls === 'brand-epz' ? 'ЕПЗ' : 'СЕРВІС')));
+                html += `<th style="padding:16px; border-bottom:1px solid var(--border); width:50%; vertical-align:top; color:var(--text-main);"><div class="sc-brand ${s.cls}" style="margin-bottom:8px; display:inline-block;">${brandLabel}</div><div style="font-size:12px; font-weight:600; margin-bottom:8px;">${s.title}</div><div style="color:var(--primary);">${s.label || s.priceText}</div></th>`;
+            });
+            html += `</tr></thead><tbody><tr><td style="padding:16px; border-right:1px solid var(--border);">${descA || 'Опис відсутній'}</td><td style="padding:16px;">${descB || 'Опис відсутній'}</td></tr></tbody></table></div>`; return html;
+        }
+
+        let common = []; let diffA = []; let diffB = [...listB];
+        listA.forEach(featA => {
+            let normA = featA.toLowerCase(); let idxB = diffB.findIndex(featB => featB.toLowerCase() === normA);
+            if (idxB !== -1) { common.push({a: featA, b: diffB[idxB]}); diffB.splice(idxB, 1); } else diffA.push(featA);
+        });
+
+        let html = `<div style="font-size: 11px; color: var(--text-muted); font-weight: 800; margin-bottom: 12px; text-align: center; text-transform: uppercase;">Властивості (унікальні позначені ⭐️)</div>`;
+        html += `<div class="compare-wrapper"><table class="compare-table"><thead><tr>`;
+        [sA, sB].forEach(s => {
+            let brandLabel = s.brand || (s.cls === 'brand-ekta' ? 'ЕКТА' : (s.cls === 'brand-support' ? 'SUPPORT' : (s.cls === 'brand-epz' ? 'ЕПЗ' : 'СЕРВІС')));
+            html += `<th style="padding:16px; border-bottom:1px solid var(--border); width:50%; vertical-align:top; color:var(--text-main);"><div class="sc-brand ${s.cls}" style="margin-bottom:8px; display:inline-block;">${brandLabel}</div><div style="font-size:12px; font-weight:600; margin-bottom:8px;">${s.title}</div><div style="color:var(--primary); font-size:16px;">${s.label || s.priceText}</div></th>`;
+        });
+        html += `</tr></thead><tbody>`;
+
+        if (common.length > 0) {
+            html += `<tr><td colspan="2" style="background:var(--input-bg); font-weight:700; font-size:11px; color:var(--text-muted); text-transform:uppercase; padding:10px 16px;">Спільні властивості</td></tr>`;
+            common.forEach(pair => { html += `<tr><td style="padding:12px 16px; border-right:1px solid var(--border); border-bottom:1px solid var(--border); color:var(--text-muted);">${pair.a}</td><td style="padding:12px 16px; border-bottom:1px solid var(--border); color:var(--text-muted);">${pair.b}</td></tr>`; });
+        }
+
+        if (diffA.length > 0 || diffB.length > 0) {
+            html += `<tr><td colspan="2" style="background:var(--input-bg); font-weight:700; font-size:11px; color:var(--text-main); text-transform:uppercase; padding:10px 16px;">Відмінності</td></tr>`;
+            let maxDiff = Math.max(diffA.length, diffB.length);
+            for (let i = 0; i < maxDiff; i++) {
+                let valA = diffA[i] ? `<span style="color:#fbbf24; margin-right:6px;">●</span>${diffA[i]}` : `<span style="color:var(--border)">-</span>`;
+                let valB = diffB[i] ? `<span style="color:#fbbf24; margin-right:6px;">●</span>${diffB[i]}` : `<span style="color:var(--border)">-</span>`;
+                html += `<tr><td style="padding:12px 16px; border-right:1px solid var(--border); border-bottom:1px solid var(--border); font-weight:600;">${valA}</td><td style="padding:12px 16px; border-bottom:1px solid var(--border); font-weight:600;">${valB}</td></tr>`;
+            }
+        }
+        html += `</tbody></table></div>`; return html;
+    }
+
+    window.handleExecuteCompare = function() { if (isModalCompareMode) window.executeModalCompare(); else window.executeCompare(); }
+
+    window.executeCompare = function() {
+        if (compareSelection.length !== 2) return;
+        let sA = window.lastCalculatedServices.find(s => s.name === compareSelection[0]); let sB = window.lastCalculatedServices.find(s => s.name === compareSelection[1]);
+        if (!sA || !sB) return;
+        let descA = window.findInDb(db.descriptions, sA.name) || ""; let descB = window.findInDb(db.descriptions, sB.name) || "";
+        let html = buildCompareTable(sA, sB, descA, descB); 
+        document.getElementById('compareModalBody').innerHTML = html;
+        window.openModalBase('compareModal');
+        document.getElementById('compareBar').classList.remove('show');
+    };
+
+    window.executeModalCompare = function() {
+        if (modalCompareSelection.length !== 2) return;
+        let sA = window.lastModalServices.find(s => s.name === modalCompareSelection[0] || s.serviceName === modalCompareSelection[0]);
+        let sB = window.lastModalServices.find(s => s.name === modalCompareSelection[1] || s.serviceName === modalCompareSelection[1]);
+        if (!sA || !sB) return;
+        let mappedA = { name: sA.name || sA.serviceName, title: (sA.title || sA.serviceName).replace(/^\[.*?\]\s*/, ''), brand: sA.brand || sA.displayProv || "", label: sA.priceText || sA.label, cls: sA.cls || "brand-settings" };
+        let mappedB = { name: sB.name || sB.serviceName, title: (sB.title || sB.serviceName).replace(/^\[.*?\]\s*/, ''), brand: sB.brand || sB.displayProv || "", label: sB.priceText || sB.label, cls: sB.cls || "brand-settings" };
+        let descA = window.findInDb(db.descriptions, mappedA.name) || ""; let descB = window.findInDb(db.descriptions, mappedB.name) || "";
+        let html = buildCompareTable(mappedA, mappedB, descA, descB); 
+        document.getElementById('compareModalBody').innerHTML = html;
+        window.openModalBase('compareModal');
+        document.getElementById('compareBar').classList.remove('show');
+    };
+
+    window.closeCompareModal = function() {
+        window.closeModalBase('compareModal');
+        
+        isCompareMode = false;
+        compareSelection = [];
+        isModalCompareMode = false;
+        modalCompareSelection = [];
+        
+        const cBar = document.getElementById('compareBar');
+        if (cBar) cBar.classList.remove('show');
+        
+        const mainBtn = document.getElementById('toggleCompareBtn');
+        if (mainBtn) { mainBtn.innerText = 'Порівняти'; mainBtn.classList.remove('active'); }
+        
+        document.querySelectorAll('.compare-toggle-btn').forEach(btn => {
+            btn.innerText = 'Порівняти';
+            btn.classList.remove('active');
+        });
+
+        if (currentCategoryData || currentServiceData) renderServices();
+        if (document.getElementById('montazhCity')) window.updateMontazhResults();
+        else if (document.querySelector('#rezervItemModal.show')) window.updateRezervResults();
+        else window.updateSetupResults();
+    }
+
+    window.renderMontazhModal = function() {
+        try {
+            if (!db.montazhData || !db.montazhData.cities || db.montazhData.cities.length === 0) {
+                document.getElementById('modalBody').innerHTML = `<div style="text-align:center; padding: 20px; color:var(--text-muted); font-weight: 800;">Помилка: Міста для монтажу не завантажено.</div>`; return;
+            }
+
+            const cities = db.montazhData.cities.sort((a, b) => String(a).localeCompare(String(b))); const services = db.montazhData.services;
+            window.cityStatusMap = new Map();
+            cities.forEach(city => {
+                let hasAny = services.some(s => { let avail = s.availability[city]; return avail && avail !== "-" && avail !== "✖" && !String(avail).toLowerCase().includes("немає"); });
+                window.cityStatusMap.set(city, hasAny);
+            });
+            const categories = [...new Set(services.map(s => s.cat).filter(Boolean))];
+
+            document.getElementById('modalBody').innerHTML = `
+                <div class="input-group">
+                    <select id="montazhCity" class="montazh-select">
+                        <option value="">-- Оберіть місто --</option>
+                        ${cities.map(c => { let emoji = window.cityStatusMap.get(c) ? "🟢" : "🔴"; return `<option value="${c}">${emoji} ${c}</option>`; }).join('')}
+                    </select>
+                </div>
+                <div class="input-group">
+                    <select id="montazhCat" class="montazh-select">
+                        <option value="">-- Оберіть категорію --</option>
+                        ${categories.map(c => `<option value="${c}">${c}</option>`).join('')}
+                    </select>
+                </div>
+                <div id="montazhSubCatWrapper" class="input-group" style="display:none;">
+                    <select id="montazhSubCat" class="montazh-select"></select>
+                </div>
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+                    <span style="font-weight:700; font-size:12px; text-transform:uppercase; color:var(--text-muted);">Послуги</span>
+                    <button id="montazhCompareBtn" class="compare-toggle-btn" style="display:none;" onclick="window.toggleModalCompareMode()">Порівняти</button>
+                </div>
+                <div id="montazhResults" style="margin-bottom:0; display:flex; flex-direction:column; gap:12px;"></div>
+            `;
+
+            let catSelect = document.getElementById('montazhCat');
+            if (currentCategoryData && currentCategoryData.category) {
+                let targetCat = String(currentCategoryData.category).toLowerCase();
+                for (let i = 0; i < catSelect.options.length; i++) {
+                    if (String(catSelect.options[i].value).toLowerCase().includes(targetCat) || targetCat.includes(String(catSelect.options[i].value).toLowerCase())) {
+                        catSelect.selectedIndex = i; setTimeout(() => catSelect.dispatchEvent(new Event('change')), 50); break;
+                    }
+                }
+            }
+            document.getElementById('montazhCity').addEventListener('change', window.updateMontazhResults);
+            document.getElementById('montazhCat').addEventListener('change', (e) => {
+                const cat = e.target.value; const subCatSelect = document.getElementById('montazhSubCat'); const subCatWrapper = document.getElementById('montazhSubCatWrapper');
+                const subcats = [...new Set(services.filter(s => s.cat === cat).map(s => s.subcat).filter(c => c && String(c).trim() !== ""))];
+                if (subcats.length > 0) { subCatSelect.innerHTML = `<option value="">-- Всі послуги --</option>` + subcats.map(sc => `<option value="${sc}">${sc}</option>`).join(''); subCatWrapper.style.display = 'block'; } 
+                else { subCatSelect.innerHTML = ''; subCatWrapper.style.display = 'none'; }
+                window.updateMontazhResults();
+            });
+            document.getElementById('montazhSubCat').addEventListener('change', window.updateMontazhResults);
+        } catch(e) { console.error(e); }
+    }
+
+    window.updateMontazhResults = function() {
+        try {
+            const city = document.getElementById('montazhCity').value; const cat = document.getElementById('montazhCat').value;
+            const subcatWrapper = document.getElementById('montazhSubCatWrapper'); const subcat = subcatWrapper.style.display !== 'none' ? document.getElementById('montazhSubCat').value : "";
+            const resultsContainer = document.getElementById('montazhResults');
+            
+            if (!city || !cat) { resultsContainer.innerHTML = ""; return; }
+            const matches = db.montazhData.services.filter(s => s.cat === cat && (!subcatWrapper.style.display || subcatWrapper.style.display === 'none' || !subcat || s.subcat === subcat));
+            if (matches.length === 0) { resultsContainer.innerHTML = `<div style="padding:20px; text-align:center; color:var(--text-muted);">Послуг не знайдено</div>`; return; }
+
+            let renderItems = [];
+            matches.forEach(s => {
+                 let availability = s.availability[city] || ""; let isUnavailable = (!availability || String(availability).toLowerCase().includes("немає") || availability === "-" || availability === "✖");
+                 let displayProv = ""; let matchProv = String(s.name).match(/^\[(.*?)\]/); if (matchProv) displayProv = matchProv[1].trim(); 
+                 let price = s.price;
+                 if (!price) {
+                     let nameClean = normalizeServiceName(s.name); const t = db.tariffs.find(x => normalizeServiceName(x.service) === nameClean || (x.serviceRu && normalizeServiceName(x.serviceRu) === nameClean));
+                     if (t && t.cost) price = t.cost;
+                 }
+                 let cleanCost = String(price).replace(/\s+/g, '').replace(/[^\d.,]/g, '').replace(',', '.'); let priceVal = parseFloat(cleanCost) || 0;
+                 let priceText = isNaN(priceVal) || cleanCost === '' ? price : priceVal.toLocaleString('uk-UA') + " ₴";
+                 let descToggleHTML = generateDescToggleHTML(window.findInDb(db.descriptions, s.name), window.findInDb(db.serviceCodes, s.name));
+                 renderItems.push({ isUnavailable, priceVal, displayProv, serviceName: s.name, priceText, descToggleHTML, availability, code: s.code });
+            });
+
+            renderItems.sort((a, b) => { if (a.isUnavailable !== b.isUnavailable) return a.isUnavailable ? 1 : -1; return b.priceVal - a.priceVal; });
+            window.lastModalServices = renderItems.map(item => {
+                let cls = 'brand-other'; let pUpper = String(item.displayProv).toUpperCase();
+                if (pUpper === 'ЕКТА' || pUpper === 'EKTA') cls = "brand-ekta"; else if (pUpper === 'НАШ СЕРВІС' || pUpper === 'SUPPORT' || pUpper === 'МІЙ СЕРВІС') cls = "brand-support";
+                return { name: item.serviceName, title: String(item.serviceName).replace(/^\[.*?\]\s*/, ''), brand: item.displayProv, cls, priceText: item.priceText, code: item.code };
+            });
+
+            let modalCompBtn = document.getElementById('montazhCompareBtn'); let availableCount = renderItems.filter(item => !item.isUnavailable).length;
+            if (modalCompBtn) { if (availableCount >= 2) modalCompBtn.style.display = 'block'; else { modalCompBtn.style.display = 'none'; if (isModalCompareMode) window.toggleModalCompareMode(); } }
+
+            let resultsHTML = ""; let seenUnavailable = new Set(); 
+            renderItems.forEach(item => {
+                let cls = 'brand-other'; let pUpper = String(item.displayProv).toUpperCase();
+                if (pUpper === 'ЕКТА' || pUpper === 'EKTA') cls = "brand-ekta"; else if (pUpper === 'НАШ СЕРВІС' || pUpper === 'SUPPORT' || pUpper === 'МІЙ СЕРВІС') cls = "brand-support";
+                let obj = { name: item.serviceName, title: String(item.serviceName).replace(/^\[.*?\]\s*/, ''), brand: item.displayProv, cls, label: item.priceText, descToggleHTML: item.descToggleHTML, isPackage: false, code: item.code };
+                
+                if (item.isUnavailable) {
+                    if (!seenUnavailable.has(pUpper) && item.displayProv) {
+                        seenUnavailable.add(pUpper);
+                        resultsHTML += `<div class="service-card" style="opacity:0.6; cursor:default;"><div class="sc-header"><div class="sc-brand ${cls}" style="margin-bottom:0;">${item.displayProv}</div></div><div style="font-size:14px; font-weight:600;">Монтаж у цьому місті відсутній</div></div>`; 
+                    }
+                } else {
+                     let text = item.availability; let availLower = String(text).toLowerCase(); let displayText = text;
+                     if (availLower === "так" || availLower === "+") displayText = "В межах міста";
+                     let col = "var(--primary)";
+                     if (availLower.includes("тільки місто") || availLower.includes("до 20 км")) col = "var(--danger)";
+                     else if (availLower.includes("передмістя") || availLower.includes("платно")) col = "#f59e0b";
+                     
+                     let extraInfoHTML = `<div style="font-size:11px; font-weight:600; color:${col}; margin-top: 6px;">📍 ${displayText}</div>`;
+                     obj.availabilityHTML = extraInfoHTML; 
+                     resultsHTML += generateServiceCardHTML(obj, true, false); 
+                }
+            });
+            resultsContainer.innerHTML = resultsHTML;
+        } catch(e) { console.error(e); }
+    }
+
+    window.renderDirectListModal = function(targetCategories) {
+        try {
+            if (!Array.isArray(targetCategories)) targetCategories = [targetCategories];
+            let matches = db.tariffs.filter(t => {
+                let c = t.cat ? normalizeServiceName(t.cat) : ""; let sName = t.service ? normalizeServiceName(t.service) : "";
+                return targetCategories.some(tc => { let ntc = normalizeServiceName(tc); return c.includes(ntc) || sName.includes(ntc); });
+            });
+            if(matches.length === 0) { document.getElementById('modalBody').innerHTML = `<div style="text-align:center; padding: 20px; color:var(--text-muted);">Послуг не знайдено</div>`; return; }
+            
+            const p = parseFloat(elPriceInput.value) || 0; 
+            let processedMatches = matches.map(m => {
+                let numCost = 0; let priceText = "Дізнатись вартість";
+                if (m.cost) {
+                    let rawCost = m.cost.toString().trim();
+                    if (rawCost.includes('%')) {
+                        if (p > 0) { numCost = Math.round(p * parseFloat(rawCost.replace(',', '.'))/100); priceText = numCost.toLocaleString('uk-UA') + " ₴"; } else priceText = rawCost;
+                    } else {
+                        let cleanCost = rawCost.replace(/\s+/g, '').replace(/[^\d.,]/g, '').replace(',', '.');
+                        if (cleanCost === '') priceText = rawCost;
+                        else { numCost = parseFloat(cleanCost); priceText = isNaN(numCost) ? rawCost : numCost.toLocaleString('uk-UA') + " ₴"; }
+                    }
+                }
+                let cls = 'brand-settings'; let uName = String(m.service).toUpperCase();
+                if (uName.includes('SUPPORT') || uName.includes('НАШ СЕРВІС')) cls = 'brand-support'; 
+                else if (uName.includes('EKTA') || uName.includes('ЕКТА')) cls = 'brand-ekta'; 
+                else if (uName.includes('EPZ') || uName.includes('ЕПЗ')) cls = 'brand-epz'; 
+                return { name: m.service, title: String(m.service).replace(/^\[.*?\]\s*/, ''), numCost, priceText, cls: cls, code: m.code, isPackage: false };
+            });
+
+            processedMatches.sort((a, b) => b.numCost - a.numCost); window.lastModalServices = processedMatches;
+            let headerHtml = `<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;"><span style="font-weight:700; font-size:12px; text-transform:uppercase; color:var(--text-muted);">Сервіси</span><button id="setupCompareBtn" class="compare-toggle-btn" style="display:${processedMatches.length >= 2 ? 'block' : 'none'}; cursor:pointer;" onclick="window.toggleModalCompareMode()">Порівняти</button></div>`;
+            let html = processedMatches.map(m => { m.label = m.priceText; m.descToggleHTML = generateDescToggleHTML(window.findInDb(db.descriptions, m.name), m.code); return generateServiceCardHTML(m, true, false); }).join('');
+            document.getElementById('modalBody').innerHTML = headerHtml + `<div id="setupResults" style="margin-bottom:0; display:flex; flex-direction:column; gap:12px;">${html}</div>`;
+        } catch(e) { console.error(e); }
+    }
+
+    window.renderSetupModal = function(targetName, mode = "setup") {
+        try {
+            let setupCats = [...new Set(db.tariffs.filter(t => {
+                if (!t.cat) return false; let c = String(t.cat).toLowerCase();
+                if (mode === "antivirus") return c.includes('антивірус') || c.includes('eset');
+                else return !c.includes('монтаж') && !c.includes('кухонна') && !c.includes('перевірка') && !c.includes('поклейка') && !c.includes('скло') && !c.includes('антивірус') && !c.includes('eset') && !c.includes('кінотеатр') && !c.includes('sweet') && !c.includes('сервіси support') && !c.includes('сервіси екта');
+            }).map(t => t.cat))];
+            
+            let labelText = mode === "antivirus" ? "Оберіть тип антивірусу:" : "Оберіть тип сервісу:";
+            document.getElementById('modalBody').innerHTML = `<div class="input-group"><span class="montazh-label" style="font-weight:600; display:block; margin-bottom:8px; font-size:14px; color:var(--text-muted);">${labelText}</span><select id="setupCat" class="montazh-select"><option value="">-- Оберіть категорію --</option>${setupCats.map(c => `<option value="${c}">${c}</option>`).join('')}</select></div><div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;"><span style="font-weight:700; font-size:12px; text-transform:uppercase; color:var(--text-muted);">Сервіси</span><button id="setupCompareBtn" class="compare-toggle-btn" style="display:none; cursor:pointer;" onclick="window.toggleModalCompareMode()">Порівняти</button></div><div id="setupResults" style="margin-bottom:0; display:flex; flex-direction:column; gap:12px;"></div>`;
+            
+            let catSelect = document.getElementById('setupCat'); let targetClean = normalizeServiceName(targetName);
+            let targetTariff = db.tariffs.find(t => normalizeServiceName(t.service) === targetClean || (t.serviceRu && normalizeServiceName(t.serviceRu) === targetClean));
+            let catToSelect = targetName; if (targetTariff && targetTariff.cat) catToSelect = targetTariff.cat;
+            let cleanCatToSelect = normalizeServiceName(catToSelect);
+            for (let i = 0; i < catSelect.options.length; i++) {
+                let optClean = normalizeServiceName(catSelect.options[i].value);
+                if (optClean === cleanCatToSelect || optClean.includes(cleanCatToSelect) || cleanCatToSelect.includes(optClean)) { catSelect.selectedIndex = i; setTimeout(() => catSelect.dispatchEvent(new Event('change')), 50); break; }
+            }
+            catSelect.addEventListener('change', window.updateSetupResults);
+        } catch(e) { console.error(e); }
+    }
+    
+    window.updateSetupResults = function() {
+        try {
+            let catElement = document.getElementById('setupCat'); 
+            let container = document.getElementById('setupResults');
+            if(!container) return; 
+
+            if (catElement) {
+                let cat = catElement.value;
+                if(!cat) { container.innerHTML = ""; return; }
+                let matches = db.tariffs.filter(t => t.cat === cat);
+                if(matches.length === 0) { container.innerHTML = `<div style="text-align:center; padding: 20px; color:var(--text-muted);">Послуг не знайдено</div>`; return; }
+                
+                const p = parseFloat(elPriceInput.value) || 0; 
+                let processedMatches = matches.map(m => {
+                    let numCost = 0; let priceText = "Дізнатись вартість";
+                    if (m.cost) {
+                        let rawCost = m.cost.toString().trim();
+                        if (rawCost.includes('%')) {
+                            if (p > 0) { numCost = Math.round(p * parseFloat(rawCost.replace(',', '.'))/100); priceText = numCost.toLocaleString('uk-UA') + " ₴"; } else priceText = rawCost;
+                        } else {
+                            let cleanCost = rawCost.replace(/\s+/g, '').replace(/[^\d.,]/g, '').replace(',', '.');
+                            if (cleanCost === '') priceText = rawCost;
+                            else { numCost = parseFloat(cleanCost); priceText = isNaN(numCost) ? rawCost : numCost.toLocaleString('uk-UA') + " ₴"; }
+                        }
+                    }
+                    let cls = 'brand-settings'; let uName = String(m.service).toUpperCase();
+                    if (uName.includes('SUPPORT') || uName.includes('НАШ СЕРВІС')) cls = 'brand-support'; 
+                    else if (uName.includes('EKTA') || uName.includes('ЕКТА')) cls = 'brand-ekta'; 
+                    else if (uName.includes('EPZ') || uName.includes('ЕПЗ')) cls = 'brand-epz'; 
+                    return { name: m.service, title: String(m.service).replace(/^\[.*?\]\s*/, ''), numCost, priceText, cls: cls, code: m.code, isPackage: false };
+                });
+
+                processedMatches.sort((a, b) => b.numCost - a.numCost); 
+                window.lastModalServices = processedMatches;
+            }
+            
+            let modalCompBtn = document.getElementById('setupCompareBtn');
+            if (modalCompBtn) { 
+                if (window.lastModalServices.length >= 2) modalCompBtn.style.display = 'block'; 
+                else { modalCompBtn.style.display = 'none'; if (isModalCompareMode) { window.toggleModalCompareMode(); } } 
+            }
+            
+            let html = window.lastModalServices.map(m => { 
+                m.label = m.priceText; 
+                m.descToggleHTML = generateDescToggleHTML(window.findInDb(db.descriptions, m.name), m.code); 
+                return generateServiceCardHTML(m, true, false); 
+            }).join('');
+            container.innerHTML = html;
+        } catch(e) { console.error(e); }
+    }
+
+    window.openModal = function(name, code = "") {
+        let nameClean = normalizeServiceName(name); let u = String(name).toUpperCase(); 
+        let isSetupCategory = db.tariffs.some(t => t.cat && normalizeServiceName(t.cat) === nameClean);
+        let isStaticEpz = (u.includes('WINDOWS') || u.includes('OFFICE') || u.includes('ESD') || u.includes('[ESD]')) && !u.includes('НАЛАШТУВАННЯ') && !u.includes('ВСТАНОВЛЕННЯ') && !u.includes('АНТИВІРУС');
+
+        if (!isStaticEpz) {
+            if (u.includes('МОНТАЖ') || u.includes('ПІДКЛЮЧЕННЯ') || (u.includes('ВСТАНОВЛЕННЯ') && !u.includes('ЗАХИСН'))) { document.getElementById('modalTitle').innerText = "Монтаж ВПТ"; window.openModalBase('descModal'); window.renderMontazhModal(); return; } 
+            else if (u.includes('ПЕРЕВІРКА') || u.includes('ПІКСЕЛ')) { document.getElementById('modalTitle').innerText = "Перевірка на биті пікселі"; window.openModalBase('descModal'); window.renderDirectListModal(["перевірка", "піксел"]); return; } 
+            else if (u.includes('ПОКЛЕЙКА') || u.includes('ЗАХИСН') || u.includes('СКЛО') || u.includes('ПЛІВК')) { document.getElementById('modalTitle').innerText = "Поклейка скла та плівок"; window.openModalBase('descModal'); window.renderDirectListModal(["поклейка", "скло", "плівк", "захисн"]); return; }
+            else if (u.includes('АНТИВІРУС') || u.includes('ESET')) { document.getElementById('modalTitle').innerText = "Антивіруси"; window.openModalBase('descModal'); window.renderSetupModal(name, "antivirus"); return; }
+            else if (u.includes('КІНОТЕАТР') || u.includes('SWEET') || u.includes('PARALLELS')) { document.getElementById('modalTitle').innerText = u.includes('PARALLELS') ? "Parallels Desktop" : "Онлайн кінотеатри"; window.openModalBase('descModal'); window.renderDirectListModal(u.includes('PARALLELS') ? ["parallels"] : ["sweet", "кінотеатр"]); return; }
+            else if (isSetupCategory || u.includes('НАЛАШТУВАННЯ') || u.includes('ПЗ') || u.includes('ПОСЛУГИ') || u.includes('ГОДИНА РОБОТИ')) { document.getElementById('modalTitle').innerText = "Налаштування та сервіси"; window.openModalBase('descModal'); window.renderSetupModal(name, "setup"); return; }
+        }
+
+        window.openModalBase('descModal', name, code);
+    }
+
+    window.showChangelogModal = function(version, changelogText) {
+        document.getElementById('modalTitle').innerHTML = `Оновлення v${version}`;
+        
+        let lines = String(changelogText).split('\n'); let html = '<div style="background:var(--card-bg); border-radius:16px; border:1px solid var(--border);">';
+        lines.forEach((line, index) => {
+            const l = line.trim();
+            if (l) {
+                let hasEmoji = /^(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])/.test(l);
+                let prefix = hasEmoji ? "" : "🔹";
+                let border = index !== lines.length - 1 ? 'border-bottom:1px solid var(--border);' : '';
+                html += `<div style="display:flex; align-items:flex-start; font-size:13px; line-height:1.4; color:var(--text-main); padding:16px; ${border}"><span style="margin-right:8px;">${prefix}</span><span style="flex:1;">${l}</span></div>`;
+            }
+        });
+        html += '</div>';
+        
+        document.getElementById('modalBody').innerHTML = html; window.openModalBase('descModal');
+    };
+
+    /* ЛОГІКА ДЛЯ ФОРМИ ЗМІНИ ПРОДАВЦЯ */
+    const SELLER_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwEHnajgF9C4IvTN5jKMUOrYQybiQnrt5SBBmFFzC3SysV1EzvJoy-PtgFvWlvjGUuZFA/exec";
+
+    window.openSellerModal = function() {
+        window.openModalBase('sellerModal');
+        if(document.getElementById('sellerStore').options.length <= 1) {
+            const scriptTag = document.createElement('script');
+            scriptTag.src = `${SELLER_SCRIPT_URL}?action=getFormData&callback=handleSellerResponse`;
+            document.body.appendChild(scriptTag);
+        }
+        
+        document.getElementById('sellerFormSubmit').style.display = 'block';
+        document.getElementById('sellerStatusOverlay').style.display = 'none';
+        document.getElementById('submitSellerBtn').disabled = false;
+        document.getElementById('submitSellerBtn').innerText = 'ВІДПРАВИТИ';
+        document.getElementById('sellerFormSubmit').reset();
+    }
+
+    window.handleSellerResponse = function(data) {
+        const s = document.getElementById('sellerStore');
+        const r = document.getElementById('sellerReason');
+        s.innerHTML = '<option value="" disabled selected>Оберіть магазин</option>';
+        r.innerHTML = '<option value="" disabled selected>Оберіть причину</option>';
+        data.stores.forEach(item => s.add(new Option(item, item)));
+        data.reasons.forEach(item => r.add(new Option(item, item)));
+    }
+
+    document.getElementById('sellerFormSubmit').onsubmit = function(e) {
+        e.preventDefault();
+        const btn = document.getElementById('submitSellerBtn');
+        const overlay = document.getElementById('sellerStatusOverlay');
+        const form = document.getElementById('sellerFormSubmit');
+        
+        btn.disabled = true;
+        btn.innerText = 'НАДСИЛАЄМО...';
+
+        fetch(SELLER_SCRIPT_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            body: new FormData(this)
+        })
+        .then(() => {
+            form.style.display = 'none';
+            overlay.style.display = 'block';
+        })
+        .catch(() => {
+            alert("Помилка відправки.");
+            btn.disabled = false;
+            btn.innerText = 'ВІДПРАВИТИ';
+        });
+    };
+
+    init();
+
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => { navigator.serviceWorker.register('./sw.js').catch(console.error); });
+    }
+</script>
+</body>
+</html>
