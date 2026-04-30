@@ -1,5 +1,5 @@
 {
-  "name": "SkillHUB TEST",
+  "name": "SkillHUB Assistant",
   "short_name": "SkillHUB Assistant",
   "description": "Тестовий асистент з техніки",
   "start_url": "./index.html",
