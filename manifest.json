@@ -1,6 +1,6 @@
 {
-  "name": "SkillHUB Assistant",
-  "short_name": "SkillHUB Assistant",
+  "name": "SkillHUB",
+  "short_name": "SkillHUB",
   "description": "Тестовий асистент з техніки",
   "start_url": "./index.html",
   "display": "standalone",
