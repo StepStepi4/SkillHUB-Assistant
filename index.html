@@ -1355,7 +1355,7 @@
                 window.buildServiceSearchList();
                 enableUI(); window.populateFilters();
                 window.renderSkillHubTab();
-                setAppStatus('ok', 'Офлайн (З кешу)');
+                setAppStatus('ok', 'Готовий до роботи');
                 refreshData(false); 
             } catch(e) { await refreshData(true); }
         } else await refreshData(true); 
