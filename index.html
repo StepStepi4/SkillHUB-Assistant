@@ -112,7 +112,7 @@
         .dot.red { background: var(--danger); }
         .dot.yellow { background: #fbbf24; }
 
-        /* ПЛАВАЮЧЕ МЕНЮ (М'яка підсвітка без овалів) */
+        /* ПЛАВАЮЧЕ МЕНЮ */
         .bottom-nav {
             position: fixed; 
             bottom: calc(env(safe-area-inset-bottom) + 16px); 
@@ -130,7 +130,7 @@
             justify-content: space-around; 
             align-items: center;
             z-index: 9990; 
-            box-shadow: 0 8px 32px rgba(0,0,0,0.08); /* М'якша тінь */
+            box-shadow: 0 8px 32px rgba(0,0,0,0.08);
             padding: 0 16px;
         }
         [data-theme="dark"] .bottom-nav { 
@@ -171,7 +171,6 @@
             transition: all 0.3s cubic-bezier(0.25, 0.1, 0.25, 1); 
         }
         
-        /* АКТИВНИЙ СТАН: КОЛІР, ТІНЬ І ЖИРНИЙ ТЕКСТ */
         .nav-item.active { 
             color: var(--rozetka-green-dark); 
         }
@@ -181,7 +180,7 @@
         
         .nav-item.active .nav-icon { 
             transform: translateY(-2px) scale(1.15); 
-            filter: drop-shadow(0px 4px 8px rgba(0, 160, 70, 0.35)); /* Легка зелена підсвітка іконки */
+            filter: drop-shadow(0px 4px 8px rgba(0, 160, 70, 0.35)); 
         }
         [data-theme="dark"] .nav-item.active .nav-icon { 
             filter: drop-shadow(0px 4px 8px rgba(16, 185, 129, 0.35));
@@ -190,7 +189,7 @@
         .nav-item.active span { 
             font-weight: 800; 
             transform: translateY(-1px); 
-            text-shadow: 0px 2px 6px rgba(0, 160, 70, 0.2); /* Легка зелена підсвітка тексту */
+            text-shadow: 0px 2px 6px rgba(0, 160, 70, 0.2); 
         }
         [data-theme="dark"] .nav-item.active span {
             text-shadow: 0px 2px 6px rgba(16, 185, 129, 0.2);
@@ -481,9 +480,83 @@
         .rating-score { font-size: 15px; font-weight: 800; color: var(--primary); }
         .rating-desc { font-size: 12px; font-weight: 500; color: var(--text-muted); }
 
+        /* ========================================================== */
+        /* --- НОВІ СТИЛІ ДЛЯ ВЕРХНЬОГО ВИТІКАЮЧОГО ПОШУКУ РЕЗЕРВІВ --- */
+        /* ========================================================== */
+        
+        /* Кнопка виклику пошуку поруч із вибором магазину */
+        .reserves-search-trigger {
+            width: 53px; height: 53px; flex-shrink: 0;
+            background: var(--primary); color: white;
+            border: none; border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; transition: 0.2s;
+        }
+        .reserves-search-trigger:active { transform: scale(0.95); opacity: 0.9; }
+
+        /* Сама випадаюча панель (ховається за межами екрану зверху) */
+        .top-search-panel {
+            position: fixed; top: 0; left: 0; width: 100%; /* Тепер top завжди 0, ховаємо через transform */
+            background: var(--nav-bg); 
+            backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
+            z-index: 100000; /* Перекриває ВСЕ, включно з модалками */
+            padding: calc(env(safe-area-inset-top) + 16px) 16px 16px 16px;
+            box-shadow: 0 4px 30px rgba(0,0,0,0.15);
+            display: flex; gap: 10px; align-items: center; 
+            border-bottom: 1px solid var(--border);
+            
+            /* --- НОВА АНІМАЦІЯ: ЗМЕНШЕННЯ-ЗБІЛЬШЕННЯ ТА ВИЇЗД --- */
+            transform: translateY(-150%) scale(0.85); /* Ховаємо вгору і зменшуємо */
+            opacity: 0;
+            pointer-events: none; /* Щоб не перекривала кліки, коли схована */
+            
+            /* Пружиниста анімація для transform і плавна для opacity */
+            transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.4s ease;
+        }
+        [data-theme="dark"] .top-search-panel { box-shadow: 0 4px 30px rgba(0,0,0,0.6); border-bottom-color: rgba(255,255,255,0.1); }
+        
+        /* Клас, який активує анімацію випадання */
+        .top-search-panel.show { 
+            transform: translateY(0) scale(1); /* Повертаємо на місце у 100% розмір */
+            opacity: 1;
+            pointer-events: auto; /* Вмикаємо кліки */
+        }
+        
+        .top-search-content {
+            flex: 1; position: relative; display: flex; align-items: center;
+        }
+        .top-search-content input {
+            width: 100%; padding: 12px 40px 12px 16px; margin: 0;
+            border-radius: 12px; border: 2px solid var(--primary);
+            background: var(--card-bg); font-size: 16px; color: var(--text-main);
+            outline: none; box-shadow: 0 0 0 3px var(--primary-light);
+        }
+        /* Кнопка "Х" для очищення вводу */
+        .top-search-clear {
+            position: absolute; right: 10px; width: 24px; height: 24px;
+            background: var(--text-muted); color: white; border: none; border-radius: 50%;
+            font-size: 16px; font-weight: bold; line-height: 1; cursor: pointer;
+            display: none; align-items: center; justify-content: center; padding-bottom: 2px;
+        }
+        .top-search-clear:active { background: var(--danger); }
+        
+        /* Кнопка скасування/закриття панелі */
+        .top-search-close {
+            background: transparent; border: none; color: var(--text-muted);
+            font-weight: 600; font-size: 14px; cursor: pointer; padding: 10px 5px;
+        }
+
     </style>
 </head>
 <body>
+
+<div id="topSearchPanel" class="top-search-panel">
+    <div class="top-search-content">
+        <input type="text" id="topReservesSearchInput" placeholder="Пошук у резервах..." autocomplete="off">
+        <button id="clearTopSearchBtn" class="top-search-clear">×</button>
+    </div>
+    <button id="closeTopSearchBtn" class="top-search-close">Скасувати</button>
+</div>
 
 <div id="appLoader" class="app-loader">
     <div class="spinner" id="loaderSpinner"></div>
@@ -542,10 +615,13 @@
     </div>
 
     <div id="tab-reserves" class="app-tab">
-        <div class="input-group">
-            <select id="storeFilter" onchange="window.renderRezervyList()">
+        <div class="input-group" style="display: flex; gap: 10px; align-items: center;">
+            <select id="storeFilter" onchange="window.renderRezervyList()" style="flex: 1; margin-bottom: 0;">
                 <option value="">-- Оберіть магазин --</option>
             </select>
+            <button id="openTopSearchBtn" class="reserves-search-trigger">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:20px; height:20px;"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            </button>
         </div>
         <div id="rezervyList" class="list-group"></div>
     </div>
@@ -743,6 +819,10 @@
                     <input type="text" id="sellerBill" name="bill" placeholder="РО3________" required>
                 </div>
                 <div class="input-group">
+                    <span style="font-weight:600; display:block; margin-bottom:8px; font-size:14px; color:var(--text-muted);">Сума послуг</span>
+                    <input type="number" step="any" id="sellerAmount" name="amount" placeholder="Наприклад 1499" required>
+                </div>
+                <div class="input-group">
                     <span style="font-weight:600; display:block; margin-bottom:8px; font-size:14px; color:var(--text-muted);">Причина зміни</span>
                     <select id="sellerReason" name="reason" required>
                         <option value="" disabled selected>Завантаження причин...</option>
@@ -753,7 +833,7 @@
             <div id="sellerStatusOverlay">
                 <div style="font-size: 3rem; margin-bottom: 10px;">✅</div>
                 <h5 style="color: var(--rozetka-green-dark); font-weight: 800; margin: 0; font-size: 1.2rem;">УСПІШНО ВІДПРАВЛЕНО!</h5>
-                <p style="font-size: 1rem; color: var(--text-muted); margin-top: 10px; margin-bottom: 0; line-height: 1.4;">Заявка прийнята, очікуйте на виконання 2-3 дні, а може швидше 😉</p>
+                <p style="font-size: 1rem; color: var(--text-muted); margin-top: 10px; margin-bottom: 0; line-height: 1.4;">Заявка обробляється протягом певного часу</p>
             </div>
         </div>
     </div>
@@ -957,7 +1037,6 @@
             if (name && modalId === 'descModal') {
                 let title = name.replace(/🇺🇦\s*/g, '').replace(/^UA\s+/i, '').replace(/^\[.*?\]\s*/, ''); 
                 
-                // Вставляємо ціну в заголовок, якщо вона є
                 let priceLabelHtml = "";
                 if (priceLabel && priceLabel !== "Дізнатись" && priceLabel !== "Обрати пакет") {
                     priceLabelHtml = `<div style="font-size: 16px; font-weight: 800; color: var(--primary); white-space: nowrap; margin-left: 10px; background: var(--input-bg); padding: 4px 8px; border-radius: 8px;">${priceLabel}</div>`;
@@ -970,7 +1049,7 @@
                 
                 const raw = window.findInDb(db.descriptions, name) || "";
 
-                // --- НОВА ФУНКЦІЯ: ОБ'ЄДНАННЯ СЕРТИФІКАТІВ ---
+                // Об'єднання сертифікатів
                 let p = window.currentDevicePrice || parseFloat(document.getElementById('devicePrice').value) || 0;
                 let comboHtml = "";
 
@@ -981,17 +1060,15 @@
                         return n1 === n2 || (t.serviceRu && normalizeServiceName(t.serviceRu) === n2);
                     });
 
-                    // Шукаємо комбінацію лише серед сертифікатів з максимальним діапазоном, меншим за ціну товару
                     let validTariffs = tariffs.filter(t => t.maxPrice > 0 && t.maxPrice < p).sort((a,b) => b.maxPrice - a.maxPrice);
-                    
                     let allCombos = [];
-                    // Рекурсивна функція для пошуку комбінацій (від 2 до 4 сертифікатів)
+                    
                     function findCombos(startIndex, currentCombo, currentSum) {
                         if (currentSum >= p) {
                             allCombos.push({ combo: [...currentCombo], sum: currentSum });
                             return;
                         }
-                        if (currentCombo.length >= 4) return; // Максимум 4 сертифікати дозволено
+                        if (currentCombo.length >= 4) return;
 
                         for (let i = startIndex; i < validTariffs.length; i++) {
                             currentCombo.push(validTariffs[i]);
@@ -1001,7 +1078,6 @@
                     }
                     findCombos(0, [], 0);
 
-                    // Сортуємо: 1. Найближча сума до ціни товару. 2. Найменша кількість сертифікатів
                     allCombos.sort((a, b) => {
                         let diffA = a.sum - p;
                         let diffB = b.sum - p;
@@ -1009,7 +1085,6 @@
                         return a.combo.length - b.combo.length;
                     });
 
-                    // Видаляємо дублікати (якщо різні комбінації складаються з тих самих сертифікатів)
                     let uniqueCombos = [];
                     let seenSignatures = new Set();
                     for (let c of allCombos) {
@@ -1020,7 +1095,6 @@
                         }
                     }
 
-                    // Відбираємо максимум 2 найкращі варіанти
                     let topCombos = uniqueCombos.slice(0, 2);
 
                     if (topCombos.length > 0) {
@@ -1032,7 +1106,6 @@
                                 let maxP = t.maxPrice || 0;
                                 let tName = t.service;
                                 
-                                // Формуємо красиву назву з брендом
                                 let cleanName = tName.replace(/^\[.*?\]\s*/, '').trim();
                                 let brandMatch = tName.match(/^\[(.*?)\]/);
                                 let brand = brandMatch ? brandMatch[1] : "";
@@ -1042,13 +1115,11 @@
                                     displayName += ` (${minP.toLocaleString('uk-UA')} - ${maxP.toLocaleString('uk-UA')})`;
                                 }
                                 
-                                // Розраховуємо ціну одного сертифікату для комбінації
                                 let tPriceStr = "";
                                 let tPriceNum = 0;
                                 if (t.cost) {
                                     let cStr = String(t.cost).trim();
                                     if (cStr.includes('%')) {
-                                        // Для динамічних % сертифікатів рахуємо ціну від його ВЛАСНОГО номіналу
                                         tPriceNum = Math.round(maxP * parseFloat(cStr.replace(',', '.'))/100);
                                     } else {
                                         tPriceNum = parseFloat(cStr.replace(/\s+/g, '').replace(',', '.'));
@@ -1111,7 +1182,6 @@
                         `;
                     }
                 }
-                // --- КІНЕЦЬ НОВОЇ ФУНКЦІЇ ---
 
                 document.getElementById('modalBody').innerHTML = generateDescToggleHTML(raw, code).replace('display: none;', 'display: block;').replace('Детальніше', 'Опис сервісу') + comboHtml;
                 let dc = document.getElementById('modalBody').querySelector('.desc-content');
@@ -1246,7 +1316,6 @@
         txt.innerText = text;
     }
 
-    // --- ДИНАМІЧНИЙ РЕНДЕР КНОПОК SKILLHUB ---
     window.renderSkillHubTab = function() {
         const container = document.getElementById('dynamicSkillHubButtons');
         if (!container || !db.skillHubButtons) return;
@@ -1256,7 +1325,6 @@
             let linkStr = String(btn.link).trim();
             let nm = String(btn.name).toLowerCase();
             
-            // Якщо є маркер з таблиці
             if (linkStr === "--") {
                 actionStr = `onclick="window.openSellerModal()"`;
             } else if (linkStr === "%") {
@@ -1293,7 +1361,6 @@
         safeUpdateHTML(container, html);
     };
 
-    // --- ДИНАМІЧНИЙ РЕНДЕР РЕЙТИНГУ ---
     window.renderRatingModalContent = function() {
         const container = document.getElementById('ratingModalBody');
         if (!container) return;
@@ -1412,7 +1479,7 @@
                 }
                 enableUI(); window.populateFilters();
                 window.renderSkillHubTab();
-                if(currentCategoryData || currentServiceData) renderServices(); // Оновлюємо сервіси, якщо ми на екрані пошуку
+                if(currentCategoryData || currentServiceData) renderServices(); 
                 if(document.getElementById('tab-reserves').classList.contains('active')) window.renderRezervyList();
             }, 400); 
             
@@ -1486,9 +1553,22 @@
     window.renderRezervyList = function() {
         const store = document.getElementById('storeFilter').value;
         const cont = document.getElementById('rezervyList');
+        const searchInput = document.getElementById('topReservesSearchInput');
+        const searchQuery = searchInput ? searchInput.value.toLowerCase().trim() : '';
+
         if (!store) { safeUpdateHTML(cont, '<div style="padding:20px; text-align:center; color:var(--text-muted); font-weight:600;">Оберіть магазин вище</div>'); return; }
         
-        const matches = db.rezervyData.filter(r => r.store === store);
+        let matches = db.rezervyData.filter(r => r.store === store);
+
+        // Фільтрація по пошуку
+        if (searchQuery) {
+            matches = matches.filter(r => {
+                let shortName = r.name.replace(/^(Телевізор|Ноутбук|Смартфон|Мобільний телефон|Планшет|Холодильник|Пральна машина|Мікрохвильова піч|Кавомашина|Пилосос)\s*/i, '').toLowerCase();
+                let catName = r.cat.toLowerCase();
+                return shortName.includes(searchQuery) || catName.includes(searchQuery) || r.name.toLowerCase().includes(searchQuery);
+            });
+        }
+
         if (matches.length === 0) { safeUpdateHTML(cont, `<div style="padding:20px; text-align:center; color:var(--text-muted); font-weight:600;">Немає товарів</div>`); return; }
 
         matches.sort((a, b) => b.price - a.price);
@@ -1506,6 +1586,56 @@
         }).join('');
         safeUpdateHTML(cont, html);
     }
+
+    // --- ЛОГІКА ДЛЯ ВЕРХНЬОЇ ПАНЕЛІ ПОШУКУ ---
+    const topPanel = document.getElementById('topSearchPanel');
+    const openTopBtn = document.getElementById('openTopSearchBtn');
+    const closeTopBtn = document.getElementById('closeTopSearchBtn');
+    const topInput = document.getElementById('topReservesSearchInput');
+    const clearTopBtn = document.getElementById('clearTopSearchBtn');
+
+    // Відкриття панелі при кліку на лупу
+    openTopBtn.onclick = () => {
+        topPanel.classList.add('show');
+        setTimeout(() => topInput.focus(), 300);
+    };
+
+    // Закриття панелі
+    closeTopBtn.onclick = () => {
+        topPanel.classList.remove('show');
+        topInput.value = '';
+        clearTopBtn.style.display = 'none';
+        window.renderRezervyList(); // Скидаємо фільтр
+    };
+
+    // Подія при введенні тексту (показ хрестика і фільтрація)
+    topInput.addEventListener('input', () => {
+        clearTopBtn.style.display = topInput.value.length > 0 ? 'flex' : 'none';
+        window.renderRezervyList();
+    });
+
+    // Клік по "Х" в пошуку
+    clearTopBtn.onclick = () => {
+        topInput.value = '';
+        clearTopBtn.style.display = 'none';
+        topInput.focus();
+        window.renderRezervyList();
+    };
+    
+    // --- НОВЕ: Закриття панелі при кліку в порожнє місце ---
+    document.addEventListener('click', function(event) {
+        // Якщо панель відкрита
+        if (topPanel.classList.contains('show')) {
+            // Перевіряємо, чи клік був НЕ по самій панелі і НЕ по кнопці відкриття
+            if (!topPanel.contains(event.target) && event.target !== openTopBtn && !openTopBtn.contains(event.target)) {
+                topPanel.classList.remove('show');
+                topInput.value = '';
+                clearTopBtn.style.display = 'none';
+                window.renderRezervyList(); // Скидаємо фільтр резервів
+            }
+        }
+    });
+    // -----------------------------------------
 
     window.openRezervItemModal = function(catName, price, itemName) {
         let searchVal = normalize(catName); let foundItem = null;
@@ -2445,7 +2575,7 @@
     };
 
     /* ЛОГІКА ДЛЯ ФОРМИ ЗМІНИ ПРОДАВЦЯ */
-    const SELLER_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwEHnajgF9C4IvTN5jKMUOrYQybiQnrt5SBBmFFzC3SysV1EzvJoy-PtgFvWlvjGUuZFA/exec";
+    const SELLER_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyMDkyDEPQ9FpeBvRdLxoVm7qUlEEs2ksJSALjv11gZX1-6jNckZvdayvnNahQfcWG8Ig/exec";
 
     window.openSellerModal = function() {
         window.openModalBase('sellerModal');
