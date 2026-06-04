@@ -382,7 +382,7 @@
         .floating-top:active { transform: scale(0.9); }
 
         .rezervy-name { font-size: 14px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.4;}
-        .rezervy-cat { font-size: 12px; color: var(--text-muted); text-transform: uppercase; margin-top: 4px; transition: 0.2s ease;}
+        .rezervy-cat { font-size: 12px; color: var(--text-muted); text-transform: uppercase; margin-top: 4px;}
         .rezervy-price { font-size: 15px; font-weight: 800; color: var(--primary); background: var(--input-bg); padding: 6px 10px; border-radius: 8px; border: 1px solid var(--border); white-space: nowrap;}
         
         #rezervItemModal { z-index: 100010; }
@@ -1582,24 +1582,14 @@
             let shortName = r.name.replace(/^(Телевізор|Ноутбук|Смартфон|Мобільний телефон|Планшет|Холодильник|Пральна машина|Мікрохвильова піч|Кавомашина|Пилосос)\s*/i, '');
             
             // FIX: Екрануємо лапки спеціально для HTML-атрибуту onclick
-            let safeCatOnClick = String(r.cat).replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '"');
-            let safeNameOnClick = String(shortName).replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '"');
-
-            // НОВЕ: Перевірка наявності категорії в базі
-            let searchVal = normalize(r.cat); 
-            let catExists = false;
-            if (db.categories && db.categories.length > 0) {
-                catExists = db.categories.some(c => normalize(c.ua).includes(searchVal) || searchVal.includes(normalize(c.ua)));
-            }
-
-            let catStyle = catExists ? "" : "color: var(--danger); background: var(--danger-bg); padding: 2px 6px; border-radius: 4px; display: inline-block; width: fit-content;";
-            let warningIcon = catExists ? "" : " ⚠️";
+            let safeCatOnClick = String(r.cat).replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '&quot;');
+            let safeNameOnClick = String(shortName).replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '&quot;');
 
             return `
             <div class="list-item" onclick="window.openRezervItemModal('${safeCatOnClick}', ${r.price}, '${safeNameOnClick}')">
                 <div class="list-item-content">
                     <span class="list-item-title rezervy-name">${window.escapeHTML(shortName)}</span>
-                    <span class="list-item-subtitle rezervy-cat" style="${catStyle}">${window.escapeHTML(r.cat)}${warningIcon}</span>
+                    <span class="list-item-subtitle rezervy-cat">${window.escapeHTML(r.cat)}</span>
                 </div>
                 <div class="list-item-value rezervy-price">${Math.round(r.price).toLocaleString('uk-UA')} ₴</div>
             </div>`;
