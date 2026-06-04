@@ -881,7 +881,7 @@
         }
     });
 
-    const API_URL = 'https://script.google.com/macros/s/AKfycbzudsRj1EzQZQT4EUScNJDeg_lD3HSXus6BrMfErR-CaLsybBzIhmtaoT8mJAXsQSwaLw/exec';
+    const API_URL = 'https://script.google.com/macros/s/AKfycbx6CDquyEwpG8lpj-igGq-nP4heBgjEcSQTEi3lcozpX9wmXE68mK_2b7MD81YmW2T6Cw/exec';
     const CACHE_KEY = 'skillhub_v1_flat'; 
     const SEEN_VERSION_KEY = 'skillhub_version_flat';
     
@@ -1638,15 +1638,48 @@
     // -----------------------------------------
 
     window.openRezervItemModal = function(catName, price, itemName) {
-        let searchVal = normalize(catName); let foundItem = null;
-        if (db.categories && db.categories.length > 0) foundItem = db.categories.find(c => normalize(c.ua).includes(searchVal) || searchVal.includes(normalize(c.ua)));
+        let searchVal = normalize(catName); 
+        let foundItem = null;
+
+        if (db.categories && db.categories.length > 0) {
+            // 1. Шукаємо точне або часткове входження в усіх мовах та категоріях
+            foundItem = db.categories.find(c => {
+                let ua = normalize(c.ua);
+                let ru = normalize(c.ru);
+                let en = normalize(c.en);
+                let cat = normalize(c.category);
+
+                return (ua && (ua.includes(searchVal) || searchVal.includes(ua))) ||
+                       (ru && (ru.includes(searchVal) || searchVal.includes(ru))) ||
+                       (en && (en.includes(searchVal) || searchVal.includes(en))) ||
+                       (cat && (cat.includes(searchVal) || searchVal.includes(cat)));
+            });
+
+            // 2. Розумний fallback-пошук (якщо не знайшли точного збігу)
+            // Допомагає обійти проблему множини/однини (наприклад, "Ноутбуки" знайде "Ноутбук")
+            if (!foundItem && searchVal) {
+                // Розбиваємо пошуковий запит на слова довші за 3 символи
+                let tokens = searchVal.split(/\s+/).filter(t => t.length >= 3);
+                if (tokens.length > 0) {
+                    foundItem = db.categories.find(c => {
+                        let combined = [normalize(c.ua), normalize(c.ru), normalize(c.en), normalize(c.category)].join(' ');
+                        // Шукаємо, чи є хоча б одне корінь-слово в базі
+                        return tokens.some(token => {
+                            // Відкидаємо останні 1-2 букви (закінчення) для ширшого пошуку
+                            let shortToken = token.length > 4 ? token.substring(0, token.length - 1) : token;
+                            return combined.includes(shortToken);
+                        });
+                    });
+                }
+            }
+        }
 
         if (foundItem) {
             document.getElementById('rezervItemTitle').innerText = itemName + ` — ${Math.round(price).toLocaleString('uk-UA')} ₴`;
             window.openModalBase('rezervItemModal');
             renderRezervItemServices(foundItem, price);
         } else {
-            alert(`Категорію "${catName}" не знайдено.`);
+            alert(`Категорію "${catName}" не знайдено в базі сервісів. Спробуйте скористатися головним пошуком.`);
         }
     }
 
