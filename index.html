@@ -12,6 +12,13 @@
     <meta name="apple-mobile-web-app-title" content="SkillHUB_Assistant">
     <link rel="apple-touch-icon" href="icon-192.png">
 
+    <script>
+        (function() {
+            var theme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', theme);
+        })();
+    </script>
+
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
         
@@ -546,6 +553,43 @@
             font-weight: 600; font-size: 14px; cursor: pointer; padding: 10px 5px;
         }
 
+        /* ========================================================== */
+        /* --- СУЧАСНИЙ БЕЙДЖ ДАТИ ДЛЯ РЕЗЕРВІВ --- */
+        /* ========================================================== */
+        .reserves-date-wrapper {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 12px;
+        }
+        .modern-date-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+            transition: 0.3s ease;
+        }
+        [data-theme="dark"] .modern-date-badge {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+        .modern-date-badge svg {
+            width: 14px;
+            height: 14px;
+            stroke: var(--primary); /* Колір іконки в стиль додатку */
+        }
+        .modern-date-badge span {
+            color: var(--text-main); /* Виділяємо саму дату контрастним кольором */
+            font-weight: 800;
+        }
+
     </style>
 </head>
 <body>
@@ -615,6 +659,17 @@
     </div>
 
     <div id="tab-reserves" class="app-tab">
+        
+        <div class="reserves-date-wrapper">
+            <div id="rezervyDateBox" class="modern-date-badge">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <polyline points="12 6 12 12 16 14"></polyline>
+                </svg>
+                Оновлено: <span id="rezervyDateValue">08.06.2026</span>
+            </div>
+        </div>
+
         <div class="input-group" style="display: flex; gap: 10px; align-items: center;">
             <select id="storeFilter" onchange="window.renderRezervyList()" style="flex: 1; margin-bottom: 0;">
                 <option value="">-- Оберіть магазин --</option>
@@ -881,8 +936,8 @@
         }
     });
 
-    // ОБНОВЛЕННЫЙ АДРЕС ВАШЕГО API ИЗ ЗАПРОСА
-    const API_URL = 'https://script.google.com/macros/s/AKfycbx6CDquyEwpG8lpj-igGq-nP4heBgjEcSQTEi3lcozpX9wmXE68mK_2b7MD81YmW2T6Cw/exec';
+    // ОБНОВЛЕННЫЙ АДРЕС ВАШЕГО API ІЗ ЗАПИТУ
+    const API_URL = 'https://script.google.com/macros/s/AKfycbyiidLHjfGTcU1V1nrtL_8HDP1JE0GfrLyFQk4dMoE5hURm0ueMxOMgoecwSsA8QPFqSw/exec';
     const CACHE_KEY = 'skillhub_v1_flat'; 
     const SEEN_VERSION_KEY = 'skillhub_version_flat';
     
@@ -1008,6 +1063,15 @@
         if(currentTheme === 'dark') toggle.classList.add('active');
         else toggle.classList.remove('active');
     }
+
+    // ДОДАНИЙ БЛОК: Синхронізація кнопок між відкритими вкладками
+    window.addEventListener('storage', (event) => {
+        if (event.key === 'theme') {
+            currentTheme = event.newValue || 'light';
+            document.documentElement.setAttribute('data-theme', currentTheme);
+            updateToggleUI();
+        }
+    });
 
     const brandRegex = /^\[(.*?)\]/;
 
@@ -1585,9 +1649,9 @@
         let html = matches.map(r => {
             let shortName = r.name.replace(/^(Телевізор|Ноутбук|Смартфон|Мобільний телефон|Планшет|Холодильник|Пральна машина|Мікрохвильова піч|Кавомашина|Пилосос)\s*/i, '');
             
-            // FIX: Екрануємо лапки спеціально для HTML-атрибуту onclick (&quot;)
-            let safeCatOnClick = String(r.cat).replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '&quot;');
-            let safeNameOnClick = String(shortName).replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '&quot;');
+            // FIX: Екрануємо лапки спеціально для HTML-атрибуту onclick (")
+            let safeCatOnClick = String(r.cat).replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '"');
+            let safeNameOnClick = String(shortName).replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '"');
 
             // Перевірка наявності категорії в базі
             let searchVal = normalize(r.cat); 
