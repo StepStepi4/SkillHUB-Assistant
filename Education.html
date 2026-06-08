@@ -5,12 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Навчання - SkillHUB</title>
     <meta name="theme-color" content="#f2f2f7">
+    
+    <script>
+        // Анти-мерцание: мгновенно применяем тему до загрузки элементов интерфейса
+        (function() {
+            var theme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', theme);
+        })();
+    </script>
+
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
 
         *, *::before, *::after { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
         :root {
+            /* СВЕТЛАЯ ТЕМА */
             --bg: #f2f2f7; 
             --card-bg: #ffffff;
             --text-main: #111827; 
@@ -27,11 +37,27 @@
             --rozetka-green-dark: #00a046;
         }
 
+        [data-theme="dark"] {
+            /* ТЕМНАЯ ТЕМА */
+            --bg: #000000; 
+            --card-bg: #1c1c1e;
+            --text-main: #ffffff; 
+            --text-muted: #98989d; 
+            --primary: #10b981;
+            --primary-light: rgba(16, 185, 129, 0.2);
+            --border: #38383a;
+            --input-bg: #2c2c2e;
+            --danger: #ff453a;
+            --danger-bg: rgba(255, 69, 58, 0.15);
+            --success: #34d399;
+        }
+
         body { 
             font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text-main); 
             margin: 0; padding: 0; display: flex; justify-content: center; align-items: flex-start; 
             min-height: 100vh; -webkit-font-smoothing: antialiased; 
             padding-bottom: 80px; 
+            transition: background 0.3s ease, color 0.3s ease; /* Плавное переключение цветов */
         }
 
         .container { 
@@ -121,7 +147,6 @@
         }
         .nav-header h2 { font-size: 24px !important; margin: 0; font-weight: 800; letter-spacing: -0.5px; line-height: 1.2; color: var(--text-main); }
         
-        /* Исправлен ореол у верхних кнопок */
         .nav-actions {
             display: flex; gap: 6px; background: transparent; padding: 0; border: none; box-shadow: none;
         }
@@ -469,8 +494,16 @@
 </div>
 
 <script>
-    const API_URL = 'https://script.google.com/macros/s/AKfycbySj3hN3dN3JJJv-KBGL86-Zc2Qsa-njJ5ngWG_y_zcQetM8qTcnPZRMJST8vJn_KYjgA/exec'; 
+    const API_URL = 'https://script.google.com/macros/s/AKfycbyiidLHjfGTcU1V1nrtL_8HDP1JE0GfrLyFQk4dMoE5hURm0ueMxOMgoecwSsA8QPFqSw/exec'; 
     const CACHE_KEY = 'skillhub_v4_desc';
+
+    // Слушатель для синхронизации: моментально меняет тему при её смене в index.html
+    window.addEventListener('storage', (event) => {
+        if (event.key === 'theme') {
+            let currentTheme = event.newValue || 'light';
+            document.documentElement.setAttribute('data-theme', currentTheme);
+        }
+    });
 
     let db = null;
     let globalAchievements = []; 
@@ -561,7 +594,7 @@
             window.scrollTo(0, 0);
 
             const exitBtn = document.getElementById('floatingExitBtn');
-            if (viewId === 'testView' || viewId === 'loginView') {
+            if (viewId === 'testView') {
                 exitBtn.style.display = 'none';
             } else {
                 exitBtn.style.display = 'flex';
@@ -1155,7 +1188,6 @@
         let fPcs = parseFloat(String(user.execPcs || "0").replace(/\s/g, '').replace(',', '.')) || 0;
         let fUah = parseFloat(String(user.execUah || "0").replace(/\s/g, '').replace(',', '.')) || 0;
 
-        // Форматуємо для відображення: якщо менше 0, міняємо на + і робимо зеленим
         let displayFPcs = fPcs < 0 ? `<span style="color: var(--success);">+${formatNumber(Math.abs(fPcs))}</span>` : formatNumber(fPcs);
         let displayFUah = fUah < 0 ? `<span style="color: var(--success);">+${formatNumber(Math.abs(fUah))}</span>` : formatNumber(fUah);
 
@@ -1386,17 +1418,49 @@
             .map(line => line.trim())
             .filter(line => line.length > 0)
             .map(line => {
+                let isAa = false;
+                let isAA = false;
+
+                // Перевіряємо наявність міток форматування
+                if (line.startsWith('[Aa]')) {
+                    isAa = true;
+                    line = line.substring(4).trim();
+                } else if (line.startsWith('[AA]')) {
+                    isAA = true;
+                    line = line.substring(4).trim();
+                }
+
+                // Перевіряємо наявність емодзі на початку (після мітки, якщо вона була)
                 let match = line.match(/^(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])/);
+                let emoji = "";
+                let text = line;
+
                 if (match) {
-                    let emoji = match[0];
-                    let text = line.replace(emoji, '').trim();
+                    emoji = match[0];
+                    text = line.replace(emoji, '').trim();
+                }
+
+                // Робимо першу літеру великою для заголовка [Aa]
+                if (isAa && text.length > 0) {
+                    text = text.charAt(0).toUpperCase() + text.slice(1);
+                }
+
+                // Визначаємо стилі тексту в залежності від міток
+                let textStyle = "font-size: 15px; line-height: 1.5; font-weight: 500;";
+                if (isAa) {
+                    textStyle = "font-size: 19px; line-height: 1.3; font-weight: 800; color: var(--text-main); margin-top: 8px;";
+                } else if (isAA) {
+                    textStyle = "font-size: 15px; line-height: 1.5; font-weight: 800; text-transform: uppercase; color: var(--text-main);";
+                }
+
+                if (emoji) {
                     return `
                     <div class="theory-line" style="display: flex; align-items: center; gap: 14px;">
                         <div style="font-size: 24px; display: flex; align-items: center; justify-content: center; width: 30px; height: 30px; flex-shrink: 0;">${emoji}</div>
-                        <div style="flex: 1; font-size: 15px; font-weight: 500; line-height: 1.5;">${text}</div>
+                        <div style="flex: 1; ${textStyle}">${text}</div>
                     </div>`;
                 } else {
-                    return `<div class="theory-line" style="font-size: 15px; line-height: 1.5; font-weight: 500;">${line}</div>`;
+                    return `<div class="theory-line" style="${textStyle}">${text}</div>`;
                 }
             })
             .join('');
