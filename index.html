@@ -1629,6 +1629,12 @@
         const searchInput = document.getElementById('topReservesSearchInput');
         const searchQuery = searchInput ? searchInput.value.toLowerCase().trim() : '';
 
+        // Оновлення дати
+        const dateEl = document.getElementById('rezervyDateValue');
+        if (dateEl) {
+            dateEl.innerText = db.updateDate || db.rezervyDate || db.lastUpdate || new Date().toLocaleDateString('uk-UA');
+        }
+
         if (!store) { safeUpdateHTML(cont, '<div style="padding:20px; text-align:center; color:var(--text-muted); font-weight:600;">Оберіть магазин вище</div>'); return; }
         
         let matches = db.rezervyData.filter(r => r.store === store);
