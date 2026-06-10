@@ -615,7 +615,7 @@
     </div>
 
     <div id="tab-reserves" class="app-tab">
-        <div class="input-group" style="display: flex; gap: 10px; align-items: center; margin-bottom: 8px;">
+        <div class="input-group" style="display: flex; gap: 10px; align-items: center;">
             <select id="storeFilter" onchange="window.renderRezervyList()" style="flex: 1; margin-bottom: 0;">
                 <option value="">-- Оберіть магазин --</option>
             </select>
@@ -623,7 +623,6 @@
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:20px; height:20px;"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
             </button>
         </div>
-        <div id="rezervyDateContainer" style="font-size: 11px; color: var(--text-muted); text-align: right; margin-bottom: 12px; font-weight: 600;"></div>
         <div id="rezervyList" class="list-group"></div>
     </div>
 
@@ -896,7 +895,7 @@
     const CACHE_KEY = 'skillhub_v1_flat'; 
     const SEEN_VERSION_KEY = 'skillhub_version_flat';
     
-    let db = { categories: [], descriptions: {}, tariffs: [], appVersion: "", changelog: "", montazhData: {cities:[], services:[]}, serviceCodes: {}, rezervyData: [], rezervyDate: "", serviceBrands: {}, trainingData: [], skillHubButtons: [], sellerRatings: [] };
+    let db = { categories: [], descriptions: {}, tariffs: [], appVersion: "", changelog: "", montazhData: {cities:[], services:[]}, serviceCodes: {}, rezervyData: [], serviceBrands: {}, trainingData: [], skillHubButtons: [], sellerRatings: [] };
     let currentCategoryData = null;
     let currentServiceData = null; 
     let savedScrollY = 0; 
@@ -967,7 +966,7 @@
     };
 
     function sanitizeDb(data) {
-        if(!data) return { categories: [], descriptions: {}, tariffs: [], montazhData: {cities:[], services:[]}, serviceCodes: {}, rezervyData: [], rezervyDate: "", serviceBrands: {}, trainingData: [], skillHubButtons: [], sellerRatings: [] };
+        if(!data) return { categories: [], descriptions: {}, tariffs: [], montazhData: {cities:[], services:[]}, serviceCodes: {}, rezervyData: [], serviceBrands: {}, trainingData: [], skillHubButtons: [], sellerRatings: [] };
         data.categories = data.categories || [];
         data.descriptions = data.descriptions || {};
         data.tariffs = data.tariffs || [];
@@ -976,7 +975,6 @@
         if (!data.montazhData.services) data.montazhData.services = [];
         data.serviceCodes = data.serviceCodes || {};
         data.rezervyData = data.rezervyData || [];
-        data.rezervyDate = data.rezervyDate || ""; 
         data.serviceBrands = data.serviceBrands || {};
         data.trainingData = data.trainingData || [];
         data.skillHubButtons = data.skillHubButtons || [];
@@ -1277,7 +1275,7 @@
     
     window.escapeForJS = function(str) {
         if (!str) return '';
-        return String(str).replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '&quot;').replace(/\n/g, '\\n').replace(/\r/g, '');
+        return String(str).replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '\\"').replace(/\n/g, '\\n').replace(/\r/g, '');
     }
 
     function normalizeServiceName(s) {
@@ -1567,11 +1565,6 @@
         const cont = document.getElementById('rezervyList');
         const searchInput = document.getElementById('topReservesSearchInput');
         const searchQuery = searchInput ? searchInput.value.toLowerCase().trim() : '';
-        const dateContainer = document.getElementById('rezervyDateContainer');
-
-        if (dateContainer) {
-            dateContainer.innerText = db.rezervyDate ? `Останнє оновлення: ${db.rezervyDate}` : '';
-        }
 
         if (!store) { safeUpdateHTML(cont, '<div style="padding:20px; text-align:center; color:var(--text-muted); font-weight:600;">Оберіть магазин вище</div>'); return; }
         
@@ -1593,7 +1586,7 @@
         let html = matches.map(r => {
             let shortName = r.name.replace(/^(Телевізор|Ноутбук|Смартфон|Мобільний телефон|Планшет|Холодильник|Пральна машина|Мікрохвильова піч|Кавомашина|Пилосос)\s*/i, '');
             
-            // FIX: Екрануємо лапки спеціально для HTML-атрибуту onclick (&quot;)
+            // FIX: Екрануємо лапки спеціально для HTML-атрибуту onclick (")
             let safeCatOnClick = String(r.cat).replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '&quot;');
             let safeNameOnClick = String(shortName).replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '&quot;');
 
