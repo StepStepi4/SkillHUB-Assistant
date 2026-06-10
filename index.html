@@ -12,13 +12,6 @@
     <meta name="apple-mobile-web-app-title" content="SkillHUB_Assistant">
     <link rel="apple-touch-icon" href="icon-192.png">
 
-    <script>
-        (function() {
-            var theme = localStorage.getItem('theme') || 'light';
-            document.documentElement.setAttribute('data-theme', theme);
-        })();
-    </script>
-
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
         
@@ -389,7 +382,7 @@
         .floating-top:active { transform: scale(0.9); }
 
         .rezervy-name { font-size: 14px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.4;}
-        .rezervy-cat { font-size: 12px; color: var(--text-muted); text-transform: uppercase; margin-top: 4px; transition: 0.2s ease;}
+        .rezervy-cat { font-size: 12px; color: var(--text-muted); text-transform: uppercase; margin-top: 4px;}
         .rezervy-price { font-size: 15px; font-weight: 800; color: var(--primary); background: var(--input-bg); padding: 6px 10px; border-radius: 8px; border: 1px solid var(--border); white-space: nowrap;}
         
         #rezervItemModal { z-index: 100010; }
@@ -524,7 +517,7 @@
         
         /* Клас, який активує анімацію випадання */
         .top-search-panel.show { 
-            transform: translateY(0) scale(1); /* Повертаємо на місце у 100% размер */
+            transform: translateY(0) scale(1); /* Повертаємо на місце у 100% розмір */
             opacity: 1;
             pointer-events: auto; /* Вмикаємо кліки */
         }
@@ -551,43 +544,6 @@
         .top-search-close {
             background: transparent; border: none; color: var(--text-muted);
             font-weight: 600; font-size: 14px; cursor: pointer; padding: 10px 5px;
-        }
-
-        /* ========================================================== */
-        /* --- СУЧАСНИЙ БЕЙДЖ ДАТИ ДЛЯ РЕЗЕРВІВ --- */
-        /* ========================================================== */
-        .reserves-date-wrapper {
-            display: flex;
-            justify-content: flex-end;
-            margin-bottom: 12px;
-        }
-        .modern-date-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 6px 12px;
-            background: var(--card-bg);
-            border: 1px solid var(--border);
-            border-radius: 20px;
-            font-size: 10px;
-            font-weight: 700;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.04);
-            transition: 0.3s ease;
-        }
-        [data-theme="dark"] .modern-date-badge {
-            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-        }
-        .modern-date-badge svg {
-            width: 14px;
-            height: 14px;
-            stroke: var(--primary); /* Колір іконки в стиль додатку */
-        }
-        .modern-date-badge span {
-            color: var(--text-main); /* Виділяємо саму дату контрастним кольором */
-            font-weight: 800;
         }
 
     </style>
@@ -659,17 +615,6 @@
     </div>
 
     <div id="tab-reserves" class="app-tab">
-        
-        <div class="reserves-date-wrapper">
-            <div id="rezervyDateBox" class="modern-date-badge">
-                <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                    <circle cx="12" cy="12" r="10"></circle>
-                    <polyline points="12 6 12 12 16 14"></polyline>
-                </svg>
-                Оновлено: <span id="rezervyDateValue">08.06.2026</span>
-            </div>
-        </div>
-
         <div class="input-group" style="display: flex; gap: 10px; align-items: center;">
             <select id="storeFilter" onchange="window.renderRezervyList()" style="flex: 1; margin-bottom: 0;">
                 <option value="">-- Оберіть магазин --</option>
@@ -683,7 +628,7 @@
 
     <div id="tab-skillhub" class="app-tab">
         <div class="list-group" id="dynamicSkillHubButtons">
-        </div>
+            </div>
     </div>
 
     <div id="tab-settings" class="app-tab">
@@ -715,6 +660,16 @@
                 </div>
                 <div class="list-item-arrow">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" style="width:18px; height:18px; stroke-width: 2.5;"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.92-10.24l5.58 5.58"/></svg>
+                </div>
+            </button>
+            
+            <button class="list-item" onclick="window.open('./Education.html', '_blank')">
+                <div class="list-item-content">
+                    <span class="list-item-title">🎓 Навчальний портал</span>
+                    <span class="list-item-subtitle">Пройти тестування та вивчити матеріали</span>
+                </div>
+                <div class="list-item-arrow">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" style="width:18px; height:18px; stroke-width: 2.5;"><polyline points="9 18 15 12 9 6"></polyline></svg>
                 </div>
             </button>
             
@@ -936,8 +891,7 @@
         }
     });
 
-    // ОБНОВЛЕННЫЙ АДРЕС ВАШЕГО API ІЗ ЗАПИТУ
-    const API_URL = 'https://script.google.com/macros/s/AKfycbyiidLHjfGTcU1V1nrtL_8HDP1JE0GfrLyFQk4dMoE5hURm0ueMxOMgoecwSsA8QPFqSw/exec';
+    const API_URL = 'https://script.google.com/macros/s/AKfycbzrYbhxpeWT8raJdM507tBC_PWw9SWleym95qgn4u0s2Hfu22RikrZSArF6YI5oAOJmTQ/exec';
     const CACHE_KEY = 'skillhub_v1_flat'; 
     const SEEN_VERSION_KEY = 'skillhub_version_flat';
     
@@ -990,7 +944,7 @@
             let cls = 'brand-other';
             if (uBrand.includes('SUPPORT') || u.includes('SUPPORT') || u.includes('НАШ СЕРВІС')) cls = 'brand-support'; 
             else if (uBrand.includes('ЕКТА') || uBrand.includes('EKTA') || u.includes('EKTA') || u.includes('ЕКТА')) cls = 'brand-ekta'; 
-            else if (uBrand.includes('EPZ') || uBrand.includes('EPZ') || u.includes('ЕПЗ') || u.includes('ЛІЦЕНЗІЙНЕ') || u.includes('WINDOWS') || u.includes('OFFICE')) cls = 'brand-epz'; 
+            else if (uBrand.includes('EPZ') || u.includes('EPZ') || u.includes('ЕПЗ') || u.includes('ЛІЦЕНЗІЙНЕ') || u.includes('WINDOWS') || u.includes('OFFICE')) cls = 'brand-epz'; 
             else if (u.includes('НАЛАШТУВАННЯ')) cls = 'brand-settings'; 
             else if (u.includes('МОНТАЖ') || u.includes('ПІДКЛЮЧЕННЯ') || u.includes('ВСТАНОВЛЕННЯ')) cls = 'brand-install';
             
@@ -1063,15 +1017,6 @@
         if(currentTheme === 'dark') toggle.classList.add('active');
         else toggle.classList.remove('active');
     }
-
-    // ДОДАНИЙ БЛОК: Синхронізація кнопок між відкритими вкладками
-    window.addEventListener('storage', (event) => {
-        if (event.key === 'theme') {
-            currentTheme = event.newValue || 'light';
-            document.documentElement.setAttribute('data-theme', currentTheme);
-            updateToggleUI();
-        }
-    });
 
     const brandRegex = /^\[(.*?)\]/;
 
@@ -1248,7 +1193,7 @@
                     }
                 }
 
-                document.getElementById('modalBody').innerHTML = generateDescToggleHTML(window.findInDb(db.descriptions, name), code).replace('display: none;', 'display: block;').replace('Детальніше', 'Опис сервісу') + comboHtml;
+                document.getElementById('modalBody').innerHTML = generateDescToggleHTML(raw, code).replace('display: none;', 'display: block;').replace('Детальніше', 'Опис сервісу') + comboHtml;
                 let dc = document.getElementById('modalBody').querySelector('.desc-content');
                 if(dc) dc.classList.add('show');
             }
@@ -1290,10 +1235,6 @@
 
     window.openRatingModal = function() {
         window.renderRatingModalContent();
-        window.openRatingModalBase();
-    }
-    
-    window.openRatingModalBase = function() {
         window.openModalBase('ratingModal');
     }
 
@@ -1400,10 +1341,6 @@
                 actionStr = `onclick="window.openRatingModal()"`;
             } else if (linkStr === "@@") {
                 actionStr = `onclick="window.openModalBase('certManualModal')"`;
-            } else if (linkStr.toLowerCase().includes("education.html") || nm.includes("навчан") || nm.includes("обучен")) {
-                // ПЕРЕХОД НА СТРАНИЦУ ОБУЧЕНИЯ В ЭТОМ ЖЕ ОКНЕ БЕЗ ОТКРЫТИЯ НОВОЙ ВКЛАДКИ
-                let cleanLink = linkStr !== "#" && linkStr !== "" ? linkStr : "Education.html";
-                actionStr = `onclick="window.location.href='${cleanLink}'"`;
             } else if (linkStr !== "" && linkStr !== "#") {
                 actionStr = `onclick="window.open('${linkStr}', '_blank')"`;
             } else {
@@ -1629,12 +1566,6 @@
         const searchInput = document.getElementById('topReservesSearchInput');
         const searchQuery = searchInput ? searchInput.value.toLowerCase().trim() : '';
 
-        // Оновлення дати
-        const dateEl = document.getElementById('rezervyDateValue');
-        if (dateEl) {
-            dateEl.innerText = db.updateDate || db.rezervyDate || db.lastUpdate || new Date().toLocaleDateString('uk-UA');
-        }
-
         if (!store) { safeUpdateHTML(cont, '<div style="padding:20px; text-align:center; color:var(--text-muted); font-weight:600;">Оберіть магазин вище</div>'); return; }
         
         let matches = db.rezervyData.filter(r => r.store === store);
@@ -1656,8 +1587,8 @@
             let shortName = r.name.replace(/^(Телевізор|Ноутбук|Смартфон|Мобільний телефон|Планшет|Холодильник|Пральна машина|Мікрохвильова піч|Кавомашина|Пилосос)\s*/i, '');
             
             // FIX: Екрануємо лапки спеціально для HTML-атрибуту onclick (")
-            let safeCatOnClick = String(r.cat).replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '"');
-            let safeNameOnClick = String(shortName).replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '"');
+            let safeCatOnClick = String(r.cat).replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '&quot;');
+            let safeNameOnClick = String(shortName).replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '&quot;');
 
             // Перевірка наявності категорії в базі
             let searchVal = normalize(r.cat); 
@@ -1683,7 +1614,6 @@
                 <div class="list-item-value rezervy-price">${Math.round(r.price).toLocaleString('uk-UA')} ₴</div>
             </div>`;
         }).join('');
-        
         safeUpdateHTML(cont, html);
     }
 
@@ -1722,20 +1652,17 @@
         window.renderRezervyList();
     };
     
-    // --- НОВЕ: Закриття панелі при кліку в порожнє місце ---
+    // Закриття панелі при кліку в порожнє місце
     document.addEventListener('click', function(event) {
-        // Якщо панель відкрита
         if (topPanel.classList.contains('show')) {
-            // Перевіряємо, чи клік був НЕ по самій панелі і НЕ по кнопці відкриття
             if (!topPanel.contains(event.target) && event.target !== openTopBtn && !openTopBtn.contains(event.target)) {
                 topPanel.classList.remove('show');
                 topInput.value = '';
                 clearTopBtn.style.display = 'none';
-                window.renderRezervyList(); // Скидаємо фільтр резервів
+                window.renderRezervyList(); 
             }
         }
     });
-    // -----------------------------------------
 
     window.openRezervItemModal = function(catName, price, itemName) {
         let searchVal = normalize(catName); let foundItem = null;
@@ -1971,45 +1898,6 @@
         html += `</div>`; return hasInfo ? html : "";
     }
 
-    function generateServiceCardHTML(s, isModalCtx = false, disableCompare = false) {
-        if(!s) return '';
-        let isSelected = false; let compareModeActive = false;
-        if (!disableCompare) {
-            isSelected = isModalCtx ? modalCompareSelection.includes(s.name) : compareSelection.includes(s.name);
-            compareModeActive = isModalCtx ? isModalCompareMode : isCompareMode;
-        }
-        
-        let cardClass = "service-card";
-        if (compareModeActive && !s.isPackage) cardClass += ' compare-mode';
-        if (isSelected) cardClass += ' selected';
-        
-        let safeName = window.escapeForJS(s.name); let safeCode = window.escapeForJS(s.code); let safeLabel = window.escapeForJS(s.label);
-        let clickHandler = '';
-        if (disableCompare) clickHandler = `onclick="window.handleServiceClick(event, '${safeName}', '${safeCode}', ${s.isPackage}, true, '${safeLabel}')"`;
-        else if (isModalCtx) clickHandler = `onclick="window.handleModalServiceClick(event, '${safeName}', ${s.isPackage}, '${safeCode}', '${safeLabel}')"`;
-        else clickHandler = `onclick="window.handleServiceClick(event, '${safeName}', '${safeCode}', ${s.isPackage}, false, '${safeLabel}')"`;
-            
-        let descHtml = s.descToggleHTML || '';
-        let availHtml = s.availabilityHTML ? `<div style="margin-top:8px;">${s.availabilityHTML}</div>` : '';
-        let focusHtml = (s.isFocus && !isSelected) ? `<span style="color:#f59e0b; font-size:16px; flex-shrink:0; line-height:1.2;">🔥</span>` : '';
-        let brandHtml = s.brand ? `<div class="sc-brand ${s.cls}">${s.brand}</div>` : '';
-        let checkboxHtml = (compareModeActive && !s.isPackage) ? `<div class="checkbox"></div>` : '';
-
-        return `
-        <div class="${cardClass}" ${clickHandler}>
-            ${checkboxHtml}
-            <div class="sc-header" style="align-items: center;">
-                <div style="display:flex; flex-direction:column; align-items:flex-start; flex:1; padding-right:10px;">
-                    ${brandHtml}
-                    <div class="sc-title">${focusHtml} <span style="flex:1;">${s.title}</span></div>
-                </div>
-                <div class="sc-price">${s.label}</div>
-            </div>
-            ${availHtml}
-            ${descHtml}
-        </div>`;
-    }
-
     function renderTechInfo() {
         if (!currentCategoryData) return;
         const p = parseFloat(elPriceInput.value) || 0;
@@ -2132,6 +2020,45 @@
 
         dataForSort.sort((a, b) => { if (a.isFocus && !b.isFocus) return -1; if (!a.isFocus && b.isFocus) return 1; return b.numCost - a.numCost; });
         return dataForSort;
+    }
+
+    function generateServiceCardHTML(s, isModalCtx = false, disableCompare = false) {
+        if(!s) return '';
+        let isSelected = false; let compareModeActive = false;
+        if (!disableCompare) {
+            isSelected = isModalCtx ? modalCompareSelection.includes(s.name) : compareSelection.includes(s.name);
+            compareModeActive = isModalCtx ? isModalCompareMode : isCompareMode;
+        }
+        
+        let cardClass = "service-card";
+        if (compareModeActive && !s.isPackage) cardClass += ' compare-mode';
+        if (isSelected) cardClass += ' selected';
+        
+        let safeName = window.escapeForJS(s.name); let safeCode = window.escapeForJS(s.code); let safeLabel = window.escapeForJS(s.label);
+        let clickHandler = '';
+        if (disableCompare) clickHandler = `onclick="window.handleServiceClick(event, '${safeName}', '${safeCode}', ${s.isPackage}, true, '${safeLabel}')"`;
+        else if (isModalCtx) clickHandler = `onclick="window.handleModalServiceClick(event, '${safeName}', ${s.isPackage}, '${safeCode}', '${safeLabel}')"`;
+        else clickHandler = `onclick="window.handleServiceClick(event, '${safeName}', '${safeCode}', ${s.isPackage}, false, '${safeLabel}')"`;
+            
+        let descHtml = s.descToggleHTML || '';
+        let availHtml = s.availabilityHTML ? `<div style="margin-top:8px;">${s.availabilityHTML}</div>` : '';
+        let focusHtml = (s.isFocus && !isSelected) ? `<span style="color:#f59e0b; font-size:16px; flex-shrink:0; line-height:1.2;">🔥</span>` : '';
+        let brandHtml = s.brand ? `<div class="sc-brand ${s.cls}">${s.brand}</div>` : '';
+        let checkboxHtml = (compareModeActive && !s.isPackage) ? `<div class="checkbox"></div>` : '';
+
+        return `
+        <div class="${cardClass}" ${clickHandler}>
+            ${checkboxHtml}
+            <div class="sc-header" style="align-items: center;">
+                <div style="display:flex; flex-direction:column; align-items:flex-start; flex:1; padding-right:10px;">
+                    ${brandHtml}
+                    <div class="sc-title">${focusHtml} <span style="flex:1;">${s.title}</span></div>
+                </div>
+                <div class="sc-price">${s.label}</div>
+            </div>
+            ${availHtml}
+            ${descHtml}
+        </div>`;
     }
 
     function renderServices() {
@@ -2470,11 +2397,11 @@
         try {
             const city = document.getElementById('montazhCity').value; const cat = document.getElementById('montazhCat').value;
             const subcatWrapper = document.getElementById('montazhSubCatWrapper'); const subcat = subcatWrapper.style.display !== 'none' ? document.getElementById('montazhSubCat').value : "";
-            const Pala_container = document.getElementById('montazhResults');
+            const resultsContainer = document.getElementById('montazhResults');
             
-            if (!city || !cat) { safeUpdateHTML(Pala_container, ""); return; }
+            if (!city || !cat) { safeUpdateHTML(resultsContainer, ""); return; }
             const matches = db.montazhData.services.filter(s => s.cat === cat && (!subcatWrapper.style.display || subcatWrapper.style.display === 'none' || !subcat || s.subcat === subcat));
-            if (matches.length === 0) { safeUpdateHTML(Pala_container, `<div style="padding:20px; text-align:center; color:var(--text-muted);">Послуг не знайдено</div>`); return; }
+            if (matches.length === 0) { safeUpdateHTML(resultsContainer, `<div style="padding:20px; text-align:center; color:var(--text-muted);">Послуг не знайдено</div>`); return; }
 
             let renderItems = [];
             matches.forEach(s => {
@@ -2524,7 +2451,7 @@
                      resultsHTML += generateServiceCardHTML(obj, true, false); 
                 }
             });
-            safeUpdateHTML(Pala_container, resultsHTML);
+            safeUpdateHTML(resultsContainer, resultsHTML);
         } catch(e) { console.error(e); }
     }
 
@@ -2724,6 +2651,57 @@
             btn.disabled = false;
             btn.innerText = 'ВІДПРАВИТИ';
         });
+    };
+
+    // --- ЛОГИКА АВТОРИЗАЦИИ НАВЧАННЯ ---
+    window.openEduLoginModal = function() {
+        const savedLogin = localStorage.getItem('edu_saved_login');
+        const savedPass = localStorage.getItem('edu_saved_pass');
+        
+        if (savedLogin && savedPass && db.educationData) {
+            const isValid = db.educationData.users.some(u => String(u.login).trim() === String(savedLogin).trim() && String(u.pass).trim() === String(savedPass).trim());
+            if (isValid) {
+                window.location.href = 'education.html';
+                return;
+            }
+        }
+        
+        document.getElementById('eduLoginInput').value = savedLogin || "";
+        document.getElementById('eduPassInput').value = savedPass || "";
+        document.getElementById('eduRememberCheck').checked = !!savedLogin;
+        document.getElementById('eduAuthError').style.display = 'none';
+        
+        window.openModalBase('eduLoginModal');
+    };
+
+    window.processEduLogin = function() {
+        const login = document.getElementById('eduLoginInput').value.trim();
+        const pass = document.getElementById('eduPassInput').value.trim();
+        const remember = document.getElementById('eduRememberCheck').checked;
+        const errEl = document.getElementById('eduAuthError');
+
+        if (!db.educationData || !db.educationData.users) {
+            errEl.innerText = "База даних ще завантажується...";
+            errEl.style.display = 'block';
+            return;
+        }
+
+        const isValid = db.educationData.users.some(u => String(u.login).trim() === login && String(u.pass).trim() === pass);
+
+        if (isValid) {
+            if (remember) {
+                localStorage.setItem('edu_saved_login', login);
+                localStorage.setItem('edu_saved_pass', pass);
+            } else {
+                localStorage.removeItem('edu_saved_login');
+                localStorage.removeItem('edu_saved_pass');
+                sessionStorage.setItem('edu_temp_auth', 'true'); 
+            }
+            window.location.href = 'education.html';
+        } else {
+            errEl.innerText = "Невірний логін або пароль!";
+            errEl.style.display = 'block';
+        }
     };
 
     init();
