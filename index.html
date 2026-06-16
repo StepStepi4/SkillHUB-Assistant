@@ -496,30 +496,28 @@
 
         /* Сама випадаюча панель (ховається за межами екрану зверху) */
         .top-search-panel {
-            position: fixed; top: 0; left: 0; width: 100%; /* Тепер top завжди 0, ховаємо через transform */
+            position: fixed; top: 0; left: 0; width: 100%; 
             background: var(--nav-bg); 
             backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
-            z-index: 100000; /* Перекриває ВСЕ, включно з модалками */
+            z-index: 100000; 
             padding: calc(env(safe-area-inset-top) + 16px) 16px 16px 16px;
             box-shadow: 0 4px 30px rgba(0,0,0,0.15);
             display: flex; gap: 10px; align-items: center; 
             border-bottom: 1px solid var(--border);
             
-            /* --- НОВА АНІМАЦІЯ: ЗМЕНШЕННЯ-ЗБІЛЬШЕННЯ ТА ВИЇЗД --- */
-            transform: translateY(-150%) scale(0.85); /* Ховаємо вгору і зменшуємо */
+            transform: translateY(-150%) scale(0.85); 
             opacity: 0;
-            pointer-events: none; /* Щоб не перекривала кліки, коли схована */
+            pointer-events: none; 
             
-            /* Пружиниста анімація для transform і плавна для opacity */
             transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.4s ease;
         }
         [data-theme="dark"] .top-search-panel { box-shadow: 0 4px 30px rgba(0,0,0,0.6); border-bottom-color: rgba(255,255,255,0.1); }
         
         /* Клас, який активує анімацію випадання */
         .top-search-panel.show { 
-            transform: translateY(0) scale(1); /* Повертаємо на місце у 100% розмір */
+            transform: translateY(0) scale(1); 
             opacity: 1;
-            pointer-events: auto; /* Вмикаємо кліки */
+            pointer-events: auto; 
         }
         
         .top-search-content {
@@ -615,7 +613,7 @@
     </div>
 
     <div id="tab-reserves" class="app-tab">
-        <div class="input-group" style="display: flex; gap: 10px; align-items: center;">
+        <div class="input-group" style="display: flex; gap: 10px; align-items: center; margin-bottom: 8px;">
             <select id="storeFilter" onchange="window.renderRezervyList()" style="flex: 1; margin-bottom: 0;">
                 <option value="">-- Оберіть магазин --</option>
             </select>
@@ -623,12 +621,12 @@
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:20px; height:20px;"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
             </button>
         </div>
+        <div id="rezervyDateContainer" style="font-size: 11px; color: var(--text-muted); text-align: right; margin-bottom: 12px; font-weight: 600;"></div>
         <div id="rezervyList" class="list-group"></div>
     </div>
 
     <div id="tab-skillhub" class="app-tab">
-        <div class="list-group" id="dynamicSkillHubButtons">
-            </div>
+        <div class="list-group" id="dynamicSkillHubButtons"></div>
     </div>
 
     <div id="tab-settings" class="app-tab">
@@ -660,16 +658,6 @@
                 </div>
                 <div class="list-item-arrow">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" style="width:18px; height:18px; stroke-width: 2.5;"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.92-10.24l5.58 5.58"/></svg>
-                </div>
-            </button>
-            
-            <button class="list-item" onclick="window.open('./Education.html', '_blank')">
-                <div class="list-item-content">
-                    <span class="list-item-title">🎓 Навчальний портал</span>
-                    <span class="list-item-subtitle">Пройти тестування та вивчити матеріали</span>
-                </div>
-                <div class="list-item-arrow">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" style="width:18px; height:18px; stroke-width: 2.5;"><polyline points="9 18 15 12 9 6"></polyline></svg>
                 </div>
             </button>
             
@@ -864,9 +852,8 @@
 </div>
 
 <script>
-    window.currentDevicePrice = 0; // Глобальна ціна пристрою
+    window.currentDevicePrice = 0; 
 
-    // --- ФУНКЦІЯ АНТИ-МЕРЕХТІННЯ ---
     function safeUpdateHTML(elementOrId, newHtml) {
         let el = typeof elementOrId === 'string' ? document.getElementById(elementOrId) : elementOrId;
         if (el && el.innerHTML !== newHtml) {
@@ -891,11 +878,11 @@
         }
     });
 
-    const API_URL = 'https://script.google.com/macros/s/AKfycbzrYbhxpeWT8raJdM507tBC_PWw9SWleym95qgn4u0s2Hfu22RikrZSArF6YI5oAOJmTQ/exec';
+    const API_URL = 'https://script.google.com/macros/s/AKfycbzp0B9IQDgaET9NbDcp2ZHU7OwreCkjXA_Qb9qM2PbFHGD8tcnouC6NUOeqbBMW_-QwyA/exec';
     const CACHE_KEY = 'skillhub_v1_flat'; 
     const SEEN_VERSION_KEY = 'skillhub_version_flat';
     
-    let db = { categories: [], descriptions: {}, tariffs: [], appVersion: "", changelog: "", montazhData: {cities:[], services:[]}, serviceCodes: {}, rezervyData: [], serviceBrands: {}, trainingData: [], skillHubButtons: [], sellerRatings: [] };
+    let db = { categories: [], descriptions: {}, tariffs: [], appVersion: "", changelog: "", montazhData: {cities:[], services:[]}, serviceCodes: {}, rezervyData: [], rezervyDate: "", serviceBrands: {}, trainingData: [], skillHubButtons: [], sellerRatings: [] };
     let currentCategoryData = null;
     let currentServiceData = null; 
     let savedScrollY = 0; 
@@ -966,7 +953,7 @@
     };
 
     function sanitizeDb(data) {
-        if(!data) return { categories: [], descriptions: {}, tariffs: [], montazhData: {cities:[], services:[]}, serviceCodes: {}, rezervyData: [], serviceBrands: {}, trainingData: [], skillHubButtons: [], sellerRatings: [] };
+        if(!data) return { categories: [], descriptions: {}, tariffs: [], montazhData: {cities:[], services:[]}, serviceCodes: {}, rezervyData: [], rezervyDate: "", serviceBrands: {}, trainingData: [], skillHubButtons: [], sellerRatings: [] };
         data.categories = data.categories || [];
         data.descriptions = data.descriptions || {};
         data.tariffs = data.tariffs || [];
@@ -975,6 +962,7 @@
         if (!data.montazhData.services) data.montazhData.services = [];
         data.serviceCodes = data.serviceCodes || {};
         data.rezervyData = data.rezervyData || [];
+        data.rezervyDate = data.rezervyDate || ""; 
         data.serviceBrands = data.serviceBrands || {};
         data.trainingData = data.trainingData || [];
         data.skillHubButtons = data.skillHubButtons || [];
@@ -1275,7 +1263,7 @@
     
     window.escapeForJS = function(str) {
         if (!str) return '';
-        return String(str).replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '\\"').replace(/\n/g, '\\n').replace(/\r/g, '');
+        return String(str).replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '&quot;').replace(/\n/g, '\\n').replace(/\r/g, '');
     }
 
     function normalizeServiceName(s) {
@@ -1565,6 +1553,16 @@
         const cont = document.getElementById('rezervyList');
         const searchInput = document.getElementById('topReservesSearchInput');
         const searchQuery = searchInput ? searchInput.value.toLowerCase().trim() : '';
+        const dateContainer = document.getElementById('rezervyDateContainer');
+
+        if (dateContainer) {
+            if (db.rezervyDate) {
+                dateContainer.innerHTML = `📅 Останнє оновлення: <span style="color:var(--text-main);">${db.rezervyDate}</span>`;
+                dateContainer.style.display = 'block';
+            } else {
+                dateContainer.style.display = 'none';
+            }
+        }
 
         if (!store) { safeUpdateHTML(cont, '<div style="padding:20px; text-align:center; color:var(--text-muted); font-weight:600;">Оберіть магазин вище</div>'); return; }
         
@@ -1586,7 +1584,7 @@
         let html = matches.map(r => {
             let shortName = r.name.replace(/^(Телевізор|Ноутбук|Смартфон|Мобільний телефон|Планшет|Холодильник|Пральна машина|Мікрохвильова піч|Кавомашина|Пилосос)\s*/i, '');
             
-            // FIX: Екрануємо лапки спеціально для HTML-атрибуту onclick (")
+            // FIX: Екрануємо лапки спеціально для HTML-атрибуту onclick
             let safeCatOnClick = String(r.cat).replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '&quot;');
             let safeNameOnClick = String(shortName).replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '&quot;');
 
