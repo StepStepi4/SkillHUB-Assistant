@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="uk">
 <head>
@@ -631,6 +630,18 @@
     </div>
 
     <div id="tab-settings" class="app-tab">
+        
+        <div class="list-group">
+            <div class="list-item" style="flex-direction:column; align-items:flex-start;">
+                <div class="list-item-content" style="margin-bottom: 10px; width:100%;">
+                    <span class="list-item-title">🔍 Парсер Rozetka</span>
+                    <span class="list-item-subtitle">Вставте посилання на товар, щоб отримати EAN та Код товару</span>
+                </div>
+                <input type="text" id="rozetkaUrlInput" placeholder="https://rozetka.com.ua/..." style="margin-bottom: 10px; font-size: 14px;">
+                <button class="btn btn-primary" onclick="window.parseRozetkaProduct()" style="padding: 12px;">Отримати дані</button>
+                <div id="rozetkaParseResult" style="margin-top: 10px; font-size: 14px; font-weight: 600; color: var(--primary); text-align: center; width: 100%;"></div>
+            </div>
+        </div>
         <div class="list-group">
             <div class="list-item">
                 <div class="list-item-content">
@@ -854,6 +865,51 @@
 
 <script>
     window.currentDevicePrice = 0; 
+
+    // --- ЛОГІКА ЗАПУСКУ ПАРСЕРА ROZETKA ---
+    window.parseRozetkaProduct = async function() {
+        const urlInput = document.getElementById('rozetkaUrlInput').value.trim();
+        const resultDiv = document.getElementById('rozetkaParseResult');
+        
+        if (!urlInput) {
+            resultDiv.style.color = "var(--danger)";
+            resultDiv.innerText = "Будь ласка, вставте посилання!";
+            return;
+        }
+        
+        resultDiv.style.color = "var(--text-muted)";
+        resultDiv.innerText = "Парсинг...";
+        
+        try {
+            const response = await fetch(API_URL, {
+                method: 'POST',
+                body: JSON.stringify({ action: "parse_rozetka", url: urlInput })
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                resultDiv.style.color = "var(--primary)";
+                let text = [];
+                if (data.ean) text.push(`EAN: ${data.ean}`);
+                if (data.code) text.push(`Код товару: ${data.code}`);
+                
+                if (text.length > 0) {
+                    resultDiv.innerHTML = text.join('<br>');
+                } else {
+                    resultDiv.style.color = "#f59e0b";
+                    resultDiv.innerText = "Дані не знайдені на сторінці.";
+                }
+            } else {
+                resultDiv.style.color = "var(--danger)";
+                resultDiv.innerText = "Помилка: Невірне посилання або захист сайту";
+            }
+        } catch (err) {
+            resultDiv.style.color = "var(--danger)";
+            resultDiv.innerText = "Помилка мережі!";
+        }
+    }
+    // ----------------------------------------
 
     function safeUpdateHTML(elementOrId, newHtml) {
         let el = typeof elementOrId === 'string' ? document.getElementById(elementOrId) : elementOrId;
@@ -1264,7 +1320,7 @@
     
     window.escapeForJS = function(str) {
         if (!str) return '';
-        return String(str).replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '"').replace(/\n/g, '\\n').replace(/\r/g, '');
+        return String(str).replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '&quot;').replace(/\n/g, '\\n').replace(/\r/g, '');
     }
 
     function normalizeServiceName(s) {
@@ -1586,8 +1642,8 @@
             let shortName = r.name.replace(/^(Телевізор|Ноутбук|Смартфон|Мобільний телефон|Планшет|Холодильник|Пральна машина|Мікрохвильова піч|Кавомашина|Пилосос)\s*/i, '');
             
             // FIX: Екрануємо лапки спеціально для HTML-атрибуту onclick
-            let safeCatOnClick = String(r.cat).replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '"');
-            let safeNameOnClick = String(shortName).replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '"');
+            let safeCatOnClick = String(r.cat).replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '&quot;');
+            let safeNameOnClick = String(shortName).replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '&quot;');
 
             // Перевірка наявності категорії в базі
             let searchVal = normalize(r.cat); 
