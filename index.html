@@ -1295,7 +1295,7 @@
     
     window.escapeForJS = function(str) {
         if (!str) return '';
-        return String(str).replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '\\"').replace(/\n/g, '\\n').replace(/\r/g, '');
+        return String(str).replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '&quot;').replace(/\n/g, '\\n').replace(/\r/g, '');
     }
 
     function normalizeServiceName(s) {
@@ -1917,7 +1917,7 @@
                         <span style="font-size: 18px;">❓</span> Як дізнатись причину уцінки
                     </button>
                     <div class="input-group" style="position:relative; margin-bottom: 12px;">
-                        <select id="discountReasonSelect" onchange="window.selectDiscountReason(this.value)" style="font-weight: 600; color: var(--text-main);">
+                        <select id="discountReasonSelect" onchange="window.selectDiscountReason(this.value)" style="font-weight: 600; color: var(--text-main); text-align: center; text-align-last: center;">
                             <option value="">-- Оберіть причину уцінки --</option>
                             ${optionsHtml}
                         </select>
@@ -2051,8 +2051,11 @@
         }
         
         const fields = [
-            ['💵', 'Платний ремонт', calcPrice], ['🔧', 'Найдорожчі деталі', item.expensiveParts],
-            ['✅', 'Гарантійні випадки', item.garant], ['❌', 'Негарантійні випадки', item.negarant]
+            ['💵', 'Платний ремонт', calcPrice], 
+            ['🔧', 'Найдорожчі деталі', item.expensiveParts],
+            ['✅', 'Гарантійні випадки', item.garant], 
+            ['🛡️', 'Гарантія', item.garantiya], 
+            ['❌', 'Негарантійні випадки', item.negarant]
         ];
         
         fields.forEach(f => {
