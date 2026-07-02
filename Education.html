@@ -444,7 +444,7 @@
             <div style="background: var(--card-bg); border: 1px solid var(--border); border-radius: 20px; padding: 24px; margin-bottom: 30px; text-align: left; box-shadow: 0 8px 24px rgba(0,0,0,0.04); max-width: 100%;">
                 <p style="font-size: 15px; font-weight: 600; margin-bottom: 16px; line-height: 1.5;">
                     <span style="font-size: 18px; display: inline-block; vertical-align: middle;">⏱</span> 
-                    У вас буде рівно <strong>35 секунд</strong> на кожне питання.
+                    У вас буде рівно <strong>25 секунд</strong> на кожне питання.
                 </p>
                 <p style="font-size: 15px; font-weight: 600; margin-bottom: 0; line-height: 1.5; color: var(--danger);">
                     <span style="font-size: 18px; display: inline-block; vertical-align: middle;">🚫</span> 
@@ -487,12 +487,50 @@
 
     let chartsInstances = {};
 
+    // --- ФУНКЦІЯ МАСШТАБУВАННЯ ШРИФТІВ ---
+    window.updateFontScale = function(scale) {
+        let style = document.getElementById('dynamicFontScale');
+        if(!style) { 
+            style = document.createElement('style'); 
+            style.id = 'dynamicFontScale'; 
+            document.head.appendChild(style); 
+        }
+        style.innerHTML = `
+            input, select, textarea, button, .btn { font-size: calc(16px * ${scale}) !important; }
+            h1 { font-size: calc(26px * ${scale}) !important; }
+            h2 { font-size: calc(24px * ${scale}) !important; }
+            p.subtitle { font-size: calc(14px * ${scale}) !important; }
+            .section-title { font-size: calc(14px * ${scale}) !important; }
+            .input-label { font-size: calc(12px * ${scale}) !important; }
+            .progress-title-text { font-size: calc(12px * ${scale}) !important; }
+            .progress-percent-val { font-size: calc(28px * ${scale}) !important; }
+            .stat-val { font-size: calc(22px * ${scale}) !important; }
+            .stat-label { font-size: calc(11px * ${scale}) !important; }
+            .list-card-title { font-size: calc(16px * ${scale}) !important; }
+            .theory-line { font-size: calc(15px * ${scale}) !important; }
+            .question-title { font-size: calc(17px * ${scale}) !important; }
+            .answer-label { font-size: calc(14px * ${scale}) !important; }
+            .ach-title { font-size: calc(22px * ${scale}) !important; }
+            .ach-card-title { font-size: calc(15px * ${scale}) !important; }
+            .ach-card-desc { font-size: calc(13px * ${scale}) !important; }
+            #deadlineText { font-size: calc(14px * ${scale}) !important; }
+            #userWelcome { font-size: calc(13px * ${scale}) !important; }
+            .timer-box { font-size: calc(16px * ${scale}) !important; }
+        `;
+    };
+
     window.addEventListener('storage', (event) => {
         if (event.key === 'theme') {
             let currentTheme = event.newValue || 'light';
             document.documentElement.setAttribute('data-theme', currentTheme);
+        } else if (event.key === 'skillhub_font_scale') {
+            window.updateFontScale(event.newValue || "1");
         }
     });
+
+    let savedFontScale = localStorage.getItem('skillhub_font_scale') || "1";
+    window.updateFontScale(savedFontScale);
+    // --------------------------------------
 
     let db = null;
     let globalAchievements = []; 
@@ -515,7 +553,7 @@
 
     let currentQuestionIndex = 0;
     let totalTimeSpent = 0;
-    const TIME_PER_QUESTION = 35; 
+    const TIME_PER_QUESTION = 25; 
 
     function getCleanName(str) {
         if (!str) return "";
@@ -1866,6 +1904,7 @@
         });
     }
 
+    // --- Оновлений парсер описів для розділу Education ---
     function openProduct(index) {
         currentProductData = coursesMap[currentCourseName][index];
         let parsed = formatWithCustomEmoji(currentProductData.product, '');
@@ -1881,15 +1920,35 @@
             .map(line => line.trim())
             .filter(line => line.length > 0)
             .map(line => {
-                let isAa = false;
-                let isAA = false;
-
-                if (line.startsWith('[Aa]')) {
-                    isAa = true;
+                let textStyle = "font-size: 15px; line-height: 1.5; font-weight: 500;";
+                
+                // Перевірка маркерів
+                if (line.startsWith('(AA+)')) {
+                    line = line.substring(5).trim().toUpperCase();
+                    textStyle += " font-weight:800; margin-top:8px;";
+                } else if (line.startsWith('(Аа+)')) {
+                    line = line.substring(5).trim();
+                    line = line.charAt(0).toUpperCase() + line.slice(1);
+                    textStyle += " font-weight:800; color:var(--text-main); margin-top:8px;";
+                } else if (line.startsWith('(аа*)')) {
+                    line = line.substring(5).trim();
+                    textStyle += " font-style:italic;";
+                } else if (line.startsWith('(КР+)')) {
+                    line = line.substring(5).trim().toUpperCase();
+                    textStyle += " font-weight:800; color:var(--danger); margin-top:8px;";
+                } else if (line.startsWith('(Кр+)')) {
+                    line = line.substring(5).trim();
+                    textStyle += " font-weight:800; color:var(--danger); margin-top:8px;";
+                } else if (line.startsWith('(кр*)')) {
+                    line = line.substring(5).trim();
+                    textStyle += " font-style:italic; color:var(--danger);";
+                } else if (line.startsWith('[Aa]')) { // Зворотня сумісність
                     line = line.substring(4).trim();
-                } else if (line.startsWith('[AA]')) {
-                    isAA = true;
-                    line = line.substring(4).trim();
+                    line = line.charAt(0).toUpperCase() + line.slice(1);
+                    textStyle += " font-weight:800; color:var(--text-main); margin-top:8px;";
+                } else if (line.startsWith('[AA]')) { // Зворотня сумісність
+                    line = line.substring(4).trim().toUpperCase();
+                    textStyle += " font-weight:800; color:var(--text-main); margin-top:8px;";
                 }
 
                 let match = line.match(/^(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])/);
@@ -1899,17 +1958,6 @@
                 if (match) {
                     emoji = match[0];
                     text = line.replace(emoji, '').trim();
-                }
-
-                if (isAa && text.length > 0) {
-                    text = text.charAt(0).toUpperCase() + text.slice(1);
-                }
-
-                let textStyle = "font-size: 15px; line-height: 1.5; font-weight: 500;";
-                if (isAa) {
-                    textStyle = "font-size: 19px; line-height: 1.3; font-weight: 800; color: var(--text-main); margin-top: 8px;";
-                } else if (isAA) {
-                    textStyle = "font-size: 15px; line-height: 1.5; font-weight: 800; text-transform: uppercase; color: var(--text-main);";
                 }
 
                 if (emoji) {
