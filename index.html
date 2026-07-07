@@ -452,26 +452,9 @@
         #certManualModal { z-index: 100035; }
         #compareModal { z-index: 100040; }
         #ratingModal { z-index: 100045; }
+        #klochCalcModal { z-index: 100050; }
         #galleryModal { z-index: 100060; }
         
-        /* Спеціальний стиль для Калькулятора щоб він був по центру (вище клавіатури) */
-        #klochCalcModal { align-items: center; justify-content: center; z-index: 100050; }
-        .kloch-modal { 
-            border-radius: 24px; 
-            margin: auto; 
-            max-width: 440px; 
-            width: 90%; 
-            max-height: 85vh;
-            transform: translateY(30px) scale(0.95);
-            opacity: 0;
-            padding-bottom: 24px;
-            transition: all 0.3s cubic-bezier(0.1, 0.9, 0.2, 1);
-        }
-        #klochCalcModal.show .kloch-modal {
-            transform: translateY(0) scale(1);
-            opacity: 1;
-        }
-
         .gallery-nav { background: rgba(255,255,255,0.2); border: none; color: white; font-size: 24px; padding: 10px; cursor: pointer; border-radius: 50%; position: absolute; top: 50%; transform: translateY(-50%); z-index: 10; }
         .gallery-nav.prev { left: 10px; }
         .gallery-nav.next { right: 10px; }
@@ -826,7 +809,7 @@
 </div>
 
 <div id="klochCalcModal" class="modal">
-    <div class="modal-content kloch-modal">
+    <div class="modal-content">
         <div class="modal-header" style="align-items: flex-start; margin-bottom: 20px;">
             <div style="display:flex; flex-direction:column;">
                 <div class="modal-title" style="width: 100%;">🧮 Калькулятор бонусів</div>
@@ -1735,7 +1718,8 @@
         let text = "🧮 Розрахунок бонусів:\n\n";
         let total = 0;
         window.klochList.forEach((item, index) => {
-            text += `${index + 1}. Вартість: ${item.price} ₴ | Кіл-ть: ${item.qty} шт | Коеф: ${item.percent}%\n`;
+            // Оновлено: прибрано вивід коефіцієнта
+            text += `${index + 1}. Вартість: ${item.price} ₴ | Кіл-ть: ${item.qty} шт\n`;
             text += `   Бонус: ${item.result.toFixed(2)} ₴\n`;
             total += item.result;
         });
