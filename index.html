@@ -250,7 +250,7 @@
             background-repeat: no-repeat; background-position: right 16px center; cursor: pointer;
         }
         
-        .clear-btn { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); width: 24px; height: 24px; background-color: var(--primary); border: none; border-radius: 50%; cursor: pointer; display: none; padding: 0; transition: background-color 0.2s, transform 0.1s; -webkit-tap-highlight-color: transparent; color: white; font-size: 18px; font-weight: bold; line-height: 24px; text-align: center; }
+        .clear-btn { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); width: 24px; height: 24px; background-color: var(--primary); border: none; border-radius: 50%; cursor: pointer; display: none; padding: 0; transition: background-color 0.2s, transform 0.1s; -webkit-tap-highlight-color: transparent; color: white; font-size: 18px; font-weight: bold; line-height: 24px; text-align: center; z-index: 10; }
         .clear-btn:active { background-color: var(--danger); transform: translateY(-50%) scale(1.1); }
 
         .btn {
@@ -454,6 +454,24 @@
         #ratingModal { z-index: 100045; }
         #galleryModal { z-index: 100060; }
         
+        /* Спеціальний стиль для Калькулятора щоб він був по центру (вище клавіатури) */
+        #klochCalcModal { align-items: center; justify-content: center; z-index: 100050; }
+        .kloch-modal { 
+            border-radius: 24px; 
+            margin: auto; 
+            max-width: 440px; 
+            width: 90%; 
+            max-height: 85vh;
+            transform: translateY(30px) scale(0.95);
+            opacity: 0;
+            padding-bottom: 24px;
+            transition: all 0.3s cubic-bezier(0.1, 0.9, 0.2, 1);
+        }
+        #klochCalcModal.show .kloch-modal {
+            transform: translateY(0) scale(1);
+            opacity: 1;
+        }
+
         .gallery-nav { background: rgba(255,255,255,0.2); border: none; color: white; font-size: 24px; padding: 10px; cursor: pointer; border-radius: 50%; position: absolute; top: 50%; transform: translateY(-50%); z-index: 10; }
         .gallery-nav.prev { left: 10px; }
         .gallery-nav.next { right: 10px; }
@@ -807,6 +825,69 @@
     </div>
 </div>
 
+<div id="klochCalcModal" class="modal">
+    <div class="modal-content kloch-modal">
+        <div class="modal-header" style="align-items: flex-start; margin-bottom: 20px;">
+            <div style="display:flex; flex-direction:column;">
+                <div class="modal-title" style="width: 100%;">🧮 Калькулятор бонусів</div>
+                <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-top: 4px;">
+                    Актуально на <span id="klochRelevance" style="font-weight: 700; color: var(--primary);"></span>
+                </div>
+            </div>
+            <button class="modal-close" onclick="window.closeKlochCalc()"></button>
+        </div>
+        <div class="modal-body" style="display: flex; flex-direction: column; gap: 16px;">
+            
+            <div class="input-group" style="margin-bottom: 0;">
+                <span style="font-weight:600; display:block; margin-bottom:8px; font-size:14px; color:var(--text-muted);">Вартість товару (₴)</span>
+                <div style="position: relative;">
+                    <input type="number" id="klochPrice" placeholder="Наприклад, 2200" oninput="window.calculateKlochBonus(); document.getElementById('clearKlochPriceBtn').style.display = this.value ? 'block' : 'none';">
+                    <button id="clearKlochPriceBtn" class="clear-btn" style="display:none;" onclick="document.getElementById('klochPrice').value=''; this.style.display='none'; document.getElementById('klochPrice').focus(); window.calculateKlochBonus();">×</button>
+                </div>
+            </div>
+
+            <div class="input-group" style="margin-bottom: 0;">
+                <span style="font-weight:600; display:block; margin-bottom:8px; font-size:14px; color:var(--text-muted);">Кількість (шт)</span>
+                <div style="position: relative;">
+                    <input type="number" id="klochQty" placeholder="1" value="1" oninput="window.calculateKlochBonus(); document.getElementById('clearKlochQtyBtn').style.display = this.value ? 'block' : 'none';">
+                    <button id="clearKlochQtyBtn" class="clear-btn" style="display:block;" onclick="document.getElementById('klochQty').value=''; this.style.display='none'; document.getElementById('klochQty').focus(); window.calculateKlochBonus();">×</button>
+                </div>
+            </div>
+
+            <div style="background: var(--primary-light); border-radius: 16px; padding: 16px; text-align: center; border: 1px dashed var(--primary); transition: 0.3s;" id="klochResultBox">
+                <div style="font-size: 13px; color: var(--rozetka-green-dark); font-weight: 600; margin-bottom: 4px;">Розрахунковий бонус</div>
+                <div id="klochResultValue" style="font-size: 28px; font-weight: 900; color: var(--text-main);">0.00 ₴</div>
+                <div id="klochResultFormula" style="font-size: 11px; color: var(--text-muted); margin-top: 4px; font-style: italic;">Формула: (0 * 0%) * 1</div>
+            </div>
+
+            <div style="display: flex; gap: 10px;">
+                <button class="btn btn-primary" style="flex: 1; padding: 14px; font-size: 15px;" onclick="window.addKlochToList()">➕ Додати в список</button>
+            </div>
+
+            <div style="border-top: 1px dashed var(--border); margin: 6px 0;"></div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span style="font-weight:700; font-size:14px; color:var(--text-main);">📋 Тимчасовий список</span>
+                <button style="background: transparent; border: none; color: var(--danger); font-size: 12px; font-weight: 600; cursor: pointer; padding: 4px 8px;" onclick="window.clearKlochList()">Очистити</button>
+            </div>
+
+            <div id="klochListContainer" style="display: flex; flex-direction: column; gap: 8px;">
+                </div>
+
+            <div style="display: flex; gap: 8px; margin-top: 8px;">
+                <div style="flex: 1; display: flex; justify-content: space-between; align-items: center; background: var(--card-bg); padding: 12px 16px; border-radius: 12px; border: 1px solid var(--border); box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
+                    <span style="font-size: 14px; font-weight: 700; color: var(--text-muted);">Загальна сума:</span>
+                    <span id="klochTotalSum" style="font-size: 18px; font-weight: 900; color: var(--primary);">0.00 ₴</span>
+                </div>
+                <button id="exportKlochBtn" class="btn" style="background: var(--input-bg); color: var(--text-main); border: 1px solid var(--border); width: 50px; padding: 0; flex-shrink: 0;" onclick="window.exportKlochList()">
+                    <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect></svg>
+                </button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
 <div id="certManualModal" class="modal">
     <div class="modal-content" style="max-height: 90vh;">
         <div class="modal-header">
@@ -927,6 +1008,9 @@
     window.currentRezervItem = null;
     window.currentRezervPrice = 0;
     window.currentRezervIsDiscount = false;
+    
+    // Тимчасовий масив для калькулятора Клочківської
+    window.klochList = [];
 
     // --- ФУНКЦІЯ МАСШТАБУВАННЯ ШРИФТІВ ---
     window.updateFontScale = function(scale) {
@@ -997,11 +1081,11 @@
         }
     });
 
-    const API_URL = 'https://script.google.com/macros/s/AKfycbyjtt5iCmzXUXoDOeHZ2FWZv7FMjgcxoZ3CU-PrPAN1PFKkR2lDPLwwtjrpeeFSKiyDrw/exec';
+    const API_URL = 'https://script.google.com/macros/s/AKfycbxOheaO5dCbXcWAvFT_B39PIYqGIUBfuWlnH7PbKv8F--ZWWmf39QIY6qRyRWxNVkDESg/exec';
     const CACHE_KEY = 'skillhub_v1_flat'; 
     const SEEN_VERSION_KEY = 'skillhub_version_flat';
     
-    let db = { categories: [], descriptions: {}, tariffs: [], appVersion: "", changelog: "", montazhData: {cities:[], services:[]}, serviceCodes: {}, rezervyData: [], rezervyDate: "", serviceBrands: {}, trainingData: [], skillHubButtons: [], sellerRatings: [] };
+    let db = { categories: [], descriptions: {}, tariffs: [], appVersion: "", changelog: "", montazhData: {cities:[], services:[]}, serviceCodes: {}, rezervyData: [], rezervyDate: "", serviceBrands: {}, trainingData: [], skillHubButtons: [], sellerRatings: [], klochCalcData: { rules: [], relevance: "" } };
     let currentCategoryData = null;
     let currentServiceData = null; 
     let savedScrollY = 0; 
@@ -1072,7 +1156,7 @@
     };
 
     function sanitizeDb(data) {
-        if(!data) return { categories: [], descriptions: {}, tariffs: [], montazhData: {cities:[], services:[]}, serviceCodes: {}, rezervyData: [], rezervyDate: "", serviceBrands: {}, trainingData: [], skillHubButtons: [], sellerRatings: [] };
+        if(!data) return { categories: [], descriptions: {}, tariffs: [], montazhData: {cities:[], services:[]}, serviceCodes: {}, rezervyData: [], rezervyDate: "", serviceBrands: {}, trainingData: [], skillHubButtons: [], sellerRatings: [], klochCalcData: { rules: [], relevance: "" } };
         data.categories = data.categories || [];
         data.descriptions = data.descriptions || {};
         data.tariffs = data.tariffs || [];
@@ -1086,6 +1170,7 @@
         data.trainingData = data.trainingData || [];
         data.skillHubButtons = data.skillHubButtons || [];
         data.sellerRatings = data.sellerRatings || [];
+        data.klochCalcData = data.klochCalcData || { rules: [], relevance: "" };
         return data;
     }
 
@@ -1323,7 +1408,7 @@
             window.scrollTo(0, savedScrollY);
         }
         
-        if (modalId === 'descModal' || modalId === 'rezervItemModal' || modalId === 'sellerModal' || modalId === 'certManualModal' || modalId === 'ratingModal') {
+        if (modalId === 'descModal' || modalId === 'rezervItemModal' || modalId === 'sellerModal' || modalId === 'certManualModal' || modalId === 'ratingModal' || modalId === 'klochCalcModal') {
             if (isModalCompareMode) {
                 isModalCompareMode = false;
                 modalCompareSelection = [];
@@ -1346,7 +1431,7 @@
     }
 
     function checkOpenModals() {
-        const modals = ['descModal', 'compareModal', 'rezervItemModal', 'galleryModal', 'sellerModal', 'certManualModal', 'ratingModal'];
+        const modals = ['descModal', 'compareModal', 'rezervItemModal', 'galleryModal', 'sellerModal', 'certManualModal', 'ratingModal', 'klochCalcModal'];
         for (let id of modals) {
             let el = document.getElementById(id);
             if (el && el.classList.contains('show')) return true;
@@ -1484,7 +1569,9 @@
             let linkStr = String(btn.link).trim();
             let nm = String(btn.name).toLowerCase();
             
-            if (linkStr === "--") {
+            if (linkStr === "Calculator_kloch") {
+                actionStr = `onclick="window.openKlochCalc()"`;
+            } else if (linkStr === "--") {
                 actionStr = `onclick="window.openSellerModal()"`;
             } else if (linkStr === "%") {
                 actionStr = `onclick="window.openRatingModal()"`;
@@ -1499,6 +1586,8 @@
                     actionStr = `onclick="window.openModalBase('certManualModal')"`;
                 } else if (nm.includes("рейтинг")) {
                     actionStr = `onclick="window.openRatingModal()"`;
+                } else if (nm.includes("калькулятор") || nm.includes("клочківськ")) {
+                    actionStr = `onclick="window.openKlochCalc()"`;
                 }
             }
 
@@ -1519,6 +1608,160 @@
         
         safeUpdateHTML(container, html);
     };
+
+    // --- ЛОГІКА КАЛЬКУЛЯТОРА КЛОЧКІВСЬКОЇ ---
+    window.openKlochCalc = function() {
+        if (db.klochCalcData && db.klochCalcData.relevance) {
+            document.getElementById('klochRelevance').innerText = db.klochCalcData.relevance;
+        } else {
+            document.getElementById('klochRelevance').innerText = "не вказано";
+        }
+        window.clearKlochForm();
+        window.renderKlochList();
+        window.openModalBase('klochCalcModal');
+    }
+
+    window.closeKlochCalc = function() {
+        window.closeModalBase('klochCalcModal');
+    }
+
+    window.calculateKlochBonus = function() {
+        let price = parseFloat(document.getElementById('klochPrice').value) || 0;
+        let qty = parseInt(document.getElementById('klochQty').value) || 1;
+        
+        let result = 0;
+        let appliedPercent = 0;
+
+        if (price > 0 && db.klochCalcData && db.klochCalcData.rules && db.klochCalcData.rules.length > 0) {
+            let rules = [...db.klochCalcData.rules];
+            rules.sort((a, b) => a.min - b.min);
+            
+            let matchedRule = rules.find(r => price >= r.min && price <= r.max);
+            
+            if (matchedRule) {
+                appliedPercent = matchedRule.percent;
+            } else if (rules.length > 0 && price > rules[rules.length - 1].max) {
+                // Якщо сума вище останнього максимального кроку - множимо на останній коефіцієнт
+                appliedPercent = rules[rules.length - 1].percent;
+            }
+            
+            result = (price * (appliedPercent / 100)) * qty;
+        }
+
+        let resBox = document.getElementById('klochResultBox');
+        resBox.style.transform = 'scale(1.02)';
+        setTimeout(() => resBox.style.transform = 'scale(1)', 150);
+
+        document.getElementById('klochResultValue').innerText = result.toFixed(2) + ' ₴';
+        document.getElementById('klochResultFormula').innerText = `Формула: (${price} * ${appliedPercent}%) * ${qty}`;
+        
+        return { price, qty, percent: appliedPercent, result };
+    }
+
+    window.addKlochToList = function() {
+        let calcData = window.calculateKlochBonus();
+        if (calcData.price <= 0) return;
+
+        window.klochList.push({
+            id: Date.now(),
+            price: calcData.price,
+            qty: calcData.qty,
+            percent: calcData.percent,
+            result: calcData.result
+        });
+
+        window.clearKlochForm();
+        window.renderKlochList();
+    }
+
+    window.clearKlochForm = function() {
+        let priceEl = document.getElementById('klochPrice');
+        let qtyEl = document.getElementById('klochQty');
+        priceEl.value = '';
+        qtyEl.value = '1';
+        
+        document.getElementById('clearKlochPriceBtn').style.display = 'none';
+        document.getElementById('clearKlochQtyBtn').style.display = 'block';
+        
+        window.calculateKlochBonus();
+    }
+
+    window.clearKlochList = function() {
+        window.klochList = [];
+        window.renderKlochList();
+    }
+
+    window.removeKlochItem = function(id) {
+        window.klochList = window.klochList.filter(item => item.id !== id);
+        window.renderKlochList();
+    }
+
+    window.renderKlochList = function() {
+        let container = document.getElementById('klochListContainer');
+        let totalSpan = document.getElementById('klochTotalSum');
+        
+        if (window.klochList.length === 0) {
+            container.innerHTML = '<div style="text-align:center; font-size:12px; color:var(--text-muted); padding: 10px;">Список порожній</div>';
+            totalSpan.innerText = '0.00 ₴';
+            return;
+        }
+
+        let total = 0;
+        let html = window.klochList.map((item, index) => {
+            total += item.result;
+            return `
+            <div style="display: flex; justify-content: space-between; align-items: center; background: var(--input-bg); padding: 10px 12px; border-radius: 10px; border: 1px solid var(--border); animation: fade 0.2s ease;">
+                <div style="display: flex; flex-direction: column; gap: 2px;">
+                    <span style="font-weight: 700; font-size: 13px; color: var(--text-main);">Позиція ${index + 1} <span style="font-weight: 500; color: var(--text-muted);">(${item.price} ₴ × ${item.qty} шт)</span></span>
+                    <span style="font-size: 11px; color: var(--primary);">Коеф: ${item.percent}%</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <span style="font-weight: 800; font-size: 14px; color: var(--text-main);">${item.result.toFixed(2)} ₴</span>
+                    <button style="background: transparent; border: none; color: var(--danger); cursor: pointer; padding: 4px;" onclick="window.removeKlochItem(${item.id})">✖</button>
+                </div>
+            </div>`;
+        }).join('');
+
+        container.innerHTML = html;
+        totalSpan.innerText = total.toFixed(2) + ' ₴';
+    }
+
+    window.exportKlochList = function() {
+        if (window.klochList.length === 0) {
+            alert("Список порожній, немає що копіювати.");
+            return;
+        }
+
+        let text = "🧮 Розрахунок бонусів:\n\n";
+        let total = 0;
+        window.klochList.forEach((item, index) => {
+            text += `${index + 1}. Вартість: ${item.price} ₴ | Кіл-ть: ${item.qty} шт | Коеф: ${item.percent}%\n`;
+            text += `   Бонус: ${item.result.toFixed(2)} ₴\n`;
+            total += item.result;
+        });
+        text += `\n💰 Загальна сума: ${total.toFixed(2)} ₴`;
+
+        let btn = document.getElementById('exportKlochBtn');
+        let originalHtml = btn.innerHTML;
+
+        const successAnim = () => {
+            btn.innerHTML = '✅';
+            setTimeout(() => { btn.innerHTML = originalHtml; }, 2000);
+        };
+
+        const fallbackCopy = () => {
+            let t = document.createElement("textarea"); t.value = text;
+            t.style.position = "fixed"; t.style.opacity = "0"; document.body.appendChild(t);
+            t.focus(); t.select();
+            try { document.execCommand('copy'); successAnim(); } catch (err) {}
+            t.remove();
+        };
+
+        if (navigator.clipboard && window.isSecureContext) {
+            navigator.clipboard.writeText(text).then(() => successAnim()).catch(() => fallbackCopy());
+        } else fallbackCopy();
+    }
+    // ------------------------------------------
 
     window.renderRatingModalContent = function() {
         const container = document.getElementById('ratingModalBody');
