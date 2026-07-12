@@ -33,6 +33,8 @@
             --danger: #ef4444;
             --danger-bg: rgba(239, 68, 68, 0.08);
             --success: #10b981;
+            --blue: #3b82f6;
+            --blue-bg: rgba(59, 130, 246, 0.1);
 
             --rozetka-green-light: #00c65d;
             --rozetka-green-dark: #00a046;
@@ -54,6 +56,8 @@
             --danger: #ff453a;
             --danger-bg: rgba(255, 69, 58, 0.15);
             --success: #34d399;
+            --blue: #0a84ff;
+            --blue-bg: rgba(10, 132, 255, 0.15);
             
             --chart-bg: #1c1c1e;
             --chart-text: #ffffff;
@@ -114,6 +118,8 @@
         .btn-glow:disabled { background: var(--border); box-shadow: none; cursor: not-allowed; opacity: 0.7; color: var(--text-muted); }
         .btn-secondary { background: var(--input-bg); color: var(--text-main); border: 1px solid var(--border); }
         .btn-secondary:active { transform: scale(0.96); background: var(--border); }
+        .btn-blue { background: var(--blue); color: white; box-shadow: 0 8px 20px rgba(59, 130, 246, 0.25); }
+        .btn-blue:active { transform: scale(0.96); }
 
         /* --- НАВІГАЦІЯ --- */
         .nav-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; gap: 12px; padding: 0; background: transparent; border: none; box-shadow: none; }
@@ -130,7 +136,7 @@
         .floating-exit { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); width: auto; height: 48px; background: rgba(255,255,255,0.9); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); border: 1px solid var(--border); border-radius: 24px; padding: 0 20px; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 8px 24px rgba(0,0,0,0.1); z-index: 9000; cursor: pointer; transition: 0.2s; color: var(--text-main); font-weight: 700; font-size: 14px; text-transform: uppercase; }
         .floating-exit:active { transform: translateX(-50%) scale(0.95); background: var(--input-bg); }
 
-        /* --- ПРОГРЕС-БАР --- */
+        /* --- ПРОГРЕС-БАР та СТАТИСТИКА --- */
         .progress-widget { background: var(--card-bg); border-radius: 20px; padding: 20px; margin-bottom: 24px; border: 1px solid var(--border); box-shadow: 0 6px 16px rgba(0,0,0,0.03); transition: all 0.3s ease; }
         .progress-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 12px; }
         .progress-title-text { font-size: 12px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
@@ -138,12 +144,19 @@
         .progress-track { width: 100%; height: 12px; background: var(--input-bg); border-radius: 6px; overflow: hidden; box-shadow: inset 0 2px 4px rgba(0,0,0,0.04); }
         .progress-fill { height: 100%; border-radius: 6px; background: var(--primary); transition: width 1s cubic-bezier(0.34, 1.56, 0.64, 1); will-change: width; }
 
-        .stats-dashboard { display: flex; justify-content: space-between; gap: 12px; margin-bottom: 16px; }
-        .stat-item { flex: 1; background: var(--card-bg); border: 1px solid var(--border); border-radius: 16px; padding: 14px; text-align: center; transition: all 0.3s ease; box-shadow: 0 4px 10px rgba(0,0,0,0.02); display: flex; flex-direction: column; justify-content: center; }
+        .stats-dashboard { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 12px; margin-bottom: 16px; }
+        .stat-item { background: var(--card-bg); border: 1px solid var(--border); border-radius: 16px; padding: 16px 12px; text-align: center; transition: all 0.3s ease; box-shadow: 0 4px 10px rgba(0,0,0,0.02); display: flex; flex-direction: column; justify-content: center; }
         .stat-item.clickable { cursor: pointer; }
         .stat-item.clickable:active { transform: scale(0.96); background: var(--input-bg);}
-        .stat-val { font-size: 22px; font-weight: 900; color: var(--text-main); line-height: 1; margin-bottom: 6px; transition: color 0.3s ease;}
+        .stat-val { font-size: 22px; font-weight: 900; color: var(--text-main); line-height: 1.1; margin-bottom: 6px; transition: color 0.3s ease;}
         .stat-label { font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; transition: color 0.3s ease;}
+
+        /* Спеціальні блоки для порівняння */
+        .compare-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
+        .compare-vs { grid-column: span 2; text-align: center; font-weight: 900; color: var(--text-muted); font-size: 14px; margin: 4px 0; text-transform: uppercase; letter-spacing: 1px; }
+        .stat-box-compare { background: var(--input-bg); border-radius: 14px; padding: 14px; text-align: center; border: 1px solid var(--border); display: flex; flex-direction: column; gap: 6px; }
+        .compare-val { font-size: 20px; font-weight: 900; color: var(--text-main); }
+        .compare-label { font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; }
 
         /* --- КАРТКИ --- */
         .list-card { background: var(--card-bg); border-radius: 20px; border: 1.5px solid var(--border); margin-bottom: 14px; padding: 18px; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 4px 12px rgba(0,0,0,0.02); }
@@ -224,7 +237,7 @@
             margin-bottom: 24px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.02);
             position: relative;
-            height: 140px;
+            height: 220px;
             width: 100%;
         }
 
@@ -268,6 +281,7 @@
 
 <div class="container">
 
+    <!-- ЛОГІН -->
     <div id="loginView" class="view active">
         <div class="login-wrapper">
             <div class="login-card">
@@ -302,6 +316,7 @@
         </div>
     </div>
 
+    <!-- АДМІН ПАНЕЛЬ -->
     <div id="adminView" class="view">
         <div class="nav-header">
             <div style="display: flex; gap: 12px; align-items: stretch;">
@@ -340,6 +355,7 @@
         <div id="adminUsersList"></div>
     </div>
 
+    <!-- ОСОБИСТИЙ КАБІНЕТ (DASHBOARD) -->
     <div id="courseView" class="view">
         <div class="nav-header">
             <div style="display: flex; gap: 12px; align-items: stretch;">
@@ -359,7 +375,7 @@
                     </svg>
                 </button>
                 <button id="achBtn" class="back-btn-sleek ach-btn" onclick="toggleAchievements()" title="Мої досягнення">
-                    <img src="medal.svg" alt="Achievements" style="width: 32px; height: 32px; object-fit: contain;" onerror="this.outerHTML='<span style=\\'font-size:28px;\\'>🏅</span>'">
+                    <span style="font-size:24px;">🏅</span>
                     <div class="notification-dot" id="achNotificationDot"></div>
                 </button>
                 <button class="back-btn-sleek" onclick="forceRefresh()" title="Оновити дані" style="color: var(--primary);">
@@ -385,13 +401,37 @@
 
         <div id="globalStatsContainer"></div>
 
+        <button id="compareBtn" class="btn btn-blue" style="margin-bottom: 24px;" onclick="openCompareView()">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 3h5v5M4 20L21 3M21 16v5h-5M15 15l6 6M4 4l5 5"></path></svg>
+            ПОРІВНЯТИ З КОЛЕГОЮ
+        </button>
+
         <div class="section-title" id="courseListTitle" style="display: flex; justify-content: flex-start; align-items: center; gap: 8px;">
-            <img src="icons_skillHUB/Check.svg" style="width: 20px; height: 20px; display: block;" alt="Check" onerror="this.style.display='none'">
+            <span style="font-size: 18px;">📚</span>
             <span style="line-height: 1; padding-top: 2px;">Призначені курси</span>
         </div>
         <div id="courseList"></div>
     </div>
 
+    <!-- ПОРІВНЯННЯ З КОЛЕГОЮ -->
+    <div id="compareView" class="view">
+        <div class="nav-header">
+            <div style="display: flex; gap: 12px; align-items: center;">
+                <div style="width: 4px; background: linear-gradient(to bottom, var(--blue) 50%, var(--primary) 50%); border-radius: 2px; flex-shrink: 0; height: 40px;"></div>
+                <h2 style="font-size: 20px !important;">Порівняння</h2>
+            </div>
+        </div>
+
+        <select id="compareSelect" class="admin-select" style="margin-bottom: 24px;" onchange="updateComparison()">
+            <option value="">Оберіть колегу...</option>
+        </select>
+
+        <div id="compareContent">
+            <!-- Тут буде згенерована таблиця порівняння та графіки -->
+        </div>
+    </div>
+
+    <!-- КУРСИ ПРОДУКТИ -->
     <div id="productView" class="view">
         <div class="nav-header">
             <div style="display: flex; gap: 12px; align-items: stretch;">
@@ -401,11 +441,11 @@
                 </div>
             </div>
         </div>
-
         <div id="courseProgressContainer"></div>
         <div id="productList"></div>
     </div>
 
+    <!-- ТЕОРІЯ -->
     <div id="theoryView" class="view">
         <div class="nav-header">
             <div style="display: flex; gap: 12px; align-items: stretch;">
@@ -415,7 +455,6 @@
                 </div>
             </div>
         </div>
-
         <div class="big-emoji" id="theoryEmoji">
             <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display: block; margin: 0 auto;">
                 <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
@@ -423,7 +462,6 @@
             </svg>
         </div>
         <div id="theoryContent" class="theory-box"></div>
-
         <div style="background: rgba(239, 68, 68, 0.08); border: 1px solid rgba(239, 68, 68, 0.2); border-radius: 16px; padding: 16px; margin-bottom: 24px; text-align: left;" id="testWarningBox">
             <div style="font-size: 14px; font-weight: 800; color: var(--danger); margin-bottom: 6px; display: flex; align-items: center; gap: 8px;">
                 <span style="font-size: 18px;">⚠️</span> Важливе правило
@@ -432,10 +470,10 @@
                 Увімкніть режим <b>«Не турбувати»</b> на телефоні. Будь-який вхідний дзвінок, відкриття сповіщень або згортання браузера буде зараховано як спробу списування!
             </div>
         </div>
-
         <button class="btn btn-glow" id="startTestButton" onclick="startTest()">ПРОЙТИ ТЕСТ</button>
     </div>
 
+    <!-- ПОПЕРЕДЖЕННЯ ТЕСТУ -->
     <div id="warningView" class="view">
         <div style="min-height: 70vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;">
             <div class="big-emoji" style="font-size: 80px;">⚠️</div>
@@ -451,11 +489,11 @@
                     <strong>Заборонено</strong> перемикатися між додатками, згортати вікно або робити свайпи екрану. Це призведе до миттєвого блокування тесту та результату 0%.
                 </p>
             </div>
-
             <button class="btn btn-glow" onclick="acceptWarningAndStart()">ЗРОЗУМІЛО</button>
         </div>
     </div>
 
+    <!-- ТЕСТ -->
     <div id="testView" class="view no-select">
         <div class="nav-header" style="align-items: center;">
             <div style="display: flex; align-items: center; gap: 12px;">
@@ -464,17 +502,16 @@
             </div>
             <div id="testTimer" class="timer-box">00:00</div>
         </div>
-
         <div id="testContainer"></div>
         <button class="btn btn-glow" id="submitTestBtn">НАСТУПНЕ ПИТАННЯ</button>
     </div>
 
+    <!-- РЕЗУЛЬТАТ -->
     <div id="resultView" class="view">
         <div style="min-height: 70vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;">
             <div class="big-emoji" id="resultEmoji" style="font-size: 80px;">🏆</div>
             <h1 id="resultTitle" style="font-size: 32px; margin-bottom: 12px;">Результат</h1>
             <p class="subtitle" id="resultSubtitle" style="font-size: 16px; margin-bottom: 40px; color: var(--text-muted);"></p>
-
             <div id="resultActionContainer" style="width: 100%;"></div>
         </div>
     </div>
@@ -482,19 +519,14 @@
 </div>
 
 <script>
-    const API_URL = 'https://script.google.com/macros/s/AKfycbyjtt5iCmzXUXoDOeHZ2FWZv7FMjgcxoZ3CU-PrPAN1PFKkR2lDPLwwtjrpeeFSKiyDrw/exec'; 
+    const API_URL = 'https://script.google.com/macros/s/AKfycbyIOzt9LKn3medBMW5_wNGYnmwyVWBepWMqbx-Pfo6T7fR6UrGdHVkM3ux_PB9YqkYv6w/exec'; 
     const CACHE_KEY = 'skillhub_v4_desc';
 
     let chartsInstances = {};
 
-    // --- ФУНКЦІЯ МАСШТАБУВАННЯ ШРИФТІВ ---
     window.updateFontScale = function(scale) {
         let style = document.getElementById('dynamicFontScale');
-        if(!style) { 
-            style = document.createElement('style'); 
-            style.id = 'dynamicFontScale'; 
-            document.head.appendChild(style); 
-        }
+        if(!style) { style = document.createElement('style'); style.id = 'dynamicFontScale'; document.head.appendChild(style); }
         style.innerHTML = `
             input, select, textarea, button, .btn { font-size: calc(16px * ${scale}) !important; }
             h1 { font-size: calc(26px * ${scale}) !important; }
@@ -523,6 +555,8 @@
         if (event.key === 'theme') {
             let currentTheme = event.newValue || 'light';
             document.documentElement.setAttribute('data-theme', currentTheme);
+            if(chartsInstances['yearly']) chartsInstances['yearly'].update();
+            if(chartsInstances['compare']) chartsInstances['compare'].update();
         } else if (event.key === 'skillhub_font_scale') {
             window.updateFontScale(event.newValue || "1");
         }
@@ -530,7 +564,6 @@
 
     let savedFontScale = localStorage.getItem('skillhub_font_scale') || "1";
     window.updateFontScale(savedFontScale);
-    // --------------------------------------
 
     let db = null;
     let globalAchievements = []; 
@@ -565,17 +598,12 @@
         return String(str).replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
     }
 
-    const ACH_EXTS = ['.svg', '.png', '.jpg', '.jpeg', '.webp', '.gif'];
-    function handleAchImageError(img) {
-        let extIdx = parseInt(img.getAttribute('data-ext-index')) || 0;
-        let code = img.getAttribute('data-code');
-        extIdx++;
-        if (extIdx < ACH_EXTS.length) {
-            img.setAttribute('data-ext-index', extIdx);
-            img.src = `Achievement/${code}${ACH_EXTS[extIdx]}`;
-        } else {
-            img.outerHTML = '<span style="font-size:40px;">🏅</span>';
-        }
+    function formatNumber(num) {
+        if (num === undefined || num === null || num === "") return "0";
+        let str = String(num).replace(/[\s\u00A0\u202F]/g, '').replace(',', '.');
+        let n = parseFloat(str);
+        if (isNaN(n)) return "0";
+        return n.toLocaleString('uk-UA');
     }
 
     function formatWithCustomEmoji(name, defaultIcon) {
@@ -594,28 +622,6 @@
         }
     }
 
-    function getAttemptWord(count) {
-        let n = parseInt(count) || 0;
-        if (n % 10 === 1 && n % 100 !== 11) return 'спроба';
-        if ([2, 3, 4].includes(n % 10) && ![12, 13, 14].includes(n % 100)) return 'спроби';
-        return 'спроб';
-    }
-
-    function formatNumber(num) {
-        if (num === undefined || num === null || num === "") return "0";
-        let str = String(num).replace(/[\s\u00A0\u202F]/g, '').replace(',', '.');
-        let n = parseFloat(str);
-        if (isNaN(n)) return "0";
-        return n.toLocaleString('uk-UA');
-    }
-    
-    function formatDeadlineText(deadlineStr) {
-        if (!deadlineStr || deadlineStr === "undefined" || String(deadlineStr).trim() === "") return null;
-        let ds = String(deadlineStr).trim();
-        if (!isNaN(ds)) return `${ds} днів`;
-        return ds;
-    }
-
     function handleFloatingBack() {
         let activeView = document.querySelector('.view.active').id;
         if (activeView === 'loginView' || activeView === 'adminView') {
@@ -627,6 +633,8 @@
             } else {
                 window.location.href = 'index.html'; 
             }
+        } else if (activeView === 'compareView') {
+            switchView('courseView');
         } else if (activeView === 'productView') {
             switchView('courseView');
         } else if (activeView === 'theoryView') {
@@ -653,14 +661,13 @@
         });
     }
 
+    /* ----------- ДЕДЛАЙН ТА ОФЛАЙН (Збережено без змін) ----------- */
     function saveOfflineResult(login, product, score, time) {
         try {
             let queue = JSON.parse(localStorage.getItem('skillhub_offline_queue') || '[]');
             queue.push({ action: 'save_score', login: login, product: product, score: score, time: time, timestamp: Date.now() });
             localStorage.setItem('skillhub_offline_queue', JSON.stringify(queue));
-        } catch(e) {
-            console.error(e);
-        }
+        } catch(e) { console.error(e); }
     }
 
     async function processOfflineQueue() {
@@ -674,36 +681,25 @@
             let remainingQueue = [];
             for (let item of queue) {
                 try {
-                    await fetch(API_URL, {
-                        method: 'POST', cache: 'no-store', mode: 'no-cors', body: JSON.stringify(item)
-                    });
-                } catch (e) {
-                    remainingQueue.push(item);
-                }
+                    await fetch(API_URL, { method: 'POST', cache: 'no-store', mode: 'no-cors', body: JSON.stringify(item) });
+                } catch (e) { remainingQueue.push(item); }
             }
             localStorage.setItem('skillhub_offline_queue', JSON.stringify(remainingQueue));
-        } catch(e) {
-            console.error("Offline queue error:", e);
-            localStorage.removeItem('skillhub_offline_queue'); 
-        }
+        } catch(e) { localStorage.removeItem('skillhub_offline_queue'); }
     }
 
     function getDeadlineMs(deadlineValue, userObj) {
         if (!deadlineValue || String(deadlineValue).trim() === "") return null;
         let val = String(deadlineValue).trim();
-
         let dateMatch = val.match(/^(\d{2})\.(\d{2})\.(\d{4})/);
         if (dateMatch) {
             let dateObj = new Date(`${dateMatch[3]}-${dateMatch[2]}-${dateMatch[1]}T23:59:59`);
             if (!isNaN(dateObj.getTime())) return dateObj.getTime();
         }
-
         let days = parseFloat(val);
         if (!isNaN(days)) {
             let startTime = null;
-            if (db.startTimes && db.startTimes[userObj.login]) {
-                startTime = parseInt(db.startTimes[userObj.login]);
-            }
+            if (db.startTimes && db.startTimes[userObj.login]) startTime = parseInt(db.startTimes[userObj.login]);
             if (!startTime) {
                 let anchorKey = 'skillhub_dl_anchor_' + userObj.login;
                 startTime = parseInt(localStorage.getItem(anchorKey));
@@ -712,34 +708,32 @@
                     localStorage.setItem(anchorKey, startTime);
                 }
             }
-            if (startTime) {
-                return startTime + (days * 24 * 60 * 60 * 1000);
-            }
+            if (startTime) return startTime + (days * 24 * 60 * 60 * 1000);
         }
         return null;
     }
 
+    function formatDeadlineText(deadlineStr) {
+        if (!deadlineStr || deadlineStr === "undefined" || String(deadlineStr).trim() === "") return null;
+        let ds = String(deadlineStr).trim();
+        if (!isNaN(ds)) return `${ds} днів`;
+        return ds;
+    }
+
     function startDeadlineTimer() {
         clearInterval(deadlineInterval);
-        
         let user = windowViewingEmployee || db.users.find(u => u.login === currentUser);
         if (!user) return;
-
         let dlMs = getDeadlineMs(user.deadline, user);
-
         if (!dlMs) {
             document.getElementById('deadlineContainer').style.display = 'none';
             window.isDeadlinePassed = false;
             updateTestButtonState();
             return;
         }
-
         document.getElementById('deadlineContainer').style.display = 'flex';
-
         deadlineInterval = setInterval(() => {
-            let now = Date.now();
-            let diff = dlMs - now;
-
+            let diff = dlMs - Date.now();
             if (diff <= 0) {
                 document.getElementById('deadlineText').innerText = "Доступ до тестів закрито 🔒";
                 document.getElementById('deadlineText').style.color = "var(--danger)";
@@ -765,30 +759,23 @@
     function updateTestButtonState() {
         const btn = document.getElementById('startTestButton');
         if (!btn) return;
-        
         if (windowViewingEmployee) {
             btn.style.display = 'none'; 
             document.getElementById('testWarningBox').style.display = 'none';
             return;
         }
-        
         btn.style.display = 'flex';
         document.getElementById('testWarningBox').style.display = 'block';
-
         if (window.isDeadlinePassed) {
-            btn.disabled = true;
-            btn.innerText = "ЧАС ВИЧЕРПАНО 🔒";
+            btn.disabled = true; btn.innerText = "ЧАС ВИЧЕРПАНО 🔒";
         } else {
-            btn.disabled = false;
-            btn.innerText = "ПРОЙТИ ТЕСТ";
+            btn.disabled = false; btn.innerText = "ПРОЙТИ ТЕСТ";
         }
     }
 
+    /* ----------- СИНХРОНІЗАЦІЯ ----------- */
     async function forceRefresh() {
-        if (!navigator.onLine) {
-            alert("Немає підключення до інтернету!");
-            return;
-        }
+        if (!navigator.onLine) { alert("Немає підключення до інтернету!"); return; }
         document.getElementById('loaderText').innerText = "Оновлення даних...";
         document.getElementById('loader').style.display = 'flex';
         await fetchFreshDataSilent();
@@ -798,15 +785,12 @@
 
     async function fetchFreshDataSilent() {
         if (!navigator.onLine) return;
-
         processOfflineQueue();
-
         try {
             const controller = new AbortController();
             const timeoutId = setTimeout(() => controller.abort(), 15000); 
             const response = await fetch(API_URL + '?nocache=' + Date.now(), { cache: 'no-store', signal: controller.signal });
             clearTimeout(timeoutId);
-
             const data = await response.json();
             if (!data.error) {
                 localStorage.setItem(CACHE_KEY, JSON.stringify(data));
@@ -818,12 +802,8 @@
                     if (user) {
                         let myToken = localStorage.getItem('skillhub_session_token');
                         if (db.activeSessions && db.activeSessions[currentUser]) {
-                            if (myToken && db.activeSessions[currentUser] !== myToken) {
-                                logout(true); 
-                                return;
-                            }
+                            if (myToken && db.activeSessions[currentUser] !== myToken) { logout(true); return; }
                         }
-
                         if (document.getElementById('adminView').classList.contains('active')) {
                             renderAdminView();
                         } else if (document.getElementById('courseView').classList.contains('active')) {
@@ -832,23 +812,25 @@
                                 if (updatedEmp) {
                                     windowViewingEmployee = updatedEmp;
                                     buildCoursesMap(updatedEmp);
-                                    renderCourses(updatedEmp);
+                                    renderDashboardStats(updatedEmp);
+                                    renderCoursesList(updatedEmp);
                                     startDeadlineTimer(); 
                                 }
                             } else {
                                 buildCoursesMap(user);
-                                renderCourses(user);
+                                renderDashboardStats(user);
+                                renderCoursesList(user);
                                 startDeadlineTimer();
                                 checkNewAchievements(user);
                             }
+                        } else if (document.getElementById('compareView').classList.contains('active')) {
+                            updateComparison();
                         } else if (document.getElementById('productView').classList.contains('active')) {
                             openCourse(currentCourseName);
                         } else if (document.getElementById('achDrawer').classList.contains('open')) {
                             renderAchievements(); 
                         }
-                    } else {
-                        logout();
-                    }
+                    } else { logout(); }
                 }
             }
         } catch(e) { console.error("Fetch Error:", e); }
@@ -857,9 +839,7 @@
     function startSessionMonitor() {
         clearInterval(sessionCheckInterval);
         sessionCheckInterval = setInterval(() => {
-            if (currentUser && navigator.onLine && !isTestActive) {
-                fetchFreshDataSilent();
-            }
+            if (currentUser && navigator.onLine && !isTestActive) fetchFreshDataSilent();
         }, 30000);
     }
 
@@ -882,7 +862,6 @@
 
         try {
             document.getElementById('loader').style.display = 'none';
-
             let savedCreds = localStorage.getItem('skillhub_edu_creds');
             let parsedCreds = savedCreds ? JSON.parse(savedCreds) : null;
 
@@ -921,59 +900,6 @@
         }
     });
 
-    function buildCoursesMap(user) {
-        coursesMap = {}; 
-        let currentUserAssigned = user.assigned || [];
-
-        (db.courses || []).forEach(c => {
-            let isAssigned = currentUserAssigned.some(assignedName => {
-                let aClean = getCleanName(assignedName);
-                let pClean = getCleanName(c.product);
-                return aClean === pClean;
-            });
-
-            if (isAssigned) {
-                if (!coursesMap[c.course]) coursesMap[c.course] = [];
-                if (!coursesMap[c.course].some(existing => existing.product === c.product)) {
-                    coursesMap[c.course].push(c);
-                }
-            }
-        });
-    }
-
-    function switchToMyCabinet() {
-        windowViewingEmployee = null;
-        let user = db.users.find(u => u.login === currentUser);
-        
-        let rawName = user.name && String(user.name).trim() !== "" && user.name !== "undefined" ? String(user.name) : currentUser;
-        let nameParts = rawName.replace(/[\/\\,]/g, '').trim().split(/\s+/);
-        let firstName = nameParts.length > 1 ? nameParts[1] : nameParts[0];
-        if(!firstName || firstName === "") firstName = "Колега";
-
-        document.getElementById('courseViewTitle').innerText = 'Особистий кабінет';
-        document.getElementById('userWelcome').innerHTML = `Вітаю, ${escapeHTMLAttr(firstName)} <span style="font-size: 14px; margin-left: 4px;">👋</span>`;
-        document.getElementById('courseViewNavActions').style.display = 'flex'; 
-
-        if (windowUserRole === 'admin' || windowUserRole === 'director') {
-            document.getElementById('adminPanelBtn').style.display = 'flex';
-        } else {
-            document.getElementById('adminPanelBtn').style.display = 'none';
-        }
-
-        buildCoursesMap(user);
-        renderCourses(user);
-        startDeadlineTimer();
-        checkNewAchievements(user);
-        
-        switchView('courseView');
-    }
-
-    function switchToAdminPanel() {
-        windowViewingEmployee = null;
-        renderAdminView();
-        switchView('adminView');
-    }
-
     async function handleLogin(isAuto = false) {
         const loginBtn = document.getElementById('loginSubmitBtn');
         const err = document.getElementById('errorMsg');
@@ -988,19 +914,15 @@
             }
 
             if (!isAuto && loginBtn) {
-                loginBtn.disabled = true;
-                loginBtn.innerText = "ВХІД...";
+                loginBtn.disabled = true; loginBtn.innerText = "ВХІД...";
             }
-
             err.style.display = 'none';
 
             if (!db || !db.users || db.users.length === 0) {
                 if (navigator.onLine) {
                     await fetchFreshDataSilent();
                 } else {
-                    err.innerText = "База даних порожня. Перевірте інтернет!";
-                    err.style.display = 'block';
-                    return;
+                    err.innerText = "База даних порожня. Перевірте інтернет!"; err.style.display = 'block'; return;
                 }
             }
 
@@ -1009,7 +931,6 @@
             if (user) {
                 currentUser = user.login;
                 err.style.display = 'none';
-
                 localStorage.setItem('skillhub_draft_login', l);
                 localStorage.setItem('skillhub_draft_pass', p);
 
@@ -1020,19 +941,11 @@
                 }
 
                 if (navigator.onLine) {
-                    try {
-                        fetch(API_URL, {
-                            method: 'POST', cache: 'no-store', mode: 'no-cors',
-                            body: JSON.stringify({ action: 'set_session', login: currentUser, token: myToken })
-                        });
-                    } catch(e) {}
+                    try { fetch(API_URL, { method: 'POST', cache: 'no-store', mode: 'no-cors', body: JSON.stringify({ action: 'set_session', login: currentUser, token: myToken }) }); } catch(e) {}
                 } 
                 
                 if (isAuto && db.activeSessions && db.activeSessions[currentUser]) {
-                    if (db.activeSessions[currentUser] !== myToken) {
-                        logout(true); 
-                        return;
-                    }
+                    if (db.activeSessions[currentUser] !== myToken) { logout(true); return; }
                 }
 
                 if (document.getElementById('rememberMe').checked) {
@@ -1057,43 +970,27 @@
                     switchToMyCabinet();
                     startSessionMonitor(); 
                 }
-                
             } else {
-                err.innerText = "Невірний логін або пароль!";
-                err.style.display = 'block';
-                
+                err.innerText = "Невірний логін або пароль!"; err.style.display = 'block';
                 if(isAuto) {
-                    localStorage.removeItem('skillhub_edu_creds');
-                    switchView('loginView');
+                    localStorage.removeItem('skillhub_edu_creds'); switchView('loginView');
                 }
             }
         } catch (error) {
-            err.innerText = "Сталася помилка з'єднання. Спробуйте ще раз.";
-            err.style.display = 'block';
+            err.innerText = "Сталася помилка з'єднання. Спробуйте ще раз."; err.style.display = 'block';
         } finally {
-            if (loginBtn) {
-                loginBtn.disabled = false;
-                loginBtn.innerText = "УВІЙТИ";
-            }
+            if (loginBtn) { loginBtn.disabled = false; loginBtn.innerText = "УВІЙТИ"; }
         }
     }
 
     function logout(forced = false, explicit = false) {
-        if (forced) {
-            alert("Ваш акаунт було відкрито на іншому пристрої. Сесію скинуто.");
-        } else if (explicit && currentUser && navigator.onLine) {
-            try {
-                fetch(API_URL, {
-                    method: 'POST', cache: 'no-store', mode: 'no-cors',
-                    body: JSON.stringify({ action: 'set_session', login: currentUser, token: '' })
-                });
-            } catch(e) {}
+        if (forced) { alert("Ваш акаунт було відкрито на іншому пристрої. Сесію скинуто."); } 
+        else if (explicit && currentUser && navigator.onLine) {
+            try { fetch(API_URL, { method: 'POST', cache: 'no-store', mode: 'no-cors', body: JSON.stringify({ action: 'set_session', login: currentUser, token: '' }) }); } catch(e) {}
         }
-
         clearInterval(deadlineInterval);
         clearInterval(sessionCheckInterval);
-        currentUser = null;
-        coursesMap = {}; 
+        currentUser = null; coursesMap = {}; 
         
         localStorage.removeItem('skillhub_edu_creds');
         localStorage.removeItem('skillhub_session_token');
@@ -1104,15 +1001,405 @@
             localStorage.removeItem('skillhub_draft_login');
             localStorage.removeItem('skillhub_draft_pass');
         }
-
         switchView('loginView');
     }
 
-    // --- ПАНЕЛЬ КЕРІВНИКА (ADMIN VIEW) ---
+    /* ----------- КАБІНЕТ ТА ДАШБОРД (НОВЕ) ----------- */
+    function buildCoursesMap(user) {
+        coursesMap = {}; 
+        let currentUserAssigned = user.assigned || [];
+        (db.courses || []).forEach(c => {
+            let isAssigned = currentUserAssigned.some(assignedName => {
+                let aClean = getCleanName(assignedName);
+                let pClean = getCleanName(c.product);
+                return aClean === pClean;
+            });
+            if (isAssigned) {
+                if (!coursesMap[c.course]) coursesMap[c.course] = [];
+                if (!coursesMap[c.course].some(existing => existing.product === c.product)) {
+                    coursesMap[c.course].push(c);
+                }
+            }
+        });
+    }
+
+    function switchToMyCabinet() {
+        windowViewingEmployee = null;
+        let user = db.users.find(u => u.login === currentUser);
+        
+        let rawName = user.name && String(user.name).trim() !== "" && user.name !== "undefined" ? String(user.name) : currentUser;
+        let nameParts = rawName.replace(/[\/\\,]/g, '').trim().split(/\s+/);
+        let firstName = nameParts.length > 1 ? nameParts[1] : nameParts[0];
+        if(!firstName || firstName === "") firstName = "Колега";
+
+        document.getElementById('courseViewTitle').innerText = 'Особистий кабінет';
+        document.getElementById('userWelcome').innerHTML = `Вітаю, ${escapeHTMLAttr(firstName)} <span style="font-size: 14px; margin-left: 4px;">👋</span>`;
+        document.getElementById('courseViewNavActions').style.display = 'flex'; 
+        
+        if (windowUserRole === 'admin' || windowUserRole === 'director') {
+            document.getElementById('adminPanelBtn').style.display = 'flex';
+        } else {
+            document.getElementById('adminPanelBtn').style.display = 'none';
+        }
+        
+        document.getElementById('compareBtn').style.display = 'flex';
+
+        buildCoursesMap(user);
+        renderDashboardStats(user);
+        renderCoursesList(user);
+        startDeadlineTimer();
+        checkNewAchievements(user);
+        switchView('courseView');
+    }
+
+    function renderDashboardStats(user) {
+        let statsHtml = '';
+        
+        // 1. Поточний Місяць (Current Month)
+        let cMonth = user.currentMonth || {};
+        let plan = parseFloat(String(cMonth.plan || "0").replace(/[\s\u00A0]/g, '').replace(',', '.')) || 0;
+        let pcs = parseFloat(String(cMonth.pcs || "0").replace(/[\s\u00A0]/g, '').replace(',', '.')) || 0;
+        let grn = parseFloat(String(cMonth.grn || "0").replace(/[\s\u00A0]/g, '').replace(',', '.')) || 0;
+        let execPct = cMonth.execution || "0%";
+        let eff = cMonth.efficiency || "0%";
+        
+        let displayPcs = pcs < 0 ? `<span style="color:var(--success)">+${formatNumber(Math.abs(pcs))}</span>` : formatNumber(pcs);
+        let displayGrn = grn < 0 ? `<span style="color:var(--success)">+${formatNumber(Math.abs(grn))}</span>` : formatNumber(grn);
+        let isExecDone = parseFloat(execPct) >= 100;
+        
+        statsHtml += `
+            <div class="section-title" style="margin-top: 0; display: flex; align-items: center; gap: 8px;">
+                <span style="font-size: 18px;">🎯</span> <span>Поточний місяць</span>
+            </div>
+            <div class="stats-dashboard">
+                <div class="stat-item">
+                    <div class="stat-val">${displayPcs} <span style="font-size:12px; color:var(--text-muted);">/ ${formatNumber(plan)}</span></div>
+                    <div class="stat-label">Виконання (шт)</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-val">${displayGrn}</div>
+                    <div class="stat-label">Сума (грн)</div>
+                </div>
+                <div class="stat-item" style="${isExecDone ? 'background: rgba(16,185,129,0.1); border-color: var(--primary);' : ''}">
+                    <div class="stat-val" style="color: ${isExecDone ? 'var(--primary)' : 'var(--text-main)'};">${execPct}</div>
+                    <div class="stat-label" style="color: ${isExecDone ? 'var(--primary)' : 'var(--text-muted)'};">Відсоток</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-val">${eff}</div>
+                    <div class="stat-label">Ефективність</div>
+                </div>
+            </div>
+        `;
+
+        // 2. Річна статистика (Yearly)
+        let yStats = user.yearlyStats || {};
+        let years = Object.keys(yStats).sort();
+        
+        if (years.length > 0) {
+            statsHtml += `
+                <div class="section-title" style="display: flex; align-items: center; gap: 8px;">
+                    <span style="font-size: 18px;">📊</span> <span>Річна статистика (Обіг)</span>
+                </div>
+                <div class="chart-container">
+                    <canvas id="yearlyChart"></canvas>
+                </div>
+            `;
+        }
+
+        // 3. Статистика Навчання (Courses)
+        let totalAssigned = 0; let totalCompleted = 0; let scoreSum = 0; let scoreCount = 0;
+        savedCompletedListHtml = "";
+        
+        Object.values(coursesMap).reduce((acc, val) => acc.concat(val), []).forEach(p => {
+            totalAssigned++;
+            let resStr = (user.results || {})[getCleanName(p.product)];
+            if (resStr) {
+                let match = String(resStr).match(/(\d+)\s*\/\s*(\d+)%(?:\/(\d+))?/);
+                let score = 0, attempts = 0;
+                if (match) { attempts = match[1]; score = parseInt(match[2], 10) || 0; } 
+                else { let sm = String(resStr).match(/(\d+)%/); if (sm) { score = parseInt(sm[1], 10) || 0; attempts = 1; } }
+                
+                scoreSum += score; scoreCount++;
+                if (score >= 80) {
+                    totalCompleted++;
+                    savedCompletedListHtml += `
+                        <div style="padding:16px 0; border-bottom:1px solid var(--input-bg); display:flex; justify-content:space-between; align-items:center; gap: 16px;">
+                            <span style="flex:1; font-size:15px; font-weight:700; color:var(--text-main);">${p.product}</span>
+                            <div style="display:flex; flex-direction:column; align-items:flex-end;">
+                                <span style="font-size:16px; font-weight:900; color:var(--text-main);">${score}%</span>
+                                <span style="font-size:11px; font-weight:600; color:var(--text-muted);">${attempts} ${getAttemptWord(attempts)}</span>
+                            </div>
+                        </div>`;
+                }
+            }
+        });
+
+        let avgScore = scoreCount > 0 ? Math.round(scoreSum / scoreCount) : 0;
+        let globalPercent = totalAssigned > 0 ? Math.round((totalCompleted / totalAssigned) * 100) : 0;
+        let isGlobalCompleted = globalPercent >= 100 && totalAssigned > 0;
+
+        statsHtml += `
+            <div class="section-title" style="display: flex; align-items: center; gap: 8px;">
+                <span style="font-size: 18px;">🎓</span> <span>Прогрес навчання</span>
+            </div>
+            <div class="stats-dashboard" style="grid-template-columns: 1fr 1fr;">
+                <div class="stat-item clickable" onclick="openCompletedModal()">
+                    <div class="stat-val">${totalCompleted}/${totalAssigned}</div>
+                    <div class="stat-label">Пройдено курсів</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-val">${avgScore}%</div>
+                    <div class="stat-label">Сер. бал</div>
+                </div>
+            </div>
+            <div class="progress-widget" onclick="openCompletedModal()" style="cursor:pointer; margin-bottom: 24px; ${isGlobalCompleted ? 'background: rgba(16,185,129,0.1); border-color: var(--primary);' : ''}">
+                <div class="progress-header">
+                    <div class="progress-title-text">Загальний прогрес</div>
+                    <div class="progress-percent-val" style="color: ${isGlobalCompleted ? 'var(--primary)' : 'var(--text-main)'};">${globalPercent}%</div>
+                </div>
+                <div class="progress-track">
+                    <div class="progress-fill" style="width: ${globalPercent}%;"></div>
+                </div>
+            </div>
+        `;
+
+        document.getElementById('globalStatsContainer').innerHTML = statsHtml;
+
+        // Render Chart
+        if (years.length > 0) {
+            setTimeout(() => {
+                let ctx = document.getElementById('yearlyChart');
+                if(!ctx) return;
+                
+                if(chartsInstances['yearly']) chartsInstances['yearly'].destroy();
+                
+                let isDark = (localStorage.getItem('theme') || 'light') === 'dark';
+                let textColor = isDark ? '#ffffff' : '#111827';
+                let gridColor = isDark ? '#38383a' : '#e5e7eb';
+
+                let factData = years.map(y => yStats[y].totalTurnover || 0);
+                
+                chartsInstances['yearly'] = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: years,
+                        datasets: [{
+                            label: 'Загальний обіг',
+                            data: factData,
+                            backgroundColor: '#10b981',
+                            borderRadius: 6,
+                            barThickness: 24
+                        }]
+                    },
+                    options: {
+                        responsive: true, maintainAspectRatio: false,
+                        plugins: { legend: { display: false } },
+                        scales: {
+                            y: { grid: { color: gridColor }, ticks: { color: textColor, callback: v => formatNumber(v) } },
+                            x: { grid: { display: false }, ticks: { color: textColor, font: { family: 'Inter', weight: 'bold' } } }
+                        }
+                    }
+                });
+            }, 100);
+        }
+    }
+
+    function renderCoursesList(user) {
+        const list = document.getElementById('courseList');
+        const courseNames = Object.keys(coursesMap);
+        if (courseNames.length === 0) {
+            list.innerHTML = '<div style="text-align:center; background: var(--card-bg); border-radius: 16px; border: 1px solid var(--border); color: var(--text-muted); padding: 30px 20px; font-weight: 600;">Вам поки не призначено жодного курсу.</div>';
+            return;
+        }
+
+        let userResults = user.results || {};
+        let coursesHtml = courseNames.map(name => {
+            let parsed = formatWithCustomEmoji(name, '📘');
+            let courseProducts = coursesMap[name] || [];
+            let cTotal = courseProducts.length;
+            let cPassed = 0;
+
+            courseProducts.forEach(p => {
+                let resStr = userResults[getCleanName(p.product)];
+                if (resStr) {
+                    let sm = String(resStr).match(/(\d+)\s*\/\s*(\d+)%/);
+                    let score = sm ? parseInt(sm[2], 10) : (String(resStr).match(/(\d+)%/) ? parseInt(String(resStr).match(/(\d+)%/)[1], 10) : 0);
+                    if (score >= 80) cPassed++;
+                }
+            });
+
+            let isCourseDone = (cTotal > 0 && cPassed === cTotal);
+            return `
+            <div class="list-card ${isCourseDone ? 'completed' : ''}" onclick="openCourse('${escapeHTMLAttr(name)}')">
+                <div class="list-card-title" style="flex: 1;">
+                    <span style="font-size: 16px;">${parsed.title}</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <div style="font-size: 15px; font-weight: 800; color: ${isCourseDone ? 'var(--success)' : 'var(--text-main)'};">${cPassed}<span style="font-size: 12px; font-weight: 600; color: var(--text-muted);"> / ${cTotal}</span></div>
+                    <div class="list-card-arrow">❯</div>
+                </div>
+            </div>`;
+        }).join('');
+        list.innerHTML = coursesHtml;
+    }
+
+    /* ----------- ПОРІВНЯННЯ З КОЛЕГОЮ ----------- */
+    function openCompareView() {
+        let select = document.getElementById('compareSelect');
+        let allEmployees = db.users.filter(u => u.login !== currentUser && (String(u.role).toLowerCase().includes('співробітник') || String(u.role).toLowerCase().includes('сотрудник')));
+        allEmployees.sort((a,b) => (a.name||"").localeCompare(b.name||""));
+        
+        let opts = `<option value="">Оберіть колегу для порівняння...</option>`;
+        allEmployees.forEach(u => {
+            let cName = (u.name || u.login).replace(/[\/\\,]/g, '').trim();
+            opts += `<option value="${escapeHTMLAttr(u.login)}">${escapeHTMLAttr(cName)}</option>`;
+        });
+        select.innerHTML = opts;
+        document.getElementById('compareContent').innerHTML = '';
+        switchView('compareView');
+    }
+
+    function updateComparison() {
+        let targetLogin = document.getElementById('compareSelect').value;
+        if(!targetLogin) { document.getElementById('compareContent').innerHTML = ''; return; }
+
+        let me = db.users.find(u => u.login === currentUser);
+        let them = db.users.find(u => u.login === targetLogin);
+
+        // Helper calculations
+        const getMetrics = (u) => {
+            let m = {
+                execPct: u.currentMonth?.execution || "0%",
+                eff: u.currentMonth?.efficiency || "0%",
+                achCount: String(u.achievements||"").split(',').filter(x=>x.trim()).length,
+                totalTurnover: 0,
+                overfulfilled: 0,
+                avgScore: 0
+            };
+            
+            // Yearly
+            if(u.yearlyStats) {
+                Object.values(u.yearlyStats).forEach(y => {
+                    m.totalTurnover += (y.totalTurnover || 0);
+                    m.overfulfilled += (y.overfulfilledCount || 0);
+                });
+            }
+            
+            // Course Avg
+            let sum=0, c=0;
+            for(let key in (u.results||{})){
+                let res=u.results[key], match=String(res).match(/(\d+)\s*\/\s*(\d+)%/);
+                let score = match ? parseInt(match[2]) : (String(res).match(/(\d+)%/) ? parseInt(String(res).match(/(\d+)%/)[1]) : 0);
+                sum+=score; c++;
+            }
+            m.avgScore = c>0 ? Math.round(sum/c) : 0;
+            
+            return m;
+        };
+
+        let meM = getMetrics(me);
+        let thM = getMetrics(them);
+
+        let meName = (me.name || me.login).replace(/[\/\\,]/g, '').split(' ')[0] || "Ви";
+        let thName = (them.name || them.login).replace(/[\/\\,]/g, '').split(' ')[0] || "Колега";
+
+        let getWinnerColor = (valMe, valThem) => {
+            let v1 = parseFloat(String(valMe).replace(/[^\d.-]/g, '')) || 0;
+            let v2 = parseFloat(String(valThem).replace(/[^\d.-]/g, '')) || 0;
+            if(v1 > v2) return ['color: var(--success);', 'color: var(--text-main);'];
+            if(v2 > v1) return ['color: var(--text-main);', 'color: var(--success);'];
+            return ['color: var(--text-main);', 'color: var(--text-main);'];
+        };
+
+        let cExec = getWinnerColor(meM.execPct, thM.execPct);
+        let cEff = getWinnerColor(meM.eff, thM.eff);
+        let cAch = getWinnerColor(meM.achCount, thM.achCount);
+        let cTurn = getWinnerColor(meM.totalTurnover, thM.totalTurnover);
+        let cOver = getWinnerColor(meM.overfulfilled, thM.overfulfilled);
+        let cAvg = getWinnerColor(meM.avgScore, thM.avgScore);
+
+        let html = `
+            <div class="compare-grid">
+                <div style="text-align:center; font-weight:800; font-size:16px; color:var(--primary);">${escapeHTMLAttr(meName)} (Ви)</div>
+                <div style="text-align:center; font-weight:800; font-size:16px; color:var(--blue);">${escapeHTMLAttr(thName)}</div>
+                
+                <div class="compare-vs">Поточний місяць</div>
+                
+                <div class="stat-box-compare"><span class="compare-val" style="${cExec[0]}">${meM.execPct}</span><span class="compare-label">Виконання</span></div>
+                <div class="stat-box-compare"><span class="compare-val" style="${cExec[1]}">${thM.execPct}</span><span class="compare-label">Виконання</span></div>
+                
+                <div class="stat-box-compare"><span class="compare-val" style="${cEff[0]}">${meM.eff}</span><span class="compare-label">Ефективність</span></div>
+                <div class="stat-box-compare"><span class="compare-val" style="${cEff[1]}">${thM.eff}</span><span class="compare-label">Ефективність</span></div>
+
+                <div class="compare-vs">Загальні досягнення</div>
+
+                <div class="stat-box-compare"><span class="compare-val" style="${cTurn[0]}">${formatNumber(meM.totalTurnover)}</span><span class="compare-label">Обіг (грн)</span></div>
+                <div class="stat-box-compare"><span class="compare-val" style="${cTurn[1]}">${formatNumber(thM.totalTurnover)}</span><span class="compare-label">Обіг (грн)</span></div>
+
+                <div class="stat-box-compare"><span class="compare-val" style="${cAch[0]}">🏆 ${meM.achCount}</span><span class="compare-label">Ачівок</span></div>
+                <div class="stat-box-compare"><span class="compare-val" style="${cAch[1]}">🏆 ${thM.achCount}</span><span class="compare-label">Ачівок</span></div>
+
+                <div class="stat-box-compare"><span class="compare-val" style="${cOver[0]}">${meM.overfulfilled}</span><span class="compare-label">Перевиконаних планів</span></div>
+                <div class="stat-box-compare"><span class="compare-val" style="${cOver[1]}">${thM.overfulfilled}</span><span class="compare-label">Перевиконаних планів</span></div>
+
+                <div class="stat-box-compare"><span class="compare-val" style="${cAvg[0]}">${meM.avgScore}%</span><span class="compare-label">Сер. бал</span></div>
+                <div class="stat-box-compare"><span class="compare-val" style="${cAvg[1]}">${thM.avgScore}%</span><span class="compare-label">Сер. бал</span></div>
+            </div>
+
+            <div class="section-title" style="display: flex; align-items: center; gap: 8px;">
+                <span style="font-size: 18px;">📈</span> <span>Річний обіг (Грн)</span>
+            </div>
+            <div class="chart-container">
+                <canvas id="compareChart"></canvas>
+            </div>
+        `;
+
+        document.getElementById('compareContent').innerHTML = html;
+
+        // Render Compare Chart
+        setTimeout(() => {
+            let ctx = document.getElementById('compareChart');
+            if(!ctx) return;
+            if(chartsInstances['compare']) chartsInstances['compare'].destroy();
+
+            let isDark = (localStorage.getItem('theme') || 'light') === 'dark';
+            let textColor = isDark ? '#ffffff' : '#111827';
+            let gridColor = isDark ? '#38383a' : '#e5e7eb';
+
+            // Extract all years from both users
+            let yearsSet = new Set();
+            if(me.yearlyStats) Object.keys(me.yearlyStats).forEach(y => yearsSet.add(y));
+            if(them.yearlyStats) Object.keys(them.yearlyStats).forEach(y => yearsSet.add(y));
+            let years = Array.from(yearsSet).sort();
+
+            let meData = years.map(y => me.yearlyStats && me.yearlyStats[y] ? me.yearlyStats[y].totalTurnover : 0);
+            let thData = years.map(y => them.yearlyStats && them.yearlyStats[y] ? them.yearlyStats[y].totalTurnover : 0);
+
+            chartsInstances['compare'] = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: years,
+                    datasets: [
+                        { label: meName, data: meData, backgroundColor: '#10b981', borderRadius: 4 },
+                        { label: thName, data: thData, backgroundColor: '#3b82f6', borderRadius: 4 }
+                    ]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    plugins: { legend: { labels: { color: textColor, font: {family: 'Inter'} } } },
+                    scales: {
+                        y: { grid: { color: gridColor }, ticks: { color: textColor, callback: v => formatNumber(v) } },
+                        x: { grid: { display: false }, ticks: { color: textColor, font: { family: 'Inter', weight: 'bold' } } }
+                    }
+                }
+            });
+        }, 150);
+    }
+
+    /* ----------- ДЕТАЛІ АДМІН ПАНЕЛІ ----------- */
     function renderAdminView() {
         let currentUserObj = db.users.find(u => u.login === currentUser);
         let isAdmin = windowUserRole === 'admin';
-        
         let allUsers = db.users.filter(u => {
             let rStr = String(u.role).toLowerCase();
             return rStr.includes('співробітник') || rStr.includes('сотрудник') || rStr.includes('керівник') || rStr.includes('власник');
@@ -1124,41 +1411,23 @@
 
         let managedUsers = allUsers.filter(u => {
             if (u.login === currentUser) return false;
-
             let uRoleStr = String(u.role).toLowerCase();
             let uIsOwner = uRoleStr.includes('власник') || uRoleStr.includes('владелец') || uRoleStr.includes('admin') || uRoleStr.includes('адмін');
             let uIsDirector = uRoleStr.includes('керівник') || uRoleStr.includes('директор') || uRoleStr.includes('manager');
-
             let assignedCount = parseInt((u.tableStats || {}).assigned) || 0;
             let arrAssigned = (u.assigned && u.assigned.length > 0) ? u.assigned.length : 0;
-            
-            let tPcs = parseFloat(String(u.targetPcs || "0").replace(/[\s\u00A0\u202F]/g, '').replace(',', '.')) || 0;
-            let tUah = parseFloat(String(u.targetUah || "0").replace(/[\s\u00A0\u202F]/g, '').replace(',', '.')) || 0;
-            let fPcs = parseFloat(String(u.execPcs || "0").replace(/[\s\u00A0\u202F]/g, '').replace(',', '.')) || 0;
-            let fUah = parseFloat(String(u.execUah || "0").replace(/[\s\u00A0\u202F]/g, '').replace(',', '.')) || 0;
-            
-            let hasGoals = (tPcs > 0 || tUah > 0 || fPcs !== 0 || fUah !== 0);
-            let hasCourses = (assignedCount > 0 || arrAssigned > 0);
-            let hasGoalsOrCourses = hasGoals || hasCourses;
+            let hasGoalsOrCourses = (u.targetPcs > 0 || u.targetUah > 0 || u.execPcs > 0 || u.execUah > 0 || assignedCount > 0 || arrAssigned > 0);
 
-            if (isAdmin) {
-                if (uIsOwner) return false;
-                if (!hasGoalsOrCourses) return false;
-                return true; 
-            } else {
+            if (isAdmin) { if (uIsOwner || !hasGoalsOrCourses) return false; return true; } 
+            else {
                 let uDir = String(u.director).toLowerCase().trim();
                 let belongsToManager = uDir && (uDir === mShort || mName.includes(uDir) || uDir.includes(mShort));
-
-                if (!belongsToManager) return false;
-                if (uIsDirector || uIsOwner) return false;
-                if (!hasGoalsOrCourses) return false;
-
+                if (!belongsToManager || uIsDirector || uIsOwner || !hasGoalsOrCourses) return false;
                 return true;
             }
         });
 
         let directors = [...new Set(managedUsers.map(u => u.director).filter(d => d))].sort();
-
         let filterHtml = ``;
         if (isAdmin) {
             filterHtml += `
@@ -1190,9 +1459,7 @@
         let selectedEmp = empSelect ? empSelect.value : "";
 
         if (changedFilter === 'dir') {
-            selectedEmp = "";
-            if (empSelect) empSelect.value = "";
-            
+            selectedEmp = ""; if (empSelect) empSelect.value = "";
             if (empSelect) {
                 let empsForDir = selectedDir ? window.adminManagedUsers.filter(u => u.director === selectedDir) : window.adminManagedUsers;
                 let empOpts = `<option value="">-- Всі співробітники --</option>`;
@@ -1207,57 +1474,34 @@
 
         let filtered = window.adminManagedUsers;
         if (selectedDir) filtered = filtered.filter(u => u.director === selectedDir);
-        
-        if (selectedEmp) {
-            viewEmployeeDetails(selectedEmp);
-            return; 
-        }
-
+        if (selectedEmp) { viewEmployeeDetails(selectedEmp); return; }
         renderAdminStatsAndList(filtered);
     }
 
     function renderAdminStatsAndList(users) {
-        let groupAssigned = 0;
-        let groupPassed = 0;
-        let groupAvgSum = 0;
-        let validAvgs = 0;
-
+        let groupAssigned = 0; let groupPassed = 0; let groupAvgSum = 0; let validAvgs = 0;
         users.forEach(u => {
             let st = u.tableStats || {};
             groupAssigned += parseInt(st.assigned) || 0;
             groupPassed += (parseInt(st.on100) || 0) + (parseInt(st.on90) || 0) + (parseInt(st.on80) || 0);
             
-            let sum = 0;
-            let count = 0;
+            let sum = 0, count = 0;
             for (let key in (u.results || {})) {
                 let resStr = u.results[key];
-                let score = 0;
-                let match = String(resStr).match(/(\d+)\s*\/\s*(\d+)%(?:\/(\d+))?/);
-                if (match) {
-                    score = parseInt(match[2], 10) || 0;
-                } else {
-                    let sm = String(resStr).match(/(\d+)%/);
-                    if (sm) score = parseInt(sm[1], 10) || 0;
-                }
-                sum += score;
-                count++;
+                let match = String(resStr).match(/(\d+)\s*\/\s*(\d+)%/);
+                let score = match ? parseInt(match[2], 10) : (String(resStr).match(/(\d+)%/) ? parseInt(String(resStr).match(/(\d+)%/)[1], 10) : 0);
+                sum += score; count++;
             }
-            if (count > 0) {
-                groupAvgSum += (sum / count);
-                validAvgs++;
-            }
+            if (count > 0) { groupAvgSum += (sum / count); validAvgs++; }
         });
 
         let groupAvg = validAvgs > 0 ? Math.round(groupAvgSum / validAvgs) : 0;
-
-        let statsHtml = `
+        document.getElementById('adminStatsContainer').innerHTML = `
             <div class="stats-dashboard">
-                <div class="stat-item"><div class="stat-val">${groupPassed}/${groupAssigned}</div><div class="stat-label">Пройдено курсів</div></div>
+                <div class="stat-item"><div class="stat-val">${groupPassed}/${groupAssigned}</div><div class="stat-label">Пройдено</div></div>
                 <div class="stat-item"><div class="stat-val">${groupAvg}%</div><div class="stat-label">Сер. бал групи</div></div>
             </div>
         `;
-
-        document.getElementById('adminStatsContainer').innerHTML = statsHtml;
 
         let listHtml = users.map(u => {
             let st = u.tableStats || {};
@@ -1269,77 +1513,36 @@
             if (deadlineStr) {
                 let dlMs = getDeadlineMs(deadlineStr, u);
                 let isExpired = dlMs && Date.now() > dlMs;
-                let dTextRaw = formatDeadlineText(deadlineStr);
-                let dText = isExpired ? `🔒 Дедлайн ${dTextRaw} (Завершено)` : `⏳ Дедлайн ${dTextRaw}`;
-                let dColor = isExpired ? 'var(--danger)' : '#f59e0b';
-                let dBg = isExpired ? 'var(--danger-bg)' : 'rgba(245, 158, 11, 0.15)';
-                dlBadge = `<div style="font-size:12px; font-weight:600; color:${dColor}; background:${dBg}; padding:2px 6px; border-radius:6px; display:inline-block;">${escapeHTMLAttr(dText)}</div>`;
+                dlBadge = `<div style="font-size:12px; font-weight:600; color:${isExpired?'var(--danger)':'#f59e0b'}; background:${isExpired?'var(--danger-bg)':'rgba(245, 158, 11, 0.15)'}; padding:2px 6px; border-radius:6px; display:inline-block;">${escapeHTMLAttr(isExpired ? '🔒 Дедлайн (Завершено)' : '⏳ Дедлайн '+formatDeadlineText(deadlineStr))}</div>`;
             } else {
                 dlBadge = `<div style="font-size:12px; font-weight:600; color:var(--text-muted); background:var(--input-bg); padding:2px 6px; border-radius:6px; display:inline-block;">Без дедлайну</div>`;
             }
             
             let achCodes = u.achievements ? String(u.achievements).split(',').map(s=>s.trim()).filter(s=>s) : [];
-            let achHtml = '';
-            if(achCodes.length > 0) {
-                let topAchs = achCodes.slice(0, 3);
-                achHtml = topAchs.map(code => `<img src="Achievement/${escapeHTMLAttr(code)}.svg" style="width:20px; height:20px; object-fit:contain; margin-right:4px;" onerror="this.outerHTML='<span style=\\'font-size:20px; margin-right:4px;\\'>🏅</span>'">`).join('');
-                if(achCodes.length > 3) achHtml += `<span style="font-size:12px; color:var(--text-muted); font-weight:bold;">+${achCodes.length - 3}</span>`;
-            } else {
-                achHtml = '<span style="font-size:12px; color:var(--text-muted);">Немає нагороди</span>';
-            }
+            let achHtml = achCodes.length > 0 ? achCodes.slice(0, 3).map(code => `<img src="Achievement/${escapeHTMLAttr(code)}.svg" style="width:20px; height:20px; object-fit:contain; margin-right:4px;" onerror="this.outerHTML='<span style=\\'font-size:20px; margin-right:4px;\\'>🏅</span>'">`).join('') + (achCodes.length > 3 ? `<span style="font-size:12px; color:var(--text-muted); font-weight:bold;">+${achCodes.length - 3}</span>` : '') : '<span style="font-size:12px; color:var(--text-muted);">Немає нагороди</span>';
 
             let rawName = u.name && u.name !== "undefined" && String(u.name).trim() !== "" ? String(u.name) : u.login;
             let displayName = rawName.replace(/[\/\\,]/g, '').trim(); 
             
-            let roleStr = String(u.role).trim();
-            let rLow = roleStr.toLowerCase();
-            let isHead = rLow.includes('керівник') || rLow.includes('власник') || rLow.includes('директор');
+            let roleStr = String(u.role).trim().toLowerCase();
+            let isHead = roleStr.includes('керівник') || roleStr.includes('власник') || roleStr.includes('директор');
             
-            let dirDisplayHtml = '';
-            let storeDisplayHtml = '';
+            let dirDisplayHtml = isHead ? `<div style="color:var(--text-main); font-weight:700;">${roleStr.includes('власник')?'Власник':'Керівник'}</div>` : `<div style="color:var(--text-main);">👤 ${escapeHTMLAttr(u.director ? `Керівник: ${u.director}` : 'Керівник не вказаний')}</div>`;
+            let storeDisplayHtml = (!isHead && u.store && u.store !== "undefined") ? `<div>📍 ${escapeHTMLAttr(u.store)}</div>` : '';
 
-            if (isHead) {
-                let displayRole = rLow.includes('власник') ? 'Власник' : 'Керівник';
-                dirDisplayHtml = `<div style="color:var(--text-main); font-weight:700;">${displayRole}</div>`;
-            } else {
-                let dirDisplay = u.director ? `Керівник: ${u.director}` : 'Керівник не вказаний';
-                dirDisplayHtml = `<div style="color:var(--text-main);">👤 ${escapeHTMLAttr(dirDisplay)}</div>`;
-                if (u.store && u.store !== "undefined") {
-                    storeDisplayHtml = `<div>📍 ${escapeHTMLAttr(u.store)}</div>`;
-                }
-            }
-
-            let cardBg = 'var(--card-bg)';
-            let cardBorder = 'var(--border)';
-            
-            if (uTotal > 0) {
-                if (uPass === uTotal) {
-                    cardBorder = 'rgba(16, 185, 129, 0.8)';
-                } else if (uPass === 0) {
-                    cardBorder = 'rgba(239, 68, 68, 0.5)';
-                } else {
-                    cardBorder = 'rgba(245, 158, 11, 0.6)';
-                }
-            }
+            let cardBorder = (uTotal > 0) ? (uPass === uTotal ? 'rgba(16, 185, 129, 0.8)' : (uPass === 0 ? 'rgba(239, 68, 68, 0.5)' : 'rgba(245, 158, 11, 0.6)')) : 'var(--border)';
 
             return `
-            <div class="list-card" onclick="viewEmployeeDetails('${escapeHTMLAttr(u.login)}')" style="background: ${cardBg}; border-color: ${cardBorder};">
+            <div class="list-card" onclick="viewEmployeeDetails('${escapeHTMLAttr(u.login)}')" style="background: var(--card-bg); border-color: ${cardBorder};">
                 <div style="flex:1;">
                     <div style="font-size:15px; font-weight:700; color:var(--text-main); margin-bottom:6px;">${escapeHTMLAttr(displayName)}</div>
-                    
                     <div style="font-size:12px; font-weight:600; color:var(--text-muted); margin-bottom:8px; display:flex; flex-direction:column; gap:4px;">
-                        ${storeDisplayHtml}
-                        ${dirDisplayHtml}
+                        ${storeDisplayHtml} ${dirDisplayHtml}
                     </div>
-                    
                     <div style="display:flex; align-items:center; gap: 8px; margin-bottom:6px;">
-                        ${dlBadge}
-                        <div style="font-size:12px; font-weight:600; color:var(--text-muted); background:var(--input-bg); padding:2px 6px; border-radius:6px;">Курсів: ${uTotal}</div>
+                        ${dlBadge} <div style="font-size:12px; font-weight:600; color:var(--text-muted); background:var(--input-bg); padding:2px 6px; border-radius:6px;">Курсів: ${uTotal}</div>
                     </div>
-                    
-                    <div style="display:flex; align-items:center;">
-                        ${achHtml}
-                    </div>
+                    <div style="display:flex; align-items:center;">${achHtml}</div>
                 </div>
                 <div style="display:flex; flex-direction:column; justify-content:center; align-items:flex-end; gap:4px; padding-left:12px;">
                     <div style="font-size: 16px; font-weight: 900; color: ${(uTotal > 0 && uPass===uTotal)?'var(--success)':'var(--text-main)'};">${uPass}<span style="font-size:12px; color:var(--text-muted);">/${uTotal}</span></div>
@@ -1356,29 +1559,24 @@
     function viewEmployeeDetails(login) {
         windowViewingEmployee = db.users.find(u => u.login === login);
         if(!windowViewingEmployee) return;
-        
         buildCoursesMap(windowViewingEmployee);
-        
         let rawName = windowViewingEmployee.name && windowViewingEmployee.name !== "undefined" && String(windowViewingEmployee.name).trim() !== "" ? String(windowViewingEmployee.name) : windowViewingEmployee.login;
-        let displayName = rawName.replace(/[\/\\,]/g, '').trim(); 
-
         document.getElementById('courseViewTitle').innerText = 'Картка співробітника';
-        document.getElementById('userWelcome').innerHTML = `<strong style="color:var(--text-main); font-size: 18px;">${escapeHTMLAttr(displayName)}</strong>`;
+        document.getElementById('userWelcome').innerHTML = `<strong style="color:var(--text-main); font-size: 18px;">${escapeHTMLAttr(rawName.replace(/[\/\\,]/g, '').trim())}</strong>`;
         document.getElementById('courseViewNavActions').style.display = 'none'; 
-        
-        renderCourses(windowViewingEmployee);
+        document.getElementById('compareBtn').style.display = 'none'; 
+        renderDashboardStats(windowViewingEmployee);
+        renderCoursesList(windowViewingEmployee);
         startDeadlineTimer(); 
         switchView('courseView');
     }
 
-    // --- ЗВИЧАЙНИЙ РОЗДІЛ НАВЧАННЯ ---
+    /* ----------- ІНШІ ФУНКЦІЇ UI ТА ТЕСТІВ ----------- */
     function checkNewAchievements(user) {
         if (!user || !user.achievements) return;
         let achCodes = String(user.achievements).split(',').map(s => s.trim()).filter(s => s !== "");
         let savedCount = parseInt(localStorage.getItem(`ach_count_${user.login}`)) || 0;
-
         const achBtn = document.getElementById('achBtn');
-
         if (achCodes.length > savedCount) {
             document.getElementById('achNotificationDot').style.display = 'block';
             if(achBtn) achBtn.classList.add('has-new');
@@ -1391,90 +1589,53 @@
     function toggleAchievements() {
         const drawer = document.getElementById('achDrawer');
         const overlay = document.getElementById('achOverlay');
-        
         if (drawer.classList.contains('open')) {
-            drawer.classList.remove('open');
-            overlay.classList.remove('active');
-            document.body.style.overflow = ''; 
-
+            drawer.classList.remove('open'); overlay.classList.remove('active'); document.body.style.overflow = ''; 
             document.querySelectorAll('.ach-card.zoomed').forEach(c => c.classList.remove('zoomed'));
         } else {
             document.getElementById('achNotificationDot').style.display = 'none';
-            const achBtn = document.getElementById('achBtn');
-            if(achBtn) achBtn.classList.remove('has-new');
-
+            const achBtn = document.getElementById('achBtn'); if(achBtn) achBtn.classList.remove('has-new');
             document.body.style.overflow = 'hidden'; 
-
             let user = db.users.find(u => u.login === currentUser);
             if(user && user.achievements) {
                  let count = String(user.achievements).split(',').filter(s => s.trim() !== "").length;
                  localStorage.setItem(`ach_count_${user.login}`, count);
             }
-
-            renderAchievements();
-            drawer.classList.add('open');
-            overlay.classList.add('active');
+            renderAchievements(); drawer.classList.add('open'); overlay.classList.add('active');
         }
     }
 
     function toggleAchZoom(element) {
         let isZoomed = element.classList.contains('zoomed');
-        
-        document.querySelectorAll('.ach-card.zoomed').forEach(card => {
-            card.classList.remove('zoomed');
-        });
-
-        if (!isZoomed) {
-            element.classList.add('zoomed');
-            setTimeout(() => {
-                element.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-            }, 50);
-        }
+        document.querySelectorAll('.ach-card.zoomed').forEach(card => card.classList.remove('zoomed'));
+        if (!isZoomed) { element.classList.add('zoomed'); setTimeout(() => element.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 50); }
     }
 
     function renderAchievements() {
         let user = db.users.find(u => u.login === currentUser);
         let achListEl = document.getElementById('achList');
-
-        if (!user || !user.achievements) {
-            achListEl.innerHTML = '<div style="text-align:center; color:var(--text-muted); margin-top: 20px;">У вас поки немає нагород. Навчайтесь та отримуйте ачівки!</div>';
-            return;
-        }
-
+        if (!user || !user.achievements) { achListEl.innerHTML = '<div style="text-align:center; color:var(--text-muted); margin-top: 20px;">У вас поки немає нагород. Навчайтесь та отримуйте ачівки!</div>'; return; }
         let achCodes = String(user.achievements).split(',').map(s => s.trim()).filter(s => s !== "");
-
-        if (achCodes.length === 0) {
-            achListEl.innerHTML = '<div style="text-align:center; color:var(--text-muted); margin-top: 20px;">У вас поки немає нагород.</div>';
-            return;
-        }
-
+        if (achCodes.length === 0) { achListEl.innerHTML = '<div style="text-align:center; color:var(--text-muted); margin-top: 20px;">У вас поки немає нагород.</div>'; return; }
         let html = '';
         achCodes.forEach(code => {
             let achInfo = globalAchievements.find(a => String(a.code).trim() === code);
-            
             let displayName = (achInfo && achInfo.name) ? achInfo.name.replace(/\.(svg|png|jpg|jpeg|webp|gif)$/i, '') : "Нова нагорода!";
             let desc = (achInfo && achInfo.description) ? achInfo.description : "";
-            let safeCode = escapeHTMLAttr(code);
-
             html += `
             <div class="ach-card" onclick="toggleAchZoom(this)">
-                <div class="ach-icon-wrapper">
-                    <img src="Achievement/${safeCode}.svg" class="ach-icon" alt="${displayName}" data-code="${safeCode}" data-ext-index="0" onerror="handleAchImageError(this)">
-                </div>
+                <div class="ach-icon-wrapper"><img src="Achievement/${escapeHTMLAttr(code)}.svg" class="ach-icon" onerror="handleAchImageError(this)"></div>
                 <div style="display: flex; flex-direction: column; justify-content: center; flex: 1;">
-                    <div class="ach-card-title">${displayName}</div>
-                    <div class="ach-card-desc">${desc}</div>
+                    <div class="ach-card-title">${displayName}</div><div class="ach-card-desc">${desc}</div>
                 </div>
             </div>`;
         });
-
         achListEl.innerHTML = html;
     }
 
     function openCompletedModal() {
         let modal = document.getElementById('genericModal');
         let overlay = document.getElementById('genericModalOverlay');
-
         modal.innerHTML = `
             <div class="ach-modal-title" style="margin-bottom: 24px;">Пройдені курси</div>
             <div class="modal-scrollable" style="max-height: 60vh; overflow-y: auto; text-align: left; margin-bottom: 24px; padding-right: 4px;">
@@ -1482,10 +1643,7 @@
             </div>
             <button class="btn btn-secondary" style="width: 100%; border-radius: 14px; padding: 16px; font-weight: 800; text-transform: uppercase;" onclick="closeModals()">ЗАКРИТИ</button>
         `;
-
-        document.body.style.overflow = 'hidden'; 
-        overlay.classList.add('active');
-        modal.classList.add('active');
+        document.body.style.overflow = 'hidden'; overlay.classList.add('active'); modal.classList.add('active');
     }
 
     function closeModals() {
@@ -1494,484 +1652,79 @@
         document.body.style.overflow = ''; 
     }
 
-    // --- ФУНКЦІЯ ВІДМАЛЬОВКИ ДІАГРАМИ ЦІЛЕЙ ---
-    function renderCharts(user) {
-        let goalsCanvas = document.getElementById('goalsChart');
-        if (!goalsCanvas) return; 
-
-        if (chartsInstances['goals']) {
-            chartsInstances['goals'].destroy();
-            delete chartsInstances['goals'];
-        }
-
-        const theme = localStorage.getItem('theme') || 'light';
-        const isDark = theme === 'dark';
-        const textColor = isDark ? '#ffffff' : '#111827';
-        const gridColor = isDark ? '#38383a' : '#e5e7eb';
-
-        let tPcs = parseFloat(String(user.targetPcs || "0").replace(/[\s\u00A0\u202F]/g, '').replace(',', '.')) || 0;
-        let tUah = parseFloat(String(user.targetUah || "0").replace(/[\s\u00A0\u202F]/g, '').replace(',', '.')) || 0;
-        let fPcs = parseFloat(String(user.execPcs || "0").replace(/[\s\u00A0\u202F]/g, '').replace(',', '.')) || 0;
-        let fUah = parseFloat(String(user.execUah || "0").replace(/[\s\u00A0\u202F]/g, '').replace(',', '.')) || 0;
-        
-        let labels = [];
-        let dataVals = [];
-        
-        // Змінено умови, щоб показувати "шт" та "грн", якщо є ВИКОНАННЯ, навіть коли ціль відсутня (0)
-        if (tPcs > 0 || fPcs !== 0) {
-            labels.push('шт');
-            dataVals.push(tPcs > 0 ? Math.min((fPcs / tPcs) * 100, 100) : 100);
-        }
-        if (tUah > 0 || fUah !== 0) {
-            labels.push('грн');
-            dataVals.push(tUah > 0 ? Math.min((fUah / tUah) * 100, 100) : 100);
-        }
-
-        if (labels.length === 0) return;
-
-        chartsInstances['goals'] = new Chart(goalsCanvas, {
-            type: 'bar',
-            data: {
-                labels: labels,
-                datasets: [
-                    { 
-                        data: dataVals, 
-                        backgroundColor: '#10b981', 
-                        borderRadius: 6, 
-                        barThickness: labels.length === 1 ? 32 : 24 
-                    }
-                ]
-            },
-            options: {
-                indexAxis: 'y',
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: { legend: { display: false } },
-                scales: {
-                    x: { max: 100, grid: { color: gridColor }, ticks: { color: textColor, callback: v => v + '%' } },
-                    y: { grid: { display: false }, ticks: { color: textColor, font: { family: 'Inter', weight: 'bold' } } }
-                }
-            }
-        });
-    }
-
-    function renderCourses(user) {
-        if (!user) user = db.users.find(u => u.login === currentUser);
-        const list = document.getElementById('courseList');
-        const courseNames = Object.keys(coursesMap);
-
-        if (courseNames.length === 0) {
-            document.getElementById('globalStatsContainer').innerHTML = '';
-            list.innerHTML = '<div style="text-align:center; background: var(--card-bg); border-radius: 16px; border: 1px solid var(--border); color: var(--text-muted); padding: 30px 20px; font-weight: 600;">Вам поки не призначено жодного курсу.</div>';
-            return;
-        }
-
-        let userResults = user.results || {};
-        let totalAssigned = 0;
-        let totalCompleted = 0;
-        let totalScoreSum = 0;
-        let scoreCount = 0;
-        
-        savedCompletedListHtml = ""; 
-
-        Object.values(coursesMap).reduce((acc, val) => acc.concat(val), []).forEach(p => {
-            totalAssigned++;
-            let cleanP = getCleanName(p.product);
-            let resStr = userResults[cleanP];
-            if (resStr) {
-                let match = String(resStr).match(/(\d+)\s*\/\s*(\d+)%(?:\/(\d+))?/);
-                let score = 0;
-                let attempts = 0;
-                if (match) {
-                    attempts = match[1];
-                    score = parseInt(match[2], 10) || 0;
-                } else {
-                    let scoreMatch = String(resStr).match(/(\d+)%/);
-                    if (scoreMatch) {
-                        score = parseInt(scoreMatch[1], 10) || 0;
-                        attempts = 1;
-                    }
-                }
-
-                totalScoreSum += score;
-                scoreCount++;
-                if (score >= 80) {
-                    totalCompleted++;
-                    let attWord = getAttemptWord(attempts);
-                    
-                    savedCompletedListHtml += `
-                        <div style="padding:16px 0; border-bottom:1px solid var(--input-bg); display:flex; justify-content:space-between; align-items:center; gap: 16px;">
-                            <span style="flex:1; font-size:15px; font-weight:700; line-height:1.4; color:var(--text-main);">${p.product}</span>
-                            <div style="display:flex; flex-direction:column; align-items:flex-end; flex-shrink:0;">
-                                <span style="font-size:16px; font-weight:900; color:var(--text-main); line-height:1;">${score}%</span>
-                                <span style="font-size:11px; font-weight:600; color:var(--text-muted); margin-top:4px;">${attempts} ${attWord}</span>
-                            </div>
-                        </div>`;
-                }
-            }
-        });
-
-        let tPcs = parseFloat(String(user.targetPcs || "0").replace(/[\s\u00A0\u202F]/g, '').replace(',', '.')) || 0;
-        let tUah = parseFloat(String(user.targetUah || "0").replace(/[\s\u00A0\u202F]/g, '').replace(',', '.')) || 0;
-        let fPcs = parseFloat(String(user.execPcs || "0").replace(/[\s\u00A0\u202F]/g, '').replace(',', '.')) || 0;
-        let fUah = parseFloat(String(user.execUah || "0").replace(/[\s\u00A0\u202F]/g, '').replace(',', '.')) || 0;
-
-        let displayFPcs = fPcs < 0 ? `<span style="color: var(--success);">+${formatNumber(Math.abs(fPcs))}</span>` : formatNumber(fPcs);
-        let displayFUah = fUah < 0 ? `<span style="color: var(--success);">+${formatNumber(Math.abs(fUah))}</span>` : formatNumber(fUah);
-
-        // Обчислення відсотка виконання. Якщо цілі немає, до загального % вона не враховується.
-        let validPcts = [];
-        if (tPcs > 0) validPcts.push((fPcs / tPcs) * 100);
-        if (tUah > 0) validPcts.push((fUah / tUah) * 100);
-        
-        let execPctVal = validPcts.length > 0 ? Math.max(...validPcts) : 100;
-        execPctVal = parseFloat(execPctVal.toFixed(1));
-
-        let goalsHtml = "";
-        if (tPcs > 0 || tUah > 0 || fPcs !== 0 || fUah !== 0) {
-            let isGoalCompleted = execPctVal >= 100;
-            let execBg = isGoalCompleted ? 'rgba(16, 185, 129, 0.15)' : 'var(--card-bg)';
-            let execBorder = isGoalCompleted ? 'rgba(16, 185, 129, 0.4)' : 'var(--border)';
-            let execColor = isGoalCompleted ? 'var(--rozetka-green-dark)' : 'var(--text-main)';
-
-            let statItems = "";
-            // Змінено умови, щоб показувати "шт" та "грн", якщо є ВИКОНАННЯ, навіть коли ціль відсутня
-            if (tPcs > 0 || fPcs !== 0) {
-                let targetText = tPcs > 0 ? ` / ${formatNumber(tPcs)}` : '';
-                let labelText = tPcs > 0 ? 'Ціль (шт)' : 'Виконання (шт)';
-                statItems += `
-                <div class="stat-item">
-                    <div class="stat-val" style="font-size:18px;">${displayFPcs} <span style="font-size:12px; color:var(--text-muted);">${targetText}</span></div>
-                    <div class="stat-label">${labelText}</div>
-                </div>`;
-            }
-            if (tUah > 0 || fUah !== 0) {
-                let targetText = tUah > 0 ? ` / ${formatNumber(tUah)}` : '';
-                let labelText = tUah > 0 ? 'Ціль (грн)' : 'Виконання (грн)';
-                statItems += `
-                <div class="stat-item">
-                    <div class="stat-val" style="font-size:18px;">${displayFUah} <span style="font-size:12px; color:var(--text-muted);">${targetText}</span></div>
-                    <div class="stat-label">${labelText}</div>
-                </div>`;
-            }
-
-            statItems += `
-            <div class="stat-item" style="background: ${execBg}; border-color: ${execBorder};">
-                <div class="stat-val" style="font-size:20px; color: ${execColor};">${execPctVal}%</div>
-                <div class="stat-label" style="color: ${execColor};">Виконання</div>
-            </div>`;
-
-            goalsHtml = `
-                <div class="section-title" style="margin-top: 0; display: flex; justify-content: flex-start; align-items: center; gap: 8px;">
-                    <img src="icons_skillHUB/aim.svg" style="width: 22px; height: 22px; display: block;" alt="Aim"> 
-                    <span style="line-height: 1; padding-top: 2px;">Цілі та виконання</span>
-                </div>
-                <div class="stats-dashboard">
-                    ${statItems}
-                </div>
-                <div class="chart-container">
-                    <canvas id="goalsChart"></canvas>
-                </div>
-            `;
-        }
-
-        let avgScore = scoreCount > 0 ? Math.round(totalScoreSum / scoreCount) : 0;
-
-        let globalPercent = totalAssigned > 0 ? Math.round((totalCompleted / totalAssigned) * 100) : 0;
-        let isGlobalCompleted = globalPercent >= 100 && totalAssigned > 0;
-        let globalBg = isGlobalCompleted ? 'rgba(16, 185, 129, 0.15)' : 'var(--card-bg)';
-        let globalBorder = isGlobalCompleted ? 'rgba(16, 185, 129, 0.4)' : 'var(--border)';
-        let globalColor = isGlobalCompleted ? 'var(--rozetka-green-dark)' : 'var(--text-main)';
-
-        document.getElementById('globalStatsContainer').innerHTML = `
-            ${goalsHtml}
-            <div class="section-title" style="${goalsHtml ? '' : 'margin-top: 0;'} display: flex; justify-content: flex-start; align-items: center; gap: 8px;">
-                <img src="icons_skillHUB/analytics.svg" style="width: 20px; height: 20px; display: block;" alt="Stats">
-                <span style="line-height: 1; padding-top: 2px;">Статистика навчання</span>
-            </div>
-            <div class="stats-dashboard">
-                <div class="stat-item clickable" onclick="openCompletedModal()">
-                    <div class="stat-val">${totalCompleted}/${totalAssigned}</div>
-                    <div class="stat-label">Пройдено</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-val">${avgScore}%</div>
-                    <div class="stat-label">Сер. бал</div>
-                </div>
-            </div>
-            
-            <div class="progress-widget" onclick="openCompletedModal()" style="cursor:pointer; margin-bottom: 24px; background: ${globalBg}; border-color: ${globalBorder};">
-                <div class="progress-header">
-                    <div class="progress-title-text">Загальний прогрес</div>
-                    <div class="progress-percent-val" style="color: ${globalColor};">${globalPercent}%</div>
-                </div>
-                <div class="progress-track">
-                    <div class="progress-fill" style="width: ${globalPercent}%;"></div>
-                </div>
-            </div>
-        `;
-        
-        setTimeout(() => renderCharts(user), 150);
-
-        if (windowViewingEmployee) {
-            let coursesHtml = courseNames.map(name => {
-                let courseProducts = coursesMap[name] || [];
-                let parsedCourse = formatWithCustomEmoji(name, '📘');
-                
-                let productsHtml = courseProducts.map((p, idx) => {
-                    let cleanP = getCleanName(p.product);
-                    let resStr = user.results[cleanP];
-                    let score = 0, attempts = 0, time = 0;
-                    if (resStr) {
-                        let match = String(resStr).match(/(\d+)\s*\/\s*(\d+)%(?:\/(\d+))?/);
-                        if (match) {
-                            attempts = match[1];
-                            score = parseInt(match[2], 10) || 0;
-                            time = parseInt(match[3], 10) || 0;
-                        } else {
-                            let sm = String(resStr).match(/(\d+)%/);
-                            if (sm) { score = parseInt(sm[1], 10) || 0; attempts = 1; }
-                        }
-                    }
-                    let timeStr = time > 0 ? `${Math.floor(time/60)}хв ${time%60}с` : '0хв 0с';
-                    
-                    let borderStyle = idx === courseProducts.length - 1 ? '' : 'border-bottom: 1px solid var(--input-bg);';
-                    
-                    return `
-                    <div style="padding: 14px 0; ${borderStyle} display: flex; flex-direction: column; gap: 10px;">
-                        <div style="font-size: 15px; font-weight: 700; color: var(--text-main); line-height: 1.3;">
-                            ${escapeHTMLAttr(p.product)}
-                        </div>
-                        <div style="display: flex; gap: 8px; width: 100%;">
-                            <div style="flex: 1; background: ${score>=80?'rgba(16, 185, 129, 0.08)':'rgba(239, 68, 68, 0.08)'}; border: 1px solid ${score>=80?'rgba(16, 185, 129, 0.2)':'rgba(239, 68, 68, 0.2)'}; padding: 10px 4px; border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-                                <span style="font-size: 10px; text-transform: uppercase; color: ${score>=80?'var(--success)':'var(--danger)'}; margin-bottom: 6px; font-weight: 700;">Результат</span>
-                                <span style="color:${score>=80?'var(--success)':'var(--danger)'}; font-size: 16px; font-weight: 900; line-height: 1;">${score}%</span>
-                            </div>
-                            <div style="flex: 1; background: var(--input-bg); border: 1px solid var(--border); padding: 10px 4px; border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-                                <span style="font-size: 10px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 6px; font-weight: 700;">Спроби</span>
-                                <span style="color:var(--text-main); font-size: 16px; font-weight: 900; line-height: 1;">${attempts}</span>
-                            </div>
-                            <div style="flex: 1; background: var(--input-bg); border: 1px solid var(--border); padding: 10px 4px; border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-                                <span style="font-size: 10px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 6px; font-weight: 700;">Час</span>
-                                <span style="color:var(--text-main); font-size: 15px; font-weight: 900; line-height: 1;">${timeStr}</span>
-                            </div>
-                        </div>
-                    </div>`;
-                }).join('');
-
-                return `
-                <div class="list-card" style="flex-direction: column; align-items: stretch; cursor: default; padding: 20px; box-shadow: 0 8px 24px rgba(0,0,0,0.03);">
-                    <div style="font-size: 18px; font-weight: 900; color: var(--primary); margin-bottom: 8px; display: flex; align-items: center; gap: 8px;">
-                        <span>${parsedCourse.icon}</span> ${escapeHTMLAttr(parsedCourse.title)}
-                    </div>
-                    ${productsHtml}
-                </div>`;
-            }).join('');
-            
-            list.innerHTML = coursesHtml;
-            return;
-        }
-
-        let coursesHtml = courseNames.map(name => {
-            let parsed = formatWithCustomEmoji(name, '📘');
-            let safeName = escapeHTMLAttr(name);
-
-            let courseProducts = coursesMap[name] || [];
-            let cTotal = courseProducts.length;
-            let cPassed = 0;
-
-            courseProducts.forEach(p => {
-                let cleanP = getCleanName(p.product);
-                let resStr = userResults[cleanP];
-                if (resStr) {
-                    let scoreMatch = String(resStr).match(/(\d+)\s*\/\s*(\d+)%(?:\/(\d+))?/);
-                    let score = 0;
-                    if (scoreMatch) score = parseInt(scoreMatch[2], 10) || 0;
-                    else {
-                        let singleMatch = String(resStr).match(/(\d+)%/);
-                        if (singleMatch) score = parseInt(singleMatch[1], 10) || 0;
-                    }
-                    if (score >= 80) cPassed++;
-                }
-            });
-
-            let isCourseDone = (cTotal > 0 && cPassed === cTotal);
-            let cardClass = isCourseDone ? "list-card completed" : "list-card";
-
-            return `
-            <div class="${cardClass}" onclick="openCourse(this.getAttribute('data-name'))" data-name="${safeName}">
-                <div class="list-card-title" style="flex: 1;">
-                    <span style="font-size: 16px;">${parsed.title}</span>
-                </div>
-                <div style="display: flex; align-items: center; gap: 10px;">
-                    <div style="font-size: 15px; font-weight: 800; color: ${isCourseDone ? 'var(--success)' : 'var(--text-main)'};">${cPassed}<span style="font-size: 12px; font-weight: 600; color: var(--text-muted);"> / ${cTotal}</span></div>
-                    <div class="list-card-arrow">❯</div>
-                </div>
-            </div>
-            `;
-        }).join('');
-
-        requestAnimationFrame(() => {
-            list.innerHTML = coursesHtml;
-        });
-    }
-
+    /* ----------- ЛОГІКА КУРСІВ ТА ТЕСТІВ (БЕЗ ЗМІН) ----------- */
     function openCourse(name) {
         currentCourseName = name;
         let parsedCourse = formatWithCustomEmoji(name, '');
         document.getElementById('productViewTitle').innerText = parsedCourse.title;
-
         const list = document.getElementById('productList');
         const products = coursesMap[name];
-
         let currentUserObj = windowViewingEmployee || db.users.find(u => u.login === currentUser);
         let userResults = currentUserObj.results || {};
-
         let completedCount = 0;
         products.forEach(p => {
-            let cleanP = getCleanName(p.product);
-            let resStr = userResults[cleanP];
+            let resStr = userResults[getCleanName(p.product)];
             if (resStr) {
-                let match = String(resStr).match(/(\d+)\s*\/\s*(\d+)%(?:\/(\d+))?/);
-                let score = 0;
-                if (match) {
-                    score = parseInt(match[2], 10) || 0;
-                } else {
-                    let scoreMatch = String(resStr).match(/(\d+)%/);
-                    if (scoreMatch) score = parseInt(scoreMatch[1], 10) || 0;
-                }
+                let match = String(resStr).match(/(\d+)\s*\/\s*(\d+)%/);
+                let score = match ? parseInt(match[2], 10) : (String(resStr).match(/(\d+)%/) ? parseInt(String(resStr).match(/(\d+)%/)[1], 10) : 0);
                 if (score >= 80) completedCount++;
             }
         });
-
         let percent = products.length > 0 ? Math.round((completedCount / products.length) * 100) : 0;
-
         document.getElementById('courseProgressContainer').innerHTML = `
             <div class="progress-widget">
-                <div class="progress-header">
-                    <div class="progress-title-text">Прогрес курсу</div>
-                    <div class="progress-percent-val">${percent}%</div>
-                </div>
-                <div class="progress-track">
-                    <div class="progress-fill" style="width: ${percent}%;"></div>
-                </div>
-            </div>
-        `;
-
+                <div class="progress-header"><div class="progress-title-text">Прогрес курсу</div><div class="progress-percent-val">${percent}%</div></div>
+                <div class="progress-track"><div class="progress-fill" style="width: ${percent}%;"></div></div>
+            </div>`;
         let productsHtml = products.map((p, index) => {
-            let cleanP = getCleanName(p.product);
-            let resStr = userResults[cleanP];
-            
-            let score = 0;
+            let resStr = userResults[getCleanName(p.product)];
+            let score = 0, attempts = 0, time = 0;
             if (resStr) {
                 let match = String(resStr).match(/(\d+)\s*\/\s*(\d+)%(?:\/(\d+))?/);
-                if (match) {
-                    score = parseInt(match[2], 10) || 0;
-                } else {
-                    let scoreMatch = String(resStr).match(/(\d+)%/);
-                    if (scoreMatch) score = parseInt(scoreMatch[1], 10) || 0;
-                }
+                if (match) { attempts = match[1]; score = parseInt(match[2], 10) || 0; time = parseInt(match[3], 10) || 0; }
+                else { let sm = String(resStr).match(/(\d+)%/); if (sm) { score = parseInt(sm[1], 10) || 0; attempts = 1; } }
             }
-
-            let scoreColor = 'var(--text-muted)';
-            let scoreText = 'Почати';
+            let scoreColor = 'var(--text-muted)', scoreText = 'Почати';
             if (score === 100) { scoreColor = '#10b981'; scoreText = '100%'; } 
             else if (score >= 90) { scoreColor = '#f97316'; scoreText = score + '%'; } 
             else if (score >= 80) { scoreColor = '#a16207'; scoreText = score + '%'; } 
             else if (score > 0) { scoreColor = '#ef4444'; scoreText = score + '%'; }
-
             let parsed = formatWithCustomEmoji(p.product, '📄');
-            let cardClass = (score >= 80) ? "list-card completed" : "list-card";
-
             return `
-            <div class="${cardClass}" onclick="openProduct(${index})">
+            <div class="list-card ${score >= 80 ? 'completed' : ''}" onclick="openProduct(${index})">
                 <div style="display: flex; align-items: center; gap: 14px; flex: 1;">
-                    <div style="display: flex; flex-direction: column; justify-content: center;">
-                        <span style="font-size: 16px; font-weight: 700; color: var(--text-main); line-height: 1.2;">${parsed.title}</span>
-                    </div>
+                    <div style="display: flex; flex-direction: column; justify-content: center;"><span style="font-size: 16px; font-weight: 700; color: var(--text-main); line-height: 1.2;">${parsed.title}</span></div>
                 </div>
-                <div style="display: flex; align-items: center; gap: 12px;">
-                    <div style="font-size: 14px; font-weight: 800; color: ${scoreColor};">${scoreText}</div>
-                    <div class="list-card-arrow">❯</div>
-                </div>
-            </div>
-            `;
+                <div style="display: flex; align-items: center; gap: 12px;"><div style="font-size: 14px; font-weight: 800; color: ${scoreColor};">${scoreText}</div><div class="list-card-arrow">❯</div></div>
+            </div>`;
         }).join('');
-
-        requestAnimationFrame(() => {
-            list.innerHTML = productsHtml;
-            switchView('productView');
-        });
+        list.innerHTML = productsHtml;
+        switchView('productView');
     }
 
-    // --- Оновлений парсер описів для розділу Education ---
     function openProduct(index) {
         currentProductData = coursesMap[currentCourseName][index];
         let parsed = formatWithCustomEmoji(currentProductData.product, '');
         document.getElementById('theoryTitle').innerText = parsed.title;
-
-        window.sessionTotalTime = 0;
-        window.theoryEntryTime = Date.now();
-
+        window.sessionTotalTime = 0; window.theoryEntryTime = Date.now();
         const contentBox = document.getElementById('theoryContent');
         const rawInfo = currentProductData.info || "Опис відсутній...";
-
-        const formattedHTML = rawInfo.split('\n')
-            .map(line => line.trim())
-            .filter(line => line.length > 0)
-            .map(line => {
-                let textStyle = "font-size: 15px; line-height: 1.5; font-weight: 500;";
-                
-                // Перевірка маркерів
-                if (line.startsWith('(AA+)')) {
-                    line = line.substring(5).trim().toUpperCase();
-                    textStyle += " font-weight:800; margin-top:8px;";
-                } else if (line.startsWith('(Аа+)')) {
-                    line = line.substring(5).trim();
-                    line = line.charAt(0).toUpperCase() + line.slice(1);
-                    textStyle += " font-weight:800; color:var(--text-main); margin-top:8px;";
-                } else if (line.startsWith('(аа*)')) {
-                    line = line.substring(5).trim();
-                    textStyle += " font-style:italic;";
-                } else if (line.startsWith('(КР+)')) {
-                    line = line.substring(5).trim().toUpperCase();
-                    textStyle += " font-weight:800; color:var(--danger); margin-top:8px;";
-                } else if (line.startsWith('(Кр+)')) {
-                    line = line.substring(5).trim();
-                    textStyle += " font-weight:800; color:var(--danger); margin-top:8px;";
-                } else if (line.startsWith('(кр*)')) {
-                    line = line.substring(5).trim();
-                    textStyle += " font-style:italic; color:var(--danger);";
-                } else if (line.startsWith('[Aa]')) { // Зворотня сумісність
-                    line = line.substring(4).trim();
-                    line = line.charAt(0).toUpperCase() + line.slice(1);
-                    textStyle += " font-weight:800; color:var(--text-main); margin-top:8px;";
-                } else if (line.startsWith('[AA]')) { // Зворотня сумісність
-                    line = line.substring(4).trim().toUpperCase();
-                    textStyle += " font-weight:800; color:var(--text-main); margin-top:8px;";
-                }
-
-                let match = line.match(/^(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])/);
-                let emoji = "";
-                let text = line;
-
-                if (match) {
-                    emoji = match[0];
-                    text = line.replace(emoji, '').trim();
-                }
-
-                if (emoji) {
-                    return `
-                    <div class="theory-line" style="display: flex; align-items: center; gap: 14px;">
-                        <div style="font-size: 24px; display: flex; align-items: center; justify-content: center; width: 30px; height: 30px; flex-shrink: 0;">${emoji}</div>
-                        <div style="flex: 1; ${textStyle}">${text}</div>
-                    </div>`;
-                } else {
-                    return `<div class="theory-line" style="${textStyle}">${text}</div>`;
-                }
-            })
-            .join('');
-
+        const formattedHTML = rawInfo.split('\n').map(line => line.trim()).filter(line => line.length > 0).map(line => {
+            let textStyle = "font-size: 15px; line-height: 1.5; font-weight: 500;";
+            if (line.startsWith('(AA+)')) { line = line.substring(5).trim().toUpperCase(); textStyle += " font-weight:800; margin-top:8px;"; }
+            else if (line.startsWith('(Аа+)')) { line = line.substring(5).trim(); line = line.charAt(0).toUpperCase() + line.slice(1); textStyle += " font-weight:800; color:var(--text-main); margin-top:8px;"; }
+            else if (line.startsWith('(аа*)')) { line = line.substring(5).trim(); textStyle += " font-style:italic;"; }
+            else if (line.startsWith('(КР+)')) { line = line.substring(5).trim().toUpperCase(); textStyle += " font-weight:800; color:var(--danger); margin-top:8px;"; }
+            else if (line.startsWith('(Кр+)')) { line = line.substring(5).trim(); textStyle += " font-weight:800; color:var(--danger); margin-top:8px;"; }
+            else if (line.startsWith('(кр*)')) { line = line.substring(5).trim(); textStyle += " font-style:italic; color:var(--danger);"; }
+            else if (line.startsWith('[Aa]')) { line = line.substring(4).trim(); line = line.charAt(0).toUpperCase() + line.slice(1); textStyle += " font-weight:800; color:var(--text-main); margin-top:8px;"; }
+            else if (line.startsWith('[AA]')) { line = line.substring(4).trim().toUpperCase(); textStyle += " font-weight:800; color:var(--text-main); margin-top:8px;"; }
+            let match = line.match(/^(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])/);
+            let emoji = "", text = line;
+            if (match) { emoji = match[0]; text = line.replace(emoji, '').trim(); }
+            if (emoji) return `<div class="theory-line" style="display: flex; align-items: center; gap: 14px;"><div style="font-size: 24px; display: flex; align-items: center; justify-content: center; width: 30px; height: 30px; flex-shrink: 0;">${emoji}</div><div style="flex: 1; ${textStyle}">${text}</div></div>`;
+            else return `<div class="theory-line" style="${textStyle}">${text}</div>`;
+        }).join('');
         contentBox.innerHTML = formattedHTML;
         updateTestButtonState();
         switchView('theoryView');
@@ -1979,9 +1732,7 @@
 
     function parseTestString(testStr) {
         let lines = testStr.split('\n').map(l => l.trim()).filter(l => l);
-        let questions = [];
-        let currentQ = null;
-
+        let questions = [], currentQ = null;
         lines.forEach(line => {
             let qMatch = line.match(/^(\d+)\.\s*(.*)/);
             if (qMatch) {
@@ -1990,44 +1741,30 @@
             } else {
                 let aMatch = line.match(/^\d+\/[a-zа-яA-ZА-Я0-9]\)\s*(.*)/);
                 if (aMatch && currentQ) {
-                    let ansText = aMatch[1];
-                    let isCorrect = false;
-                    if (ansText.includes('(+)')) {
-                        isCorrect = true;
-                        ansText = ansText.replace(/\(\+\)/g, '').trim();
-                    }
+                    let ansText = aMatch[1], isCorrect = false;
+                    if (ansText.includes('(+)')) { isCorrect = true; ansText = ansText.replace(/\(\+\)/g, '').trim(); }
                     currentQ.answers.push({ text: ansText, correct: isCorrect });
                 }
             }
         });
         if (currentQ) questions.push(currentQ);
-
-        questions.forEach(q => {
-            let correctCount = q.answers.filter(a => a.correct).length;
-            if (correctCount > 1) q.type = 'checkbox';
-        });
-
+        questions.forEach(q => { if (q.answers.filter(a => a.correct).length > 1) q.type = 'checkbox'; });
         return questions;
     }
 
     function updateSelection(qIndex, aIndex) {
         let q = parsedQuestions[qIndex];
-        
         if (q.type === 'radio') {
             q.answers.forEach((ans, idx) => {
                 ans.selected = (idx === aIndex);
                 let label = document.getElementById(`lbl_q${qIndex}_a${idx}`);
-                if (label) {
-                    if (ans.selected) label.classList.add('selected');
-                    else label.classList.remove('selected');
-                }
+                if (label) { if (ans.selected) label.classList.add('selected'); else label.classList.remove('selected'); }
             });
         } else {
             let input = document.getElementById(`q${qIndex}_a${aIndex}`);
             q.answers[aIndex].selected = input.checked;
             let label = document.getElementById(`lbl_q${qIndex}_a${aIndex}`);
-            if (input.checked) label.classList.add('selected');
-            else label.classList.remove('selected');
+            if (input.checked) label.classList.add('selected'); else label.classList.remove('selected');
         }
     }
 
@@ -2036,332 +1773,144 @@
         let s = (timeRemaining % 60).toString().padStart(2, '0');
         let el = document.getElementById('testTimer');
         el.innerText = `${m}:${s}`;
-
-        if (timeRemaining <= 10) {
-            el.style.color = "white";
-            el.style.background = "var(--danger)";
-        } else {
-            el.style.color = "var(--danger)";
-            el.style.background = "var(--danger-bg)";
-        }
+        if (timeRemaining <= 10) { el.style.color = "white"; el.style.background = "var(--danger)"; } 
+        else { el.style.color = "var(--danger)"; el.style.background = "var(--danger-bg)"; }
     }
 
     function showQuestion(index) {
-        if (index >= parsedQuestions.length) {
-            submitTest();
-            return;
-        }
-
+        if (index >= parsedQuestions.length) { submitTest(); return; }
         let q = parsedQuestions[index];
         document.getElementById('testHeaderTitle').innerText = `Питання ${index + 1} з ${parsedQuestions.length}`;
-
         let answersHtml = q.answers.map((ans, aIndex) => {
-            let checkedAttr = ans.selected ? 'checked' : '';
-            let selectedClass = ans.selected ? 'selected' : '';
-            return `
-            <label class="answer-label ${selectedClass}" id="lbl_q${index}_a${aIndex}">
-                <input type="${q.type}" name="q_${index}" id="q${index}_a${aIndex}" ${checkedAttr} onchange="updateSelection(${index}, ${aIndex})">
-                <span style="flex:1;">${ans.text}</span>
-            </label>
-            `;
+            let checkedAttr = ans.selected ? 'checked' : '', selectedClass = ans.selected ? 'selected' : '';
+            return `<label class="answer-label ${selectedClass}" id="lbl_q${index}_a${aIndex}"><input type="${q.type}" name="q_${index}" id="q${index}_a${aIndex}" ${checkedAttr} onchange="updateSelection(${index}, ${aIndex})"><span style="flex:1;">${ans.text}</span></label>`;
         }).join('');
-
         let hint = q.type === 'checkbox' ? `<span style="font-size:13px; font-weight:500; color:var(--text-muted); display:block; margin-top:6px;">(Множинний вибір)</span>` : '';
-
-        document.getElementById('testContainer').innerHTML = `
-            <div class="question-card">
-                <div class="question-title">${q.text} ${hint}</div>
-                ${answersHtml}
-            </div>
-        `;
-
+        document.getElementById('testContainer').innerHTML = `<div class="question-card"><div class="question-title">${q.text} ${hint}</div>${answersHtml}</div>`;
         let btn = document.getElementById('submitTestBtn');
-        if (index === parsedQuestions.length - 1) {
-            btn.innerText = "ЗАВЕРШИТИ ТЕСТ";
-            btn.onclick = () => submitTest();
-        } else {
-            btn.innerText = "НАСТУПНЕ ПИТАННЯ";
-            btn.onclick = () => nextQuestion();
-        }
-
-        timeRemaining = TIME_PER_QUESTION; 
-        updateTimerUI();
-
+        if (index === parsedQuestions.length - 1) { btn.innerText = "ЗАВЕРШИТИ ТЕСТ"; btn.onclick = () => submitTest(); } 
+        else { btn.innerText = "НАСТУПНЕ ПИТАННЯ"; btn.onclick = () => nextQuestion(); }
+        timeRemaining = TIME_PER_QUESTION; updateTimerUI();
         clearInterval(testTimerInterval);
         testTimerInterval = setInterval(() => {
-            timeRemaining--;
-            totalTimeSpent++; 
-            updateTimerUI();
-            if (timeRemaining <= 0) {
-                clearInterval(testTimerInterval);
-                nextQuestion(); 
-            }
+            timeRemaining--; totalTimeSpent++; updateTimerUI();
+            if (timeRemaining <= 0) { clearInterval(testTimerInterval); nextQuestion(); }
         }, 1000);
     }
 
-    function nextQuestion() {
-        clearInterval(testTimerInterval);
-        currentQuestionIndex++;
-        showQuestion(currentQuestionIndex);
-    }
+    function nextQuestion() { clearInterval(testTimerInterval); currentQuestionIndex++; showQuestion(currentQuestionIndex); }
 
     function startTest() {
         if (window.isDeadlinePassed) return;
         if (windowViewingEmployee) return;
-
-        if (!currentProductData.test || currentProductData.test.trim() === "") {
-            alert("Тест для цього продукту відсутній.");
-            return;
-        }
-
+        if (!currentProductData.test || currentProductData.test.trim() === "") { alert("Тест для цього продукту відсутній."); return; }
         let warningShown = sessionStorage.getItem('skillhub_test_warning_shown');
-        if (!warningShown) {
-            switchView('warningView');
-        } else {
-            proceedToTest();
-        }
+        if (!warningShown) switchView('warningView'); else proceedToTest();
     }
 
-    function acceptWarningAndStart() {
-        sessionStorage.setItem('skillhub_test_warning_shown', 'true');
-        proceedToTest();
-    }
+    function acceptWarningAndStart() { sessionStorage.setItem('skillhub_test_warning_shown', 'true'); proceedToTest(); }
 
     function proceedToTest() {
         parsedQuestions = parseTestString(currentProductData.test);
-
-        if (parsedQuestions.length === 0) {
-            alert("Помилка обробки тесту. Перевірте формат у таблиці.");
-            return;
-        }
-
-        if (window.theoryEntryTime > 0) {
-            window.sessionTotalTime += Math.floor((Date.now() - window.theoryEntryTime) / 1000);
-            window.theoryEntryTime = 0; 
-        }
+        if (parsedQuestions.length === 0) { alert("Помилка обробки тесту. Перевірте формат у таблиці."); return; }
+        if (window.theoryEntryTime > 0) { window.sessionTotalTime += Math.floor((Date.now() - window.theoryEntryTime) / 1000); window.theoryEntryTime = 0; }
         totalTimeSpent = window.sessionTotalTime;
-
         shuffleArray(parsedQuestions);
-        parsedQuestions.forEach(q => {
-            shuffleArray(q.answers);
-            q.answers.forEach(a => a.selected = false); 
-        });
-
-        currentQuestionIndex = 0;
-        isTestActive = true; 
-        
-        initWatermarks();  
-        requestFullScreen();
-        
-        switchView('testView');
-        showQuestion(currentQuestionIndex);
+        parsedQuestions.forEach(q => { shuffleArray(q.answers); q.answers.forEach(a => a.selected = false); });
+        currentQuestionIndex = 0; isTestActive = true; 
+        initWatermarks(); requestFullScreen();
+        switchView('testView'); showQuestion(currentQuestionIndex);
     }
 
-    function retryTest() {
-        window.sessionTotalTime = totalTimeSpent;
-        window.theoryEntryTime = 0; 
-        startTest();
-    }
-
-    function repeatTheory() {
-        window.sessionTotalTime = totalTimeSpent;
-        window.theoryEntryTime = Date.now();
-        switchView('theoryView');
-    }
+    function retryTest() { window.sessionTotalTime = totalTimeSpent; window.theoryEntryTime = 0; startTest(); }
+    function repeatTheory() { window.sessionTotalTime = totalTimeSpent; window.theoryEntryTime = Date.now(); switchView('theoryView'); }
 
     async function submitTest() {
-        isTestActive = false; 
-        clearInterval(testTimerInterval); 
-        removeWatermarks();
-        exitFullScreen();
-        
+        isTestActive = false; clearInterval(testTimerInterval); removeWatermarks(); exitFullScreen();
         let correctCount = 0;
-
         parsedQuestions.forEach((q) => {
-            let isQuestionCorrect = true;
-            let answeredAnything = false;
-
+            let isQuestionCorrect = true, answeredAnything = false;
             q.answers.forEach((ans) => {
                 if (ans.selected) answeredAnything = true;
-                if (!!ans.selected !== ans.correct) {
-                    isQuestionCorrect = false;
-                }
+                if (!!ans.selected !== ans.correct) isQuestionCorrect = false;
             });
-
-            if (isQuestionCorrect && answeredAnything) {
-                correctCount++;
-            }
+            if (isQuestionCorrect && answeredAnything) correctCount++;
         });
-
         let totalScore = Math.round((correctCount / parsedQuestions.length) * 100);
-        let passed = totalScore >= 80; 
-        let timeSpent = totalTimeSpent;
-
+        let passed = totalScore >= 80; let timeSpent = totalTimeSpent;
         let cleanP = getCleanName(currentProductData.product);
         let currentUserObj = db.users.find(u => u.login === currentUser);
         if (!currentUserObj.results) currentUserObj.results = {};
-
         let oldRes = currentUserObj.results[cleanP] || "0/0%/0";
-        let attempts = 0;
-        let oldScore = 0;
-        let oldTime = 0;
-
+        let attempts = 0, oldScore = 0, oldTime = 0;
         let match = String(oldRes).match(/(\d+)\s*\/\s*(\d+)%(?:\/(\d+))?/);
-        if (match) {
-            attempts = parseInt(match[1], 10) || 0;
-            oldScore = parseInt(match[2], 10) || 0;
-            oldTime = parseInt(match[3], 10) || 0;
-        } else {
-            let scoreMatch = String(oldRes).match(/(\d+)%/);
-            if (scoreMatch) {
-                oldScore = parseInt(scoreMatch[1], 10) || 0;
-                attempts = 1;
-            }
-        }
-
+        if (match) { attempts = parseInt(match[1], 10) || 0; oldScore = parseInt(match[2], 10) || 0; oldTime = parseInt(match[3], 10) || 0; } 
+        else { let scoreMatch = String(oldRes).match(/(\d+)%/); if (scoreMatch) { oldScore = parseInt(scoreMatch[1], 10) || 0; attempts = 1; } }
         attempts++;
-        
         let bestScore = Math.max(oldScore, totalScore);
         let bestTime = oldTime;
-        
-        if (totalScore > oldScore) {
-            bestTime = timeSpent;
-        } else if (totalScore === oldScore && (timeSpent < oldTime || oldTime === 0)) {
-            bestTime = timeSpent;
-        }
-
+        if (totalScore > oldScore) bestTime = timeSpent; else if (totalScore === oldScore && (timeSpent < oldTime || oldTime === 0)) bestTime = timeSpent;
         currentUserObj.results[cleanP] = `${attempts}/${bestScore}%/${bestTime}`;
-
+        
         let fullCache = JSON.parse(localStorage.getItem(CACHE_KEY) || "{}");
-        fullCache.educationData = db;
-        localStorage.setItem(CACHE_KEY, JSON.stringify(fullCache));
-
+        fullCache.educationData = db; localStorage.setItem(CACHE_KEY, JSON.stringify(fullCache));
+        
         document.getElementById('resultEmoji').innerText = passed ? '🏆' : '📝';
         document.getElementById('resultTitle').innerText = passed ? 'Тест складено!' : 'Потрібно повторити';
         document.getElementById('resultTitle').style.color = passed ? 'var(--success)' : 'var(--danger)';
         document.getElementById('resultSubtitle').innerHTML = `Твій результат: <strong style="font-size:22px; color: var(--text-main); margin: 0 4px;">${totalScore}%</strong><br><span style="font-size:14px; margin-top: 6px; display:inline-block;">(${correctCount} з ${parsedQuestions.length} правильних)</span>`;
-
         let actionHtml = '';
-        if (passed) {
-            actionHtml = `<button class="btn btn-glow" onclick="openCourse(this.getAttribute('data-course'))" data-course="${escapeHTMLAttr(currentCourseName)}">ПЕРЕЙТИ ДАЛІ</button>`;
-        } else {
-            actionHtml = `
-                <button class="btn btn-glow" style="margin-bottom: 16px;" onclick="retryTest()">СПРОБУВАТИ ЩЕ РАЗ</button>
-                <button class="btn btn-secondary" style="border-radius: 14px;" onclick="repeatTheory()">ПОВТОРИТИ ТЕОРІЮ</button>
-            `;
-        }
+        if (passed) { actionHtml = `<button class="btn btn-glow" onclick="openCourse(this.getAttribute('data-course'))" data-course="${escapeHTMLAttr(currentCourseName)}">ПЕРЕЙТИ ДАЛІ</button>`; } 
+        else { actionHtml = `<button class="btn btn-glow" style="margin-bottom: 16px;" onclick="retryTest()">СПРОБУВАТИ ЩЕ РАЗ</button><button class="btn btn-secondary" style="border-radius: 14px;" onclick="repeatTheory()">ПОВТОРИТИ ТЕОРІЮ</button>`; }
         document.getElementById('resultActionContainer').innerHTML = actionHtml;
-
         switchView('resultView');
 
         if (navigator.onLine) {
             try {
-                fetch(API_URL, {
-                    method: 'POST', cache: 'no-store', mode: 'no-cors',
-                    body: JSON.stringify({
-                        action: 'save_score',
-                        login: currentUser,
-                        product: currentProductData.product, 
-                        score: totalScore,
-                        time: timeSpent
-                    })
-                }).catch(e => saveOfflineResult(currentUser, currentProductData.product, totalScore, timeSpent));
-            } catch (e) {
-                saveOfflineResult(currentUser, currentProductData.product, totalScore, timeSpent);
-            }
-        } else {
-            saveOfflineResult(currentUser, currentProductData.product, totalScore, timeSpent);
-        }
+                fetch(API_URL, { method: 'POST', cache: 'no-store', mode: 'no-cors', body: JSON.stringify({ action: 'save_score', login: currentUser, product: currentProductData.product, score: totalScore, time: timeSpent }) })
+                .catch(e => saveOfflineResult(currentUser, currentProductData.product, totalScore, timeSpent));
+            } catch (e) { saveOfflineResult(currentUser, currentProductData.product, totalScore, timeSpent); }
+        } else { saveOfflineResult(currentUser, currentProductData.product, totalScore, timeSpent); }
     }
 
-    // --- АНТИ-СУПЕР-ЧІТ ---
-    document.addEventListener('contextmenu', event => {
-        if (document.getElementById('testView').classList.contains('active')) event.preventDefault();
-    });
-
-    document.addEventListener('copy', event => {
-        if (document.getElementById('testView').classList.contains('active')) {
-            event.preventDefault();
-            alert("Копіювання матеріалів тесту заборонено!");
-        }
-    });
-
+    /* ----------- АНТИ-СУПЕР-ЧІТ ----------- */
+    document.addEventListener('contextmenu', event => { if (document.getElementById('testView').classList.contains('active')) event.preventDefault(); });
+    document.addEventListener('copy', event => { if (document.getElementById('testView').classList.contains('active')) { event.preventDefault(); alert("Копіювання матеріалів тесту заборонено!"); } });
     document.addEventListener('keydown', (e) => {
         if (document.getElementById('testView').classList.contains('active')) {
-            if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'i')) || 
-               (e.ctrlKey && (e.key === 'p' || e.key === 'P' || e.key === 's' || e.key === 'S' || e.key === 'f' || e.key === 'F'))) {
-                e.preventDefault();
-                alert("Ця дія тимчасово заблокована задля чесності тестування!");
+            if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'i')) || (e.ctrlKey && (e.key === 'p' || e.key === 'P' || e.key === 's' || e.key === 'S' || e.key === 'f' || e.key === 'F'))) {
+                e.preventDefault(); alert("Ця дія тимчасово заблокована задля чесності тестування!");
             }
         }
     });
 
     function initWatermarks() {
         let container = document.getElementById('watermarkContainer');
-        if (!container) {
-            container = document.createElement('div');
-            container.id = 'watermarkContainer';
-            container.className = 'watermark-container';
-            document.body.appendChild(container);
-        }
+        if (!container) { container = document.createElement('div'); container.id = 'watermarkContainer'; container.className = 'watermark-container'; document.body.appendChild(container); }
         container.innerHTML = ''; container.style.display = 'block';
         const wmText = currentUser ? currentUser : "SkillHUB";
         for (let i = 0; i < 25; i++) {
-            let wm = document.createElement('div'); wm.className = 'watermark-text';
-            wm.style.top = `${Math.random() * 100}%`; wm.style.left = `${Math.random() * 100}%`;
-            wm.innerText = wmText; container.appendChild(wm);
+            let wm = document.createElement('div'); wm.className = 'watermark-text'; wm.style.top = `${Math.random() * 100}%`; wm.style.left = `${Math.random() * 100}%`; wm.innerText = wmText; container.appendChild(wm);
         }
     }
-
-    function removeWatermarks() {
-        let container = document.getElementById('watermarkContainer');
-        if (container) container.style.display = 'none';
-    }
-
-    function requestFullScreen() {
-        let elem = document.documentElement;
-        if (elem.requestFullscreen) elem.requestFullscreen().catch(err => console.log(err));
-        else if (elem.webkitRequestFullscreen) elem.webkitRequestFullscreen();
-    }
-
-    function exitFullScreen() {
-        if (document.fullscreenElement || document.webkitFullscreenElement) {
-            if (document.exitFullscreen) document.exitFullscreen();
-            else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
-        }
-    }
-
-    document.addEventListener('fullscreenchange', () => {
-        if (!document.fullscreenElement && document.getElementById('testView').classList.contains('active')) {
-            triggerAntiCheat();
-        }
-    });
+    function removeWatermarks() { let container = document.getElementById('watermarkContainer'); if (container) container.style.display = 'none'; }
+    function requestFullScreen() { let elem = document.documentElement; if (elem.requestFullscreen) elem.requestFullscreen().catch(err => console.log(err)); else if (elem.webkitRequestFullscreen) elem.webkitRequestFullscreen(); }
+    function exitFullScreen() { if (document.fullscreenElement || document.webkitFullscreenElement) { if (document.exitFullscreen) document.exitFullscreen(); else if (document.webkitExitFullscreen) document.webkitExitFullscreen(); } }
+    document.addEventListener('fullscreenchange', () => { if (!document.fullscreenElement && document.getElementById('testView').classList.contains('active')) { triggerAntiCheat(); } });
 
     function triggerAntiCheat() {
         if (!isTestActive) return; 
-        isTestActive = false; 
-        clearInterval(testTimerInterval); 
-
-        document.body.classList.add('cheating');
-
-        parsedQuestions.forEach(q => {
-            q.answers.forEach(a => a.selected = false);
-        });
-
+        isTestActive = false; clearInterval(testTimerInterval); document.body.classList.add('cheating');
+        parsedQuestions.forEach(q => { q.answers.forEach(a => a.selected = false); });
         setTimeout(() => {
             alert("⛔ Порушення правил! Ви згорнули вікно або відвели фокус. Спробу зараховано з результатом 0%.");
-            document.body.classList.remove('cheating');
-            submitTest();
+            document.body.classList.remove('cheating'); submitTest();
         }, 150);
     }
-
     window.addEventListener('blur', triggerAntiCheat); 
     window.addEventListener('pagehide', triggerAntiCheat); 
-    document.addEventListener('visibilitychange', () => { 
-        if (document.hidden) triggerAntiCheat(); 
-    });
+    document.addEventListener('visibilitychange', () => { if (document.hidden) triggerAntiCheat(); });
     document.addEventListener('touchcancel', triggerAntiCheat); 
-
 </script>
 </body>
 </html>
