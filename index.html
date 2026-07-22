@@ -1626,7 +1626,7 @@
                 if (progress < 90) { progress += Math.random() * 15; pBar.style.width = progress + '%'; }
             }, 300);
 
-            const timeoutId = setTimeout(() => controller.abort(), 30000);
+            const timeoutId = setTimeout(() => controller.abort(), 60000);
             const response = await fetch(API_URL + '?nocache=' + Date.now(), { signal: controller.signal });
             clearTimeout(timeoutId);
             
