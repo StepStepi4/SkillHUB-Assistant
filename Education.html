@@ -536,8 +536,49 @@
 
 <!-- СКРИПТИ -->
 <script>
+    // --- ЦЕНТРАЛЬНА КОНФІГУРАЦІЯ (ДЛЯ ГНУЧКОСТІ КОЛОНОК І РОЛЕЙ) ---
+    // Якщо ти додаси або перейменуєш колонку в таблиці Google Sheet,
+    // просто додай її нове ключове слово (дрібними літерами, без пробілів) сюди.
+    const CONFIG = {
+        metrics: {
+            plan: ['план', 'планнамісяць'], // Варіанти назви колонки для "План"
+            factPcs: ['шт', 'продановшт', 'проданошт'], // Варіанти для "Факт шт"
+            factUah: ['грн', 'продановгрн', 'проданогрн'], // Варіанти для "Факт грн"
+            planExec: ['виконанняплану'], // Варіанти для "% виконання"
+            efficiency: ['ефективність'], // Варіанти для "Ефективність"
+            share: ['доля'] // Варіанти для "Доля"
+        },
+        roles: {
+            admin: ['власник', 'владелец', 'admin', 'адмін'],
+            director: ['керівник', 'директор', 'manager'],
+            employee: ['співробітник', 'сотрудник']
+        }
+    };
+
+    // Допоміжна функція для отримання всіх ключів метрик (щоб відфільтрувати їх від списку курсів)
+    const getMetricKeys = () => Object.values(CONFIG.metrics).flat();
+
+    // Допоміжна функція для безпечного отримання потрібного значення незалежно від імені колонки
+    function getMetricValue(resObj, keysArray) {
+        if (!resObj) return undefined;
+        for (let key of keysArray) {
+            if (resObj[key] !== undefined && resObj[key] !== "") {
+                return resObj[key];
+            }
+        }
+        return undefined;
+    }
+
+    // Допоміжна функція для перевірки ролі
+    function checkRole(roleStr, roleGroup) {
+        if (!roleStr) return false;
+        let rLow = String(roleStr).toLowerCase().trim();
+        return CONFIG.roles[roleGroup].some(r => rLow.includes(r));
+    }
+
+
     // --- КОНСТАНТИ ТА НАЛАШТУВАННЯ ---
-    const API_URL = 'https://script.google.com/macros/s/AKfycbz7cjvpNvUokt7YrWvj0Dx2ZKC2Mwwh3zBkzht0ItQe0bGhPBoLuD3hivs6E6Y46PDQbw/exec'; 
+    const API_URL = 'https://script.google.com/macros/s/AKfycbyeoKV6uQRE_h0jy_QjkbQI7k_Py_UOYMvckWhHmGITT-q-Ai832__GWVxbdjxBgQ6zqA/exec'; 
     const CACHE_KEY = 'skillhub_v4_flat'; 
     const TIME_PER_QUESTION = 25; 
 
@@ -905,8 +946,9 @@
             const l = document.getElementById('loginInput').value.trim();
             const p = document.getElementById('passInput').value.trim();
 
-            if (!l || !p) { 
-                if(!isAuto) { err.innerText = "Введіть логін та пароль"; err.style.display = 'block'; }
+            // Проверяем только наличие логина. Пароль теперь не обязателен.
+            if (!l) { 
+                if(!isAuto) { err.innerText = "Введіть логін"; err.style.display = 'block'; }
                 return; 
             }
 
@@ -921,18 +963,20 @@
                 else { err.innerText = "База даних порожня. Перевірте інтернет!"; err.style.display = 'block'; return; }
             }
 
-            let user = db && db.users && db.users.find(u => 
-                String(u.login).trim().toLowerCase() === l.toLowerCase() && 
-                String(u.pass).trim().toLowerCase() === p.toLowerCase()
-            );
+            // Новая логика: если в базе пароль пустой, проверяем только логин.
+            const findUser = (u) => {
+                let isLoginMatch = String(u.login).trim().toLowerCase() === l.toLowerCase();
+                let dbPass = String(u.pass || "").trim().toLowerCase();
+                let isPassMatch = (dbPass === "") || (dbPass === p.toLowerCase());
+                return isLoginMatch && isPassMatch;
+            };
+
+            let user = db && db.users && db.users.find(findUser);
 
             if (!user && navigator.onLine && !isAuto) {
                 if (loginBtn) loginBtn.innerText = "ОНОВЛЕННЯ ДАНИХ...";
                 await fetchFreshDataSilent();
-                user = db && db.users && db.users.find(u => 
-                    String(u.login).trim().toLowerCase() === l.toLowerCase() && 
-                    String(u.pass).trim().toLowerCase() === p.toLowerCase()
-                );
+                user = db && db.users && db.users.find(findUser);
             }
 
             if (user) {
@@ -967,9 +1011,8 @@
                     localStorage.removeItem('skillhub_edu_creds');
                 }
 
-                let roleStr = String(user.role || '').toLowerCase().trim();
-                let isAdmin = roleStr.includes('власник') || roleStr.includes('владелец') || roleStr.includes('admin') || roleStr.includes('адмін');
-                let isDirector = roleStr.includes('керівник') || roleStr.includes('директор') || roleStr.includes('manager');
+                let isAdmin = checkRole(user.role, 'admin');
+                let isDirector = checkRole(user.role, 'director');
 
                 windowUserRole = isAdmin ? 'admin' : (isDirector ? 'director' : 'employee');
                 windowViewingEmployee = null;
@@ -1026,8 +1069,7 @@
         let isAdmin = windowUserRole === 'admin';
         
         let allUsers = db.users.filter(u => {
-            let rStr = String(u.role).toLowerCase();
-            return rStr.includes('співробітник') || rStr.includes('сотрудник') || rStr.includes('керівник') || rStr.includes('власник');
+            return checkRole(u.role, 'employee') || checkRole(u.role, 'director') || checkRole(u.role, 'admin');
         });
         
         let mName = String(currentUserObj.name).toLowerCase().trim();
@@ -1037,9 +1079,8 @@
         let managedUsers = allUsers.filter(u => {
             if (u.login === currentUser) return false;
 
-            let uRoleStr = String(u.role).toLowerCase();
-            let uIsOwner = uRoleStr.includes('власник') || uRoleStr.includes('владелец') || uRoleStr.includes('admin') || uRoleStr.includes('адмін');
-            let uIsDirector = uRoleStr.includes('керівник') || uRoleStr.includes('директор') || uRoleStr.includes('manager');
+            let uIsOwner = checkRole(u.role, 'admin');
+            let uIsDirector = checkRole(u.role, 'director');
 
             let assignedCount = parseInt((u.tableStats || {}).assigned) || 0;
             let arrAssigned = (u.assigned && u.assigned.length > 0) ? u.assigned.length : 0;
@@ -1128,6 +1169,7 @@
 
     function renderAdminStatsAndList(users) {
         let groupAssigned = 0; let groupPassed = 0; let groupAvgSum = 0; let validAvgs = 0;
+        let excludeKeys = getMetricKeys();
 
         users.forEach(u => {
             let st = u.tableStats || {};
@@ -1136,7 +1178,8 @@
             
             let sum = 0; let count = 0;
             for (let key in (u.results || {})) {
-                if (['план', 'планнамісяць', 'шт', 'продановшт', 'проданошт', 'грн', 'продановгрн', 'проданогрн', 'виконанняплану', 'ефективність', 'доля'].includes(key)) continue;
+                // Використовуємо CONFIG для виключення не-навчальних метрик
+                if (excludeKeys.includes(key)) continue;
 
                 let resStr = u.results[key]; let score = 0;
                 let match = String(resStr).match(/(\d+)\s*\/\s*(\d+)%(?:\/(\d+))?/);
@@ -1193,13 +1236,12 @@
             let rawName = u.name && u.name !== "undefined" && String(u.name).trim() !== "" ? String(u.name) : u.login;
             let displayName = rawName.replace(/[\/\\,]/g, '').trim(); 
             
-            let roleStr = String(u.role).trim(); let rLow = roleStr.toLowerCase();
-            let isHead = rLow.includes('керівник') || rLow.includes('власник') || rLow.includes('директор');
+            let isHead = checkRole(u.role, 'director') || checkRole(u.role, 'admin');
             
             let dirDisplayHtml = ''; let storeDisplayHtml = '';
 
             if (isHead) {
-                let displayRole = rLow.includes('власник') ? 'Власник' : 'Керівник';
+                let displayRole = checkRole(u.role, 'admin') ? 'Власник' : 'Керівник';
                 dirDisplayHtml = `<div style="color:var(--text-main); font-weight:700;">${displayRole}</div>`;
             } else {
                 let dirDisplay = u.director ? `Керівник: ${u.director}` : 'Керівник не вказаний';
@@ -1327,16 +1369,16 @@
             return parseFloat(str) || 0;
         }
 
-        // --- 1. СТАТИСТИКА ---
-        let planTotal = safeNum(res['планнамісяць'] || res['план']);
-        let factPcs = safeNum(res['шт'] || res['продановшт'] || res['проданошт']);
-        let factUah = safeNum(res['грн'] || res['продановгрн'] || res['проданогрн']);
+        // --- 1. СТАТИСТИКА (з використанням гнучкого CONFIG) ---
+        let planTotal = safeNum(getMetricValue(res, CONFIG.metrics.plan));
+        let factPcs = safeNum(getMetricValue(res, CONFIG.metrics.factPcs));
+        let factUah = safeNum(getMetricValue(res, CONFIG.metrics.factUah));
 
-        let planExec = parsePercentValue(res['виконанняплану']);
+        let planExec = parsePercentValue(getMetricValue(res, CONFIG.metrics.planExec));
         let safePlanExec = isNaN(planExec) ? 0 : Math.max(0, Math.min(planExec, 100));
         
-        let eff = parsePercentValue(res['ефективність']);
-        let dolya = parsePercentValue(res['доля']);
+        let eff = parsePercentValue(getMetricValue(res, CONFIG.metrics.efficiency));
+        let dolya = parsePercentValue(getMetricValue(res, CONFIG.metrics.share));
 
         let monthlyPlanHtml = `
             <div class="stat-card-modern">
