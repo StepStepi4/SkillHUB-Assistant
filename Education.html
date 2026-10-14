@@ -281,10 +281,8 @@
         <div class="login-wrapper">
             <div class="login-card">
                 <div class="big-emoji">
-                    <svg width="72" height="72" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display: block; margin: 0 auto; margin-bottom: 16px;">
-                        <path d="M22 10v6M2 10l10-5 10 5-10 5z"></path>
-                        <path d="M6 12v5c3 3 9 3 12 0v-5"></path>
-                    </svg>
+                    <!-- Замінили SVG на зображення 17.png -->
+                    <img src="Achievement/17.png" alt="SkillHUB Logo" style="width: 80px; height: 80px; object-fit: contain; display: block; margin: 0 auto 16px auto; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.1));" onerror="this.style.display='none'">
                 </div>
                 <h1>Вхід у Навчання</h1>
                 <p class="subtitle">Увійдіть, щоб розпочати вивчення матеріалів</p>
@@ -1535,49 +1533,6 @@
         });
     }
 
-    function openProduct(index) {
-        currentProductData = coursesMap[currentCourseName][index];
-        let parsed = formatWithCustomEmoji(currentProductData.product, '');
-        
-        window.sessionTotalTime = 0;
-        window.theoryEntryTime = Date.now();
-
-        const rawInfo = currentProductData.info || "Опис відсутній...";
-        const formattedHTML = rawInfo.split('\n')
-            .map(line => line.trim())
-            .filter(line => line.length > 0)
-            .map(line => {
-                let textStyle = "font-size: 15px; line-height: 1.5; font-weight: 500;";
-                
-                if (line.startsWith('(AA+)')) { line = line.substring(5).trim().toUpperCase(); textStyle += " font-weight:800; margin-top:8px;"; } 
-                else if (line.startsWith('(Аа+)')) { line = line.substring(5).trim(); line = line.charAt(0).toUpperCase() + line.slice(1); textStyle += " font-weight:800; color:var(--text-main); margin-top:8px;"; } 
-                else if (line.startsWith('(аа*)')) { line = line.substring(5).trim(); textStyle += " font-style:italic;"; } 
-                else if (line.startsWith('(КР+)')) { line = line.substring(5).trim().toUpperCase(); textStyle += " font-weight:800; color:var(--danger); margin-top:8px;"; } 
-                else if (line.startsWith('(Кр+)')) { line = line.substring(5).trim(); textStyle += " font-weight:800; color:var(--danger); margin-top:8px;"; } 
-                else if (line.startsWith('(кр*)')) { line = line.substring(5).trim(); textStyle += " font-style:italic; color:var(--danger);"; } 
-                else if (line.startsWith('[Aa]')) { line = line.substring(4).trim(); line = line.charAt(0).toUpperCase() + line.slice(1); textStyle += " font-weight:800; color:var(--text-main); margin-top:8px;"; } 
-                else if (line.startsWith('[AA]')) { line = line.substring(4).trim().toUpperCase(); textStyle += " font-weight:800; color:var(--text-main); margin-top:8px;"; }
-
-                let match = line.match(/^(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])/);
-                let emoji = ""; let text = line;
-
-                if (match) { emoji = match[0]; text = line.replace(emoji, '').trim(); }
-
-                if (emoji) {
-                    return `<div class="theory-line" style="display: flex; align-items: center; gap: 14px;"><div style="font-size: 24px; display: flex; align-items: center; justify-content: center; width: 30px; height: 30px; flex-shrink: 0;">${emoji}</div><div style="flex: 1; ${textStyle}">${text}</div></div>`;
-                } else {
-                    return `<div class="theory-line" style="${textStyle}">${text}</div>`;
-                }
-            }).join('');
-
-        requestAnimationFrame(() => {
-            document.getElementById('theoryTitle').innerText = parsed.title;
-            document.getElementById('theoryContent').innerHTML = formattedHTML;
-            updateTestButtonState();
-            switchView('theoryView');
-        });
-    }
-
     function checkNewAchievements(user) {
         if (!user || !user.achievements) return;
         let achCodes = String(user.achievements).split(',').map(s => s.trim()).filter(s => s !== "");
@@ -1891,7 +1846,6 @@
         if (testTimerInterval) clearInterval(testTimerInterval); 
         document.body.classList.add('cheating');
 
-        // Збільшуємо лічильник списувань локально для користувача
         if (currentUser) {
             let cheats = parseInt(localStorage.getItem('cheats_' + currentUser)) || 0;
             localStorage.setItem('cheats_' + currentUser, cheats + 1);
