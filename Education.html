@@ -6,9 +6,11 @@
     <title>Навчання - SkillHUB</title>
     <meta name="theme-color" content="#f2f2f7">
     
-    <!-- Підключення бібліотек та шрифтів -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Оптимізація завантаження -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
 
     <!-- Ініціалізація теми перед завантаженням (щоб не було блимання) -->
     <script>
@@ -70,9 +72,9 @@
         .container { width: 100%; max-width: 480px; padding: 24px 16px; margin: 0 auto; position: relative; }
 
         /* --- АНІМАЦІЇ ТА ВІДОБРАЖЕННЯ ЕКРАНІВ (SPA) --- */
-        .view { display: none; animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1); will-change: opacity, transform; }
+        .view { display: none; animation: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1); will-change: opacity, transform; }
         .view.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
         /* --- ЛОАДЕР (ЗАВАНТАЖЕННЯ) --- */
         .loader-overlay {
@@ -151,12 +153,11 @@
         }
         .apb-text { position: relative; z-index: 2; }
 
-        .stats-dashboard { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap;}
-        .stat-item { flex: 1 1 45%; background: var(--card-bg); border: 1px solid var(--border); border-radius: 16px; padding: 14px; text-align: center; transition: all 0.3s ease; box-shadow: 0 4px 10px rgba(0,0,0,0.02); display: flex; flex-direction: column; justify-content: center; }
-        .stat-card-modern { background: var(--card-bg); border: 1px solid var(--border); border-radius: 20px; padding: 20px; margin-bottom: 24px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); }
-        .stat-row-modern { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
-        .stat-label-modern { color: var(--text-muted); font-size: 14px; font-weight: 600; }
+        .stat-item { background: var(--card-bg); border: 1px solid var(--border); border-radius: 16px; padding: 14px; text-align: center; display: flex; flex-direction: column; justify-content: center; box-shadow: 0 4px 10px rgba(0,0,0,0.02); }
+        .stat-label-modern { color: var(--text-muted); font-size: 14px; font-weight: 600; margin-top: 4px; }
         .stat-val-modern { color: var(--text-main); font-size: 15px; font-weight: 800; }
+        
+        .chart-wrapper { position: relative; height: 220px; width: 100%; background: var(--card-bg); border: 1px solid var(--border); border-radius: 16px; padding: 16px; margin-bottom: 24px; box-shadow: 0 4px 10px rgba(0,0,0,0.02); }
 
         /* --- КАРТКИ --- */
         .list-card { background: var(--card-bg); border-radius: 20px; border: 1.5px solid var(--border); margin-bottom: 14px; padding: 18px 20px; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 4px 12px rgba(0,0,0,0.02); }
@@ -202,23 +203,19 @@
         .ach-card:active:not(.zoomed) { transform: scale(0.96); background: var(--input-bg); } 
         .ach-card.zoomed { padding: 24px 20px; margin: 8px -16px 20px -16px; border-radius: 24px; box-shadow: 0 24px 48px rgba(0,0,0,0.12); border-color: var(--primary-light); background: #ffffff; gap: 20px; z-index: 10; }
         
-        /* РОЗМІРИ ІКОНОК: ЗАРОБЛЕНІ (ВЕЛИКІ) ТА НЕЗАРОБЛЕНІ (МАЛЕНЬКІ) */
         .ach-icon-wrapper { width: 85px; height: 85px; flex-shrink: 0; background: transparent; display: flex; align-items: center; justify-content: center; transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
         .ach-card.locked .ach-icon-wrapper { width: 50px; height: 50px; }
         .ach-card.zoomed .ach-icon-wrapper { width: 120px; height: 120px; }
         
-        /* САМА КАРТИНКА (МЕДАЛЬ) */
         .ach-img { width: 100%; height: 100%; object-fit: contain; transition: 0.4s; }
-        .ach-card:not(.locked) .ach-img { filter: drop-shadow(0 6px 12px rgba(0,0,0,0.15)); transform: scale(1.05); } /* Зароблені - об'ємні та кольорові */
+        .ach-card:not(.locked) .ach-img { filter: drop-shadow(0 6px 12px rgba(0,0,0,0.15)); transform: scale(1.05); } 
         
-        /* СТИЛІЗАЦІЯ НЕЗАРОБЛЕНИХ АЧІВОК (СІРИЙ ТА НАПІВПРОЗОРИЙ) */
         .ach-card.locked { opacity: 0.30; filter: grayscale(100%); cursor: default; background: transparent; border-style: dashed; border-color: var(--text-muted); }
         .ach-card.locked:active { transform: none; background: transparent; }
         .ach-card.locked .ach-card-desc { display: none; }
         
-        /* ШРИФТИ ДЛЯ АЧІВОК */
         .ach-card-title { font-size: 18px; font-weight: 800; color: var(--text-main); line-height: 1.3; transition: 0.4s; }
-        .ach-card.locked .ach-card-title { font-size: 15px; } /* Менший шрифт для заблокованих */
+        .ach-card.locked .ach-card-title { font-size: 15px; } 
         .ach-card.zoomed .ach-card-title { font-size: 22px; }
         
         .ach-card-desc { font-size: 13px; font-weight: 600; color: var(--success); line-height: 1.4; max-height: 0; opacity: 0; overflow: hidden; margin-top: 0; transition: 0.4s; }
@@ -228,9 +225,6 @@
         .ach-modal.active { opacity: 1; transform: translate(-50%, -50%) scale(1); display: flex; }
         .ach-modal-title { font-size: 22px; font-weight: 800; color: var(--text-main); margin-bottom: 8px; flex-shrink: 0; }
         .notification-dot { position: absolute; top: 4px; right: 4px; width: 14px; height: 14px; background-color: var(--danger); border-radius: 50%; border: 2px solid var(--card-bg); display: none; }
-        .modal-scrollable::-webkit-scrollbar { width: 6px; }
-        .modal-scrollable::-webkit-scrollbar-track { background: transparent; }
-        .modal-scrollable::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
 
         .admin-select { width: 100%; padding: 14px 20px; border-radius: 14px; font-size: 15px; font-family: inherit; font-weight: 600; background: var(--input-bg); color: var(--text-main); border: 1.5px solid transparent; outline: none; transition: 0.2s; appearance: none; -webkit-appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%238e8e93' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 16px center; cursor: pointer; box-shadow: inset 0 2px 4px rgba(0,0,0,0.02); }
         .admin-select:focus { background: var(--card-bg); border-color: var(--primary); box-shadow: 0 0 0 4px var(--primary-light); }
@@ -403,7 +397,7 @@
         <div class="tabs-container">
             <div class="tab-btn active" onclick="switchCabinetTab('stats', this)">
                 <div style="display:flex; align-items:center; justify-content:center; gap:6px;">
-                    <img src="icons_skillHUB/analytics.svg" style="width:16px; height:16px;"> Статистика
+                    <img src="icons_skillHUB/analytics.svg" style="width:16px; height:16px;"> Аналітика
                 </div>
             </div>
             <div class="tab-btn" onclick="switchCabinetTab('courses', this)">
@@ -413,22 +407,15 @@
             </div>
         </div>
 
-        <!-- Вкладка: Статистика -->
+        <!-- Вкладка: Аналітика (Нова) -->
         <div id="tabStats" class="tab-content active">
             <div class="section-title">
-                <img src="icons_skillHUB/analytics.svg" style="width:16px; height:16px;"> Поточний місяць
+                <img src="icons_skillHUB/analytics.svg" style="width:16px; height:16px;"> Аналітика тестування
             </div>
-            <div id="monthlyPlanBlock"></div>
-
-            <div class="section-title">
-                <img src="icons_skillHUB/aim.svg" style="width:16px; height:16px;"> Цілі і виконання
+            <div class="chart-wrapper">
+                <canvas id="progressChart"></canvas>
             </div>
-            <div id="goalsBlock"></div>
-
-            <div class="section-title">
-                <img src="icons_skillHUB/Check.svg" style="width:16px; height:16px;"> Прогрес навчання
-            </div>
-            <div id="courseStatsBlock"></div>
+            <div id="learningAnalyticsBlock"></div>
         </div>
 
         <!-- Вкладка: Курси -->
@@ -536,18 +523,7 @@
 
 <!-- СКРИПТИ -->
 <script>
-    // --- ЦЕНТРАЛЬНА КОНФІГУРАЦІЯ (ДЛЯ ГНУЧКОСТІ КОЛОНОК І РОЛЕЙ) ---
-    // Якщо ти додаси або перейменуєш колонку в таблиці Google Sheet,
-    // просто додай її нове ключове слово (дрібними літерами, без пробілів) сюди.
     const CONFIG = {
-        metrics: {
-            plan: ['план', 'планнамісяць'], // Варіанти назви колонки для "План"
-            factPcs: ['шт', 'продановшт', 'проданошт'], // Варіанти для "Факт шт"
-            factUah: ['грн', 'продановгрн', 'проданогрн'], // Варіанти для "Факт грн"
-            planExec: ['виконанняплану'], // Варіанти для "% виконання"
-            efficiency: ['ефективність'], // Варіанти для "Ефективність"
-            share: ['доля'] // Варіанти для "Доля"
-        },
         roles: {
             admin: ['власник', 'владелец', 'admin', 'адмін'],
             director: ['керівник', 'директор', 'manager'],
@@ -555,34 +531,16 @@
         }
     };
 
-    // Допоміжна функція для отримання всіх ключів метрик (щоб відфільтрувати їх від списку курсів)
-    const getMetricKeys = () => Object.values(CONFIG.metrics).flat();
-
-    // Допоміжна функція для безпечного отримання потрібного значення незалежно від імені колонки
-    function getMetricValue(resObj, keysArray) {
-        if (!resObj) return undefined;
-        for (let key of keysArray) {
-            if (resObj[key] !== undefined && resObj[key] !== "") {
-                return resObj[key];
-            }
-        }
-        return undefined;
-    }
-
-    // Допоміжна функція для перевірки ролі
     function checkRole(roleStr, roleGroup) {
         if (!roleStr) return false;
         let rLow = String(roleStr).toLowerCase().trim();
         return CONFIG.roles[roleGroup].some(r => rLow.includes(r));
     }
 
-
-    // --- КОНСТАНТИ ТА НАЛАШТУВАННЯ ---
     const API_URL = 'https://script.google.com/macros/s/AKfycbyeoKV6uQRE_h0jy_QjkbQI7k_Py_UOYMvckWhHmGITT-q-Ai832__GWVxbdjxBgQ6zqA/exec'; 
     const CACHE_KEY = 'skillhub_v4_flat'; 
     const TIME_PER_QUESTION = 25; 
 
-    // --- ФУНКЦІЯ МАСШТАБУВАННЯ ШРИФТІВ ---
     window.updateFontScale = function(scale) {
         let style = document.getElementById('dynamicFontScale');
         if(!style) { 
@@ -615,7 +573,6 @@
     let savedFontScale = localStorage.getItem('skillhub_font_scale') || "1";
     window.updateFontScale(savedFontScale);
 
-    // --- ГЛОБАЛЬНІ ЗМІННІ ---
     let db = null;
     let globalAchievements = []; 
     let currentUser = null;
@@ -627,7 +584,6 @@
     let currentProductData = null;
     let parsedQuestions = [];
 
-    // --- ТАЙМЕРИ ТА СТАТУСИ ---
     let testTimerInterval = null;
     let timeRemaining = 0;
     let deadlineInterval = null;
@@ -640,7 +596,6 @@
     let currentQuestionIndex = 0;
     let totalTimeSpent = 0;
     
-    // --- ДОПОМІЖНІ ФУНКЦІЇ ---
     function getCleanName(str) { return !str ? "" : String(str).toLowerCase().replace(/[^a-zа-яёієїґ0-9]/g, ''); }
     function escapeHTMLAttr(str) { return !str ? "" : String(str).replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/'/g, "&#39;"); }
     
@@ -658,35 +613,12 @@
         }
     }
 
-    function formatNumber(num) {
-        if (num === undefined || num === null || num === "") return "0";
-        let str = String(num).replace(/[\s\u00A0\u202F]/g, '').replace(',', '.').replace(/[^\d.-]/g, '');
-        let n = parseFloat(str);
-        return isNaN(n) ? "0" : n.toLocaleString('uk-UA').replace(/,/g, ' ');
-    }
-
-    function parsePercentValue(val) {
-        if (!val) return 0;
-        let str = String(val).trim().replace(',', '.').replace(/[^\d.-]/g, ''); 
-        let num = parseFloat(str) || 0;
-        let isPercent = String(val).includes('%');
-        
-        if (isPercent) {
-            return parseFloat(num.toFixed(2));
-        }
-        if (num > -2 && num < 2 && String(val).includes('.')) {
-            return parseFloat((num * 100).toFixed(2));
-        }
-        return parseFloat(num.toFixed(2));
-    }
-    
     function formatDeadlineText(deadlineStr) {
         if (!deadlineStr || deadlineStr === "undefined" || String(deadlineStr).trim() === "") return null;
         let ds = String(deadlineStr).trim();
         return !isNaN(ds) ? `${ds} днів` : ds;
     }
 
-    // --- НАВІГАЦІЯ МІЖ ЕКРАНАМИ ---
     function handleFloatingBack() {
         let activeView = document.querySelector('.view.active').id;
         if (activeView === 'loginView' || activeView === 'adminView') {
@@ -729,7 +661,7 @@
                 el.classList.add('active');
             } else {
                 let targetBtn = Array.from(document.querySelectorAll('.tab-btn')).find(b => {
-                    if(tabName === 'stats' && b.innerText.includes('Статистика')) return true;
+                    if(tabName === 'stats' && b.innerText.includes('Аналітика')) return true;
                     if(tabName === 'courses' && b.innerText.includes('Навчання')) return true;
                     return false;
                 });
@@ -744,7 +676,6 @@
         });
     }
 
-    // --- ОФЛАЙН ЧЕРГА ТА API ---
     function saveOfflineResult(login, product, score, time) {
         try {
             let queue = JSON.parse(localStorage.getItem('skillhub_offline_queue') || '[]');
@@ -844,7 +775,6 @@
         }, 30000);
     }
 
-    // --- ДЕДЛАЙН ТА ОНОВЛЕННЯ СТАНУ ТЕСТУ ---
     function getDeadlineMs(deadlineValue, userObj) {
         if (!deadlineValue || String(deadlineValue).trim() === "") return null;
         let val = String(deadlineValue).trim();
@@ -937,7 +867,6 @@
         }
     }
 
-    // --- АВТОРИЗАЦІЯ ---
     async function handleLogin(isAuto = false) {
         const loginBtn = document.getElementById('loginSubmitBtn');
         const err = document.getElementById('errorMsg');
@@ -946,7 +875,6 @@
             const l = document.getElementById('loginInput').value.trim();
             const p = document.getElementById('passInput').value.trim();
 
-            // Проверяем только наличие логина. Пароль теперь не обязателен.
             if (!l) { 
                 if(!isAuto) { err.innerText = "Введіть логін"; err.style.display = 'block'; }
                 return; 
@@ -963,7 +891,6 @@
                 else { err.innerText = "База даних порожня. Перевірте інтернет!"; err.style.display = 'block'; return; }
             }
 
-            // Новая логика: если в базе пароль пустой, проверяем только логин.
             const findUser = (u) => {
                 let isLoginMatch = String(u.login).trim().toLowerCase() === l.toLowerCase();
                 let dbPass = String(u.pass || "").trim().toLowerCase();
@@ -1063,7 +990,6 @@
         switchView('loginView');
     }
 
-    // --- ПАНЕЛЬ КЕРІВНИКА (ADMIN VIEW) ---
     function renderAdminView() {
         let currentUserObj = db.users.find(u => u.login === currentUser);
         let isAdmin = windowUserRole === 'admin';
@@ -1084,19 +1010,11 @@
 
             let assignedCount = parseInt((u.tableStats || {}).assigned) || 0;
             let arrAssigned = (u.assigned && u.assigned.length > 0) ? u.assigned.length : 0;
-            
-            let tPcs = parseFloat(String(u.targetPcs || "0").replace(/[\s\u00A0\u202F]/g, '').replace(',', '.')) || 0;
-            let tUah = parseFloat(String(u.targetUah || "0").replace(/[\s\u00A0\u202F]/g, '').replace(',', '.')) || 0;
-            let fPcs = parseFloat(String(u.execPcs || "0").replace(/[\s\u00A0\u202F]/g, '').replace(',', '.')) || 0;
-            let fUah = parseFloat(String(u.execUah || "0").replace(/[\s\u00A0\u202F]/g, '').replace(',', '.')) || 0;
-            
-            let hasGoals = (tPcs > 0 || tUah > 0 || fPcs !== 0 || fUah !== 0);
             let hasCourses = (assignedCount > 0 || arrAssigned > 0);
-            let hasGoalsOrCourses = hasGoals || hasCourses;
 
             if (isAdmin) {
                 if (uIsOwner) return false;
-                if (!hasGoalsOrCourses) return false;
+                if (!hasCourses) return false;
                 return true; 
             } else {
                 let uDir = String(u.director).toLowerCase().trim();
@@ -1104,7 +1022,7 @@
 
                 if (!belongsToManager) return false;
                 if (uIsDirector || uIsOwner) return false;
-                if (!hasGoalsOrCourses) return false;
+                if (!hasCourses) return false;
 
                 return true;
             }
@@ -1169,7 +1087,6 @@
 
     function renderAdminStatsAndList(users) {
         let groupAssigned = 0; let groupPassed = 0; let groupAvgSum = 0; let validAvgs = 0;
-        let excludeKeys = getMetricKeys();
 
         users.forEach(u => {
             let st = u.tableStats || {};
@@ -1178,16 +1095,13 @@
             
             let sum = 0; let count = 0;
             for (let key in (u.results || {})) {
-                // Використовуємо CONFIG для виключення не-навчальних метрик
-                if (excludeKeys.includes(key)) continue;
-
                 let resStr = u.results[key]; let score = 0;
-                let match = String(resStr).match(/(\d+)\s*\/\s*(\d+)%(?:\/(\d+))?/);
+                let match = String(resStr).match(/^(\d+)\s*\/\s*(\d+)%(?:\/(\d+))?$/);
                 if (match) { 
                     score = parseInt(match[2], 10) || 0; 
                     sum += score; count++;
                 } else { 
-                    let sm = String(resStr).match(/(\d+)%/); 
+                    let sm = String(resStr).match(/^(\d+)%$/); 
                     if (sm) {
                         score = parseInt(sm[1], 10) || 0;
                         sum += score; count++;
@@ -1309,7 +1223,6 @@
         switchView('adminView');
     }
 
-    // --- ЛОГІКА КАБІНЕТУ СПІВРОБІТНИКА ---
     function buildCoursesMap(user) {
         coursesMap = {}; 
         let currentUserAssigned = user.assigned || [];
@@ -1358,157 +1271,148 @@
         switchCabinetTab('stats');
     }
 
+    function renderProgressChart(passed, inProgress, notStarted) {
+        let ctx = document.getElementById('progressChart');
+        if (!ctx) return;
+        
+        if (typeof Chart === 'undefined') {
+            setTimeout(() => renderProgressChart(passed, inProgress, notStarted), 150);
+            return;
+        }
+
+        if (window.progressChartInstance) {
+            window.progressChartInstance.destroy();
+        }
+
+        window.progressChartInstance = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Пройдено', 'В процесі', 'Не розпочато'],
+                datasets: [{
+                    data: [passed, inProgress, notStarted],
+                    backgroundColor: [ '#10b981', '#f59e0b', '#e5e7eb' ],
+                    borderWidth: 0,
+                    hoverOffset: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: '70%',
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            font: { family: 'Inter', size: 13, weight: '600' },
+                            color: document.documentElement.getAttribute('data-theme') === 'dark' ? '#fff' : '#111827',
+                            padding: 20,
+                            usePointStyle: true,
+                            pointStyle: 'circle'
+                        }
+                    },
+                    tooltip: {
+                        backgroundColor: 'rgba(0,0,0,0.8)',
+                        titleFont: { family: 'Inter', size: 13 },
+                        bodyFont: { family: 'Inter', size: 13 },
+                        padding: 12,
+                        cornerRadius: 8,
+                        displayColors: false
+                    }
+                }
+            }
+        });
+    }
+
     function renderCabinetStatsAndCourses(user) {
         let res = user.results || {};
 
-        // Надійна функція для вилучення числових значень
-        function safeNum(val) {
-            if (val === undefined || val === null || val === "") return 0;
-            // Вирізаємо всі пробіли, замінюємо кому на крапку і залишаємо тільки цифри
-            let str = String(val).replace(/[\s\u00A0\u202F]/g, '').replace(',', '.').replace(/[^\d.-]/g, '');
-            return parseFloat(str) || 0;
-        }
+        let totalAssigned = 0;
+        let totalCompleted = 0;
+        let totalScoreSum = 0;
+        let scoreCount = 0;
+        let totalTimeSpent = 0;
+        let totalAttempts = 0;
 
-        // --- 1. СТАТИСТИКА (з використанням гнучкого CONFIG) ---
-        let planTotal = safeNum(getMetricValue(res, CONFIG.metrics.plan));
-        let factPcs = safeNum(getMetricValue(res, CONFIG.metrics.factPcs));
-        let factUah = safeNum(getMetricValue(res, CONFIG.metrics.factUah));
-
-        let planExec = parsePercentValue(getMetricValue(res, CONFIG.metrics.planExec));
-        let safePlanExec = isNaN(planExec) ? 0 : Math.max(0, Math.min(planExec, 100));
-        
-        let eff = parsePercentValue(getMetricValue(res, CONFIG.metrics.efficiency));
-        let dolya = parsePercentValue(getMetricValue(res, CONFIG.metrics.share));
-
-        let monthlyPlanHtml = `
-            <div class="stat-card-modern">
-                <div class="stat-row-modern">
-                    <span class="stat-label-modern">План:</span>
-                    <span class="stat-val-modern">${formatNumber(planTotal)}</span>
-                </div>
-                <div class="stat-row-modern">
-                    <span class="stat-label-modern">Шт:</span>
-                    <span class="stat-val-modern">${formatNumber(factPcs)}</span>
-                </div>
-                <div class="stat-row-modern" style="margin-bottom: 20px;">
-                    <span class="stat-label-modern">Грн:</span>
-                    <span class="stat-val-modern">${formatNumber(factUah)}</span>
-                </div>
-                <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:8px;">
-                    <span style="font-size:14px; font-weight:700; color:var(--text-main);">Виконання плану:</span>
-                    <span style="font-size:16px; font-weight:800; color:var(--primary);">${planExec}%</span>
-                </div>
-                <div class="adaptive-progress-bar" style="height:10px; border-radius:5px; margin-bottom:24px; border:none; background:var(--input-bg);">
-                    <div class="apb-fill" style="width: ${safePlanExec}%; border-radius:inherit; background:var(--primary);"></div>
-                </div>
-                <div class="stat-row-modern">
-                    <span class="stat-label-modern">Ефективність:</span>
-                    <span style="color:#3b82f6; font-weight:800; font-size:15px;">${eff}%</span>
-                </div>
-                <div class="stat-row-modern" style="margin-bottom: 0;">
-                    <span class="stat-label-modern">Доля:</span>
-                    <span class="stat-val-modern">${dolya}%</span>
-                </div>
-            </div>
-        `;
-
-        // --- 2. ЦІЛІ І ВИКОНАННЯ ---
-        let targetPcs = safeNum(user.targetPcs);
-        let targetUah = safeNum(user.targetUah);
-
-        // Факт
-        let donePcs = factPcs;
-        let doneUah = factUah;
-        
-        // Залишок не може бути менше нуля
-        let leftPcs = Math.max(0, targetPcs - donePcs);
-        let leftUah = Math.max(0, targetUah - doneUah);
-
-        // Відсоток виконання (Факт / Ціль) * 100
-        let pctPcs = targetPcs > 0 ? (donePcs / targetPcs) * 100 : 0;
-        let pctUah = targetUah > 0 ? (doneUah / targetUah) * 100 : 0;
-
-        let formatPctPcs = pctPcs % 1 !== 0 ? parseFloat(pctPcs.toFixed(2)) : Math.round(pctPcs);
-        let formatPctUah = pctUah % 1 !== 0 ? parseFloat(pctUah.toFixed(2)) : Math.round(pctUah);
-
-        // Щоб графік не вилазив за межі при перевиконанні (напр. 150%), зупиняємо зелену смужку на 100%
-        let safeFormatPctPcs = isNaN(formatPctPcs) ? 0 : Math.max(0, Math.min(formatPctPcs, 100));
-        let safeFormatPctUah = isNaN(formatPctUah) ? 0 : Math.max(0, Math.min(formatPctUah, 100));
-
-        let goalsBlockHtml = `
-            <div class="stat-card-modern" style="padding: 16px; margin-bottom: 12px;">
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-                    <span style="font-size:13px; font-weight:800; color:var(--text-muted); text-transform:uppercase;">Ціль (шт): <span style="color:var(--text-main); font-size:15px; margin-left:4px;">${formatNumber(targetPcs)}</span></span>
-                    <span style="font-size:16px; font-weight:900; color:#0ea5e9;">${formatPctPcs}%</span>
-                </div>
-                <div class="adaptive-progress-bar" style="height:12px; border-radius:6px; margin-bottom:8px; border:none; background:var(--input-bg);">
-                    <div class="apb-fill" style="width: ${safeFormatPctPcs}%; border-radius:inherit; background:#0ea5e9;"></div>
-                </div>
-                <div style="text-align:right; font-size:12px; font-weight:700; color:var(--text-muted);">
-                    Залишилось в шт: <span style="color:var(--text-main); font-size:14px; margin-left:2px;">${formatNumber(leftPcs)}</span>
-                </div>
-            </div>
-            <div class="stat-card-modern" style="padding: 16px; margin-bottom: 24px;">
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-                    <span style="font-size:13px; font-weight:800; color:var(--text-muted); text-transform:uppercase;">Ціль (грн): <span style="color:var(--text-main); font-size:15px; margin-left:4px;">${formatNumber(targetUah)}</span></span>
-                    <span style="font-size:16px; font-weight:900; color:#f59e0b;">${formatPctUah}%</span>
-                </div>
-                <div class="adaptive-progress-bar" style="height:12px; border-radius:6px; margin-bottom:8px; border:none; background:var(--input-bg);">
-                    <div class="apb-fill" style="width: ${safeFormatPctUah}%; border-radius:inherit; background:#f59e0b;"></div>
-                </div>
-                <div style="text-align:right; font-size:12px; font-weight:700; color:var(--text-muted);">
-                    Залишилось в грн: <span style="color:var(--text-main); font-size:14px; margin-left:2px;">${formatNumber(leftUah)}</span>
-                </div>
-            </div>
-        `;
-
-        // --- 3. ПРОГРЕС КУРСІВ ---
-        let totalAssigned = 0; let totalCompleted = 0; let totalScoreSum = 0; let scoreCount = 0;
+        let passed = 0, inProgress = 0, notStarted = 0;
 
         Object.values(coursesMap).reduce((acc, val) => acc.concat(val), []).forEach(p => {
             totalAssigned++;
             let cleanP = getCleanName(p.product);
             let resStr = res[cleanP];
             if (resStr) {
-                let match = String(resStr).match(/(\d+)\s*\/\s*(\d+)%(?:\/(\d+))?/);
-                let score = 0;
-                if (match) { score = parseInt(match[2], 10) || 0; } 
-                else { let sm = String(resStr).match(/(\d+)%/); if (sm) { score = parseInt(sm[1], 10) || 0; } }
+                let match = String(resStr).match(/^(\d+)\s*\/\s*(\d+)%(?:\/(\d+))?$/);
+                let score = 0, time = 0, att = 0;
+                if (match) {
+                    att = parseInt(match[1], 10) || 0;
+                    score = parseInt(match[2], 10) || 0;
+                    time = parseInt(match[3], 10) || 0;
+                } else {
+                    let sm = String(resStr).match(/^(\d+)%$/);
+                    if (sm) {
+                        score = parseInt(sm[1], 10) || 0;
+                        att = 1;
+                    }
+                }
 
                 totalScoreSum += score;
-                scoreCount++;
+                if (score > 0 || att > 0) scoreCount++;
+                if (score >= 80) { totalCompleted++; passed++; }
+                else if (att > 0) { inProgress++; }
+                else { notStarted++; }
 
-                if (score >= 80) totalCompleted++;
+                totalTimeSpent += time;
+                totalAttempts += att;
+            } else {
+                notStarted++;
             }
         });
 
         let avgScore = scoreCount > 0 ? Math.round(totalScoreSum / scoreCount) : 0;
-        let percentTotal = totalAssigned > 0 ? Math.round((totalCompleted / totalAssigned) * 100) : 0;
-        let safePercentTotal = Math.max(0, Math.min(percentTotal, 100));
+        let remaining = Math.max(0, totalAssigned - totalCompleted);
+        
+        let cheatsCount = parseInt(localStorage.getItem('cheats_' + user.login)) || 0;
 
-        let courseStatsHtml = `
-            <div style="display:flex; gap:12px; margin-bottom:16px;">
-                <div style="flex:1; background:var(--card-bg); border:1px solid var(--border); border-radius:16px; padding:16px; text-align:center; box-shadow:0 4px 10px rgba(0,0,0,0.02);">
-                    <div style="font-size:24px; font-weight:900; color:var(--text-main); line-height:1;">${totalCompleted}/${totalAssigned}</div>
-                    <div style="font-size:11px; font-weight:700; color:var(--text-muted); margin-top:6px; text-transform:uppercase;">Пройдено</div>
+        let timeMins = Math.floor(totalTimeSpent / 60);
+        let timeSecs = totalTimeSpent % 60;
+        let timeFormatted = `${timeMins} хв ${timeSecs} с`;
+
+        let statsHtml = `
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px; margin-bottom:24px;">
+                <div class="stat-item" style="border-color: rgba(16, 185, 129, 0.4);">
+                    <div class="stat-val-modern" style="font-size:24px; color: var(--success);">${totalCompleted}</div>
+                    <div class="stat-label-modern" style="font-size:12px;">Пройдено</div>
                 </div>
-                <div style="flex:1; background:var(--card-bg); border:1px solid var(--border); border-radius:16px; padding:16px; text-align:center; box-shadow:0 4px 10px rgba(0,0,0,0.02);">
-                    <div style="font-size:24px; font-weight:900; color:var(--text-main); line-height:1;">${avgScore}%</div>
-                    <div style="font-size:11px; font-weight:700; color:var(--text-muted); margin-top:6px; text-transform:uppercase;">Сер. бал</div>
+                <div class="stat-item" style="border-color: rgba(245, 158, 11, 0.4);">
+                    <div class="stat-val-modern" style="font-size:24px; color: #f59e0b;">${remaining}</div>
+                    <div class="stat-label-modern" style="font-size:12px;">Залишилось</div>
                 </div>
-            </div>
-            <div style="background:var(--card-bg); border:1px solid var(--border); border-radius:16px; padding:20px; box-shadow:0 4px 10px rgba(0,0,0,0.02);">
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-                    <span style="font-size:12px; font-weight:800; color:var(--text-muted); text-transform:uppercase;">Загальний прогрес</span>
-                    <span style="font-size:22px; font-weight:900; color:var(--text-main); line-height:1;">${percentTotal}%</span>
+                <div class="stat-item">
+                    <div class="stat-val-modern" style="font-size:20px;">${avgScore}%</div>
+                    <div class="stat-label-modern" style="font-size:12px;">Середній бал</div>
                 </div>
-                <div class="adaptive-progress-bar" style="height:10px; border-radius:5px; margin-bottom:0; border:none; background:var(--input-bg);">
-                    <div class="apb-fill" style="width: ${safePercentTotal}%; border-radius:inherit; background:var(--text-main);"></div>
+                <div class="stat-item">
+                    <div class="stat-val-modern" style="font-size:20px;">${totalAttempts}</div>
+                    <div class="stat-label-modern" style="font-size:12px;">Всього спроб</div>
+                </div>
+                <div class="stat-item" style="grid-column: span 2;">
+                    <div class="stat-val-modern" style="font-size:20px;">${timeFormatted}</div>
+                    <div class="stat-label-modern" style="font-size:12px;">Загальний витрачений час</div>
+                </div>
+                <div class="stat-item" style="grid-column: span 2; border-color: ${cheatsCount > 0 ? 'rgba(239,68,68,0.4)' : 'var(--border)'}; background: ${cheatsCount > 0 ? 'var(--danger-bg)' : 'var(--card-bg)'};">
+                    <div class="stat-val-modern" style="font-size:20px; color: ${cheatsCount > 0 ? 'var(--danger)' : 'var(--text-main)'};">${cheatsCount}</div>
+                    <div class="stat-label-modern" style="font-size:12px;">Спроби згорнути додаток (порушення)</div>
                 </div>
             </div>
         `;
 
-        // --- 4. СПИСОК КУРСІВ ---
+        if (totalAssigned === 0) {
+            statsHtml = '<div style="text-align:center; padding: 20px; color: var(--text-muted);">Немає призначених курсів</div>';
+            document.querySelector('.chart-wrapper').style.display = 'none';
+        } else {
+            document.querySelector('.chart-wrapper').style.display = 'block';
+            renderProgressChart(passed, inProgress, notStarted);
+        }
+
         const courseNames = Object.keys(coursesMap);
         let coursesHtml = '';
 
@@ -1526,10 +1430,10 @@
                     let cleanP = getCleanName(p.product);
                     let resStr = res[cleanP];
                     if (resStr) {
-                        let scoreMatch = String(resStr).match(/(\d+)\s*\/\s*(\d+)%(?:\/(\d+))?/);
+                        let scoreMatch = String(resStr).match(/^(\d+)\s*\/\s*(\d+)%(?:\/(\d+))?$/);
                         let score = 0;
                         if (scoreMatch) score = parseInt(scoreMatch[2], 10) || 0;
-                        else { let singleMatch = String(resStr).match(/(\d+)%/); if (singleMatch) score = parseInt(singleMatch[1], 10) || 0; }
+                        else { let singleMatch = String(resStr).match(/^(\d+)%$/); if (singleMatch) score = parseInt(singleMatch[1], 10) || 0; }
                         if (score >= 80) cPassed++;
                     }
                 });
@@ -1552,14 +1456,11 @@
         }
 
         requestAnimationFrame(() => {
-            document.getElementById('monthlyPlanBlock').innerHTML = monthlyPlanHtml;
-            document.getElementById('goalsBlock').innerHTML = goalsBlockHtml;
-            document.getElementById('courseStatsBlock').innerHTML = courseStatsHtml;
+            document.getElementById('learningAnalyticsBlock').innerHTML = statsHtml;
             document.getElementById('courseList').innerHTML = coursesHtml;
         });
     }
 
-    // --- ДЕТАЛІ КУРСУ ТА ПРОДУКТИ ---
     function openCourse(name) {
         currentCourseName = name;
         let parsedCourse = formatWithCustomEmoji(name, '');
@@ -1574,10 +1475,10 @@
             let cleanP = getCleanName(p.product);
             let resStr = userResults[cleanP];
             if (resStr) {
-                let match = String(resStr).match(/(\d+)\s*\/\s*(\d+)%(?:\/(\d+))?/);
+                let match = String(resStr).match(/^(\d+)\s*\/\s*(\d+)%(?:\/(\d+))?$/);
                 let score = 0;
                 if (match) score = parseInt(match[2], 10) || 0;
-                else { let scoreMatch = String(resStr).match(/(\d+)%/); if (scoreMatch) score = parseInt(scoreMatch[1], 10) || 0; }
+                else { let scoreMatch = String(resStr).match(/^(\d+)%$/); if (scoreMatch) score = parseInt(scoreMatch[1], 10) || 0; }
                 if (score >= 80) completedCount++;
             }
         });
@@ -1597,9 +1498,9 @@
             let resStr = userResults[cleanP];
             let score = 0;
             if (resStr) {
-                let match = String(resStr).match(/(\d+)\s*\/\s*(\d+)%(?:\/(\d+))?/);
+                let match = String(resStr).match(/^(\d+)\s*\/\s*(\d+)%(?:\/(\d+))?$/);
                 if (match) score = parseInt(match[2], 10) || 0;
-                else { let scoreMatch = String(resStr).match(/(\d+)%/); if (scoreMatch) score = parseInt(scoreMatch[1], 10) || 0; }
+                else { let scoreMatch = String(resStr).match(/^(\d+)%$/); if (scoreMatch) score = parseInt(scoreMatch[1], 10) || 0; }
             }
 
             let scoreColor = 'var(--text-muted)';
@@ -1677,7 +1578,6 @@
         });
     }
 
-    // --- СИСТЕМА ДОСЯГНЕНЬ ---
     function checkNewAchievements(user) {
         if (!user || !user.achievements) return;
         let achCodes = String(user.achievements).split(',').map(s => s.trim()).filter(s => s !== "");
@@ -1775,7 +1675,6 @@
         document.body.style.overflow = ''; 
     }
 
-    // --- ЛОГІКА ТЕСТІВ ТА ЗАПИТАНЬ ---
     function parseTestString(testStr) {
         let lines = testStr.split('\n').map(l => l.trim()).filter(l => l);
         let questions = []; let currentQ = null;
@@ -1933,10 +1832,10 @@
 
         let oldRes = currentUserObj.results[cleanP] || "0/0%/0";
         let attempts = 0; let oldScore = 0; let oldTime = 0;
-        let match = String(oldRes).match(/(\d+)\s*\/\s*(\d+)%(?:\/(\d+))?/);
+        let match = String(oldRes).match(/^(\d+)\s*\/\s*(\d+)%(?:\/(\d+))?$/);
 
         if (match) { attempts = parseInt(match[1], 10) || 0; oldScore = parseInt(match[2], 10) || 0; oldTime = parseInt(match[3], 10) || 0; } 
-        else { let scoreMatch = String(oldRes).match(/(\d+)%/); if (scoreMatch) { oldScore = parseInt(scoreMatch[1], 10) || 0; attempts = 1; } }
+        else { let scoreMatch = String(oldRes).match(/^(\d+)%$/); if (scoreMatch) { oldScore = parseInt(scoreMatch[1], 10) || 0; attempts = 1; } }
 
         attempts++;
         let bestScore = Math.max(oldScore, totalScore); let bestTime = oldTime;
@@ -1973,7 +1872,6 @@
         } else { saveOfflineResult(currentUser, currentProductData.product, totalScore, timeSpent); }
     }
 
-    // --- АНТИ-СУПЕР-ЧІТ СИСТЕМА ---
     document.addEventListener('contextmenu', event => { if (document.getElementById('testView').classList.contains('active')) event.preventDefault(); });
     document.addEventListener('copy', event => { if (document.getElementById('testView').classList.contains('active')) { event.preventDefault(); alert("Копіювання матеріалів тесту заборонено!"); } });
 
@@ -1992,6 +1890,12 @@
         
         if (testTimerInterval) clearInterval(testTimerInterval); 
         document.body.classList.add('cheating');
+
+        // Збільшуємо лічильник списувань локально для користувача
+        if (currentUser) {
+            let cheats = parseInt(localStorage.getItem('cheats_' + currentUser)) || 0;
+            localStorage.setItem('cheats_' + currentUser, cheats + 1);
+        }
         
         setTimeout(() => { 
             alert("⛔ Порушення правил! Ви згорнули вікно або відвели фокус. Спробу зараховано з результатом 0%."); 
@@ -2005,7 +1909,6 @@
     document.addEventListener('visibilitychange', () => { if (document.hidden) triggerAntiCheat(); });
     document.addEventListener('touchcancel', triggerAntiCheat); 
 
-    // --- ІНІЦІАЛІЗАЦІЯ (ГОЛОВНИЙ БЛОК) ---
     document.addEventListener('DOMContentLoaded', async () => {
         let draftL = localStorage.getItem('skillhub_draft_login');
         let draftP = localStorage.getItem('skillhub_draft_pass');
@@ -2056,7 +1959,6 @@
         }
     });
 
-    // --- СИНХРОНІЗАЦІЯ В МЕЖАХ ВКЛАДОК ---
     window.addEventListener('storage', (event) => {
         if (event.key === 'theme') {
             let currentTheme = event.newValue || 'light';
