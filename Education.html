@@ -12,12 +12,18 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
 
-    <!-- Ініціалізація теми перед завантаженням -->
+    <!-- Ініціалізація теми та МИТТЄВИЙ запуск (безшовність) -->
     <script>
         (function() {
             try {
                 var theme = localStorage.getItem('theme') || 'light';
                 document.documentElement.setAttribute('data-theme', theme);
+                
+                // Перевіряємо ЄДИНИЙ спільний кеш
+                if (localStorage.getItem('skillhub_v6_cache') && localStorage.getItem('skillhub_edu_creds')) {
+                    document.documentElement.style.setProperty('--edu-loader-display', 'none');
+                    document.documentElement.classList.add('fast-boot');
+                }
             } catch (e) {}
         })();
     </script>
@@ -29,28 +35,38 @@
         :root {
             --bg: #f2f2f7; 
             --card-bg: #ffffff;
-            --text-main: #111827; 
-            --text-muted: #6b7280; 
-            --primary: #10b981; 
-            --primary-light: #d1fae5;
-            --border: #e5e7eb;
+            --text-main: #164f58; /* Збігається з Index */
+            --text-muted: #8e8e93; 
+            
+            /* КОРПОРАТИВНИЙ КОЛІР */
+            --primary: #164f58; 
+            --primary-light: rgba(22, 79, 88, 0.15);
+            
+            --border: #e5e5ea;
             --input-bg: #f9fafb;
             --danger: #ef4444;
             --danger-bg: rgba(239, 68, 68, 0.08);
             --success: #10b981;
-            --rozetka-green-light: #00c65d;
-            --rozetka-green-dark: #00a046;
+            
+            /* Адаптовані кольори для кнопок-світіння під корп. стиль */
+            --rozetka-green-light: #237a88;
+            --rozetka-green-dark: #164f58;
+            
             --tab-bg: #e5e7eb;
             --tab-active: #ffffff;
+            --edu-loader-display: flex; /* Керується через JS в head */
         }
 
         [data-theme="dark"] {
             --bg: #000000; 
             --card-bg: #1c1c1e;
-            --text-main: #ffffff; 
+            --text-main: #f5f5f5; 
             --text-muted: #98989d; 
-            --primary: #10b981;
-            --primary-light: rgba(16, 185, 129, 0.2);
+            
+            /* КОРПОРАТИВНИЙ КОЛІР (ДЛЯ ТЕМНОЇ ТЕМИ) */
+            --primary: #164f58;
+            --primary-light: rgba(22, 79, 88, 0.25);
+            
             --border: #38383a;
             --input-bg: #2c2c2e;
             --danger: #ff453a;
@@ -60,19 +76,28 @@
             --tab-active: #1c1c1e;
         }
 
+        /* --- ПРАВИЛА ДЛЯ МИТТЄВОГО ВХОДУ --- */
+        html.fast-boot body .view { display: none !important; animation: none !important; }
+        html.fast-boot body #cabinetView { display: block !important; opacity: 1 !important; transform: none !important; animation: none !important; }
+
+        /* Стилі фону та контейнеру синхронізовані з Index.html */
         body { 
             font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text-main); 
             margin: 0; padding: 0; display: flex; justify-content: center; align-items: flex-start; 
             min-height: 100vh; -webkit-font-smoothing: antialiased; 
-            padding-bottom: 85px; transition: background 0.3s ease, color 0.3s ease;
+            transition: background 0.3s ease, color 0.3s ease;
         }
         
-        .container { width: 100%; max-width: 480px; padding: 24px 16px; margin: 0 auto; position: relative; }
+        .container { 
+            position: relative; width: 100%; max-width: 480px; 
+            padding: 20px 16px; margin-bottom: 85px; 
+            display: flex; flex-direction: column;
+        }
 
         /* Єдиний клас для всіх іконок у кнопках та меню */
         .ui-icon {
-            width: 20px;
-            height: 20px;
+            width: 24px;
+            height: 24px;
             object-fit: contain;
             flex-shrink: 0;
             display: inline-block;
@@ -86,8 +111,8 @@
         /* --- ЛОАДЕР --- */
         .loader-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: var(--bg); display: flex; flex-direction: column; justify-content: center; align-items: center;
-            z-index: 9999;
+            background: var(--bg); display: var(--edu-loader-display); flex-direction: column; justify-content: center; align-items: center;
+            z-index: 9999; transition: opacity 0.2s ease, visibility 0.2s ease;
         }
         .spinner { width: 44px; height: 44px; border: 4px solid var(--border); border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 16px; }
         @keyframes spin { 100% { transform: rotate(360deg); } }
@@ -96,7 +121,7 @@
         h1 { font-size: 26px; font-weight: 800; margin: 0 0 22px 0; text-align: center; letter-spacing: -0.5px; }
         p.subtitle { font-size: 14px; color: var(--text-muted); text-align: center; margin-bottom: 24px; font-weight: 500; }
         .section-title { font-size: 12px; font-weight: 800; margin: 24px 0 12px 0; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; display: flex; align-items: center; justify-content: flex-start; gap: 8px; }
-        .big-emoji { text-align: center; font-size: 64px; margin-bottom: 16px; line-height: 1; }
+        .big-emoji { text-align: center; font-size: 64px; margin-bottom: 16px; line-height: 1; display: flex; justify-content: center; }
 
         /* --- ЕКРАН АВТОРИЗАЦІЇ --- */
         .login-wrapper { display: flex; flex-direction: column; justify-content: center; min-height: 80vh; }
@@ -120,8 +145,8 @@
 
         /* --- КНОПКИ --- */
         .btn { width: 100%; padding: 16px; border-radius: 14px; font-size: 15px; font-weight: 800; cursor: pointer; border: none; transition: 0.2s; text-align: center; display: flex; justify-content: center; align-items: center; gap: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
-        .btn-glow { background: linear-gradient(135deg, var(--rozetka-green-light) 0%, var(--rozetka-green-dark) 100%); color: white; box-shadow: 0 8px 20px rgba(0, 198, 93, 0.25); }
-        .btn-glow:active { transform: scale(0.96); box-shadow: 0 4px 10px rgba(0, 198, 93, 0.15); }
+        .btn-glow { background: linear-gradient(135deg, var(--rozetka-green-light) 0%, var(--rozetka-green-dark) 100%); color: white; box-shadow: 0 8px 20px var(--primary-light); }
+        .btn-glow:active { transform: scale(0.96); box-shadow: 0 4px 10px var(--primary-light); }
         .btn-glow:disabled { background: var(--border); box-shadow: none; cursor: not-allowed; opacity: 0.7; color: var(--text-muted); }
         .btn-secondary { background: var(--input-bg); color: var(--text-main); border: 1px solid var(--border); }
         .btn-secondary:active { transform: scale(0.96); background: var(--border); }
@@ -135,32 +160,12 @@
         .back-btn-sleek:active { transform: scale(0.92); background: var(--input-bg); }
         .back-btn-sleek.active-nav { border-color: var(--primary); background: var(--primary-light); }
 
-        /* Швидкі кнопки ролі (📚Навчання / 📊Статистика співробітників) */
-        .role-action-bar {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 8px;
-            margin-bottom: 18px;
-        }
-        .role-action-btn {
-            background: var(--card-bg);
-            border: 1.5px solid var(--border);
-            border-radius: 14px;
-            padding: 11px 12px;
-            font-size: 13px;
-            font-weight: 800;
-            color: var(--text-main);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 7px;
-            cursor: pointer;
-            transition: all 0.2s;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.02);
-        }
+        /* Швидкі кнопки ролі */
+        .role-action-bar { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 18px; }
+        .role-action-btn { background: var(--card-bg); border: 1.5px solid var(--border); border-radius: 14px; padding: 11px 12px; font-size: 13px; font-weight: 800; color: var(--text-main); display: flex; align-items: center; justify-content: center; gap: 7px; cursor: pointer; transition: all 0.2s; box-shadow: 0 3px 10px rgba(0,0,0,0.02); }
         .role-action-btn:active { transform: scale(0.96); }
-        .role-action-btn.active { border-color: var(--primary); background: var(--primary-light); color: var(--rozetka-green-dark); }
-        [data-theme="dark"] .role-action-btn.active { color: #34d399; }
+        .role-action-btn.active { border-color: var(--primary); background: var(--primary-light); color: var(--primary); }
+        [data-theme="dark"] .role-action-btn.active { color: var(--primary); }
 
         @keyframes pulse-ring { 0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); } 70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); } 100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); } }
         .ach-btn.has-new { animation: pulse-ring 2s infinite; border-radius: 50%; }
@@ -188,22 +193,17 @@
         }
         .apb-text { position: relative; z-index: 2; }
 
-        .stats-grid-8 {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
+        .stats-grid-8 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
         .stat-item { background: var(--card-bg); border: 1px solid var(--border); border-radius: 16px; padding: 14px 12px; text-align: center; display: flex; flex-direction: column; justify-content: center; box-shadow: 0 4px 10px rgba(0,0,0,0.02); }
         .stat-label-modern { color: var(--text-muted); font-size: 12px; font-weight: 600; margin-top: 4px; line-height: 1.25; }
         .stat-val-modern { color: var(--text-main); font-size: 20px; font-weight: 800; }
         
-        .chart-wrapper { position: relative; height: 220px; width: 100%; background: var(--card-bg); border: 1px solid var(--border); border-radius: 16px; padding: 16px; margin-bottom: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.02); }
+        .chart-wrapper { position: relative; height: 260px; width: 100%; background: var(--card-bg); border: 1px solid var(--border); border-radius: 16px; padding: 16px; margin-bottom: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.02); }
 
         /* --- КАРТКИ --- */
         .list-card { background: var(--card-bg); border-radius: 20px; border: 1.5px solid var(--border); margin-bottom: 12px; padding: 16px 18px; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 4px 12px rgba(0,0,0,0.02); }
         .list-card:active { transform: scale(0.97); background: var(--input-bg); }
-        .list-card.completed { border-color: rgba(16, 185, 129, 0.55); }
+        .list-card.completed { border-color: rgba(22, 79, 88, 0.55); }
         .list-card-title { font-size: 15px; font-weight: 700; color: var(--text-main); display: flex; align-items: center; gap: 10px; line-height: 1.3; }
         .list-card-arrow { color: var(--text-muted); font-weight: bold; }
 
@@ -214,14 +214,8 @@
             0%, 100% { color: var(--danger); opacity: 1; transform: scale(1); }
             50% { color: #ff0000; opacity: 0.45; transform: scale(1.03); }
         }
-        .deadline-urgent #deadlineText {
-            color: var(--danger) !important;
-            animation: urgentDeadlinePulse 1.1s infinite ease-in-out;
-        }
-        .deadline-urgent {
-            background: rgba(239, 68, 68, 0.1) !important;
-            border-color: rgba(239, 68, 68, 0.35) !important;
-        }
+        .deadline-urgent #deadlineText { color: var(--danger) !important; animation: urgentDeadlinePulse 1.1s infinite ease-in-out; }
+        .deadline-urgent { background: rgba(239, 68, 68, 0.1) !important; border-color: rgba(239, 68, 68, 0.35) !important; }
         .deadline-expired #deadlineText { color: var(--danger) !important; }
         .deadline-expired { background: rgba(239, 68, 68, 0.12) !important; border-color: rgba(239, 68, 68, 0.3) !important; }
 
@@ -235,7 +229,7 @@
         
         .answer-label { display: flex; align-items: center; gap: 14px; padding: 16px; background: var(--card-bg); border: 2px solid var(--input-bg); border-radius: 16px; margin-bottom: 10px; cursor: pointer; transition: all 0.2s ease; font-weight: 600; font-size: 14px; color: var(--text-main); }
         .answer-label:hover { border-color: var(--border); background: var(--input-bg); }
-        .answer-label.selected { border-color: var(--primary); background: rgba(16, 185, 129, 0.05); }
+        .answer-label.selected { border-color: var(--primary); background: var(--primary-light); }
         
         .answer-label input[type="radio"], .answer-label input[type="checkbox"] { appearance: none; -webkit-appearance: none; width: 22px; height: 22px; flex-shrink: 0; border: 2px solid #d1d5db; margin: 0; display: grid; place-content: center; transition: all 0.2s ease; background: #fff; }
         .answer-label input[type="radio"] { border-radius: 50%; }
@@ -253,7 +247,7 @@
         .drawer-overlay.active { display: block; opacity: 1; }
         .ach-drawer { position: fixed; top: 0; right: -100%; width: 100%; max-width: 370px; height: 100%; background: var(--bg); z-index: 10001; transition: right 0.4s cubic-bezier(0.16, 1, 0.3, 1); box-shadow: -8px 0 32px rgba(0,0,0,0.15); overflow-y: auto; padding: 24px; }
         .ach-drawer.open { right: 0; }
-        .ach-title { font-size: 22px; font-weight: 800; color: var(--text-main); margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; }
+        .ach-title { font-size: 22px; font-weight: 800; color: var(--primary); margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; }
         
         .ach-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 20px; padding: 18px; margin-bottom: 14px; display: flex; align-items: center; gap: 18px; cursor: pointer; box-shadow: 0 4px 16px rgba(0,0,0,0.03); transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1); position: relative; z-index: 1; }
         .ach-card:active:not(.zoomed) { transform: scale(0.96); background: var(--input-bg); } 
@@ -290,14 +284,14 @@
         }
         .stats-modal.active { opacity: 1; transform: translate(-50%, -50%) scale(1); display: flex; }
         .stats-modal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; flex-shrink: 0; }
-        .stats-modal-title { font-size: 20px; font-weight: 800; color: var(--text-main); display: flex; align-items: center; gap: 8px; }
+        .stats-modal-title { font-size: 20px; font-weight: 800; color: var(--primary); display: flex; align-items: center; gap: 8px; }
         .modal-close-btn { background: var(--card-bg); border: 1px solid var(--border); width: 36px; height: 36px; border-radius: 12px; font-size: 18px; font-weight: 800; color: var(--text-muted); cursor: pointer; display: flex; align-items: center; justify-content: center; }
 
         .search-box-wrap { position: relative; margin-bottom: 14px; flex-shrink: 0; }
         .search-input-modern {
             width: 100%; padding: 14px 40px 14px 42px !important; border-radius: 14px !important;
             background: var(--card-bg) !important; border: 1.5px solid var(--border) !important;
-            font-size: 15px !important; font-weight: 600 !important; color: var(--text-main) !important;
+            font-size: 15px !important; font-weight: 600 !important; color: var(--primary) !important;
         }
         .search-icon-left { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); font-size: 16px; color: var(--text-muted); pointer-events: none; }
         .search-clear-btn { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; font-size: 16px; color: var(--text-muted); cursor: pointer; display: none; }
@@ -323,8 +317,8 @@
 
         /* Банер перегляду співробітника */
         .viewing-banner {
-            background: linear-gradient(135deg, rgba(0, 87, 183, 0.12), rgba(255, 215, 0, 0.12));
-            border: 1.5px solid rgba(0, 87, 183, 0.3);
+            background: linear-gradient(135deg, rgba(22, 79, 88, 0.12), rgba(35, 122, 136, 0.12));
+            border: 1.5px solid rgba(22, 79, 88, 0.3);
             border-radius: 16px; padding: 12px 14px; margin-bottom: 16px;
             display: none; align-items: center; justify-content: space-between; gap: 10px;
         }
@@ -344,38 +338,38 @@
 </head>
 <body>
 
-<!-- АНТИ-ЧІТ ЕКРАН (1 в 1 як у прикладі) -->
+<!-- АНТИ-ЧІТ ЕКРАН -->
 <div id="antiCheatScreen">
     <div style="font-size: 70px; margin-bottom: 24px;">🚨</div>
     <div style="font-size: 24px; font-weight: 800;">ТЕСТ ЗАБЛОКОВАНО</div>
-    <div style="font-size: 14px; font-weight: 500; color: #98989d; margin-top: 12px;">Виконано спробу згорнути вікно.<br>Захист від списування активовано.</div>
+    <div style="font-size: 14px; font-weight: 500; color: #98989d; margin-top: 12px;">Виконано спробу згорнути вікно або згорнути браузер.<br>Захист від списування активовано.</div>
 </div>
 
-<!-- ЕКРАН ЗАВАНТАЖЕННЯ -->
-<div id="loader" class="loader-overlay" style="display: flex;">
+<!-- ЕКРАН ЗАВАНТАЖЕННЯ (Тепер тільки по факту необхідності) -->
+<div id="loader" class="loader-overlay" style="display: none;">
     <div class="spinner"></div>
     <div style="font-weight: 600; color: var(--text-muted);" id="loaderText">Синхронізація з базою...</div>
 </div>
 
 <!-- КНОПКА НАЗАД (ПЛАВАЮЧА) -->
 <div class="floating-exit" id="floatingExitBtn" onclick="handleFloatingBack()" style="display: none;">
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
     <span>Назад</span>
 </div>
 
 <!-- БОКОВЕ МЕНЮ 🏆 АЧІВКИ -->
 <div class="drawer-overlay" id="achOverlay" onclick="toggleAchievements()"></div>
 <div class="ach-drawer" id="achDrawer">
-    <div class="ach-title">
+    <div class="ach-title" style="color: var(--primary);">
         <div style="display:flex; align-items:center; gap:8px;">
-            <img src="https://raw.githubusercontent.com/StepStepi4/SkillHUB-Assistant/main/education/Achievement.svg" class="ui-icon" onerror="this.style.display='none'"> Ачівки
+            <img src="https://raw.githubusercontent.com/StepStepi4/SkillHUB-Assistant/main/education/Achievement.svg" class="ui-icon" onerror="this.style.display='none'"> Зароблені відзнаки
         </div>
         <button class="modal-close-btn" onclick="toggleAchievements()">✕</button>
     </div>
     <div id="achList"></div>
 </div>
 
-<!-- МОДАЛЬНЕ ВІКНО 📊 СТАТИСТИКА СПІВРОБІТНИКІВ (ДЛЯ ВЛАСНИКА ТА КЕРІВНИКА) -->
+<!-- МОДАЛЬНЕ ВІКНО 📊 СТАТИСТИКА СПІВРОБІТНИКІВ -->
 <div class="drawer-overlay" id="statsModalOverlay" onclick="closeStatsModal()"></div>
 <div class="stats-modal" id="statsModal">
     <div class="stats-modal-header">
@@ -400,14 +394,14 @@
 
 <div class="container">
 
-    <!-- ЕКРАН 1: ВХІД (без тексту "Увійдіть, щоб розпочати вивчення матеріалів") -->
+    <!-- ЕКРАН 1: ВХІД -->
     <div id="loginView" class="view active">
         <div class="login-wrapper">
             <div class="login-card">
                 <div class="big-emoji">
                     <img src="Achievement/17.png" alt="SkillHUB Logo" style="width: 80px; height: 80px; object-fit: contain; display: block; margin: 0 auto 16px auto; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.1));" onerror="this.style.display='none'">
                 </div>
-                <h1>Вхід у Навчання</h1>
+                <h1>Вхід в академію</h1>
 
                 <div id="errorMsg">Невірний логін або пароль!</div>
 
@@ -434,20 +428,21 @@
     <!-- ЕКРАН 2: КАБІНЕТ ТА СТАТИСТИКА -->
     <div id="cabinetView" class="view">
         <div class="nav-header">
-            <div style="display: flex; gap: 12px; align-items: stretch;">
-                <div style="width: 4px; background: linear-gradient(to bottom, #0057b7 50%, #ffd700 50%); border-radius: 2px; flex-shrink: 0;"></div>
-                <div style="display: flex; flex-direction: column; justify-content: center; gap: 3px; padding: 2px 0;">
-                    <h2 id="cabinetTitle">Особистий кабінет</h2>
-                    <div style="font-size: 14px; font-weight: 700; color: var(--text-muted); display: flex; align-items: center;" id="userWelcome"></div>
+            <div style="display: flex; gap: 12px; align-items: stretch; height: 48px;">
+                <div style="width: 4px; height: 100%; background: linear-gradient(to bottom, #0057b7 50%, #ffd700 50%); border-radius: 2px; flex-shrink: 0;"></div>
+                <div style="display: flex; flex-direction: column; justify-content: center; height: 100%; flex: 1;">
+                    <h2 id="cabinetTitle" style="color: var(--primary); line-height: 1; font-size: 24px; margin-bottom: 4px;">Особистий кабінет</h2>
+                    <div style="font-size: 14px; font-weight: 700; color: var(--text-muted); display: flex; align-items: center; line-height: 1;" id="userWelcome"></div>
                 </div>
             </div>
 
-            <!-- Верхні кнопки: 🏆 Ачівки, 🔄 Оновлення, 🚪 Вийти -->
+            <!-- Верхні кнопки -->
             <div class="nav-actions" id="cabinetNavActions">
-                <button id="achBtn" class="back-btn-sleek ach-btn" onclick="toggleAchievements()" title="Ачівки">
+                <button id="achBtn" class="back-btn-sleek ach-btn" onclick="toggleAchievements()" title="Зароблені відзнаки">
                     <img src="https://raw.githubusercontent.com/StepStepi4/SkillHUB-Assistant/main/education/Achievement.svg" class="ui-icon">
                     <div class="notification-dot" id="achNotificationDot"></div>
                 </button>
+                <!-- Ручне оновлення даних -->
                 <button class="back-btn-sleek" onclick="forceRefresh()" title="Оновлення">
                     <img src="https://raw.githubusercontent.com/StepStepi4/SkillHUB-Assistant/main/education/Update.svg" class="ui-icon">
                 </button>
@@ -457,7 +452,6 @@
             </div>
         </div>
 
-        <!-- Кнопки навігації для Власника та Керівника: 📚 Навчання та 📊 Статистика співробітників -->
         <div id="managerActionBar" class="role-action-bar" style="display: none;">
             <button id="btnMyEducation" class="role-action-btn active" onclick="switchToMyCabinet()">
                 <img src="https://raw.githubusercontent.com/StepStepi4/SkillHUB-Assistant/main/education/Education.svg" class="ui-icon"> <span>Навчання</span>
@@ -467,10 +461,10 @@
             </button>
         </div>
 
-        <!-- Банер, коли Власник або Керівник переглядає картку обраного співробітника -->
+        <!-- Банер перегляду співробітника -->
         <div id="viewingEmployeeBanner" class="viewing-banner">
             <div style="display: flex; flex-direction: column; gap: 2px;">
-                <span style="font-size: 11px; font-weight: 800; text-transform: uppercase; color: #0057b7;">Перегляд співробітника</span>
+                <span style="font-size: 11px; font-weight: 800; text-transform: uppercase; color: var(--primary);">Перегляд співробітника</span>
                 <span id="viewingEmployeeMeta" style="font-size: 12px; font-weight: 600; color: var(--text-muted);"></span>
             </div>
             <div style="display: flex; gap: 6px;">
@@ -479,13 +473,13 @@
             </div>
         </div>
 
-        <!-- Блок дедлайну (пункт 5 ТЗ) -->
+        <!-- Блок дедлайну -->
         <div id="deadlineContainer" style="display:none;">
-            <span id="deadlineIcon"><img src="https://raw.githubusercontent.com/StepStepi4/SkillHUB-Assistant/main/education/Time.svg" class="ui-icon" style="width:18px; height:18px;"></span>
+            <span id="deadlineIcon"><img src="https://raw.githubusercontent.com/StepStepi4/SkillHUB-Assistant/main/education/Time.svg" class="ui-icon"></span>
             <span id="deadlineText"></span>
         </div>
 
-        <!-- Перемикач усередині 📚 Навчання: Персональна статистика / Призначені курси -->
+        <!-- Перемикач: Персональна статистика / Призначені курси -->
         <div class="tabs-container" id="cabinetTabs">
             <div class="tab-btn active" id="tabBtnStats" onclick="switchCabinetTab('stats', this)">
                 <img src="https://raw.githubusercontent.com/StepStepi4/SkillHUB-Assistant/main/education/My%20statistic.svg" class="ui-icon"> Персональна статистика
@@ -495,54 +489,47 @@
             </div>
         </div>
 
-        <!-- ВКЛАДКА 1: ПЕРСОНАЛЬНА СТАТИСТИКА (Діаграма + 8 показників + кнопка "Призначені курси" + Ачівки та Тести при перегляді співробітника) -->
+        <!-- ВКЛАДКА 1: ПЕРСОНАЛЬНА СТАТИСТИКА -->
         <div id="tabStats" class="tab-content active">
             <div class="section-title">
-                <img src="https://raw.githubusercontent.com/StepStepi4/SkillHUB-Assistant/main/education/Statistic.svg" class="ui-icon" style="width:16px; height:16px;"> <span>Діаграма проходження курсів</span>
+                <img src="https://raw.githubusercontent.com/StepStepi4/SkillHUB-Assistant/main/education/Statistic.svg" class="ui-icon"> <span>Діаграма проходження курсів</span>
             </div>
             
             <div class="chart-wrapper" id="chartContainerBox">
                 <canvas id="progressChart"></canvas>
             </div>
 
-            <!-- Кнопка переходу до Призначених курсів (переміщена одразу під діаграму) -->
-            <button class="btn btn-glow" id="goToAssignedCoursesBtn" style="margin-bottom: 24px;" onclick="switchCabinetTab('courses')">
-                <img src="https://raw.githubusercontent.com/StepStepi4/SkillHUB-Assistant/main/education/Test.svg" class="ui-icon" style="filter: brightness(0) invert(1);"> ПРИЗНАЧЕНІ КУРСИ
-            </button>
-
-            <!-- 8 обов'язкових показників -->
+            <!-- 8 показників -->
             <div id="learningAnalyticsBlock"></div>
 
-            <!-- Блок зароблених ачівок (відображається при перегляді співробітника з колонки CQ:CQ) -->
             <div id="employeeEarnedAchievementsSection" style="display: none;">
-                <div class="section-title"><img src="https://raw.githubusercontent.com/StepStepi4/SkillHUB-Assistant/main/education/Achievement.svg" class="ui-icon" style="width:16px; height:16px;"> Зароблені ачівки співробітника</div>
+                <div class="section-title"><img src="https://raw.githubusercontent.com/StepStepi4/SkillHUB-Assistant/main/education/Achievement.svg" class="ui-icon"> Зароблені відзнаки</div>
                 <div id="employeeEarnedAchievementsList"></div>
             </div>
 
-            <!-- Блок списку тестів та результатів співробітника -->
             <div id="employeeTestsResultsSection" style="display: none;">
-                <div class="section-title"><img src="https://raw.githubusercontent.com/StepStepi4/SkillHUB-Assistant/main/education/Test.svg" class="ui-icon" style="width:16px; height:16px;"> Список тестів та результати</div>
+                <div class="section-title"><img src="https://raw.githubusercontent.com/StepStepi4/SkillHUB-Assistant/main/education/Test.svg" class="ui-icon"> Список тестів та результати</div>
                 <div id="employeeTestsResultsList"></div>
             </div>
         </div>
 
-        <!-- ВКЛАДКА 2: ПРИЗНАЧЕНІ КУРСИ (Розділення "Support", "Екта" і т.д.) -->
+        <!-- ВКЛАДКА 2: ПРИЗНАЧЕНІ КУРСИ -->
         <div id="tabCourses" class="tab-content">
             <div class="section-title" id="courseListTitle">
-                <img src="https://raw.githubusercontent.com/StepStepi4/SkillHUB-Assistant/main/education/Test.svg" class="ui-icon" style="width: 18px; height: 18px;">
+                <img src="https://raw.githubusercontent.com/StepStepi4/SkillHUB-Assistant/main/education/Test.svg" class="ui-icon">
                 <span>Призначені курси за напрямками</span>
             </div>
             <div id="courseList"></div>
         </div>
     </div>
 
-    <!-- ЕКРАН 3: СПИСОК ТЕМ КУРСУ ("Support", "Екта" тощо) -->
+    <!-- ЕКРАН 3: СПИСОК ТЕМ КУРСУ -->
     <div id="productView" class="view">
         <div class="nav-header">
-            <div style="display: flex; gap: 12px; align-items: stretch;">
-                <div style="width: 4px; background: linear-gradient(to bottom, #0057b7 50%, #ffd700 50%); border-radius: 2px; flex-shrink: 0;"></div>
-                <div style="display: flex; flex-direction: column; justify-content: center; padding: 2px 0;">
-                    <h2 id="productViewTitle"></h2>
+            <div style="display: flex; gap: 12px; align-items: center; height: 48px;">
+                <div style="width: 4px; height: 100%; background: linear-gradient(to bottom, #0057b7 50%, #ffd700 50%); border-radius: 2px; flex-shrink: 0;"></div>
+                <div style="display: flex; flex-direction: column; justify-content: center; height: 100%; flex: 1;">
+                    <h2 id="productViewTitle" style="line-height: 1; font-size: 24px; margin: 0;"></h2>
                 </div>
             </div>
         </div>
@@ -553,19 +540,16 @@
     <!-- ЕКРАН 4: ТЕОРІЯ -->
     <div id="theoryView" class="view">
         <div class="nav-header">
-            <div style="display: flex; gap: 12px; align-items: stretch;">
-                <div style="width: 4px; background: linear-gradient(to bottom, #0057b7 50%, #ffd700 50%); border-radius: 2px; flex-shrink: 0;"></div>
-                <div style="display: flex; flex-direction: column; justify-content: center; padding: 2px 0;">
-                    <h2 id="theoryTitle"></h2>
+            <div style="display: flex; gap: 12px; align-items: center; height: 48px;">
+                <div style="width: 4px; height: 100%; background: linear-gradient(to bottom, #0057b7 50%, #ffd700 50%); border-radius: 2px; flex-shrink: 0;"></div>
+                <div style="display: flex; flex-direction: column; justify-content: center; height: 100%; flex: 1;">
+                    <h2 id="theoryTitle" style="line-height: 1; font-size: 24px; margin: 0;"></h2>
                 </div>
             </div>
         </div>
 
         <div class="big-emoji" id="theoryEmoji">
-            <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display: block; margin: 0 auto;">
-                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
-                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
-            </svg>
+            <img src="https://raw.githubusercontent.com/StepStepi4/SkillHUB-Assistant/main/education/Course.svg" style="width: 60px; height: 60px; object-fit: contain; margin: 0 auto; display: block;">
         </div>
         <div id="theoryContent" class="theory-box"></div>
 
@@ -607,7 +591,7 @@
         <div class="nav-header" style="align-items: center;">
             <div style="display: flex; align-items: center; gap: 12px;">
                 <span style="font-size: 26px;">⏱</span>
-                <h2 id="testHeaderTitle">Тестування</h2>
+                <h2 id="testHeaderTitle" style="font-size: 24px !important;">Тестування</h2>
             </div>
             <div id="testTimer" class="timer-box">00:00</div>
         </div>
@@ -631,9 +615,8 @@
 
 <!-- СКРИПТИ -->
 <script>
-    // Вставте сюди ваш актуальний URL розгортання Google Apps Script
     const API_URL = 'https://script.google.com/macros/s/AKfycbyeoKV6uQRE_h0jy_QjkbQI7k_Py_UOYMvckWhHmGITT-q-Ai832__GWVxbdjxBgQ6zqA/exec'; 
-    const CACHE_KEY = 'skillhub_v5_education'; 
+    const CACHE_KEY = 'skillhub_v6_cache'; 
     const TIME_PER_QUESTION = 25; 
 
     const CONFIG = {
@@ -688,7 +671,7 @@
     let db = null;
     let globalAchievements = []; 
     let currentUser = null;
-    let windowUserRole = 'seller'; // 'owner' | 'manager' | 'seller' | 'guest'
+    let windowUserRole = 'seller'; 
     let windowViewingEmployee = null; 
 
     let coursesMap = {}; 
@@ -699,7 +682,6 @@
     let testTimerInterval = null;
     let timeRemaining = 0;
     let deadlineInterval = null;
-    let sessionCheckInterval = null;
     
     window.isDeadlinePassed = false;
     let isTestActive = false; 
@@ -709,6 +691,62 @@
     let totalTimeSpent = 0;
     window.sessionTotalTime = 0;
     window.theoryEntryTime = 0;
+
+    // --- СИСТЕМА ЖОРСТКОГО КОНТРОЛЮ СЕСІЙ (АНТИ-МУЛЬТИАККАУНТ) ---
+    let sessionCheckInterval = null;
+
+    function verifySingleDeviceSession() {
+        if (!currentUser || !db || !db.activeSessions) return false;
+        let keyLow = String(currentUser).toLowerCase().trim();
+        let serverToken = db.activeSessions[keyLow] || db.activeSessions[currentUser];
+        let myToken = localStorage.getItem('skillhub_session_token');
+        
+        if (serverToken && myToken && serverToken !== myToken) {
+            logout(true, false); // true = примусовий логаут з алертом
+            return true;
+        }
+        return false;
+    }
+
+    function startSessionHeartbeat() {
+        stopSessionHeartbeat();
+        sessionCheckInterval = setInterval(async () => {
+            if (!currentUser || !navigator.onLine) return;
+            try {
+                // Фоново скачуємо актуальні сесії, не турбуючи UI
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 10000);
+                const response = await fetch(API_URL + '?nocache=' + Date.now(), { signal: controller.signal, cache: 'no-store' });
+                clearTimeout(timeoutId);
+                const data = await response.json();
+                
+                if (data && data.educationData && data.educationData.activeSessions) {
+                    db.activeSessions = data.educationData.activeSessions;
+                    verifySingleDeviceSession(); // Перевіряємо чи наш токен ще актуальний
+                }
+            } catch(e) {
+                // Ігноруємо помилки мережі під час фонової перевірки
+            }
+        }, 12000); // Перевірка кожні 12 секунд
+    }
+
+    function stopSessionHeartbeat() {
+        if (sessionCheckInterval) clearInterval(sessionCheckInterval);
+    }
+
+    // Відстеження зміни токену в інших вкладках цього ж браузера (Моментально)
+    window.addEventListener('storage', (e) => {
+        if (e.key === 'skillhub_session_token') {
+            if (currentUser && e.newValue !== e.oldValue) {
+                // Токен змінився в іншій вкладці - відразу викидаємо
+                verifySingleDeviceSession();
+            }
+        }
+        if (e.key === 'skillhub_edu_creds' && e.newValue === null) {
+            if (currentUser) logout(false, false);
+        }
+    });
+    // -------------------------------------------------------------
 
     // --- ДОПОМІЖНІ ФУНКЦІЇ ---
     function cleanCourseTitle(str) {
@@ -723,22 +761,18 @@
         return !str ? "" : String(str).replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/'/g, "&#39;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
     }
 
-    // Витягує лише Ім'я з ПІБ з Великої літери (пункт 9 ТЗ: "Вітаю, Карина 👋")
     function extractFirstNameCapitalized(userObj) {
         if (!userObj) return "Колега";
         let raw = String(userObj.name || userObj.firstName || userObj.login || "").replace(/[\/\\,]/g, ' ').trim();
         let parts = raw.split(/\s+/).filter(Boolean);
-        // У колонці ПІБ формат "Прізвище Ім'я По-батькові" -> беремо друге слово (Ім'я)
         let first = parts.length >= 2 ? parts[1] : (parts[0] || "Колега");
         return first.charAt(0).toUpperCase() + first.slice(1).toLowerCase();
     }
 
-    // Парсер результату тесту: підтримує новий формат "1/29/0/100%" (спроби/час/порушення/бал%) та старий "1/100%/29"
     function parseTestResultString(resStr) {
         let out = { attempts: 0, time: 0, violations: 0, score: 0, raw: String(resStr || "").trim() };
         if (!out.raw) return out;
 
-        // Новий формат BH2:CP: "1/29/0/100%"
         let m4 = out.raw.match(/^(\d+)\s*\/\s*(\d+)\s*\/\s*(\d+)\s*\/\s*(\d+)%?$/);
         if (m4) {
             out.attempts = parseInt(m4[1], 10) || 0;
@@ -748,7 +782,6 @@
             return out;
         }
 
-        // Старий формат: "1/100%/29"
         let m3 = out.raw.match(/^(\d+)\s*\/\s*(\d+)%(?:\/(\d+))?$/);
         if (m3) {
             out.attempts = parseInt(m3[1], 10) || 0;
@@ -789,17 +822,26 @@
         }
     }
 
-    // --- НАВІГАЦІЯ ЕКРАНІВ ---
+    // --- НАВІГАЦІЯ ЕКРАНІВ З ПІДТРИМКОЮ BFCache ---
+    function goBackToIndex() {
+        if (document.referrer && document.referrer.includes('index.html')) {
+            window.history.back(); 
+        } else {
+            window.location.href = 'index.html';
+        }
+    }
+
     function handleFloatingBack() {
         let activeEl = document.querySelector('.view.active');
         let activeView = activeEl ? activeEl.id : 'loginView';
+        
         if (activeView === 'loginView') {
-            window.location.href = 'index.html';
+            goBackToIndex();
         } else if (activeView === 'cabinetView') {
             if (windowViewingEmployee) {
                 switchToMyCabinet();
             } else {
-                window.location.href = 'index.html';
+                goBackToIndex();
             }
         } else if (activeView === 'productView') {
             switchView('cabinetView');
@@ -818,14 +860,17 @@
     }
 
     function switchView(viewId) {
-        requestAnimationFrame(() => {
-            document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
-            let target = document.getElementById(viewId);
-            if (target) target.classList.add('active');
-            window.scrollTo(0, 0);
+        document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
+        let target = document.getElementById(viewId);
+        if (target) target.classList.add('active');
+        window.scrollTo(0, 0);
 
-            const exitBtn = document.getElementById('floatingExitBtn');
-            exitBtn.style.display = (viewId === 'testView') ? 'none' : 'flex';
+        const exitBtn = document.getElementById('floatingExitBtn');
+        exitBtn.style.display = (viewId === 'testView') ? 'none' : 'flex';
+
+        // Знімаємо fast-boot після відображення контенту, щоб зберегти безшовність
+        requestAnimationFrame(() => {
+            document.documentElement.classList.remove('fast-boot');
         });
     }
 
@@ -871,20 +916,7 @@
         } catch(e) { localStorage.removeItem('skillhub_offline_queue'); }
     }
 
-    // Перевірка активної сесії (пункт 8 ТЗ: викидає перший пристрій при вході з другого)
-    function verifySingleDeviceSession() {
-        if (!currentUser || !db || !db.activeSessions) return false;
-        let keyLow = String(currentUser).toLowerCase().trim();
-        let serverToken = db.activeSessions[keyLow] || db.activeSessions[currentUser];
-        let myToken = localStorage.getItem('skillhub_session_token');
-        if (serverToken && myToken && serverToken !== myToken) {
-            logout(true, false);
-            return true;
-        }
-        return false;
-    }
-
-    async function fetchFreshDataSilent() {
+    async function fetchFreshDataSilent(isManual = false) {
         if (!navigator.onLine) return;
         processOfflineQueue();
 
@@ -896,7 +928,10 @@
 
             const data = await response.json();
             if (!data.error && data.educationData) {
-                try { localStorage.setItem(CACHE_KEY, JSON.stringify(data)); } catch(e) {}
+                try { 
+                    localStorage.setItem(CACHE_KEY, JSON.stringify(data)); 
+                } catch(e) {}
+                
                 db = data.educationData;
                 globalAchievements = data.achievementData || [];
 
@@ -935,24 +970,15 @@
         if (!navigator.onLine) { alert("Немає підключення до інтернету!"); return; }
         document.getElementById('loaderText').innerText = "Оновлення даних...";
         document.getElementById('loader').style.display = 'flex';
-        await fetchFreshDataSilent();
+        await fetchFreshDataSilent(true);
         document.getElementById('loader').style.display = 'none';
         document.getElementById('loaderText').innerText = "Синхронізація з базою...";
     }
 
-    function startSessionMonitor() {
-        clearInterval(sessionCheckInterval);
-        sessionCheckInterval = setInterval(() => {
-            if (currentUser && navigator.onLine && !isTestActive) fetchFreshDataSilent();
-        }, 12000); // Перевірка кожні 12 секунд для швидкого викидання першого пристрою
-    }
-
-    // --- ЛОГІКА ДЕДЛАЙНУ (пункт 5 ТЗ) ---
-    // Підтримує парсинг тексту з колонки K ("0 дн. 18 год. 8 хв.") та точний розрахунок від Дата призначення (J) + Дедлайн (I)
+    // --- ЛОГІКА ДЕДЛАЙНУ ---
     function computeRemainingDeadlineMs(userObj) {
         if (!userObj) return null;
 
-        // 1. Якщо є "Дата призначення курсів" (напр. "20.10.2026 16:15:00") та "Дедлайн курсів" у днях (колонка I)
         let days = parseFloat(String(userObj.deadlineDays || "").replace(',', '.'));
         let assignStr = String(userObj.assignDate || "").trim();
         if (!isNaN(days) && days > 0 && assignStr) {
@@ -973,7 +999,6 @@
             }
         }
 
-        // 2. Парсимо колонку K "Залишок до дедлайну" (напр. "0 дн. 18 год. 8 хв." або "Час вийшов")
         let rawK = String(userObj.deadline || "").trim();
         if (!rawK) return null;
         let lowK = rawK.toLowerCase();
@@ -991,7 +1016,6 @@
             let mins = mMatch ? parseInt(mMatch[1], 10) : 0;
             let totalMs = ((d * 24 + h) * 60 + mins) * 60 * 1000;
 
-            // Зберігаємо локальний відлік від моменту отримання значення з таблиці
             let cacheKey = `dl_sync_${userObj.login}_${rawK}`;
             let syncEpoch = parseInt(sessionStorage.getItem(cacheKey), 10);
             if (!syncEpoch) {
@@ -1031,7 +1055,6 @@
             container.style.display = 'flex';
 
             if (diffMs <= 0) {
-                // Коли час вийшов -> "🔒Час вийшов"
                 iconEl.style.display = 'none';
                 textEl.innerText = "🔒Час вийшов";
                 container.classList.remove('deadline-urgent');
@@ -1050,7 +1073,6 @@
                 textEl.innerText = `Залишок до дедлайну: ${d} дн. ${h} год. ${mPad} хв.`;
                 window.isDeadlinePassed = false;
 
-                // Якщо залишається менше "0 дн. 1 год. 00 хв." (< 60 хвилин) — пульсує червоним текстом
                 if (diffMs < 60 * 60 * 1000) {
                     container.classList.add('deadline-urgent');
                     container.classList.remove('deadline-expired');
@@ -1070,7 +1092,6 @@
         const warnBox = document.getElementById('testWarningBox');
         if (!btn) return;
 
-        // Гість або перегляд чужої картки не має тестів (пункт 1 ТЗ)
         if (windowViewingEmployee || windowUserRole === 'guest') {
             btn.style.display = 'none';
             if (warnBox) warnBox.style.display = 'none';
@@ -1089,7 +1110,54 @@
         }
     }
 
-    // --- АВТОРИЗАЦІЯ ТА СЕСІЇ (пункти 6, 7, 8 ТЗ) ---
+    // --- АВТОРИЗАЦІЯ ТА СЕСІЇ ---
+    function handleLoginSync(l, p) {
+        let user = null;
+        if (db && db.users) {
+            user = db.users.find(u => {
+                let isLoginMatch = String(u.login || "").trim().toLowerCase() === String(l || "").toLowerCase();
+                let dbPass = String(u.pass || "").trim().toLowerCase();
+                let isPassMatch = (dbPass === "") || (dbPass === String(p || "").toLowerCase());
+                return isLoginMatch && isPassMatch;
+            });
+        }
+
+        if (user) {
+            currentUser = user.login;
+            let userKeyLow = String(currentUser).toLowerCase().trim();
+            
+            let myToken = localStorage.getItem('skillhub_session_token');
+            let serverToken = db.activeSessions ? (db.activeSessions[userKeyLow] || db.activeSessions[currentUser]) : null;
+            
+            if (serverToken && myToken && serverToken !== myToken) {
+                logout(true, false);
+                return;
+            }
+            if (!myToken || (serverToken && serverToken !== myToken)) {
+                myToken = Date.now().toString() + "_" + Math.random().toString(36).substring(2, 10);
+                localStorage.setItem('skillhub_session_token', myToken);
+            }
+            
+            if (navigator.onLine) {
+                try {
+                    fetch(API_URL, {
+                        method: 'POST', cache: 'no-store', mode: 'no-cors',
+                        body: JSON.stringify({ action: 'set_session', login: userKeyLow, token: myToken })
+                    });
+                } catch(e) {}
+            }
+
+            windowUserRole = detectRoleGroup(user.role);
+            windowViewingEmployee = null;
+
+            switchToMyCabinet();
+        } else {
+            document.documentElement.classList.remove('fast-boot');
+            document.getElementById('loader').style.display = 'none';
+            switchView('loginView');
+        }
+    }
+
     async function handleLogin(isAuto = false) {
         const loginBtn = document.getElementById('loginSubmitBtn');
         const err = document.getElementById('errorMsg');
@@ -1134,8 +1202,6 @@
                 let userKeyLow = String(currentUser).toLowerCase().trim();
                 err.style.display = 'none';
 
-                // Перевірка одночасного входу (пункт 8):
-                // Якщо це АВТОВХІД (пристрій 1), а на сервері вже інший токен (зайшов пристрій 2) -> викидаємо пристрій 1
                 let myToken = localStorage.getItem('skillhub_session_token');
                 if (isAuto) {
                     let serverToken = db.activeSessions ? (db.activeSessions[userKeyLow] || db.activeSessions[currentUser]) : null;
@@ -1143,12 +1209,12 @@
                         logout(true, false);
                         return;
                     }
-                    if (!myToken) {
+                    if (!myToken || (serverToken && serverToken !== myToken)) {
                         myToken = Date.now().toString() + "_" + Math.random().toString(36).substring(2, 10);
                         localStorage.setItem('skillhub_session_token', myToken);
                     }
                 } else {
-                    // При ручному вході на новому пристрої генеруємо НОВИЙ токен і записуємо на сервер, щоб викинути перший пристрій
+                    // При ручному вході завжди генеруємо новий токен, щоб "викинути" старі пристрої
                     myToken = Date.now().toString() + "_" + Math.random().toString(36).substring(2, 10);
                     localStorage.setItem('skillhub_session_token', myToken);
                 }
@@ -1162,7 +1228,6 @@
                     } catch(e) {}
                 }
 
-                // Функція "Запам'ятати мене" (пункт 7 ТЗ)
                 if (document.getElementById('rememberMe').checked) {
                     localStorage.setItem('skillhub_edu_creds', JSON.stringify({ login: l, pass: p }));
                 } else {
@@ -1173,7 +1238,6 @@
                 windowViewingEmployee = null;
 
                 switchToMyCabinet();
-                startSessionMonitor();
             } else {
                 err.innerText = "Невірний логін або пароль!";
                 err.style.display = 'block';
@@ -1190,6 +1254,8 @@
     }
 
     function logout(forced = false, explicit = false) {
+        stopSessionHeartbeat(); // Зупиняємо таймер
+        
         if (forced) {
             alert("Ваш акаунт було відкрито на іншому пристрої. Сесію на цьому пристрої завершено.");
         } else if (explicit && currentUser && navigator.onLine) {
@@ -1203,7 +1269,6 @@
         }
 
         if (deadlineInterval) clearInterval(deadlineInterval);
-        if (sessionCheckInterval) clearInterval(sessionCheckInterval);
         closeStatsModal();
 
         currentUser = null;
@@ -1212,7 +1277,6 @@
         localStorage.removeItem('skillhub_session_token');
 
         if (explicit || forced) {
-            // Якщо натиснули "Вийти" або викинуло іншим пристроєм — скидаємо автовхід, щоб можна було ввести інший логін/пароль
             localStorage.removeItem('skillhub_edu_creds');
         }
         if (explicit) {
@@ -1222,7 +1286,6 @@
         switchView('loginView');
     }
 
-    // --- ПОБУДОВА КАРТИ КУРСІВ ("Support", "Екта" і т.д.) ---
     function buildCoursesMap(user) {
         coursesMap = {};
         if (!user || !db) return;
@@ -1234,7 +1297,6 @@
             let cleanProdTitle = cleanCourseTitle(c.product);
             let pClean = getCleanName(cleanProdTitle);
 
-            // Для ролі "Гість" відкриті всі курси для ознайомлення
             let isAssigned = (roleGroup === 'guest') || currentUserAssigned.some(assignedName => {
                 return getCleanName(assignedName) === pClean;
             });
@@ -1255,7 +1317,6 @@
         });
     }
 
-    // --- ПЕРЕМИКАННЯ В ОСОБИСТИЙ КАБІНЕТ ("📚 Навчання") ---
     function switchToMyCabinet() {
         windowViewingEmployee = null;
         closeStatsModal();
@@ -1265,12 +1326,10 @@
 
         windowUserRole = detectRoleGroup(user.role);
 
-        // Привітання: беремо лише Ім'я з Великої літери (пункт 9 ТЗ: "Вітаю, Карина 👋")
         let firstName = extractFirstNameCapitalized(user);
         document.getElementById('cabinetTitle').innerText = 'Особистий кабінет';
         document.getElementById('userWelcome').innerHTML = `Вітаю, ${escapeHTMLAttr(firstName)} <span style="font-size: 15px; margin-left: 4px;">👋</span>`;
 
-        // Кнопки "Навчання" та "Статистика співробітників" доступні лише Власнику та Керівнику
         const managerBar = document.getElementById('managerActionBar');
         if (windowUserRole === 'owner' || windowUserRole === 'manager') {
             managerBar.style.display = 'grid';
@@ -1288,12 +1347,14 @@
         renderCabinetStatsAndCourses(user);
         startDeadlineTimer();
         checkNewAchievements(user);
+        
+        startSessionHeartbeat(); // ЗАПУСКАЄМО ТАЙМЕР ЗАХИСТУ
 
         switchView('cabinetView');
         switchCabinetTab('stats');
     }
 
-    // --- МОДАЛЬНЕ ВІКНО 📊 СТАТИСТИКА СПІВРОБІТНИКІВ З ПОШУКОМ ПО ПІБ ТА ПІДКАЗКАМИ ---
+    // --- МОДАЛЬНЕ ВІКНО СТАТИСТИКИ СПІВРОБІТНИКІВ ---
     function getAccessibleEmployeesList() {
         if (!db || !db.users) return [];
         let me = db.users.find(u => String(u.login).toLowerCase() === String(currentUser).toLowerCase());
@@ -1308,10 +1369,8 @@
             if (detectRoleGroup(u.role) === 'guest') return false;
 
             if (windowUserRole === 'owner') {
-                // Власник бачить абсолютно всіх співробітників у колонці ПІБ
                 return true;
             } else if (windowUserRole === 'manager') {
-                // Керівник бачить тільки співробітників, у яких він вказаний у колонці "Хто керівник"
                 let uManager = String(u.manager || u.director || "").toLowerCase().trim();
                 if (!uManager) return false;
                 return uManager === myNameLow || uManager.includes(myShort) || myNameLow.includes(uManager);
@@ -1370,7 +1429,6 @@
 
         let list = getAccessibleEmployeesList();
 
-        // Випадаючий список-підказка при введенні символів
         if (q.length > 0) {
             let matches = list.filter(u => String(u.name).toLowerCase().includes(qLow)).slice(0, 6);
             if (matches.length > 0) {
@@ -1418,7 +1476,7 @@
             let m = computeUserMetrics(u);
             let borderCol = 'var(--border)';
             if (m.totalAssigned > 0) {
-                if (m.completed === m.totalAssigned) borderCol = 'rgba(16, 185, 129, 0.7)';
+                if (m.completed === m.totalAssigned) borderCol = 'rgba(22, 79, 88, 0.7)';
                 else if (m.started > 0) borderCol = 'rgba(245, 158, 11, 0.6)';
             }
 
@@ -1428,7 +1486,7 @@
             return `
                 <div class="list-card" style="border-color: ${borderCol}; padding: 14px 16px;" onclick="selectEmployeeFromModal('${escapeHTMLAttr(u.login)}')">
                     <div style="flex: 1; padding-right: 10px;">
-                        <div style="font-size: 15px; font-weight: 800; color: var(--text-main); margin-bottom: 4px;">${escapeHTMLAttr(u.name)}</div>
+                        <div style="font-size: 15px; font-weight: 800; color: var(--primary); margin-bottom: 4px;">${escapeHTMLAttr(u.name)}</div>
                         <div style="font-size: 12px; font-weight: 600; color: var(--text-muted); display: flex; flex-direction: column; gap: 2px;">
                             ${storeTxt ? `<span>${storeTxt}</span>` : ''}
                             ${mgrTxt ? `<span>${mgrTxt}</span>` : ''}
@@ -1481,7 +1539,7 @@
         switchCabinetTab('stats');
     }
 
-    // --- РОЗРАХУНОК 8 ПОКАЗНИКІВ СТАТИСТИКИ (з формул таблиці AV:BG або з результатів BH:CP) ---
+    // --- РОЗРАХУНОК ПОКАЗНИКІВ СТАТИСТИКИ ---
     function computeUserMetrics(user) {
         let st = user.stats || {};
         let assignedList = user.assigned || [];
@@ -1546,7 +1604,7 @@
         };
     }
 
-    // --- КІЛЬЦЕВА ДІАГРАМА (Chart.js) як на 3-му скріні ---
+    // --- КІЛЬЦЕВА ДІАГРАМА (НОВИЙ ПЛАГІН OUTSIDE LABELS + КОРП. КОЛЬОРИ) ---
     function renderProgressChart(passed, inProgress, notStarted) {
         let ctx = document.getElementById('progressChart');
         if (!ctx) return;
@@ -1563,11 +1621,11 @@
         let total = passed + inProgress + notStarted;
         let dataArr = total > 0 ? [passed, inProgress, notStarted] : [0, 0, 1];
 
-        // Кастомний плагін для відображення відсотків усередині сегментів
-        const insideLabelsPlugin = {
-            id: 'insideLabels',
+        // Кастомний плагін: лінії назовні + текст
+        const outsideLabelsPlugin = {
+            id: 'outsideLabels',
             afterDraw: (chart) => {
-                const cCtx = chart.ctx;
+                const ctx = chart.ctx;
                 const dataset = chart.data.datasets[0];
                 const meta = chart.getDatasetMeta(0);
                 if (!meta.data || meta.data.length === 0) return;
@@ -1577,21 +1635,56 @@
 
                 meta.data.forEach((element, index) => {
                     const dataVal = dataset.data[index];
-                    // Виводимо текст лише якщо сегмент достатньо великий (понад 5%)
-                    if (dataVal > 0 && (dataVal / cTotal) > 0.05) { 
-                        const position = element.tooltipPosition();
-                        cCtx.fillStyle = '#ffffff';
-                        cCtx.font = 'bold 14px Inter, sans-serif';
-                        cCtx.textAlign = 'center';
-                        cCtx.textBaseline = 'middle';
-                        const percent = Math.round((dataVal / cTotal) * 100) + '%';
-                        cCtx.fillText(percent, position.x, position.y);
+                    if (dataVal > 0) { 
+                        const percentage = Math.round((dataVal / cTotal) * 100) + '%';
+                        
+                        const startAngle = element.startAngle;
+                        const endAngle = element.endAngle;
+                        const middleAngle = startAngle + (endAngle - startAngle) / 2;
+                        
+                        const outerRadius = element.outerRadius;
+                        const xCenter = element.x;
+                        const yCenter = element.y;
+
+                        // Крапка на дузі
+                        const xArc = xCenter + outerRadius * Math.cos(middleAngle);
+                        const yArc = yCenter + outerRadius * Math.sin(middleAngle);
+
+                        // Злам лінії
+                        const offset = 8; 
+                        const xBreak = xCenter + (outerRadius + offset) * Math.cos(middleAngle);
+                        const yBreak = yCenter + (outerRadius + offset) * Math.sin(middleAngle);
+
+                        // Кінець лінії
+                        const isRight = Math.cos(middleAngle) >= 0;
+                        const xEnd = xBreak + (isRight ? 10 : -10); 
+                        const yEnd = yBreak;
+
+                        // Малюємо лінію
+                        ctx.beginPath();
+                        ctx.moveTo(xArc, yArc);
+                        ctx.lineTo(xBreak, yBreak);
+                        ctx.lineTo(xEnd, yEnd);
+                        ctx.strokeStyle = document.documentElement.getAttribute('data-theme') === 'dark' ? '#98989d' : '#8e8e93';
+                        ctx.lineWidth = 1.5;
+                        ctx.stroke();
+
+                        // Текст
+                        ctx.fillStyle = document.documentElement.getAttribute('data-theme') === 'dark' ? '#ffffff' : '#111827';
+                        ctx.font = 'bold 13px Inter, sans-serif';
+                        ctx.textAlign = isRight ? 'left' : 'right';
+                        ctx.textBaseline = 'middle';
+                        const textX = isRight ? xEnd + 4 : xEnd - 4;
+                        ctx.fillText(percentage, textX, yEnd);
                     }
                 });
             }
         };
 
         const bgColor = document.documentElement.getAttribute('data-theme') === 'dark' ? '#1c1c1e' : '#ffffff';
+        const colorPassed = '#164f58'; // Корпоративний
+        const colorProgress = '#3a9c9f'; // Світліший
+        const colorRemaining = document.documentElement.getAttribute('data-theme') === 'dark' ? '#38383a' : '#e5e7eb';
 
         window.progressChartInstance = new Chart(ctx, {
             type: 'doughnut',
@@ -1599,16 +1692,24 @@
                 labels: ['Пройдено', 'В процесі', 'Залишилось'],
                 datasets: [{
                     data: dataArr,
-                    backgroundColor: ['#64a022', '#b3d234', '#afb9c6'], // Кольори зі скріншоту
+                    backgroundColor: [colorPassed, colorProgress, colorRemaining],
                     borderWidth: 3,
                     borderColor: bgColor,
                     hoverOffset: 4
                 }]
             },
             options: {
+                layout: {
+                    padding: {
+                        left: 60,
+                        right: 60,
+                        top: 25,
+                        bottom: 25
+                    }
+                },
                 responsive: true,
                 maintainAspectRatio: false,
-                cutout: '40%', // Зменшений виріз для товстіших сегментів
+                cutout: '45%', 
                 plugins: {
                     legend: {
                         position: 'bottom',
@@ -1630,19 +1731,17 @@
                     }
                 }
             },
-            plugins: [insideLabelsPlugin]
+            plugins: [outsideLabelsPlugin]
         });
     }
 
-    // --- ВІДОБРАЖЕННЯ 8 ПОКАЗНИКІВ ТА СПИСКУ КУРСІВ ("Support", "Екта" тощо) ---
+    // --- ВІДОБРАЖЕННЯ 8 ПОКАЗНИКІВ ТА СПИСКУ КУРСІВ ---
     function renderCabinetStatsAndCourses(user) {
         let m = computeUserMetrics(user);
 
-        // Кільцева діаграма всіх курсів
         document.getElementById('chartContainerBox').style.display = 'block';
         renderProgressChart(m.completed, m.inProgress, m.notStarted);
 
-        // 8 обов'язкових карток статистики (пункт 1 ТЗ)
         let statsHtml = `
             <div class="stats-grid-8">
                 <div class="stat-item">
@@ -1653,7 +1752,7 @@
                     <div class="stat-val-modern" style="color: #3b82f6;">${m.started}</div>
                     <div class="stat-label-modern">Розпочато курсів</div>
                 </div>
-                <div class="stat-item" style="border-color: rgba(16, 185, 129, 0.4);">
+                <div class="stat-item" style="border-color: rgba(22, 79, 88, 0.4);">
                     <div class="stat-val-modern" style="color: var(--success);">${m.completed}</div>
                     <div class="stat-label-modern">Пройдено курсів</div>
                 </div>
@@ -1680,7 +1779,6 @@
             </div>
         `;
 
-        // Побудова списку призначених курсів ("Support", "Екта" і т.д.)
         const courseNames = Object.keys(coursesMap);
         let coursesHtml = '';
         let res = user.results || {};
@@ -1727,7 +1825,7 @@
         });
     }
 
-    // --- ЗАРОБЛЕНІ АЧІВКИ (CQ:CQ) ТА СПИСОК ТЕСТІВ І РЕЗУЛЬТАТІВ У КАРТЦІ СПІВРОБІТНИКА ---
+    // --- ЗАРОБЛЕНІ АЧІВКИ ТА СПИСОК ТЕСТІВ І РЕЗУЛЬТАТІВ У КАРТЦІ СПІВРОБІТНИКА ---
     function renderEmployeeAchievementsAndTests(emp) {
         const achSec = document.getElementById('employeeEarnedAchievementsSection');
         const achContainer = document.getElementById('employeeEarnedAchievementsList');
@@ -1737,14 +1835,13 @@
         achSec.style.display = 'block';
         testsSec.style.display = 'block';
 
-        // 1. Зароблені ачівки з колонки CQ:CQ
         let achCodes = emp.achievements ? String(emp.achievements).split(',').map(s => s.trim()).filter(Boolean) : [];
         if (achCodes.length === 0) {
-            achContainer.innerHTML = `<div style="background: var(--card-bg); border: 1px solid var(--border); border-radius: 16px; padding: 16px; text-align: center; color: var(--text-muted); font-size: 13px; font-weight: 600;">У співробітника поки немає зароблених ачівок</div>`;
+            achContainer.innerHTML = `<div style="background: var(--card-bg); border: 1px solid var(--border); border-radius: 16px; padding: 16px; text-align: center; color: var(--text-muted); font-size: 13px; font-weight: 600;">У співробітника поки немає зароблених відзнак</div>`;
         } else {
             let earnedHtml = achCodes.map(code => {
                 let achInfo = (globalAchievements || []).find(a => String(a.code).trim() === code);
-                let title = achInfo && achInfo.name ? achInfo.name : `Ачівка #${code}`;
+                let title = achInfo && achInfo.name ? achInfo.name : `Відзнака #${code}`;
                 let desc = achInfo && achInfo.description ? achInfo.description : "";
                 let safeCode = escapeHTMLAttr(code);
 
@@ -1764,7 +1861,6 @@
             achContainer.innerHTML = earnedHtml;
         }
 
-        // 2. Список призначених тестів та їх результати (BH:CP)
         let assigned = emp.assigned || [];
         let res = emp.results || {};
         if (assigned.length === 0) {
@@ -1780,7 +1876,7 @@
                 let statusText = 'Не розпочато';
                 if (rawRes) {
                     statusText = `${parsed.score}%`;
-                    if (parsed.score === 100) badgeColor = '#10b981';
+                    if (parsed.score === 100) badgeColor = 'var(--success)';
                     else if (parsed.score >= 80) badgeColor = '#059669';
                     else badgeColor = 'var(--danger)';
                 }
@@ -1843,7 +1939,7 @@
             let scoreColor = 'var(--text-muted)';
             let scoreText = (windowUserRole === 'guest') ? 'Огляд' : 'Почати';
             if (resStr && (pr.attempts > 0 || score > 0)) {
-                if (score === 100) { scoreColor = '#10b981'; scoreText = '100%'; }
+                if (score === 100) { scoreColor = 'var(--success)'; scoreText = '100%'; }
                 else if (score >= 90) { scoreColor = '#f97316'; scoreText = score + '%'; }
                 else if (score >= 80) { scoreColor = '#a16207'; scoreText = score + '%'; }
                 else { scoreColor = '#ef4444'; scoreText = score + '%'; }
@@ -1905,7 +2001,7 @@
         switchView('theoryView');
     }
 
-    // --- 🏆 АЧІВКИ (Колонка CQ:CQ + Довідник CR:CU) ---
+    // --- АЧІВКИ ---
     function checkNewAchievements(user) {
         if (!user) return;
         let achCodes = user.achievements ? String(user.achievements).split(',').map(s => s.trim()).filter(Boolean) : [];
@@ -1969,9 +2065,8 @@
         } else {
             globalAchievements.forEach(achInfo => {
                 let code = String(achInfo.code).trim();
-                // Для ролі "Гість" усі ачівки відкриті для ознайомлення
                 let isEarned = isGuest || achCodes.includes(code);
-                let displayName = (achInfo && achInfo.name) ? achInfo.name.replace(/\.(svg|png|jpg|jpeg|webp|gif)$/i, '') : `Ачівка #${code}`;
+                let displayName = (achInfo && achInfo.name) ? achInfo.name.replace(/\.(svg|png|jpg|jpeg|webp|gif)$/i, '') : `Відзнака #${code}`;
                 let desc = (achInfo && achInfo.description) ? achInfo.description : "";
                 let safeCode = escapeHTMLAttr(code);
 
@@ -1999,7 +2094,7 @@
         });
     }
 
-    // --- ПАРСИНГ ТА ПРОХОДЖЕННЯ ТЕСТІВ (BH2:CP2, формат "1/29/0/100%") ---
+    // --- ПАРСИНГ ТА ПРОХОДЖЕННЯ ТЕСТІВ ---
     function parseTestString(testStr) {
         let lines = String(testStr || "").split('\n').map(l => l.trim()).filter(Boolean);
         let questions = [];
@@ -2179,7 +2274,6 @@
         switchView('theoryView');
     }
 
-    // Завершення тесту та запис у форматі "спроби/час/порушення/найкращий_бал%" (напр. "1/29/0/100%")
     async function submitTest(forceZeroByCheat = false) {
         isTestActive = false;
         if (testTimerInterval) clearInterval(testTimerInterval);
@@ -2220,7 +2314,6 @@
             currentUserObj.results[cleanTitle] = formattedResult;
             currentUserObj.results[cleanKey] = formattedResult;
 
-            // Оновлюємо локальну статистику користувача для миттєвого відображення
             if (currentUserObj.stats) {
                 currentUserObj.stats.attempts = (currentUserObj.stats.attempts || 0) + 1;
                 currentUserObj.stats.timeSpent = (currentUserObj.stats.timeSpent || 0) + timeSpentNow;
@@ -2273,7 +2366,7 @@
         }
     }
 
-    // --- АНТИ-ЧІТ (1 в 1 як у прикладі коду) ---
+    // --- АНТИ-ЧІТ ---
     document.addEventListener('contextmenu', event => {
         if (document.getElementById('testView').classList.contains('active')) event.preventDefault();
     });
@@ -2317,7 +2410,6 @@
     document.addEventListener('visibilitychange', () => { if (document.hidden) triggerAntiCheat(); });
     document.addEventListener('touchcancel', triggerAntiCheat);
 
-    // Закриття випадаючого списку підказок пошуку при кліку поза ним
     document.addEventListener('click', (e) => {
         const wrap = document.querySelector('.search-box-wrap');
         const sugg = document.getElementById('empSearchSuggestions');
@@ -2326,7 +2418,8 @@
         }
     });
 
-    // --- ІНІЦІАЛІЗАЦІЯ ТА АВТОВХІД ("Запамʼятати мене") ---
+    // --- ІНІЦІАЛІЗАЦІЯ ---
+    
     document.addEventListener('DOMContentLoaded', async () => {
         let hasCache = false;
         try {
@@ -2352,24 +2445,35 @@
 
             if (hasCache && db && db.users && db.users.length > 0) {
                 document.getElementById('loader').style.display = 'none';
-                await handleLogin(true);
-                fetchFreshDataSilent();
+                handleLoginSync(parsedCreds.login, parsedCreds.pass);
             } else {
+                document.documentElement.classList.remove('fast-boot');
+                document.documentElement.style.setProperty('--edu-loader-display', 'flex');
                 document.getElementById('loader').style.display = 'flex';
-                await fetchFreshDataSilent();
+                await fetchFreshDataSilent(true);
                 document.getElementById('loader').style.display = 'none';
                 if (db && db.users && db.users.length > 0) await handleLogin(true);
                 else switchView('loginView');
             }
         } else {
+            document.documentElement.classList.remove('fast-boot');
+            document.documentElement.style.setProperty('--edu-loader-display', 'flex');
             if (!hasCache && navigator.onLine) {
                 document.getElementById('loader').style.display = 'flex';
-                await fetchFreshDataSilent();
-                document.getElementById('loader').style.display = 'none';
-            } else {
-                document.getElementById('loader').style.display = 'none';
+                await fetchFreshDataSilent(true);
             }
+            document.getElementById('loader').style.display = 'none';
             switchView('loginView');
+        }
+    });
+
+    window.addEventListener('pageshow', function(event) {
+        if (event.persisted) {
+            document.documentElement.style.setProperty('--edu-loader-display', 'none');
+            const loader = document.getElementById('loader');
+            if (loader) loader.style.display = 'none';
+            
+            document.documentElement.classList.remove('fast-boot');
         }
     });
 </script>
