@@ -69,6 +69,15 @@
         
         .container { width: 100%; max-width: 480px; padding: 24px 16px; margin: 0 auto; position: relative; }
 
+        /* Єдиний клас для всіх іконок у кнопках та меню */
+        .ui-icon {
+            width: 20px;
+            height: 20px;
+            object-fit: contain;
+            flex-shrink: 0;
+            display: inline-block;
+        }
+
         /* --- АНІМАЦІЇ ТА ВІДОБРАЖЕННЯ ЕКРАНІВ (SPA) --- */
         .view { display: none; animation: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1); will-change: opacity, transform; }
         .view.active { display: block; }
@@ -126,7 +135,7 @@
         .back-btn-sleek:active { transform: scale(0.92); background: var(--input-bg); }
         .back-btn-sleek.active-nav { border-color: var(--primary); background: var(--primary-light); }
 
-        /* Швидкі кнопки ролі (📚Навчання / 📊Статистика / 🏆Ачівки / 🔄Оновлення / 🚪Вийти) */
+        /* Швидкі кнопки ролі (📚Навчання / 📊Статистика співробітників) */
         .role-action-bar {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -149,10 +158,6 @@
             transition: all 0.2s;
             box-shadow: 0 3px 10px rgba(0,0,0,0.02);
         }
-        .role-action-btn img {
-            width: 18px; 
-            height: 18px;
-        }
         .role-action-btn:active { transform: scale(0.96); }
         .role-action-btn.active { border-color: var(--primary); background: var(--primary-light); color: var(--rozetka-green-dark); }
         [data-theme="dark"] .role-action-btn.active { color: #34d399; }
@@ -165,11 +170,7 @@
 
         /* --- ВКЛАДКИ (ТАБИ) --- */
         .tabs-container { display: flex; background: var(--tab-bg); border-radius: 12px; padding: 4px; margin-bottom: 20px; }
-        .tab-btn { flex: 1; text-align: center; padding: 10px; border-radius: 10px; font-size: 14px; font-weight: 700; color: var(--text-muted); cursor: pointer; transition: 0.3s; display: flex; align-items: center; justify-content: center; gap: 6px; }
-        .tab-btn img {
-            width: 16px;
-            height: 16px;
-        }
+        .tab-btn { flex: 1; display: flex; align-items: center; justify-content: center; gap: 6px; padding: 10px; border-radius: 10px; font-size: 14px; font-weight: 700; color: var(--text-muted); cursor: pointer; transition: 0.3s; }
         .tab-btn.active { background: var(--tab-active); color: var(--text-main); box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
         .tab-content { display: none; animation: fadeIn 0.3s; }
         .tab-content.active { display: block; }
@@ -208,7 +209,6 @@
 
         /* --- ДЕДЛАЙН ТА ПУЛЬСАЦІЯ --- */
         #deadlineContainer { background: var(--input-bg); border: 1px solid var(--border); border-radius: 16px; padding: 9px 16px; display: flex; align-items: center; justify-content: center; gap: 8px; margin: 0 auto 18px auto; max-width: 100%; transition: 0.3s; }
-        #deadlineIcon img { width: 18px; height: 18px; display: block; }
         #deadlineText { font-size: 13.5px; font-weight: 800; color: var(--text-main); }
         @keyframes urgentDeadlinePulse {
             0%, 100% { color: var(--danger); opacity: 1; transform: scale(1); }
@@ -279,7 +279,7 @@
 
         .notification-dot { position: absolute; top: 4px; right: 4px; width: 12px; height: 12px; background-color: var(--danger); border-radius: 50%; border: 2px solid var(--card-bg); display: none; }
 
-        /* --- МОДАЛЬНЕ ВІКНО 📊 СТАТИСТИКА НАВЧАННЯ З ПОШУКОМ ТА АВТОПІДКАЗКАМИ --- */
+        /* --- МОДАЛЬНЕ ВІКНО 📊 СТАТИСТИКА СПІВРОБІТНИКІВ З ПОШУКОМ ТА АВТОПІДКАЗКАМИ --- */
         .stats-modal {
             position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.92);
             background: var(--bg); z-index: 10002; width: 94%; max-width: 460px;
@@ -368,20 +368,18 @@
 <div class="ach-drawer" id="achDrawer">
     <div class="ach-title">
         <div style="display:flex; align-items:center; gap:8px;">
-            <img src="Achievement.png" style="width:28px; height:28px;" onerror="this.style.display='none'"> Ачівки
+            <img src="Achievement.svg" class="ui-icon" onerror="this.style.display='none'"> Ачівки
         </div>
         <button class="modal-close-btn" onclick="toggleAchievements()">✕</button>
     </div>
     <div id="achList"></div>
 </div>
 
-<!-- МОДАЛЬНЕ ВІКНО 📊 СТАТИСТИКА НАВЧАННЯ (ДЛЯ ВЛАСНИКА ТА КЕРІВНИКА) -->
+<!-- МОДАЛЬНЕ ВІКНО 📊 СТАТИСТИКА СПІВРОБІТНИКІВ (ДЛЯ ВЛАСНИКА ТА КЕРІВНИКА) -->
 <div class="drawer-overlay" id="statsModalOverlay" onclick="closeStatsModal()"></div>
 <div class="stats-modal" id="statsModal">
     <div class="stats-modal-header">
-        <div class="stats-modal-title">
-            <img src="Statistic.png" alt="Статистика" style="width: 20px; height: 20px; object-fit: contain;"> Статистика навчання
-        </div>
+        <div class="stats-modal-title"><img src="Statistic.svg" class="ui-icon"> Статистика співробітників</div>
         <button class="modal-close-btn" onclick="closeStatsModal()">✕</button>
     </div>
 
@@ -402,7 +400,7 @@
 
 <div class="container">
 
-    <!-- ЕКРАН 1: ВХІД -->
+    <!-- ЕКРАН 1: ВХІД (без тексту "Увійдіть, щоб розпочати вивчення матеріалів") -->
     <div id="loginView" class="view active">
         <div class="login-wrapper">
             <div class="login-card">
@@ -447,25 +445,25 @@
             <!-- Верхні кнопки: 🏆 Ачівки, 🔄 Оновлення, 🚪 Вийти -->
             <div class="nav-actions" id="cabinetNavActions">
                 <button id="achBtn" class="back-btn-sleek ach-btn" onclick="toggleAchievements()" title="Ачівки">
-                    <img src="Achievement.png" alt="Ачівки" style="width: 22px; height: 22px;">
+                    <img src="Achievement.svg" class="ui-icon">
                     <div class="notification-dot" id="achNotificationDot"></div>
                 </button>
                 <button class="back-btn-sleek" onclick="forceRefresh()" title="Оновлення">
-                    <img src="Update.png" alt="Оновлення" style="width: 22px; height: 22px;">
+                    <img src="Update.svg" class="ui-icon">
                 </button>
                 <button class="back-btn-sleek" onclick="logout(false, true)" title="Вийти">
-                    <img src="Exit.png" alt="Вийти" style="width: 22px; height: 22px;">
+                    <img src="Exit.svg" class="ui-icon">
                 </button>
             </div>
         </div>
 
-        <!-- Кнопки навігації для Власника та Керівника: 📚 Навчання та 📊 Статистика навчання -->
+        <!-- Кнопки навігації для Власника та Керівника: 📚 Навчання та 📊 Статистика співробітників -->
         <div id="managerActionBar" class="role-action-bar" style="display: none;">
             <button id="btnMyEducation" class="role-action-btn active" onclick="switchToMyCabinet()">
-                <img src="Education.png" alt="Навчання"> <span>Навчання</span>
+                <img src="Education.svg" class="ui-icon"> <span>Навчання</span>
             </button>
             <button id="btnTeamStats" class="role-action-btn" onclick="openStatsModal()">
-                <img src="Statistic.png" alt="Статистика навчання"> <span>Статистика навчання</span>
+                <img src="Statistic.svg" class="ui-icon"> <span>Статистика співробітників</span>
             </button>
         </div>
 
@@ -481,63 +479,64 @@
             </div>
         </div>
 
-        <!-- Блок дедлайну -->
+        <!-- Блок дедлайну (пункт 5 ТЗ) -->
         <div id="deadlineContainer" style="display:none;">
-            <span id="deadlineIcon"><img src="Time.png" alt="Дедлайн"></span>
+            <span id="deadlineIcon"><img src="Time.svg" class="ui-icon" style="width:18px; height:18px;"></span>
             <span id="deadlineText"></span>
         </div>
 
         <!-- Перемикач усередині 📚 Навчання: Персональна статистика / Призначені курси -->
         <div class="tabs-container" id="cabinetTabs">
             <div class="tab-btn active" id="tabBtnStats" onclick="switchCabinetTab('stats', this)">
-                <img src="My statistic.png" alt="Персональна статистика"> Персональна статистика
+                <img src="My statistic.svg" class="ui-icon"> Персональна статистика
             </div>
             <div class="tab-btn" id="tabBtnCourses" onclick="switchCabinetTab('courses', this)">
-                <img src="Test.png" alt="Призначені курси"> Призначені курси
+                <img src="Test.svg" class="ui-icon"> Призначені курси
             </div>
         </div>
 
-        <!-- ВКЛАДКА 1: ПЕРСОНАЛЬНА СТАТИСТИКА -->
+        <!-- ВКЛАДКА 1: ПЕРСОНАЛЬНА СТАТИСТИКА (Діаграма + 8 показників + кнопка "Призначені курси" + Ачівки та Тести при перегляді співробітника) -->
         <div id="tabStats" class="tab-content active">
             <div class="section-title">
-                <span>🍩</span> <span>Діаграма проходження курсів</span>
+                <img src="Statistic.svg" class="ui-icon" style="width:16px; height:16px;"> <span>Діаграма проходження курсів</span>
             </div>
+            
             <div class="chart-wrapper" id="chartContainerBox">
                 <canvas id="progressChart"></canvas>
             </div>
 
+            <!-- Кнопка переходу до Призначених курсів (переміщена одразу під діаграму) -->
+            <button class="btn btn-glow" id="goToAssignedCoursesBtn" style="margin-bottom: 24px;" onclick="switchCabinetTab('courses')">
+                <img src="Test.svg" class="ui-icon" style="filter: brightness(0) invert(1);"> ПРИЗНАЧЕНІ КУРСИ
+            </button>
+
             <!-- 8 обов'язкових показників -->
             <div id="learningAnalyticsBlock"></div>
 
-            <!-- Кнопка переходу до Призначених курсів -->
-            <button class="btn btn-glow" id="goToAssignedCoursesBtn" style="margin-bottom: 24px;" onclick="switchCabinetTab('courses')">
-                <img src="Test.png" alt="Призначені курси" style="width: 20px; height: 20px; filter: brightness(0) invert(1);"> ПРИЗНАЧЕНІ КУРСИ
-            </button>
-
-            <!-- Блок зароблених ачівок -->
+            <!-- Блок зароблених ачівок (відображається при перегляді співробітника з колонки CQ:CQ) -->
             <div id="employeeEarnedAchievementsSection" style="display: none;">
-                <div class="section-title">🏆 Зароблені ачівки співробітника</div>
+                <div class="section-title"><img src="Achievement.svg" class="ui-icon" style="width:16px; height:16px;"> Зароблені ачівки співробітника</div>
                 <div id="employeeEarnedAchievementsList"></div>
             </div>
 
             <!-- Блок списку тестів та результатів співробітника -->
             <div id="employeeTestsResultsSection" style="display: none;">
-                <div class="section-title">📝 Список тестів та результати</div>
+                <div class="section-title"><img src="Test.svg" class="ui-icon" style="width:16px; height:16px;"> Список тестів та результати</div>
                 <div id="employeeTestsResultsList"></div>
             </div>
         </div>
 
-        <!-- ВКЛАДКА 2: ПРИЗНАЧЕНІ КУРСИ -->
+        <!-- ВКЛАДКА 2: ПРИЗНАЧЕНІ КУРСИ (Розділення "Support", "Екта" і т.д.) -->
         <div id="tabCourses" class="tab-content">
             <div class="section-title" id="courseListTitle">
-                <img src="Test.png" alt="Курси" style="width: 18px; height: 18px;">
+                <img src="Test.svg" class="ui-icon" style="width: 18px; height: 18px;">
                 <span>Призначені курси за напрямками</span>
             </div>
             <div id="courseList"></div>
         </div>
     </div>
 
-    <!-- ЕКРАН 3: СПИСОК ТЕМ КУРСУ -->
+    <!-- ЕКРАН 3: СПИСОК ТЕМ КУРСУ ("Support", "Екта" тощо) -->
     <div id="productView" class="view">
         <div class="nav-header">
             <div style="display: flex; gap: 12px; align-items: stretch;">
@@ -1271,7 +1270,7 @@
         document.getElementById('cabinetTitle').innerText = 'Особистий кабінет';
         document.getElementById('userWelcome').innerHTML = `Вітаю, ${escapeHTMLAttr(firstName)} <span style="font-size: 15px; margin-left: 4px;">👋</span>`;
 
-        // Кнопки "📚 Навчання" та "📊 Статистика навчання" доступні лише Власнику та Керівнику
+        // Кнопки "Навчання" та "Статистика співробітників" доступні лише Власнику та Керівнику
         const managerBar = document.getElementById('managerActionBar');
         if (windowUserRole === 'owner' || windowUserRole === 'manager') {
             managerBar.style.display = 'grid';
@@ -1294,7 +1293,7 @@
         switchCabinetTab('stats');
     }
 
-    // --- МОДАЛЬНЕ ВІКНО 📊 СТАТИСТИКА НАВЧАННЯ З ПОШУКОМ ПО ПІБ ТА ПІДКАЗКАМИ ---
+    // --- МОДАЛЬНЕ ВІКНО 📊 СТАТИСТИКА СПІВРОБІТНИКІВ З ПОШУКОМ ПО ПІБ ТА ПІДКАЗКАМИ ---
     function getAccessibleEmployeesList() {
         if (!db || !db.users) return [];
         let me = db.users.find(u => String(u.login).toLowerCase() === String(currentUser).toLowerCase());
@@ -1547,7 +1546,7 @@
         };
     }
 
-    // --- КІЛЬЦЕВА ДІАГРАМА (Chart.js) ---
+    // --- КІЛЬЦЕВА ДІАГРАМА (Chart.js) як на 3-му скріні ---
     function renderProgressChart(passed, inProgress, notStarted) {
         let ctx = document.getElementById('progressChart');
         if (!ctx) return;
@@ -1564,21 +1563,52 @@
         let total = passed + inProgress + notStarted;
         let dataArr = total > 0 ? [passed, inProgress, notStarted] : [0, 0, 1];
 
+        // Кастомний плагін для відображення відсотків усередині сегментів
+        const insideLabelsPlugin = {
+            id: 'insideLabels',
+            afterDraw: (chart) => {
+                const cCtx = chart.ctx;
+                const dataset = chart.data.datasets[0];
+                const meta = chart.getDatasetMeta(0);
+                if (!meta.data || meta.data.length === 0) return;
+
+                const cTotal = dataset.data.reduce((a, b) => a + b, 0);
+                if (cTotal === 0) return;
+
+                meta.data.forEach((element, index) => {
+                    const dataVal = dataset.data[index];
+                    // Виводимо текст лише якщо сегмент достатньо великий (понад 5%)
+                    if (dataVal > 0 && (dataVal / cTotal) > 0.05) { 
+                        const position = element.tooltipPosition();
+                        cCtx.fillStyle = '#ffffff';
+                        cCtx.font = 'bold 14px Inter, sans-serif';
+                        cCtx.textAlign = 'center';
+                        cCtx.textBaseline = 'middle';
+                        const percent = Math.round((dataVal / cTotal) * 100) + '%';
+                        cCtx.fillText(percent, position.x, position.y);
+                    }
+                });
+            }
+        };
+
+        const bgColor = document.documentElement.getAttribute('data-theme') === 'dark' ? '#1c1c1e' : '#ffffff';
+
         window.progressChartInstance = new Chart(ctx, {
             type: 'doughnut',
             data: {
-                labels: ['Пройдено курсів', 'Розпочато (в процесі)', 'Залишилось (не розпочато)'],
+                labels: ['Пройдено', 'В процесі', 'Залишилось'],
                 datasets: [{
                     data: dataArr,
-                    backgroundColor: ['#10b981', '#f59e0b', '#e5e7eb'],
-                    borderWidth: 0,
+                    backgroundColor: ['#64a022', '#b3d234', '#afb9c6'], // Кольори зі скріншоту
+                    borderWidth: 3,
+                    borderColor: bgColor,
                     hoverOffset: 4
                 }]
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
-                cutout: '70%',
+                cutout: '40%', // Зменшений виріз для товстіших сегментів
                 plugins: {
                     legend: {
                         position: 'bottom',
@@ -1587,7 +1617,7 @@
                             color: document.documentElement.getAttribute('data-theme') === 'dark' ? '#fff' : '#111827',
                             padding: 14,
                             usePointStyle: true,
-                            pointStyle: 'circle'
+                            pointStyle: 'rect'
                         }
                     },
                     tooltip: {
@@ -1599,7 +1629,8 @@
                         displayColors: false
                     }
                 }
-            }
+            },
+            plugins: [insideLabelsPlugin]
         });
     }
 
@@ -1720,7 +1751,7 @@
                 return `
                     <div class="ach-card earned" onclick="toggleAchZoom(this)">
                         <div class="ach-icon-wrapper">
-                            <img src="Achievement.png" onerror="this.src='medal.svg'" class="ach-img">
+                            <img src="Achievement.svg" onerror="this.src='medal.svg'" class="ach-img">
                         </div>
                         <div style="display: flex; flex-direction: column; justify-content: center; flex: 1;">
                             <div class="ach-card-title">${escapeHTMLAttr(title)}</div>
@@ -1952,7 +1983,7 @@
                 html += `
                 <div class="ach-card ${stateClass}" onclick="if('${stateClass}' === 'earned') toggleAchZoom(this)">
                     <div class="ach-icon-wrapper">
-                        <img src="Achievement.png" onerror="this.src='medal.svg'" class="ach-img">
+                        <img src="Achievement.svg" onerror="this.src='medal.svg'" class="ach-img">
                     </div>
                     <div style="display: flex; flex-direction: column; justify-content: center; flex: 1;">
                         <div class="ach-card-title">${escapeHTMLAttr(displayName)}</div>
