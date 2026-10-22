@@ -12,6 +12,9 @@
     <meta name="apple-mobile-web-app-title" content="SkillHUB_Assistant">
     <link rel="apple-touch-icon" href="icon-192.png">
 
+    <!-- ВАЖЛИВО ДЛЯ БЕЗШОВНОГО ПЕРЕХОДУ -->
+    <meta name="view-transition" content="same-origin">
+
     <!-- МИКРО-СКРИПТ ДЛЯ МОМЕНТАЛЬНОГО ЗАПУСКА -->
     <script>
         if (localStorage.getItem('skillhub_v6_flat')) {
@@ -84,6 +87,12 @@
             font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text-main); 
             margin: 0; padding: 0; display: flex; justify-content: center; align-items: flex-start; 
             min-height: 100vh; -webkit-font-smoothing: antialiased; transition: background 0.3s ease, color 0.3s ease; 
+            animation: seamlessEnter 0.25s ease-out; /* Анімація для безшовного переходу */
+        }
+
+        @keyframes seamlessEnter {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .app-loader {
@@ -268,7 +277,6 @@
         .sc-price { font-size: 15px; font-weight: 700; color: var(--primary); flex-shrink: 0; background: var(--input-bg); padding: 6px 12px; border-radius: 10px; border: 1px solid var(--border); height: fit-content; text-align: right;}
         .sc-title { font-size: 15px; font-weight: 600; line-height: 1.4; color: var(--text-main); display: flex; align-items: center; gap: 6px;}
 
-        /* СТИЛЬ СКИДКИ: по умолчанию скрыта, при разворачивании карточки становится видимой */
         .sc-discount-badge {
             display: none;
             font-size: 10px;
@@ -285,7 +293,6 @@
             margin-left: auto;
         }
 
-        /* Показываем скидку только тогда, когда карточка раскрыта (.desc-content.show) */
         .service-card:has(.desc-content.show) .sc-discount-badge {
             display: block !important;
             animation: fadeIn 0.2s ease;
@@ -507,7 +514,8 @@
         </div>
     </div>
 
-    <div id="tab-search" class="app-tab active">
+    <!-- ВАЖЛИВО: за замовчуванням клас active тут видалено, керує скрипт, щоб не було блимання -->
+    <div id="tab-search" class="app-tab">
         <div class="input-group">
             <input type="text" id="catInput" placeholder="Яку техніку чи послугу шукаємо?" autocomplete="off" disabled>
             <button id="clearAllBtn" class="clear-btn">×</button>
@@ -634,7 +642,8 @@
 </div>
 
 <nav class="bottom-nav">
-    <button class="nav-item active" onclick="window.switchTab('tab-search')">
+    <!-- Для навігації теж видалив клас active, він буде призначений скриптом -->
+    <button class="nav-item" onclick="window.switchTab('tab-search')">
         <div class="nav-icon icon-search"></div>
         <span>Пошук</span>
     </button>
@@ -890,6 +899,26 @@
 </div>
 
 <script>
+    // ВСТАНОВЛЕННЯ СТАРТОВОЇ ВКЛАДКИ З ПАМ'ЯТІ (ДО ВІДОБРАЖЕННЯ КОНТЕНТУ)
+    (function(){
+        let initialTab = sessionStorage.getItem('skillhub_active_tab') || 'tab-search';
+        document.getElementById(initialTab).classList.add('active');
+        let navBtn = document.querySelector(`.nav-item[onclick*="${initialTab}"]`);
+        if (navBtn) navBtn.classList.add('active');
+        
+        const titles = {
+            'tab-search': 'SkillHUB Assistant',
+            'tab-reserves': 'Активні резерви',
+            'tab-skillhub': 'SkillHUB',
+            'tab-settings': 'Налаштування'
+        };
+        document.getElementById('headerTitle').innerText = titles[initialTab] || 'SkillHUB Assistant';
+        
+        if(initialTab !== 'tab-search') {
+            document.getElementById('statusContainer').style.display = 'none';
+        }
+    })();
+
     window.currentDevicePrice = 0; 
     
     window.currentRezervItem = null;
@@ -1120,6 +1149,9 @@
         if (tabId === 'tab-reserves') window.renderRezervyList();
         
         window.scrollTo(0, 0);
+
+        // ПАМ'ЯТЬ ВКЛАДКИ ДЛЯ БЕЗШОВНОГО ПОВЕРНЕННЯ
+        sessionStorage.setItem('skillhub_active_tab', tabId);
     }
 
     window.openModalBase = function(modalId, name = "", code = "", priceLabel = "", discount = "") {
@@ -1142,8 +1174,7 @@
                 <div style="display:flex; align-items:center; justify-content:space-between; width:100%; gap:10px;">
                     <span style="line-height:1.2; flex:1;">${title}</span>
                     <div style="display:flex; flex-direction:column; align-items:flex-end; gap:4px; flex-shrink:0;">
-                        ${priceLabelHtml}
-                        ${discountBadgeHtml}
+                        ${priceLabelHtml}${discountBadgeHtml}
                     </div>
                 </div>`;
                 
@@ -1208,10 +1239,10 @@
                                 let cleanName = tName.replace(/^\[.*?\]\s*/, '').trim();
                                 let brandMatch = tName.match(/^\[(.*?)\]/);
                                 let brand = brandMatch ? brandMatch[1] : "";
-                                let displayName = brand ? `[${brand}] ${cleanName}` : cleanName;
+                                let displayName = brand ? `[${brand}]${cleanName}` : cleanName;
 
                                 if (!displayName.includes(maxP.toString())) {
-                                    displayName += ` (${minP.toLocaleString('uk-UA')} - ${maxP.toLocaleString('uk-UA')})`;
+                                    displayName += ` (${minP.toLocaleString('uk-UA')} -${maxP.toLocaleString('uk-UA')})`;
                                 }
                                 
                                 let tPriceStr = "";
@@ -1248,12 +1279,11 @@
                             let sumHtml = comboObj.sum.toLocaleString('uk-UA');
                             let certCount = comboObj.combo.length;
                             let certWord = (certCount >= 2 && certCount <= 4) ? "сертифікати" : "сертифікатів";
-                            let variantTitle = `Варіант ${vIdx + 1} (${certCount} ${certWord})`;
+                            let variantTitle = `Варіант ${vIdx + 1} (${certCount}${certWord})`;
 
                             return `
                             <div style="margin-bottom: 20px;">
-                                <div style="font-size: 11px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px; letter-spacing: 0.5px; text-align: center;">${variantTitle}</div>
-                                ${comboItemsHtml}
+                                <div style="font-size: 11px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px; letter-spacing: 0.5px; text-align: center;">${variantTitle}</div>${comboItemsHtml}
                                 <div style="display: flex; flex-direction: column; gap: 6px; margin-top: 8px; background: var(--card-bg); padding: 12px; border-radius: 8px; border: 1px solid var(--primary-light);">
                                     <div style="display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: var(--text-muted);">
                                         <span>Сума діапазонів:</span>
@@ -1273,8 +1303,7 @@
                                     🧩 Об'єднати сертифікати
                                 </button>
                                 <div style="display: none; background: var(--input-bg); padding: 16px; border-radius: 12px; border: 1px solid var(--border); animation: fade 0.2s ease;">
-                                    <div style="text-align:center; font-size:13px; color:var(--text-muted); font-weight:600; margin-bottom:16px;">Об'єднання для ${p.toLocaleString('uk-UA')} ₴</div>
-                                    ${comboVariantsHtml}
+                                    <div style="text-align:center; font-size:13px; color:var(--text-muted); font-weight:600; margin-bottom:16px;">Об'єднання для ${p.toLocaleString('uk-UA')} ₴</div>${comboVariantsHtml}
                                 </div>
                             </div>
                         `;
@@ -1571,6 +1600,7 @@
     window.factoryReset = function() {
         if(confirm("Ви впевнені, що хочете повністю скинути всі налаштування, кеш додатку та збережені дані? Це поверне додаток до початкового стану.")) {
             localStorage.clear();
+            sessionStorage.clear();
             window.location.reload();
         }
     };
@@ -1617,7 +1647,7 @@
         setTimeout(() => resBox.style.transform = 'scale(1)', 150);
 
         document.getElementById('klochResultValue').innerText = result.toFixed(2) + ' ₴';
-        document.getElementById('klochResultFormula').innerText = `Формула: (${price} * ${appliedPercent}%) * ${qty}`;
+        document.getElementById('klochResultFormula').innerText = `Формула: (${price} * ${appliedPercent}\%) *${qty}`;
         
         return { price, qty, percent: appliedPercent, result };
     }
@@ -1699,7 +1729,7 @@
         let text = "🧮 Розрахунок бонусів:\n\n";
         let total = 0;
         window.klochList.forEach((item, index) => {
-            text += `${index + 1}. Вартість: ${item.price} ₴ | Кіл-ть: ${item.qty} шт\n`;
+            text += `${index + 1}. Вартість: ${item.price} ₴ \vert{} Кіл-ть: ${item.qty} шт\n`;
             text += `   Бонус: ${item.result.toFixed(2)} ₴\n`;
             total += item.result;
         });
@@ -2021,22 +2051,19 @@
             }
 
             return `
-            <div class="list-item ${discountClass}" onclick="window.openRezervItemModal('${safeCatOnClick}', ${r.price}, '${safeNameOnClick}', ${isDiscount})">
+            <div class="list-item ${discountClass}" onclick="window.openRezervItemModal('${safeCatOnClick}',${r.price}, '${safeNameOnClick}',${isDiscount})">
                 <div class="list-item-content">
                     <div style="display:flex; align-items:center; gap: 4px;">
                         <span class="list-item-title rezervy-name" style="flex:1;">${window.escapeHTML(shortName)}</span>
                     </div>
-                    <span class="list-item-subtitle rezervy-cat" style="${catStyle}; margin-top:4px;">${window.escapeHTML(r.cat)}</span>
-                    ${garantiyaHtml}
+                    <span class="list-item-subtitle rezervy-cat" style="${catStyle}; margin-top:4px;">${window.escapeHTML(r.cat)}</span>${garantiyaHtml}
                     <div style="display: flex; flex-wrap: wrap; gap: 6px; align-items: center;">
-                        ${qtyHtml}
-                        ${sellerHtml}
+                        ${qtyHtml}${sellerHtml}
                     </div>
                     ${articleHtml}
                 </div>
                 <div class="list-item-value rezervy-price" style="display:flex; align-items:center;">
-                    ${Math.round(r.price).toLocaleString('uk-UA')} ₴
-                    ${discountIconHtml}
+                    ${Math.round(r.price).toLocaleString('uk-UA')} ₴${discountIconHtml}
                 </div>
             </div>`;
         }).join('');
@@ -2147,7 +2174,7 @@
 
     function updateGalleryImage() {
         document.getElementById('galleryImage').src = getDirectImageUrl(currentPhotos[currentPhotoIndex].trim()); 
-        document.getElementById('galleryCounter').innerText = `${currentPhotoIndex + 1} / ${currentPhotos.length}`;
+        document.getElementById('galleryCounter').innerText = `${currentPhotoIndex + 1} /${currentPhotos.length}`;
         document.querySelector('.gallery-nav.prev').style.display = currentPhotos.length > 1 ? 'block' : 'none';
         document.querySelector('.gallery-nav.next').style.display = currentPhotos.length > 1 ? 'block' : 'none';
     }
@@ -2322,8 +2349,7 @@
                             brandBadge = `<div class="sc-brand ${m.cls}" style="margin: 0; font-size: 9px; padding: 2px 6px; flex-shrink: 0;">${m.brandText}</div>`;
                         }
                         return `<div class="sugg-item" data-idx="${idx}">
-                            <span style="flex-shrink:0; width: 24px; height: 24px; display:flex; align-items:center; justify-content:center;">${window.renderIcon(m.icon)}</span> 
-                            ${brandBadge} 
+                            <span style="flex-shrink:0; width: 24px; height: 24px; display:flex; align-items:center; justify-content:center;">${window.renderIcon(m.icon)}</span>${brandBadge} 
                             <span style="flex:1; line-height:1.3; margin-left: 6px;">${text}</span>
                         </div>`;
                     }).join('');
