@@ -33,7 +33,7 @@
         :root {
             --bg: #f2f2f7; 
             --card-bg: #ffffff;
-            --text-main: #000000; 
+            --text-main: #221f1f; /* Фірмовий темний колір замість абсолютно чорного */
             --text-muted: #8e8e93; 
             --primary: #10b981; 
             --primary-light: #d1fae5;
@@ -61,7 +61,7 @@
         [data-theme="dark"] {
             --bg: #000000; 
             --card-bg: #1c1c1e;
-            --text-main: #ffffff; 
+            --text-main: #f5f5f5; 
             --text-muted: #98989d; 
             --primary: #10b981;
             --primary-light: rgba(16, 185, 129, 0.2);
@@ -87,7 +87,7 @@
             font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text-main); 
             margin: 0; padding: 0; display: flex; justify-content: center; align-items: flex-start; 
             min-height: 100vh; -webkit-font-smoothing: antialiased; transition: background 0.3s ease, color 0.3s ease; 
-            animation: seamlessEnter 0.25s ease-out; /* Анімація для безшовного переходу */
+            animation: seamlessEnter 0.25s ease-out; 
         }
 
         @keyframes seamlessEnter {
@@ -106,6 +106,18 @@
         .loader-text { font-size: 14px; font-weight: 600; color: var(--text-muted); margin-bottom: 15px; text-align: center; padding: 0 20px; line-height: 1.4;}
         .progress-container { width: 220px; height: 6px; background: var(--border); border-radius: 4px; overflow: hidden; display: none; }
         .progress-bar { height: 100%; width: 0%; background: var(--primary); transition: width 0.3s ease; }
+
+        /* Стилі для інлайн лоадера (Оновлення статусу) */
+        .inline-loader {
+            display: inline-flex; align-items: center; gap: 8px; padding: 6px 14px;
+            background: var(--card-bg); border: 1px solid var(--border); border-radius: 20px;
+            font-size: 13px; font-weight: 600; color: var(--text-muted);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        .inline-spinner {
+            width: 14px; height: 14px; border: 2px solid var(--border);
+            border-top-color: #6a9c89; border-radius: 50%; animation: spin 1s linear infinite;
+        }
 
         .container { 
             position: relative; width: 100%; max-width: 480px; 
@@ -137,7 +149,7 @@
         }
         .fav-btn-top:active { transform: scale(0.85); background: var(--input-bg); }
 
-        .status-container { display: flex; justify-content: flex-end; margin-bottom: 15px; }
+        .status-container { display: flex; justify-content: flex-end; margin-bottom: 15px; min-height: 28px; }
         .status-badge { 
             display: flex; align-items: center; gap: 6px; padding: 6px 10px; 
             background: var(--card-bg); border-radius: 20px; border: 1px solid var(--border);
@@ -460,8 +472,15 @@
         .rating-score { font-size: 15px; font-weight: 800; color: var(--primary); }
         .rating-desc { font-size: 12px; font-weight: 500; color: var(--text-muted); }
 
-        .reserves-search-trigger { width: 53px; height: 53px; flex-shrink: 0; background: var(--primary); color: white; border: none; border-radius: 12px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; }
-        .reserves-search-trigger:active { transform: scale(0.95); opacity: 0.9; }
+        /* Змінена акуратна кнопка пошуку резервів */
+        .reserves-search-trigger { 
+            width: 52px; height: 52px; flex-shrink: 0; background: var(--input-bg); 
+            color: var(--text-main); border: 1px solid var(--border); border-radius: 12px; 
+            display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        }
+        .reserves-search-trigger:active { background: var(--border); transform: scale(0.95); }
+        
         .top-search-panel { position: fixed; top: 0; left: 0; width: 100%; background: var(--nav-bg); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); z-index: 100000; padding: calc(env(safe-area-inset-top) + 16px) 16px 16px 16px; box-shadow: 0 4px 30px rgba(0,0,0,0.15); display: flex; gap: 10px; align-items: center; border-bottom: 1px solid var(--border); transform: translateY(-150%) scale(0.85); opacity: 0; pointer-events: none; transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.4s ease; }
         [data-theme="dark"] .top-search-panel { box-shadow: 0 4px 30px rgba(0,0,0,0.6); border-bottom-color: rgba(255,255,255,0.1); }
         .top-search-panel.show { transform: translateY(0) scale(1); opacity: 1; pointer-events: auto; }
@@ -492,11 +511,12 @@
 
 <div class="container">
     
-    <div style="display: flex; gap: 12px; margin-bottom: 16px; align-items: stretch;">
+    <!-- Додано min-height для фіксації висоти шапки -->
+    <div style="display: flex; gap: 12px; margin-bottom: 16px; align-items: stretch; min-height: 52px;">
         <div style="width: 4px; background: linear-gradient(to bottom, #0057b7 50%, #ffd700 50%); border-radius: 2px; flex-shrink: 0;"></div>
         <div style="display: flex; flex-direction: column; justify-content: center; gap: 4px; padding: 2px 0; flex: 1;">
             <div class="header-row" id="mainHeader" style="margin-bottom: 0; justify-content: space-between;">
-                <h2 id="headerTitle" style="line-height: 1;">SkillHUB Assistant</h2>
+                <h2 id="headerTitle" style="line-height: 1;">Пошуковий асистент</h2>
                 <button id="topFavBtn" class="fav-btn-top" onclick="window.openFavoritesQuickMenu()" style="display:none;">
                     <img src="icons_skillHUB/Favorite.svg" alt="Fav" style="width: 20px; height: 20px; object-fit: contain;">
                 </button>
@@ -508,13 +528,17 @@
     </div>
     
     <div class="status-container" id="statusContainer">
-        <div class="status-badge">
+        <div class="status-badge" id="mainStatusBadge">
             <div id="statusDot" class="dot yellow pulse"></div>
             <span id="statusText">Підключення</span>
         </div>
+        <!-- Інлайн лоадер, що з'являється при оновленні бази даних -->
+        <div class="inline-loader" id="inlineLoader" style="display: none;">
+            <div class="inline-spinner"></div>
+            <span id="inlineLoaderText">завантаження... (0%)</span>
+        </div>
     </div>
 
-    <!-- ВАЖЛИВО: за замовчуванням клас active тут видалено, керує скрипт, щоб не було блимання -->
     <div id="tab-search" class="app-tab">
         <div class="input-group">
             <input type="text" id="catInput" placeholder="Яку техніку чи послугу шукаємо?" autocomplete="off" disabled>
@@ -642,7 +666,6 @@
 </div>
 
 <nav class="bottom-nav">
-    <!-- Для навігації теж видалив клас active, він буде призначений скриптом -->
     <button class="nav-item" onclick="window.switchTab('tab-search')">
         <div class="nav-icon icon-search"></div>
         <span>Пошук</span>
@@ -907,15 +930,18 @@
         if (navBtn) navBtn.classList.add('active');
         
         const titles = {
-            'tab-search': 'SkillHUB Assistant',
+            'tab-search': 'Пошуковий асистент', // 🔴 Назва замінена тут
             'tab-reserves': 'Активні резерви',
             'tab-skillhub': 'SkillHUB',
             'tab-settings': 'Налаштування'
         };
-        document.getElementById('headerTitle').innerText = titles[initialTab] || 'SkillHUB Assistant';
+        document.getElementById('headerTitle').innerText = titles[initialTab] || 'Пошуковий асистент';
         
+        // 🔴 Використовуємо visibility замість display для збереження висоти
         if(initialTab !== 'tab-search') {
-            document.getElementById('statusContainer').style.display = 'none';
+            document.getElementById('statusContainer').style.visibility = 'hidden';
+        } else {
+            document.getElementById('statusContainer').style.visibility = 'visible';
         }
     })();
 
@@ -1087,7 +1113,7 @@
     }
 
     const tabTitles = {
-        'tab-search': 'SkillHUB Assistant',
+        'tab-search': 'Пошуковий асистент',
         'tab-reserves': 'Активні резерви',
         'tab-skillhub': 'SkillHUB',
         'tab-settings': 'Налаштування'
@@ -1134,7 +1160,8 @@
         if (activeNavBtn) activeNavBtn.classList.add('active');
 
         document.getElementById('headerTitle').innerText = tabTitles[tabId];
-        document.getElementById('statusContainer').style.display = (tabId === 'tab-search') ? 'flex' : 'none';
+        // 🔴 Використовуємо visibility замість display для збереження висоти
+        document.getElementById('statusContainer').style.visibility = (tabId === 'tab-search') ? 'visible' : 'hidden';
         
         const topFavBtn = document.getElementById('topFavBtn');
         if (topFavBtn) {
@@ -1825,15 +1852,17 @@
     
     window.init = init;
 
-    async function refreshData(first = false) {
-        if(first) setAppStatus('loading', 'Підготовка');
+    // 🔴 Додано підтримку інлайн-завантаження (isManual flag)
+    async function refreshData(first = false, isManual = false) {
+        if(first && !isManual) setAppStatus('loading', 'Підготовка');
         let pInt; 
         try {
             const controller = new AbortController();
             
             const pBar = document.getElementById('progressBar');
             const pCont = document.getElementById('progressContainer');
-            if (first) {
+            
+            if (first && !isManual) {
                 document.getElementById('loaderSpinner').style.display = 'none';
                 pCont.style.display = 'block';
                 pBar.style.width = '10%';
@@ -1841,7 +1870,17 @@
 
             let progress = 10;
             pInt = setInterval(() => {
-                if (progress < 90 && first) { progress += Math.random() * 15; pBar.style.width = progress + '%'; }
+                if (progress < 90 && first) { 
+                    progress += Math.random() * 15; 
+                    if (progress > 90) progress = 90;
+                    
+                    if (!isManual) {
+                        pBar.style.width = progress + '%'; 
+                    } else {
+                        // Оновлюємо інлайн лоадер з точним відсотком
+                        document.getElementById('inlineLoaderText').innerText = `завантаження... (${Math.round(progress)}%)`;
+                    }
+                }
             }, 300);
 
             const timeoutId = setTimeout(() => controller.abort(), 60000);
@@ -1851,7 +1890,11 @@
             const dataStr = await response.text();
             
             if (pInt) clearInterval(pInt);
-            if (first) pBar.style.width = '100%';
+            
+            if (first) {
+                if (!isManual) pBar.style.width = '100%';
+                else document.getElementById('inlineLoaderText').innerText = `завантаження... (100%)`;
+            }
 
             if (dataStr.trim().startsWith('<')) throw new Error("Помилка доступу до бази. Перевірте Google Apps Script.");
             let newDb = JSON.parse(dataStr);
@@ -1865,14 +1908,24 @@
             
             db = sanitizeDb(newDb);
             window.buildServiceSearchList();
-            setAppStatus('ok', 'Готовий до роботи');
+            
+            // Якщо було ручне оновлення - ховаємо інлайн лоадер через 0.5с і повертаємо статус
+            if (isManual) {
+                setTimeout(() => {
+                    document.getElementById('inlineLoader').style.display = 'none';
+                    document.getElementById('mainStatusBadge').style.display = 'flex';
+                    setAppStatus('ok', 'Готовий до роботи');
+                }, 500);
+            } else {
+                setAppStatus('ok', 'Готовий до роботи');
+            }
             
             setTimeout(() => {
                 if (db.appVersion && savedVersion !== db.appVersion) {
                     if (savedVersion !== null) window.showChangelogModal(db.appVersion, db.changelog); 
                     try { localStorage.setItem(SEEN_VERSION_KEY, db.appVersion); } catch(e){}
                 }
-                if (first) enableUI(); 
+                if (first && !isManual) enableUI(); 
                 window.populateFilters();
                 window.renderSkillHubTab();
                 if(currentCategoryData || currentServiceData) renderServices(); 
@@ -1884,11 +1937,15 @@
             console.error("Refresh Error:", e);
             let cached = null; try { cached = localStorage.getItem(CACHE_KEY); } catch (err) {}
             if (cached) { 
+                if (isManual) {
+                    document.getElementById('inlineLoader').style.display = 'none';
+                    document.getElementById('mainStatusBadge').style.display = 'flex';
+                }
                 setAppStatus('ok', 'Офлайн (З кешу)'); 
-                if (first) { enableUI(); window.populateFilters(); window.renderSkillHubTab(); } 
+                if (first && !isManual) { enableUI(); window.populateFilters(); window.renderSkillHubTab(); } 
             } else { 
                 setAppStatus('error', 'Помилка');
-                if (first) {
+                if (first && !isManual) {
                     document.getElementById('loaderSpinner').style.display = 'none';
                     document.getElementById('progressContainer').style.display = 'none';
                     safeUpdateHTML('mainLoaderText', "Помилка завантаження.<br><span style='color:var(--danger)'>" + e.message + "</span><br><button onclick='window.init()' class='btn btn-primary' style='margin-top:20px; padding: 10px; font-size:14px; width:fit-content; margin-left:auto; margin-right:auto;'>Спробувати ще раз</button>");
@@ -1897,14 +1954,17 @@
         }
     }
 
+    // 🔴 Зміна логіки для ручного оновлення
     document.getElementById('forceUpdateBtn').addEventListener('click', async function() { 
         try { localStorage.removeItem(CACHE_KEY); } catch(e){} 
-        document.getElementById('appLoader').classList.remove('hidden');
-        document.getElementById('loaderSpinner').style.display = 'none';
-        document.getElementById('progressContainer').style.display = 'block';
-        document.getElementById('progressBar').style.width = '0%';
-        document.getElementById('mainLoaderText').innerText = "Оновлення бази...";
-        await refreshData(true); 
+        
+        // Ховаємо статус "Готовий", показуємо інлайн лоадер з вашого зображення
+        document.getElementById('mainStatusBadge').style.display = 'none';
+        document.getElementById('inlineLoader').style.display = 'inline-flex';
+        document.getElementById('inlineLoaderText').innerText = "завантаження... (0%)";
+        
+        // Запускаємо оновлення в фоні (isManual = true)
+        await refreshData(true, true); 
     });
 
     function enableUI() { 
@@ -2637,7 +2697,6 @@
         let availHtml = s.availabilityHTML ? `<div style="margin-top:8px;">${s.availabilityHTML}</div>` : '';
         let focusHtml = (s.isFocus && !isSelected) ? `<span class="animated-fire">🔥</span>` : '';
         
-        // Скидка в карточке по умолчанию скрыта (появится только при открытии через селектор/JS)
         let discountHtml = '';
         if (s.discount && s.discount !== "0%" && s.discount !== "0" && s.discount !== "" && s.discount !== "-") {
             let cleanDisc = window.escapeHTML(s.discount).replace('-', '');
