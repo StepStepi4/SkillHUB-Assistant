@@ -12,19 +12,25 @@
     <meta name="apple-mobile-web-app-title" content="SkillHUB_Assistant">
     <link rel="apple-touch-icon" href="icon-192.png">
 
+    <!-- Оптимізація завантаження шрифтів як у Education -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
     <!-- ВАЖЛИВО ДЛЯ БЕЗШОВНОГО ПЕРЕХОДУ -->
     <meta name="view-transition" content="same-origin">
 
     <!-- МИКРО-СКРИПТ ДЛЯ МОМЕНТАЛЬНОГО ЗАПУСКА -->
     <script>
-        if (localStorage.getItem('skillhub_v6_flat')) {
+        // Перевіряємо ЄДИНИЙ спільний кеш
+        if (localStorage.getItem('skillhub_v6_cache')) {
             document.documentElement.style.setProperty('--loader-display', 'none');
+            document.documentElement.classList.add('fast-boot');
+            sessionStorage.setItem('skillhub_session_active', 'true');
         }
     </script>
 
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
-        
         *, *::before, *::after { 
             box-sizing: border-box; 
             -webkit-tap-highlight-color: transparent; 
@@ -33,7 +39,7 @@
         :root {
             --bg: #f2f2f7; 
             --card-bg: #ffffff;
-            --text-main: #221f1f; /* Фірмовий темний колір замість абсолютно чорного */
+            --text-main: #164f58; /* Оновлений фірмовий колір тексту */
             --text-muted: #8e8e93; 
             --primary: #10b981; 
             --primary-light: #d1fae5;
@@ -95,28 +101,27 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
+        /* --- ПРАВИЛА ДЛЯ МИТТЄВОГО ВХОДУ --- */
+        html.fast-boot body { animation: none !important; }
+        html.fast-boot .app-loader { display: none !important; opacity: 0; pointer-events: none; }
+        html.fast-boot .app-tab { animation: none !important; }
+
         .app-loader {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: var(--bg); display: var(--loader-display); flex-direction: column; justify-content: center; align-items: center;
             z-index: 999999; transition: opacity 0.2s ease, visibility 0.2s ease;
         }
-        .app-loader.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
-        .spinner { width: 40px; height: 40px; border: 4px solid var(--border); border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 15px; }
-        @keyframes spin { 100% { transform: rotate(360deg); } }
+        .app-loader.hidden { opacity: 0; visibility: hidden; pointer-events: none; display: none; }
+        
         .loader-text { font-size: 14px; font-weight: 600; color: var(--text-muted); margin-bottom: 15px; text-align: center; padding: 0 20px; line-height: 1.4;}
-        .progress-container { width: 220px; height: 6px; background: var(--border); border-radius: 4px; overflow: hidden; display: none; }
+        .progress-container { width: 220px; height: 6px; background: var(--border); border-radius: 4px; overflow: hidden; display: none; margin-bottom: 15px; }
         .progress-bar { height: 100%; width: 0%; background: var(--primary); transition: width 0.3s ease; }
 
-        /* Стилі для інлайн лоадера (Оновлення статусу) */
         .inline-loader {
             display: inline-flex; align-items: center; gap: 8px; padding: 6px 14px;
             background: var(--card-bg); border: 1px solid var(--border); border-radius: 20px;
             font-size: 13px; font-weight: 600; color: var(--text-muted);
             box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-        }
-        .inline-spinner {
-            width: 14px; height: 14px; border: 2px solid var(--border);
-            border-top-color: #6a9c89; border-radius: 50%; animation: spin 1s linear infinite;
         }
 
         .container { 
@@ -129,7 +134,7 @@
         .app-tab.active { display: block; }
         @keyframes fade { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
-        .header-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .header-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0; }
         h2 { margin: 0; font-size: 26px; font-weight: 800; letter-spacing: -0.5px; }
         
         .fav-btn-top {
@@ -472,7 +477,6 @@
         .rating-score { font-size: 15px; font-weight: 800; color: var(--primary); }
         .rating-desc { font-size: 12px; font-weight: 500; color: var(--text-muted); }
 
-        /* Змінена акуратна кнопка пошуку резервів */
         .reserves-search-trigger { 
             width: 52px; height: 52px; flex-shrink: 0; background: var(--input-bg); 
             color: var(--text-main); border: 1px solid var(--border); border-radius: 12px; 
@@ -502,7 +506,6 @@
 </div>
 
 <div id="appLoader" class="app-loader">
-    <div class="spinner" id="loaderSpinner"></div>
     <div class="loader-text" id="mainLoaderText">Підготовка</div>
     <div class="progress-container" id="progressContainer">
         <div class="progress-bar" id="progressBar"></div>
@@ -511,35 +514,34 @@
 
 <div class="container">
     
-    <!-- Додано min-height для фіксації висоти шапки -->
-    <div style="display: flex; gap: 12px; margin-bottom: 16px; align-items: stretch; min-height: 52px;">
-        <div style="width: 4px; background: linear-gradient(to bottom, #0057b7 50%, #ffd700 50%); border-radius: 2px; flex-shrink: 0;"></div>
-        <div style="display: flex; flex-direction: column; justify-content: center; gap: 4px; padding: 2px 0; flex: 1;">
-            <div class="header-row" id="mainHeader" style="margin-bottom: 0; justify-content: space-between;">
-                <h2 id="headerTitle" style="line-height: 1;">Пошуковий асистент</h2>
+    <!-- Шапка з фіксованою висотою (height: 48px), щоб текст та жовто-синя лінія не стрибали -->
+    <div style="display: flex; gap: 12px; margin-bottom: 16px; align-items: center; height: 48px;">
+        <div style="width: 4px; height: 100%; background: linear-gradient(to bottom, #0057b7 50%, #ffd700 50%); border-radius: 2px; flex-shrink: 0;"></div>
+        <div style="display: flex; flex-direction: column; justify-content: center; height: 100%; flex: 1;">
+            <div class="header-row" id="mainHeader" style="margin-bottom: 4px; justify-content: space-between; align-items: center;">
+                <h2 id="headerTitle" style="line-height: 1; font-size: 24px; margin: 0;">Пошук</h2>
                 <button id="topFavBtn" class="fav-btn-top" onclick="window.openFavoritesQuickMenu()" style="display:none;">
                     <img src="icons_skillHUB/Favorite.svg" alt="Fav" style="width: 20px; height: 20px; object-fit: contain;">
                 </button>
             </div>
-            <div style="font-size: 13px; font-weight: 600; color: var(--text-muted); display: flex; align-items: center;">
+            <div style="font-size: 13px; font-weight: 600; color: var(--text-muted); display: flex; align-items: center; line-height: 1;">
                 Харківський регіон <span style="font-size: 14px; margin-left: 4px;">🫶</span>
             </div>
         </div>
     </div>
-    
-    <div class="status-container" id="statusContainer">
-        <div class="status-badge" id="mainStatusBadge">
-            <div id="statusDot" class="dot yellow pulse"></div>
-            <span id="statusText">Підключення</span>
-        </div>
-        <!-- Інлайн лоадер, що з'являється при оновленні бази даних -->
-        <div class="inline-loader" id="inlineLoader" style="display: none;">
-            <div class="inline-spinner"></div>
-            <span id="inlineLoaderText">завантаження... (0%)</span>
-        </div>
-    </div>
 
+    <!-- Вкладка Пошук. Блок статусів тепер ТІЛЬКИ тут, тому не переходить на інші сторінки -->
     <div id="tab-search" class="app-tab">
+        <div class="status-container" id="statusContainer">
+            <div class="status-badge" id="mainStatusBadge">
+                <div id="statusDot" class="dot yellow pulse"></div>
+                <span id="statusText">Підключення</span>
+            </div>
+            <div class="inline-loader" id="inlineLoader" style="display: none;">
+                <span id="inlineLoaderText">завантаження... (0%)</span>
+            </div>
+        </div>
+
         <div class="input-group">
             <input type="text" id="catInput" placeholder="Яку техніку чи послугу шукаємо?" autocomplete="off" disabled>
             <button id="clearAllBtn" class="clear-btn">×</button>
@@ -930,19 +932,12 @@
         if (navBtn) navBtn.classList.add('active');
         
         const titles = {
-            'tab-search': 'Пошуковий асистент', // 🔴 Назва замінена тут
+            'tab-search': 'Пошук',
             'tab-reserves': 'Активні резерви',
             'tab-skillhub': 'SkillHUB',
             'tab-settings': 'Налаштування'
         };
-        document.getElementById('headerTitle').innerText = titles[initialTab] || 'Пошуковий асистент';
-        
-        // 🔴 Використовуємо visibility замість display для збереження висоти
-        if(initialTab !== 'tab-search') {
-            document.getElementById('statusContainer').style.visibility = 'hidden';
-        } else {
-            document.getElementById('statusContainer').style.visibility = 'visible';
-        }
+        document.getElementById('headerTitle').innerText = titles[initialTab] || 'Пошук';
     })();
 
     window.currentDevicePrice = 0; 
@@ -1014,13 +1009,13 @@
         const elLoader = document.getElementById('appLoader');
         if (elLoader && !elLoader.classList.contains('hidden')) {
             elLoader.querySelector('.loader-text').innerHTML = "Критична помилка HTML:<br>" + e.message + "<br><br><span style='font-size:10px; opacity:0.7'>Скиньте кеш браузера</span>";
-            elLoader.querySelector('.spinner').style.display = 'none';
         }
     });
 
     const API_URL = 'https://script.google.com/macros/s/AKfycbyeoKV6uQRE_h0jy_QjkbQI7k_Py_UOYMvckWhHmGITT-q-Ai832__GWVxbdjxBgQ6zqA/exec';
     
-    const CACHE_KEY = 'skillhub_v6_flat'; 
+    // ЄДИНИЙ КЛЮЧ КЕШУ ДЛЯ ОБОХ ФАЙЛІВ
+    const CACHE_KEY = 'skillhub_v6_cache'; 
     const SEEN_VERSION_KEY = 'skillhub_version_flat_v6';
     
     let db = { categories: [], descriptions: {}, tariffs: [], appVersion: "", changelog: "", montazhData: {cities:[], services:[]}, serviceCodes: {}, rezervyData: [], rezervyDate: "", serviceBrands: {}, trainingData: [], skillHubButtons: [], sellerRatings: [], klochCalcData: { rules: [], relevance: "" } };
@@ -1113,7 +1108,7 @@
     }
 
     const tabTitles = {
-        'tab-search': 'Пошуковий асистент',
+        'tab-search': 'Пошук',
         'tab-reserves': 'Активні резерви',
         'tab-skillhub': 'SkillHUB',
         'tab-settings': 'Налаштування'
@@ -1160,8 +1155,6 @@
         if (activeNavBtn) activeNavBtn.classList.add('active');
 
         document.getElementById('headerTitle').innerText = tabTitles[tabId];
-        // 🔴 Використовуємо visibility замість display для збереження висоти
-        document.getElementById('statusContainer').style.visibility = (tabId === 'tab-search') ? 'visible' : 'hidden';
         
         const topFavBtn = document.getElementById('topFavBtn');
         if (topFavBtn) {
@@ -1177,7 +1170,6 @@
         
         window.scrollTo(0, 0);
 
-        // ПАМ'ЯТЬ ВКЛАДКИ ДЛЯ БЕЗШОВНОГО ПОВЕРНЕННЯ
         sessionStorage.setItem('skillhub_active_tab', tabId);
     }
 
@@ -1756,7 +1748,7 @@
         let text = "🧮 Розрахунок бонусів:\n\n";
         let total = 0;
         window.klochList.forEach((item, index) => {
-            text += `${index + 1}. Вартість: ${item.price} ₴ \vert{} Кіл-ть: ${item.qty} шт\n`;
+            text += `${index + 1}. Вартість: ${item.price} ₴ | Кіл-ть: ${item.qty} шт\n`;
             text += `   Бонус: ${item.result.toFixed(2)} ₴\n`;
             total += item.result;
         });
@@ -1834,7 +1826,7 @@
     async function init() {
         let cached = null;
         try { cached = localStorage.getItem(CACHE_KEY); } catch (e) {}
-        
+
         if (cached) { 
             try {
                 db = sanitizeDb(JSON.parse(cached)); 
@@ -1842,19 +1834,26 @@
                 enableUI(); 
                 window.populateFilters();
                 window.renderSkillHubTab();
+                
+                // Перевірка сесії більше не показує "Підготовка", 
+                // вона відразу прибирає лоадер, а дані оновляться мовчки в фоні
+                if (!sessionStorage.getItem('skillhub_session_active')) {
+                    sessionStorage.setItem('skillhub_session_active', 'true');
+                    refreshData(false, false); 
+                }
                 setAppStatus('ok', 'Готовий до роботи');
-                refreshData(false); 
-            } catch(e) { await refreshData(true); }
+            } catch(e) { await refreshData(true, false); }
         } else {
-            await refreshData(true); 
+            sessionStorage.setItem('skillhub_session_active', 'true');
+            await refreshData(true, false); 
         }
     }
     
     window.init = init;
 
-    // 🔴 Додано підтримку інлайн-завантаження (isManual flag)
+    // isManual = ручне натискання кнопки
     async function refreshData(first = false, isManual = false) {
-        if(first && !isManual) setAppStatus('loading', 'Підготовка');
+        if(first && !isManual && !localStorage.getItem(CACHE_KEY)) setAppStatus('loading', 'Підготовка');
         let pInt; 
         try {
             const controller = new AbortController();
@@ -1862,22 +1861,22 @@
             const pBar = document.getElementById('progressBar');
             const pCont = document.getElementById('progressContainer');
             
-            if (first && !isManual) {
-                document.getElementById('loaderSpinner').style.display = 'none';
+            if (first && !isManual && !document.documentElement.classList.contains('fast-boot')) {
+                document.getElementById('appLoader').classList.remove('hidden');
+                document.getElementById('appLoader').style.display = 'flex';
                 pCont.style.display = 'block';
                 pBar.style.width = '10%';
             }
 
             let progress = 10;
             pInt = setInterval(() => {
-                if (progress < 90 && first) { 
+                if (progress < 90 && first && !document.documentElement.classList.contains('fast-boot')) { 
                     progress += Math.random() * 15; 
                     if (progress > 90) progress = 90;
                     
                     if (!isManual) {
                         pBar.style.width = progress + '%'; 
                     } else {
-                        // Оновлюємо інлайн лоадер з точним відсотком
                         document.getElementById('inlineLoaderText').innerText = `завантаження... (${Math.round(progress)}%)`;
                     }
                 }
@@ -1891,7 +1890,7 @@
             
             if (pInt) clearInterval(pInt);
             
-            if (first) {
+            if (first && !document.documentElement.classList.contains('fast-boot')) {
                 if (!isManual) pBar.style.width = '100%';
                 else document.getElementById('inlineLoaderText').innerText = `завантаження... (100%)`;
             }
@@ -1903,13 +1902,13 @@
             let savedVersion = null;
             try {
                 savedVersion = localStorage.getItem(SEEN_VERSION_KEY);
+                // ЗБЕРІГАЄМО ПОВНИЙ КЕШ
                 localStorage.setItem(CACHE_KEY, dataStr);
             } catch (e) {}
             
             db = sanitizeDb(newDb);
             window.buildServiceSearchList();
             
-            // Якщо було ручне оновлення - ховаємо інлайн лоадер через 0.5с і повертаємо статус
             if (isManual) {
                 setTimeout(() => {
                     document.getElementById('inlineLoader').style.display = 'none';
@@ -1946,7 +1945,6 @@
             } else { 
                 setAppStatus('error', 'Помилка');
                 if (first && !isManual) {
-                    document.getElementById('loaderSpinner').style.display = 'none';
                     document.getElementById('progressContainer').style.display = 'none';
                     safeUpdateHTML('mainLoaderText', "Помилка завантаження.<br><span style='color:var(--danger)'>" + e.message + "</span><br><button onclick='window.init()' class='btn btn-primary' style='margin-top:20px; padding: 10px; font-size:14px; width:fit-content; margin-left:auto; margin-right:auto;'>Спробувати ще раз</button>");
                 }
@@ -1954,16 +1952,13 @@
         }
     }
 
-    // 🔴 Зміна логіки для ручного оновлення
     document.getElementById('forceUpdateBtn').addEventListener('click', async function() { 
         try { localStorage.removeItem(CACHE_KEY); } catch(e){} 
         
-        // Ховаємо статус "Готовий", показуємо інлайн лоадер з вашого зображення
         document.getElementById('mainStatusBadge').style.display = 'none';
         document.getElementById('inlineLoader').style.display = 'inline-flex';
         document.getElementById('inlineLoaderText').innerText = "завантаження... (0%)";
         
-        // Запускаємо оновлення в фоні (isManual = true)
         await refreshData(true, true); 
     });
 
@@ -1974,6 +1969,7 @@
             document.getElementById('appVersionDisp').style.display = 'inline-block';
         }
         document.getElementById('appLoader').classList.add('hidden');
+        document.getElementById('appLoader').style.display = 'none';
         
         if (document.getElementById('tab-search').classList.contains('active')) {
             document.getElementById('topFavBtn').style.display = 'flex';
