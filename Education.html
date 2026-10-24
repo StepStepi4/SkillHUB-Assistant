@@ -145,15 +145,15 @@
         .input-group { margin-bottom: 20px; position: relative; }
         .input-label { display: block; font-size: 12px; font-weight: 700; color: var(--text-muted); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
         
-        input[type="text"], input[type="password"], input[type="number"] { 
+        input[type="text"], input[type="password"], input[type="number"], input[type="url"], input[type="datetime-local"] { 
             width: 100%; padding: 16px; border-radius: 14px; font-size: 16px; font-weight: 500;
             background: var(--input-bg); border: 1.5px solid transparent; outline: none; transition: 0.2s;
             box-shadow: inset 0 2px 4px rgba(0,0,0,0.02); color: var(--text-main);
         }
-        input[type="text"]:focus, input[type="password"]:focus, input[type="number"]:focus { 
+        input[type="text"]:focus, input[type="password"]:focus, input[type="number"]:focus, input[type="url"]:focus, input[type="datetime-local"]:focus { 
             background: var(--card-bg); border-color: var(--primary); box-shadow: 0 0 0 4px var(--primary-light); 
         }
-        input[type="number"]:disabled { opacity: 0.6; cursor: not-allowed; }
+        input:disabled { opacity: 0.6; cursor: not-allowed; }
         
         .custom-checkbox-wrapper { display: flex; align-items: center; gap: 10px; cursor: pointer; margin-bottom: 28px; font-size: 14px; font-weight: 600; color: var(--text-muted); transition: color 0.2s; }
         .custom-checkbox-wrapper:hover { color: var(--text-main); }
@@ -178,7 +178,7 @@
         .back-btn-sleek:active { transform: scale(0.92); background: var(--input-bg); }
         .back-btn-sleek.active-nav { border-color: var(--primary); background: var(--primary-light); }
 
-        .role-action-bar { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 18px; }
+        .role-action-bar { display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 8px; margin-bottom: 18px; }
         .role-action-btn { background: var(--card-bg); border: 1.5px solid var(--border); border-radius: 14px; padding: 11px 12px; font-size: 13px; font-weight: 800; color: var(--text-main); display: flex; align-items: center; justify-content: center; gap: 7px; cursor: pointer; transition: all 0.2s; box-shadow: 0 3px 10px rgba(0,0,0,0.02); }
         .role-action-btn:active { transform: scale(0.96); }
         .role-action-btn.active { border-color: var(--primary); background: var(--primary-light); color: var(--primary); }
@@ -285,7 +285,7 @@
         .stats-modal.active { opacity: 1; transform: translate(-50%, -50%) scale(1); display: flex; }
         .stats-modal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; flex-shrink: 0; }
         .stats-modal-title { font-size: 20px; font-weight: 800; color: var(--primary); display: flex; align-items: center; gap: 8px; }
-        .modal-close-btn { background: var(--card-bg); border: 1px solid var(--border); width: 36px; height: 36px; border-radius: 12px; font-size: 18px; font-weight: 800; color: var(--text-muted); cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .modal-close-btn { background: var(--card-bg); border: 1px solid var(--border); width: 36px; height: 36px; border-radius: 12px; font-size: 18px; font-weight: 800; color: var(--text-muted); cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
 
         .search-box-wrap { position: relative; margin-bottom: 14px; flex-shrink: 0; }
         .search-input-modern {
@@ -337,7 +337,7 @@
             background: var(--bg); z-index: 10003; width: 94%; max-width: 420px;
             border-radius: 24px; padding: 22px 18px; opacity: 0; display: none;
             transition: all 0.3s ease; box-shadow: 0 24px 48px rgba(0,0,0,0.25);
-            flex-direction: column; max-height: 80vh;
+            flex-direction: column; max-height: 90vh;
         }
         .assign-modal.active { opacity: 1; transform: translate(-50%, -50%) scale(1); display: flex; }
         .assign-list { flex: 1; overflow-y: auto; margin-bottom: 16px; padding-right: 4px; }
@@ -380,6 +380,7 @@
     <span>Назад</span>
 </div>
 
+<!-- БОКОВЕ МЕНЮ 🏆 АЧІВКИ -->
 <div class="drawer-overlay" id="achOverlay" onclick="toggleAchievements()"></div>
 <div class="ach-drawer" id="achDrawer">
     <div class="ach-title" style="color: var(--primary);">
@@ -392,6 +393,7 @@
     <div id="achList"></div>
 </div>
 
+<!-- МОДАЛЬНЕ ВІКНО 📊 СТАТИСТИКА -->
 <div class="drawer-overlay" id="statsModalOverlay" onclick="closeStatsModal()"></div>
 <div class="stats-modal" id="statsModal">
     <div class="stats-modal-header">
@@ -417,6 +419,20 @@
     <div class="employees-scroll-list" id="statsModalUsersList"></div>
 </div>
 
+<!-- МОДАЛЬНЕ ВІКНО 📅 МОЇ ЗУСТРІЧІ -->
+<div class="drawer-overlay" id="meetModalOverlay" onclick="closeMeetModal()"></div>
+<div class="stats-modal" id="meetModal">
+    <div class="stats-modal-header">
+        <div class="stats-modal-title">
+            <img src="https://raw.githubusercontent.com/StepStepi4/SkillHUB-Assistant/main/education/Meet.svg" class="ui-icon"> 
+            Мої зустрічі
+        </div>
+        <button class="modal-close-btn" onclick="closeMeetModal()">✕</button>
+    </div>
+    <div class="employees-scroll-list" id="meetModalList"></div>
+</div>
+
+<!-- МОДАЛЬНЕ ВІКНО ПРИЗНАЧЕННЯ -->
 <div class="drawer-overlay" id="assignModalOverlay" onclick="closeAssignModal()"></div>
 <div class="assign-modal" id="assignModal">
     <div class="stats-modal-header">
@@ -427,9 +443,23 @@
         <button class="modal-close-btn" onclick="closeAssignModal()">✕</button>
     </div>
     
+    <!-- Блок дедлайну -->
     <div style="margin-bottom: 14px; flex-shrink: 0;">
         <label class="input-label" style="margin-bottom: 6px;">Дедлайн курсів (днів)</label>
-        <input type="number" id="assignDeadlineInput" class="search-input-modern" placeholder="Наприклад: 31" oninput="toggleDeadline(this.value)" min="0">
+        <input type="number" id="assignDeadlineInput" class="search-input-modern" placeholder="Наприклад: 31" oninput="checkAssignChanges()" min="0">
+    </div>
+
+    <!-- Блок Google Meet (тільки для власника) -->
+    <div id="ownerMeetInputs" style="display:none; flex-direction:column; gap:14px; margin-bottom: 14px; flex-shrink: 0; background: var(--card-bg); padding: 16px; border-radius: 16px; border: 1px solid var(--border);">
+        <div style="font-size: 12px; font-weight: 800; color: var(--primary); text-transform: uppercase;">Зустріч Google Meet</div>
+        <div>
+            <label class="input-label" style="margin-bottom: 6px;">Посилання на зустріч</label>
+            <input type="url" id="assignMeetLink" class="search-input-modern" placeholder="https://meet.google.com/..." oninput="checkAssignChanges()">
+        </div>
+        <div>
+            <label class="input-label" style="margin-bottom: 6px;">Дата та час</label>
+            <input type="datetime-local" id="assignMeetDate" class="search-input-modern" oninput="checkAssignChanges()">
+        </div>
     </div>
     
     <div class="assign-list" id="assignCourseList"></div>
@@ -439,6 +469,7 @@
     </button>
 </div>
 
+<!-- Iframe вікно для SkillHUB Site -->
 <div class="drawer-overlay" id="skillhubModalOverlay" onclick="closeSkillhubFrame()"></div>
 <div class="skillhub-modal" id="skillhubModal">
     <div class="skillhub-header">
@@ -453,6 +484,7 @@
 
 <div class="container">
 
+    <!-- ЕКРАН 1: ВХІД -->
     <div id="loginView" class="view active">
         <div class="login-wrapper">
             <div class="login-card">
@@ -483,6 +515,7 @@
         </div>
     </div>
 
+    <!-- ЕКРАН 2: КАБІНЕТ ТА СТАТИСТИКА -->
     <div id="cabinetView" class="view">
         <div class="nav-header">
             <div style="display: flex; gap: 12px; align-items: stretch; height: 48px;">
@@ -493,6 +526,7 @@
                 </div>
             </div>
 
+            <!-- Верхні кнопки -->
             <div class="nav-actions" id="cabinetNavActions">
                 <button id="achBtn" class="back-btn-sleek ach-btn" onclick="toggleAchievements()" title="Зароблені відзнаки">
                     <img src="https://raw.githubusercontent.com/StepStepi4/SkillHUB-Assistant/main/education/Achievement.svg" class="ui-icon">
@@ -516,27 +550,35 @@
                 <img src="https://raw.githubusercontent.com/StepStepi4/SkillHUB-Assistant/main/education/Statistic.svg" class="ui-icon"> 
                 <span>Команда</span>
             </button>
+            <button id="btnMyMeets" class="role-action-btn ach-btn" onclick="openMeetModal()" style="display: none;">
+                <img src="https://raw.githubusercontent.com/StepStepi4/SkillHUB-Assistant/main/education/Meet.svg" class="ui-icon"> 
+                <span>Мої зустрічі</span>
+            </button>
         </div>
 
+        <!-- Банер перегляду співробітника -->
         <div id="viewingEmployeeBanner" class="viewing-banner">
             <div style="display: flex; flex-direction: column; gap: 2px;">
                 <span style="font-size: 11px; font-weight: 800; text-transform: uppercase; color: var(--primary);">Перегляд співробітника</span>
                 <span id="viewingEmployeeMeta" style="font-size: 12px; font-weight: 600; color: var(--text-muted);"></span>
             </div>
             <div style="display: flex; gap: 6px; flex-wrap: wrap;">
-                <button id="assignCoursesBtn" class="btn-secondary" style="padding: 8px 12px; border-radius: 10px; font-size: 12px; font-weight: 800; cursor: pointer; display:none;" onclick="openAssignModal()">Призначити курси</button>
+                <button id="assignCoursesBtn" class="btn-secondary" style="padding: 8px 12px; border-radius: 10px; font-size: 12px; font-weight: 800; cursor: pointer; display:none;" onclick="openAssignModal()">Призначити</button>
                 <button class="btn-secondary" style="padding: 8px 12px; border-radius: 10px; font-size: 12px; font-weight: 800; cursor: pointer;" onclick="openStatsModal()">Змінити</button>
                 <button class="btn-secondary" style="padding: 8px 12px; border-radius: 10px; font-size: 12px; font-weight: 800; cursor: pointer; color: var(--primary);" onclick="switchToMyCabinet()">Мій кабінет</button>
             </div>
         </div>
 
+        <!-- Блок дедлайну -->
         <div id="deadlineContainer" style="display:none;">
             <span id="deadlineIcon"><img src="https://raw.githubusercontent.com/StepStepi4/SkillHUB-Assistant/main/education/Time.svg" class="ui-icon"></span>
             <span id="deadlineText"></span>
         </div>
 
+        <!-- Контейнер для кнопки Google Meet (тільки у ВЛАСНОМУ кабінеті) -->
         <div id="meetButtonContainer" style="display: none; margin-bottom: 20px;"></div>
 
+        <!-- Перемикач: Персональна статистика / Призначені курси -->
         <div class="tabs-container" id="cabinetTabs">
             <div class="tab-btn active" id="tabBtnStats" onclick="switchCabinetTab('stats', this)">
                 <img src="https://raw.githubusercontent.com/StepStepi4/SkillHUB-Assistant/main/education/My%20statistic.svg" class="ui-icon"> 
@@ -558,6 +600,7 @@
                 <canvas id="progressChart"></canvas>
             </div>
 
+            <!-- 8 показників -->
             <div id="learningAnalyticsBlock"></div>
 
             <div id="employeeEarnedAchievementsSection" style="display: none;">
@@ -586,6 +629,7 @@
         </div>
     </div>
 
+    <!-- ЕКРАН 3: СПИСОК ТЕМ КУРСУ -->
     <div id="productView" class="view">
         <div class="nav-header">
             <div style="display: flex; gap: 12px; align-items: center; height: 48px;">
@@ -599,6 +643,7 @@
         <div id="productList"></div>
     </div>
 
+    <!-- ЕКРАН 4: ТЕОРІЯ -->
     <div id="theoryView" class="view">
         <div class="nav-header">
             <div style="display: flex; gap: 12px; align-items: center; height: 48px;">
@@ -613,7 +658,7 @@
             <img src="https://raw.githubusercontent.com/StepStepi4/SkillHUB-Assistant/main/education/Course.svg" style="width: 60px; height: 60px; object-fit: contain; margin: 0 auto; display: block;">
         </div>
         
-        <div id="theoryContentContainer"></div>
+        <div id="theoryContentContainer"></div> 
 
         <div style="background: rgba(239, 68, 68, 0.08); border: 1px solid rgba(239, 68, 68, 0.2); border-radius: 16px; padding: 16px; margin-bottom: 24px; text-align: left;" id="testWarningBox">
             <div style="font-size: 14px; font-weight: 800; color: var(--danger); margin-bottom: 6px; display: flex; align-items: center; gap: 8px;">
@@ -627,6 +672,7 @@
         <button class="btn btn-glow" id="startTestButton" onclick="startTest()">ПРОЙТИ ТЕСТ</button>
     </div>
 
+    <!-- ЕКРАН 5: ПОПЕРЕДЖЕННЯ ПЕРЕД ТЕСТОМ -->
     <div id="warningView" class="view">
         <div style="min-height: 70vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;">
             <div class="big-emoji" style="font-size: 80px;">⚠️</div>
@@ -647,6 +693,7 @@
         </div>
     </div>
 
+    <!-- ЕКРАН 6: ТЕСТУВАННЯ -->
     <div id="testView" class="view no-select">
         <div class="nav-header" style="align-items: center;">
             <div style="display: flex; align-items: center; gap: 12px;">
@@ -660,6 +707,7 @@
         <button class="btn btn-glow" id="submitTestBtn">НАСТУПНЕ ПИТАННЯ</button>
     </div>
 
+    <!-- ЕКРАН 7: РЕЗУЛЬТАТ -->
     <div id="resultView" class="view">
         <div style="min-height: 70vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;">
             <div class="big-emoji" id="resultEmoji" style="font-size: 80px;">🏆</div>
@@ -740,6 +788,7 @@
     let testTimerInterval = null;
     let timeRemaining = 0;
     let deadlineInterval = null;
+    let meetPulseInterval = null;
     
     window.isDeadlinePassed = false;
     let isTestActive = false; 
@@ -770,19 +819,12 @@
         stopSessionHeartbeat();
         sessionCheckInterval = setInterval(async () => {
             if (!currentUser || !navigator.onLine) return;
-            
             try {
                 const controller = new AbortController();
                 const timeoutId = setTimeout(() => controller.abort(), 10000);
-                
-                const response = await fetch(API_URL + '?nocache=' + Date.now(), { 
-                    signal: controller.signal, 
-                    cache: 'no-store' 
-                });
-                
+                const response = await fetch(API_URL + '?nocache=' + Date.now(), { signal: controller.signal, cache: 'no-store' });
                 clearTimeout(timeoutId);
                 const data = await response.json();
-                
                 if (data && data.educationData && data.educationData.activeSessions) {
                     db.activeSessions = data.educationData.activeSessions;
                     verifySingleDeviceSession(); 
@@ -792,9 +834,7 @@
     }
 
     function stopSessionHeartbeat() {
-        if (sessionCheckInterval) {
-            clearInterval(sessionCheckInterval);
-        }
+        if (sessionCheckInterval) clearInterval(sessionCheckInterval);
     }
 
     window.addEventListener('storage', (e) => {
@@ -805,6 +845,33 @@
             logout(false, false);
         }
     });
+
+    // Утиліти дат
+    function parseUaDate(dateStr) {
+        if (!dateStr) return null;
+        let m = String(dateStr).match(/^(\d{2})\.(\d{2})\.(\d{4})(?:\s+(\d{2}):(\d{2})(?::(\d{2}))?)?/);
+        if (m) {
+            return new Date(m[3], parseInt(m[2])-1, m[1], m[4]||0, m[5]||0, m[6]||0);
+        }
+        return null;
+    }
+
+    function formatForDatetimeLocal(dateStr) {
+        let d = parseUaDate(dateStr);
+        if (!d) return '';
+        let y = d.getFullYear(), m = String(d.getMonth()+1).padStart(2,'0'), dd = String(d.getDate()).padStart(2,'0');
+        let hh = String(d.getHours()).padStart(2,'0'), mm = String(d.getMinutes()).padStart(2,'0');
+        return `${y}-${m}-${dd}T${hh}:${mm}`;
+    }
+
+    function formatFromDatetimeLocal(localStr) {
+        if (!localStr) return '';
+        let d = new Date(localStr);
+        if (isNaN(d.getTime())) return '';
+        let y = d.getFullYear(), m = String(d.getMonth()+1).padStart(2,'0'), dd = String(d.getDate()).padStart(2,'0');
+        let hh = String(d.getHours()).padStart(2,'0'), mm = String(d.getMinutes()).padStart(2,'0');
+        return `${dd}.${m}.${y} ${hh}:${mm}`;
+    }
 
     function cleanCourseTitle(str) { return !str ? "" : String(str).replace(/^✦\s*/, '').trim(); }
     function getCleanName(str) { return !str ? "" : cleanCourseTitle(str).toLowerCase().replace(/[^a-zа-яёієїґ0-9]/g, ''); }
@@ -828,7 +895,6 @@
     function parseTestResultString(resStr) {
         let out = { attempts: 0, time: 0, violations: 0, score: 0, raw: String(resStr || "").trim() };
         if (!out.raw) return out;
-        
         let m4 = out.raw.match(/^(\d+)\s*\/\s*(\d+)\s*\/\s*(\d+)\s*\/\s*(\d+)%?$/);
         if (m4) {
             out.attempts = parseInt(m4[1], 10) || 0;
@@ -837,7 +903,6 @@
             out.score = parseInt(m4[4], 10) || 0;
             return out;
         }
-        
         let m3 = out.raw.match(/^(\d+)\s*\/\s*(\d+)%(?:\/(\d+))?$/);
         if (m3) {
             out.attempts = parseInt(m3[1], 10) || 0;
@@ -845,7 +910,6 @@
             out.time = parseInt(m3[3], 10) || 0;
             return out;
         }
-        
         let m1 = out.raw.match(/^(\d+)%$/);
         if (m1) {
             out.attempts = 1;
@@ -859,7 +923,6 @@
         let h = Math.floor(secs / 3600);
         let m = Math.floor((secs % 3600) / 60);
         let s = secs % 60;
-        
         if (h > 0) return `${h} год ${m} хв ${s} с`;
         return `${m} хв ${s} с`;
     }
@@ -894,11 +957,8 @@
         if (activeView === 'loginView') {
             goBackToIndex();
         } else if (activeView === 'cabinetView') {
-            if (windowViewingEmployee) {
-                switchToMyCabinet();
-            } else {
-                goBackToIndex();
-            }
+            if (windowViewingEmployee) switchToMyCabinet();
+            else goBackToIndex();
         } else if (activeView === 'productView') {
             switchView('cabinetView');
             switchCabinetTab('courses');
@@ -917,10 +977,8 @@
 
     function switchView(viewId) {
         document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
-        
         let target = document.getElementById(viewId);
         if (target) target.classList.add('active');
-        
         window.scrollTo(0, 0);
 
         const exitBtn = document.getElementById('floatingExitBtn');
@@ -935,7 +993,6 @@
         requestAnimationFrame(() => {
             document.querySelectorAll('#cabinetTabs .tab-btn').forEach(btn => btn.classList.remove('active'));
             document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
-
             if (tabName === 'stats') {
                 document.getElementById('tabBtnStats').classList.add('active');
                 document.getElementById('tabStats').classList.add('active');
@@ -959,17 +1016,13 @@
         try {
             let queueStr = localStorage.getItem('skillhub_offline_queue');
             if (!queueStr) return;
-            
             let queue = JSON.parse(queueStr);
             if (!Array.isArray(queue) || queue.length === 0) return;
 
             let remainingQueue = [];
             for (let item of queue) {
                 try {
-                    await fetch(API_URL, { 
-                        method: 'POST', cache: 'no-store', mode: 'no-cors', 
-                        body: JSON.stringify(item) 
-                    });
+                    await fetch(API_URL, { method: 'POST', cache: 'no-store', mode: 'no-cors', body: JSON.stringify(item) });
                 } catch (e) { remainingQueue.push(item); }
             }
             localStorage.setItem('skillhub_offline_queue', JSON.stringify(remainingQueue));
@@ -979,11 +1032,9 @@
     async function fetchFreshDataSilent(isManual = false) {
         if (!navigator.onLine) return;
         processOfflineQueue();
-
         try {
             const controller = new AbortController();
             const timeoutId = setTimeout(() => controller.abort(), 15000);
-            
             const response = await fetch(API_URL + '?nocache=' + Date.now(), { cache: 'no-store', signal: controller.signal });
             clearTimeout(timeoutId);
 
@@ -996,7 +1047,6 @@
 
                 if (currentUser) {
                     if (verifySingleDeviceSession()) return;
-                    
                     let user = db.users.find(u => String(u.login).toLowerCase() === String(currentUser).toLowerCase());
                     if (user) {
                         if (document.getElementById('cabinetView').classList.contains('active')) {
@@ -1017,9 +1067,7 @@
                         } else if (document.getElementById('productView').classList.contains('active')) {
                             openCourse(currentCourseName);
                         }
-                    } else {
-                        logout(false, false);
-                    }
+                    } else { logout(false, false); }
                 }
             }
         } catch(e) { console.error("Fetch Error:", e); }
@@ -1036,7 +1084,6 @@
 
     function computeRemainingDeadlineMs(userObj) {
         if (!userObj) return null;
-        
         let days = parseFloat(String(userObj.deadlineDays || "").replace(',', '.'));
         let assignStr = String(userObj.assignDate || "").trim();
         
@@ -1056,23 +1103,13 @@
         let lowK = rawK.toLowerCase();
         if (lowK.includes("вийшов") || lowK.includes("закрито") || lowK.includes("завершено") || lowK.includes("прострочено")) return -1;
 
-        let dMatch = rawK.match(/(\d+)\s*дн/i);
-        let hMatch = rawK.match(/(\d+)\s*год/i);
-        let mMatch = rawK.match(/(\d+)\s*хв/i);
-        
+        let dMatch = rawK.match(/(\d+)\s*дн/i), hMatch = rawK.match(/(\d+)\s*год/i), mMatch = rawK.match(/(\d+)\s*хв/i);
         if (dMatch || hMatch || mMatch) {
-            let d = dMatch ? parseInt(dMatch[1], 10) : 0;
-            let h = hMatch ? parseInt(hMatch[1], 10) : 0;
-            let mins = mMatch ? parseInt(mMatch[1], 10) : 0;
+            let d = dMatch ? parseInt(dMatch[1], 10) : 0, h = hMatch ? parseInt(hMatch[1], 10) : 0, mins = mMatch ? parseInt(mMatch[1], 10) : 0;
             let totalMs = ((d * 24 + h) * 60 + mins) * 60 * 1000;
-            
             let cacheKey = `dl_sync_${userObj.login}_${rawK}`;
             let syncEpoch = parseInt(sessionStorage.getItem(cacheKey), 10);
-            
-            if (!syncEpoch) { 
-                syncEpoch = Date.now(); 
-                sessionStorage.setItem(cacheKey, String(syncEpoch)); 
-            }
+            if (!syncEpoch) { syncEpoch = Date.now(); sessionStorage.setItem(cacheKey, String(syncEpoch)); }
             return totalMs - (Date.now() - syncEpoch);
         }
         return null;
@@ -1080,7 +1117,6 @@
 
     function startDeadlineTimer() {
         if (deadlineInterval) clearInterval(deadlineInterval);
-        
         const container = document.getElementById('deadlineContainer');
         const textEl = document.getElementById('deadlineText');
         const iconEl = document.getElementById('deadlineIcon');
@@ -1088,47 +1124,27 @@
         let user = windowViewingEmployee || (db && db.users ? db.users.find(u => String(u.login).toLowerCase() === String(currentUser).toLowerCase()) : null);
         
         if (!user || detectRoleGroup(user.role) === 'guest') {
-            container.style.display = 'none';
-            window.isDeadlinePassed = false;
-            updateTestButtonState();
-            return;
+            container.style.display = 'none'; window.isDeadlinePassed = false; updateTestButtonState(); return;
         }
 
         const tick = () => {
             let diffMs = computeRemainingDeadlineMs(user);
-            
             if (diffMs === null) {
-                container.style.display = 'none';
-                container.classList.remove('deadline-urgent', 'deadline-expired');
-                window.isDeadlinePassed = false;
-                updateTestButtonState();
-                return;
+                container.style.display = 'none'; container.classList.remove('deadline-urgent', 'deadline-expired');
+                window.isDeadlinePassed = false; updateTestButtonState(); return;
             }
-            
             container.style.display = 'flex';
-            
             if (diffMs <= 0) {
-                iconEl.style.display = 'none';
-                textEl.innerText = "🔒Час вийшов";
+                iconEl.style.display = 'none'; textEl.innerText = "🔒Час вийшов";
                 container.classList.remove('deadline-urgent'); container.classList.add('deadline-expired');
-                window.isDeadlinePassed = true;
-                clearInterval(deadlineInterval);
-                updateTestButtonState();
+                window.isDeadlinePassed = true; clearInterval(deadlineInterval); updateTestButtonState();
             } else {
                 iconEl.style.display = 'inline-block';
-                let totalMinutes = Math.floor(diffMs / (1000 * 60));
-                let d = Math.floor(totalMinutes / (60 * 24));
-                let h = Math.floor((totalMinutes % (60 * 24)) / 60);
-                let m = totalMinutes % 60;
-                
+                let totalMinutes = Math.floor(diffMs / (1000 * 60)), d = Math.floor(totalMinutes / (60 * 24)), h = Math.floor((totalMinutes % (60 * 24)) / 60), m = totalMinutes % 60;
                 textEl.innerText = `Залишок до дедлайну: ${d} дн. ${h} год. ${String(m).padStart(2, '0')} хв.`;
                 window.isDeadlinePassed = false;
-                
-                if (diffMs < 60 * 60 * 1000) { 
-                    container.classList.add('deadline-urgent'); container.classList.remove('deadline-expired'); 
-                } else { 
-                    container.classList.remove('deadline-urgent', 'deadline-expired'); 
-                }
+                if (diffMs < 60 * 60 * 1000) { container.classList.add('deadline-urgent'); container.classList.remove('deadline-expired'); } 
+                else { container.classList.remove('deadline-urgent', 'deadline-expired'); }
                 updateTestButtonState();
             }
         };
@@ -1140,37 +1156,20 @@
         const btn = document.getElementById('startTestButton');
         const warnBox = document.getElementById('testWarningBox');
         if (!btn) return;
-        
         if (windowViewingEmployee || windowUserRole === 'guest') {
-            btn.style.display = 'none';
-            if (warnBox) warnBox.style.display = 'none';
-            return;
+            btn.style.display = 'none'; if (warnBox) warnBox.style.display = 'none'; return;
         }
-        
         btn.style.display = 'flex';
         if (warnBox) warnBox.style.display = 'block';
-
-        if (window.isDeadlinePassed) { 
-            btn.disabled = true; btn.innerText = "🔒Час вийшов"; 
-        } else { 
-            btn.disabled = false; btn.innerText = "ПРОЙТИ ТЕСТ"; 
-        }
+        if (window.isDeadlinePassed) { btn.disabled = true; btn.innerText = "🔒Час вийшов"; } 
+        else { btn.disabled = false; btn.innerText = "ПРОЙТИ ТЕСТ"; }
     }
 
     function handleLoginSync(l, p) {
-        let user = null;
-        if (db && db.users) {
-            user = db.users.find(u => {
-                let isLoginMatch = String(u.login || "").trim().toLowerCase() === String(l || "").toLowerCase();
-                let dbPass = String(u.pass || "").trim().toLowerCase();
-                let isPassMatch = (dbPass === "") || (dbPass === String(p || "").toLowerCase());
-                return isLoginMatch && isPassMatch;
-            });
-        }
+        let user = db && db.users ? db.users.find(u => String(u.login || "").trim().toLowerCase() === String(l || "").toLowerCase() && (String(u.pass || "").trim().toLowerCase() === "" || String(u.pass || "").trim().toLowerCase() === String(p || "").toLowerCase())) : null;
         if (user) {
             currentUser = user.login;
             let userKeyLow = String(currentUser).toLowerCase().trim();
-            
             let myToken = localStorage.getItem('skillhub_session_token');
             let serverToken = db.activeSessions ? (db.activeSessions[userKeyLow] || db.activeSessions[currentUser]) : null;
             
@@ -1198,11 +1197,7 @@
         try {
             const l = document.getElementById('loginInput').value.trim();
             const p = document.getElementById('passInput').value.trim();
-            
-            if (!l) { 
-                if (!isAuto) { err.innerText = "Введіть логін"; err.style.display = 'block'; } 
-                return; 
-            }
+            if (!l) { if (!isAuto) { err.innerText = "Введіть логін"; err.style.display = 'block'; } return; }
             if (!isAuto && loginBtn) { loginBtn.disabled = true; loginBtn.innerText = "ВХІД..."; }
             err.style.display = 'none';
 
@@ -1211,13 +1206,7 @@
                 else { err.innerText = "База даних порожня. Перевірте інтернет!"; err.style.display = 'block'; return; }
             }
 
-            const findUser = (u) => {
-                let isLoginMatch = String(u.login || "").trim().toLowerCase() === l.toLowerCase();
-                let dbPass = String(u.pass || "").trim().toLowerCase();
-                let isPassMatch = (dbPass === "") || (dbPass === p.toLowerCase());
-                return isLoginMatch && isPassMatch;
-            };
-
+            const findUser = (u) => String(u.login || "").trim().toLowerCase() === l.toLowerCase() && (String(u.pass || "").trim().toLowerCase() === "" || String(u.pass || "").trim().toLowerCase() === p.toLowerCase());
             let user = db && db.users && db.users.find(findUser);
 
             if (!user && navigator.onLine && !isAuto) {
@@ -1232,7 +1221,6 @@
                 err.style.display = 'none';
 
                 let myToken = localStorage.getItem('skillhub_session_token');
-                
                 if (isAuto) {
                     let serverToken = db.activeSessions ? (db.activeSessions[userKeyLow] || db.activeSessions[currentUser]) : null;
                     if (serverToken && myToken && serverToken !== myToken) { logout(true, false); return; }
@@ -1274,9 +1262,9 @@
             try { fetch(API_URL, { method: 'POST', cache: 'no-store', mode: 'no-cors', body: JSON.stringify({ action: 'set_session', login: userKeyLow, token: '' }) }); } catch(e) {}
         }
         if (deadlineInterval) clearInterval(deadlineInterval);
+        if (meetPulseInterval) clearInterval(meetPulseInterval);
         
-        closeStatsModal();
-        closeAssignModal();
+        closeStatsModal(); closeAssignModal(); closeMeetModal();
 
         currentUser = null; windowViewingEmployee = null; coursesMap = {};
         localStorage.removeItem('skillhub_session_token');
@@ -1289,7 +1277,6 @@
     function buildCoursesMap(user) {
         coursesMap = {};
         if (!user || !db) return;
-        
         let roleGroup = detectRoleGroup(user.role);
         let currentUserAssigned = user.assigned || [];
 
@@ -1313,7 +1300,6 @@
 
     function renderMeetButton(user) {
         const container = document.getElementById('meetButtonContainer');
-        // Показуємо кнопку тільки в тому випадку, якщо це ВЛАСНИЙ кабінет (не режим перегляду)
         if (user && user.meetLink && !windowViewingEmployee) {
             let dateTxt = user.meetDate ? `<div style="font-size:12px; font-weight:600; color:var(--text-muted); margin-top:2px;">${escapeHTMLAttr(user.meetDate)}</div>` : '';
             container.innerHTML = `
@@ -1334,9 +1320,32 @@
         }
     }
 
+    function checkUpcomingMeets() {
+        if (windowUserRole !== 'owner') return;
+        let btn = document.getElementById('btnMyMeets');
+        if (!btn) return;
+        
+        let hasApproaching = false;
+        if (db && db.users) {
+            let now = Date.now();
+            hasApproaching = db.users.some(u => {
+                let d = parseUaDate(u.meetDate);
+                if (!d || !u.meetLink) return false;
+                let diff = d.getTime() - now;
+                return diff > 0 && diff <= 60 * 60 * 1000;
+            });
+        }
+
+        if (hasApproaching) {
+            btn.classList.add('has-new');
+        } else {
+            btn.classList.remove('has-new');
+        }
+    }
+
     function switchToMyCabinet() {
         windowViewingEmployee = null;
-        closeStatsModal(); closeAssignModal();
+        closeStatsModal(); closeAssignModal(); closeMeetModal();
 
         let user = db.users.find(u => String(u.login).toLowerCase() === String(currentUser).toLowerCase());
         if (!user) return;
@@ -1350,8 +1359,23 @@
         const managerBar = document.getElementById('managerActionBar');
         if (windowUserRole === 'owner' || windowUserRole === 'manager') {
             managerBar.style.display = 'grid';
+            managerBar.style.gridTemplateColumns = (windowUserRole === 'owner') ? 'repeat(3, 1fr)' : 'repeat(2, 1fr)';
+            
             document.getElementById('btnMyEducation').classList.add('active');
             document.getElementById('btnTeamStats').classList.remove('active');
+            
+            let meetBtn = document.getElementById('btnMyMeets');
+            if (windowUserRole === 'owner') {
+                meetBtn.style.display = 'flex';
+                meetBtn.classList.remove('active');
+                if (!meetPulseInterval) {
+                    checkUpcomingMeets();
+                    meetPulseInterval = setInterval(checkUpcomingMeets, 60000);
+                }
+            } else {
+                meetBtn.style.display = 'none';
+                if (meetPulseInterval) clearInterval(meetPulseInterval);
+            }
         } else {
             managerBar.style.display = 'none';
         }
@@ -1395,9 +1419,10 @@
 
     function openStatsModal() {
         if (windowUserRole !== 'owner' && windowUserRole !== 'manager') return;
-        
         document.getElementById('btnMyEducation').classList.remove('active');
         document.getElementById('btnTeamStats').classList.add('active');
+        if (windowUserRole === 'owner') document.getElementById('btnMyMeets').classList.remove('active');
+        
         document.getElementById('modalRoleScopeHint').innerText = windowUserRole === 'owner' ? 'Усі співробітники (Власник)' : 'Підпорядковані співробітники (Керівник)';
         document.getElementById('empSearchInput').value = '';
         document.getElementById('empSearchClearBtn').style.display = 'none';
@@ -1511,10 +1536,12 @@
         if (!emp) return;
         
         windowViewingEmployee = emp;
-        closeStatsModal();
+        closeStatsModal(); closeMeetModal();
         
         document.getElementById('btnMyEducation').classList.remove('active');
         document.getElementById('btnTeamStats').classList.add('active');
+        if (windowUserRole === 'owner') document.getElementById('btnMyMeets').classList.remove('active');
+        
         document.getElementById('cabinetTitle').innerText = 'Статистика співробітника';
         document.getElementById('userWelcome').innerHTML = `<strong style="color:var(--text-main); font-size: 16px;">${escapeHTMLAttr(emp.name)}</strong>`;
 
@@ -1544,11 +1571,82 @@
         switchCabinetTab('stats');
     }
 
-    // --- ПРИЗНАЧЕННЯ КУРСІВ (МОДАЛЬНЕ ВІКНО) ---
+    // --- МОДАЛЬНЕ ВІКНО МОЇ ЗУСТРІЧІ (ДЛЯ ВЛАСНИКА) ---
+    function openMeetModal() {
+        if (windowUserRole !== 'owner') return;
+        document.getElementById('btnMyEducation').classList.remove('active');
+        document.getElementById('btnTeamStats').classList.remove('active');
+        document.getElementById('btnMyMeets').classList.add('active');
+
+        renderMeetList();
+        document.getElementById('meetModalOverlay').classList.add('active');
+        document.getElementById('meetModal').classList.add('active');
+        document.body.style.overflow = 'hidden';
+        checkUpcomingMeets();
+    }
+
+    function closeMeetModal() {
+        document.getElementById('meetModalOverlay').classList.remove('active');
+        document.getElementById('meetModal').classList.remove('active');
+        document.body.style.overflow = '';
+        
+        document.getElementById('btnMyMeets').classList.remove('active');
+        if (!windowViewingEmployee) {
+            document.getElementById('btnMyEducation').classList.add('active');
+        } else {
+            document.getElementById('btnTeamStats').classList.add('active');
+        }
+        checkUpcomingMeets();
+    }
+
+    function renderMeetList() {
+        let listContainer = document.getElementById('meetModalList');
+        if (!db || !db.users) return;
+
+        let meets = db.users.filter(u => u.meetDate && u.meetLink).map(u => {
+            return { user: u, dateObj: parseUaDate(u.meetDate) };
+        }).filter(item => item.dateObj !== null).sort((a, b) => a.dateObj - b.dateObj); 
+
+        if (meets.length === 0) {
+            listContainer.innerHTML = `<div style="text-align:center; padding: 32px 16px; color: var(--text-muted); font-weight: 600;">Немає запланованих зустрічей</div>`;
+            return;
+        }
+
+        let html = meets.map(item => {
+            let u = item.user;
+            let storeTxt = (u.store && u.store !== "-") ? `📍 ${escapeHTMLAttr(u.store)}` : "";
+            
+            let timeDiff = item.dateObj.getTime() - Date.now();
+            let isApproaching = timeDiff > 0 && timeDiff <= 60 * 60 * 1000;
+            let borderCol = isApproaching ? 'var(--primary)' : 'var(--border)';
+            let bgClass = isApproaching ? 'background: var(--primary-light);' : '';
+
+            return `
+                <div class="list-card" style="border-color: ${borderCol}; ${bgClass} padding: 14px 16px; cursor:default;">
+                    <div style="flex: 1; padding-right: 10px;">
+                        <div style="font-size: 15px; font-weight: 800; color: var(--primary); margin-bottom: 4px;">${escapeHTMLAttr(u.name)}</div>
+                        <div style="font-size: 12px; font-weight: 600; color: var(--text-muted); display: flex; flex-direction: column; gap: 2px;">
+                            ${storeTxt ? `<span>${storeTxt}</span>` : ''}
+                            <span>🗓 ${escapeHTMLAttr(u.meetDate)}</span>
+                        </div>
+                    </div>
+                    <div style="display: flex; flex-direction: column; align-items: flex-end; justify-content: center; flex-shrink: 0;">
+                        <a href="${escapeHTMLAttr(u.meetLink)}" target="_blank" class="btn btn-glow" style="padding: 8px 14px; border-radius: 10px; font-size: 12px; text-decoration:none;">ПРИЄДНАТИСЯ</a>
+                    </div>
+                </div>
+            `;
+        }).join('');
+
+        listContainer.innerHTML = html;
+    }
+
+    // --- ПРИЗНАЧЕННЯ КУРСІВ ТА ЗУСТРІЧЕЙ (МОДАЛЬНЕ ВІКНО) ---
     let originalAssignments = {};
     let pendingAssignments = {};
     let originalDeadline = "";
     let pendingDeadline = "";
+    let originalMeetLink = "";
+    let originalMeetDate = "";
 
     function openAssignModal() {
         if (!windowViewingEmployee) return;
@@ -1557,15 +1655,28 @@
         const overlay = document.getElementById('assignModalOverlay');
         const list = document.getElementById('assignCourseList');
         const saveBtn = document.getElementById('saveAssignBtn');
+        const meetInputs = document.getElementById('ownerMeetInputs');
 
         let html = '';
         originalAssignments = {};
         pendingAssignments = {};
+        
         originalDeadline = String(windowViewingEmployee.deadlineDays || "").trim();
         pendingDeadline = originalDeadline;
+        
+        originalMeetLink = String(windowViewingEmployee.meetLink || "").trim();
+        originalMeetDate = String(windowViewingEmployee.meetDate || "").trim();
 
         let deadlineInput = document.getElementById('assignDeadlineInput');
         deadlineInput.value = originalDeadline;
+
+        if (windowUserRole === 'owner') {
+            meetInputs.style.display = 'flex';
+            document.getElementById('assignMeetLink').value = originalMeetLink;
+            document.getElementById('assignMeetDate').value = formatForDatetimeLocal(originalMeetDate);
+        } else {
+            meetInputs.style.display = 'none';
+        }
 
         if (windowUserRole === 'manager' && originalDeadline && parseInt(originalDeadline) > 0) {
             deadlineInput.disabled = true;
@@ -1613,24 +1724,22 @@
         document.body.style.overflow = '';
     }
 
-    function toggleDeadline(val) {
-        pendingDeadline = String(val).trim();
-        checkAssignChanges();
-    }
-
-    function toggleAssign(key, isChecked) {
-        pendingAssignments[key] = isChecked;
-        checkAssignChanges();
-    }
+    function toggleDeadline(val) { pendingDeadline = String(val).trim(); checkAssignChanges(); }
+    function toggleAssign(key, isChecked) { pendingAssignments[key] = isChecked; checkAssignChanges(); }
 
     function checkAssignChanges() {
         let hasChanges = false;
         if (pendingDeadline !== originalDeadline) hasChanges = true;
+        
+        if (windowUserRole === 'owner') {
+            let mLink = document.getElementById('assignMeetLink').value.trim();
+            let mDate = formatFromDatetimeLocal(document.getElementById('assignMeetDate').value);
+            if (mLink !== originalMeetLink) hasChanges = true;
+            if (mDate !== originalMeetDate) hasChanges = true;
+        }
+
         for (let k in pendingAssignments) {
-            if (pendingAssignments[k] !== originalAssignments[k]) { 
-                hasChanges = true; 
-                break; 
-            }
+            if (pendingAssignments[k] !== originalAssignments[k]) { hasChanges = true; break; }
         }
         document.getElementById('saveAssignBtn').style.display = hasChanges ? 'flex' : 'none';
     }
@@ -1653,39 +1762,39 @@
         saveBtn.innerHTML = '<img src="https://raw.githubusercontent.com/StepStepi4/SkillHUB-Assistant/main/education/save.svg" class="ui-icon" style="width:20px; height:20px; filter: brightness(0) invert(1);"> ЗБЕРЕЖЕННЯ...'; 
         saveBtn.disabled = true;
 
-        let payload = { 
-            action: 'assign_courses', 
-            targetLogin: windowViewingEmployee.login, 
-            assignments: changes 
-        };
-        
-        if (pendingDeadline !== originalDeadline) {
-            payload.deadlineDays = pendingDeadline;
+        let payload = { action: 'assign_courses', targetLogin: windowViewingEmployee.login, assignments: changes };
+        if (pendingDeadline !== originalDeadline) payload.deadlineDays = pendingDeadline;
+
+        if (windowUserRole === 'owner') {
+            let mLink = document.getElementById('assignMeetLink').value.trim();
+            let mDate = formatFromDatetimeLocal(document.getElementById('assignMeetDate').value);
+            if (mLink !== originalMeetLink) payload.meetLink = mLink;
+            if (mDate !== originalMeetDate) payload.meetDate = mDate;
         }
 
         // --- МИТТЄВЕ ЛОКАЛЬНЕ ОНОВЛЕННЯ ДАНИХ (Optimistic UI) ---
-        if (payload.deadlineDays !== undefined) {
-            windowViewingEmployee.deadlineDays = payload.deadlineDays;
-        }
+        if (payload.deadlineDays !== undefined) windowViewingEmployee.deadlineDays = payload.deadlineDays;
+        if (payload.meetLink !== undefined) windowViewingEmployee.meetLink = payload.meetLink;
+        if (payload.meetDate !== undefined) windowViewingEmployee.meetDate = payload.meetDate;
         
         let newAssigned = [...(windowViewingEmployee.assigned || [])];
         for (let key in changes) {
             let originalName = getOriginalCourseNameByKey(key);
             if (changes[key] === true) {
-                if (!newAssigned.some(c => getCleanName(c) === key)) {
-                    newAssigned.push(originalName);
-                }
+                if (!newAssigned.some(c => getCleanName(c) === key)) newAssigned.push(originalName);
             } else {
                 newAssigned = newAssigned.filter(c => getCleanName(c) !== key);
             }
         }
         windowViewingEmployee.assigned = newAssigned;
 
-        // Оновлюємо у спільній базі
+        // Оновлюємо у локальній базі
         let dbUser = db.users.find(u => u.login === windowViewingEmployee.login);
         if (dbUser) {
             dbUser.deadlineDays = windowViewingEmployee.deadlineDays;
             dbUser.assigned = windowViewingEmployee.assigned;
+            dbUser.meetLink = windowViewingEmployee.meetLink;
+            dbUser.meetDate = windowViewingEmployee.meetDate;
         }
 
         // Відправка запиту у фоні
@@ -1709,6 +1818,7 @@
         renderCabinetStatsAndCourses(windowViewingEmployee);
         renderEmployeeAchievementsAndTests(windowViewingEmployee);
         startDeadlineTimer();
+        checkUpcomingMeets();
     }
 
     // --- МОДАЛЬНЕ ВІКНО Iframe SkillHUB ---
@@ -1731,13 +1841,11 @@
         let st = user.stats || {};
         let assignedList = user.assigned || [];
         let resMap = user.results || {};
-        
         let calcStarted = 0, calcCompleted = 0, calcAttempts = 0, calcTime = 0, calcViolations = 0, scoreSum = 0, scoreCount = 0;
 
         assignedList.forEach(courseName => {
             let key = getCleanName(courseName);
             let rawStr = resMap[courseName] || resMap[key];
-            
             if (rawStr) {
                 let parsed = parseTestResultString(rawStr);
                 if (parsed.attempts > 0 || parsed.score > 0) {
@@ -2023,64 +2131,6 @@
         window.sessionTotalTime = 0; window.theoryEntryTime = Date.now();
         updateTestButtonState();
         switchView('theoryView');
-    }
-
-    function checkNewAchievements(user) {
-        if (!user) return;
-        let achCodes = user.achievements ? String(user.achievements).split(',').map(s => s.trim()).filter(Boolean) : [];
-        let savedCount = parseInt(localStorage.getItem(`ach_count_${user.login}`)) || 0;
-        const achBtn = document.getElementById('achBtn');
-        if (achCodes.length > savedCount) { document.getElementById('achNotificationDot').style.display = 'block'; if (achBtn) achBtn.classList.add('has-new'); } 
-        else { document.getElementById('achNotificationDot').style.display = 'none'; if (achBtn) achBtn.classList.remove('has-new'); }
-    }
-
-    function toggleAchievements() {
-        const drawer = document.getElementById('achDrawer'), overlay = document.getElementById('achOverlay');
-        if (drawer.classList.contains('open')) {
-            drawer.classList.remove('open'); overlay.classList.remove('active'); document.body.style.overflow = '';
-            document.querySelectorAll('.ach-card.zoomed').forEach(c => c.classList.remove('zoomed'));
-        } else {
-            document.getElementById('achNotificationDot').style.display = 'none';
-            const achBtn = document.getElementById('achBtn'); if (achBtn) achBtn.classList.remove('has-new');
-            document.body.style.overflow = 'hidden';
-            let user = db.users.find(u => String(u.login).toLowerCase() === String(currentUser).toLowerCase());
-            if (user && user.achievements) { let count = String(user.achievements).split(',').filter(s => s.trim() !== "").length; localStorage.setItem(`ach_count_${user.login}`, count); }
-            renderAchievements(); drawer.classList.add('open'); overlay.classList.add('active');
-        }
-    }
-
-    function toggleAchZoom(element) {
-        let isZoomed = element.classList.contains('zoomed');
-        document.querySelectorAll('.ach-card.zoomed').forEach(card => card.classList.remove('zoomed'));
-        if (!isZoomed) { element.classList.add('zoomed'); setTimeout(() => { element.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }, 50); }
-    }
-
-    function renderAchievements() {
-        let user = db.users.find(u => String(u.login).toLowerCase() === String(currentUser).toLowerCase());
-        let isGuest = (windowUserRole === 'guest');
-        let achCodes = user && user.achievements ? String(user.achievements).split(',').map(s => s.trim()).filter(Boolean) : [];
-        let html = '';
-
-        if (!globalAchievements || globalAchievements.length === 0) {
-            html = '<div style="text-align:center; color:var(--text-muted); margin-top: 20px;">Список нагород порожній.</div>';
-        } else {
-            globalAchievements.forEach(achInfo => {
-                let code = String(achInfo.code).trim(), isEarned = isGuest || achCodes.includes(code);
-                let displayName = (achInfo && achInfo.name) ? achInfo.name.replace(/\.(svg|png|jpg|jpeg|webp|gif)$/i, '') : `Відзнака #${code}`;
-                let desc = (achInfo && achInfo.description) ? achInfo.description : "", safeCode = escapeHTMLAttr(code);
-                let stateClass = isEarned ? 'earned' : 'locked';
-                let stateText = isEarned ? '<span style="color:var(--success); font-size:12px; font-weight:800;">ОТРИМАНО</span>' : '<span style="color:var(--text-muted); font-size:12px; font-weight:700;">ЗАКРИТО</span>';
-                html += `
-                <div class="ach-card ${stateClass}" onclick="if('${stateClass}' === 'earned') toggleAchZoom(this)">
-                    <div class="ach-icon-wrapper"><img src="Achievement/${safeCode}.png" onerror="this.src='medal.svg'" class="ach-img"></div>
-                    <div style="display: flex; flex-direction: column; justify-content: center; flex: 1;">
-                        <div class="ach-card-title">${escapeHTMLAttr(displayName)}</div><div class="ach-card-desc">${escapeHTMLAttr(desc)}</div>
-                        <div style="margin-top:6px;">${stateText}</div>
-                    </div>
-                </div>`;
-            });
-        }
-        requestAnimationFrame(() => { document.getElementById('achList').innerHTML = html; });
     }
 
     function parseTestString(testStr) {
