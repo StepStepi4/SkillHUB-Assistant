@@ -144,6 +144,7 @@
         .login-card { background: var(--card-bg); border-radius: 24px; padding: 32px 24px; box-shadow: 0 12px 32px rgba(0,0,0,0.06); border: 1px solid var(--border); }
         .input-group { margin-bottom: 20px; position: relative; }
         .input-label { display: block; font-size: 12px; font-weight: 700; color: var(--text-muted); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+        
         input[type="text"], input[type="password"], input[type="number"] { 
             width: 100%; padding: 16px; border-radius: 14px; font-size: 16px; font-weight: 500;
             background: var(--input-bg); border: 1.5px solid transparent; outline: none; transition: 0.2s;
@@ -340,6 +341,20 @@
         }
         .assign-modal.active { opacity: 1; transform: translate(-50%, -50%) scale(1); display: flex; }
         .assign-list { flex: 1; overflow-y: auto; margin-bottom: 16px; padding-right: 4px; }
+        
+        .skillhub-modal {
+            position: fixed; top: 5%; left: 5%; width: 90%; height: 90%;
+            background: var(--bg); z-index: 10005; border-radius: 20px;
+            opacity: 0; display: none; flex-direction: column; overflow: hidden;
+            box-shadow: 0 24px 48px rgba(0,0,0,0.3); transform: scale(0.95);
+            transition: all 0.3s ease;
+        }
+        .skillhub-modal.active { opacity: 1; display: flex; transform: scale(1); }
+        .skillhub-header {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 14px 20px; background: var(--card-bg); border-bottom: 1px solid var(--border);
+        }
+        .skillhub-iframe { flex: 1; width: 100%; border: none; background: #fff; }
     </style>
 </head>
 <body>
@@ -422,6 +437,18 @@
     <button class="btn btn-glow" id="saveAssignBtn" onclick="saveAssignments()" style="display:none; flex-shrink: 0; justify-content: center; align-items: center; gap: 8px;">
         <img src="https://raw.githubusercontent.com/StepStepi4/SkillHUB-Assistant/main/education/save.svg" class="ui-icon" style="width:20px; height:20px; filter: brightness(0) invert(1);"> ЗБЕРЕГТИ
     </button>
+</div>
+
+<div class="drawer-overlay" id="skillhubModalOverlay" onclick="closeSkillhubFrame()"></div>
+<div class="skillhub-modal" id="skillhubModal">
+    <div class="skillhub-header">
+        <div style="font-weight:800; color:var(--text-main); display:flex; align-items:center; gap:8px;">
+            <img src="https://raw.githubusercontent.com/StepStepi4/SkillHUB-Assistant/main/education/info.svg" class="ui-icon" onerror="this.style.display='none'"> 
+            Детально про послугу
+        </div>
+        <button class="modal-close-btn" onclick="closeSkillhubFrame()">✕</button>
+    </div>
+    <iframe class="skillhub-iframe" id="skillhubIframe" src=""></iframe>
 </div>
 
 <div class="container">
@@ -782,6 +809,13 @@
     function cleanCourseTitle(str) { return !str ? "" : String(str).replace(/^✦\s*/, '').trim(); }
     function getCleanName(str) { return !str ? "" : cleanCourseTitle(str).toLowerCase().replace(/[^a-zа-яёієїґ0-9]/g, ''); }
     function escapeHTMLAttr(str) { return !str ? "" : String(str).replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/'/g, "&#39;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
+
+    function formatManagerName(fullName) {
+        if (!fullName || fullName === "-") return "";
+        let parts = String(fullName).trim().split(/\s+/);
+        if (parts.length >= 2) return parts[0] + ' ' + parts[1];
+        return parts[0] || "";
+    }
 
     function extractFirstNameCapitalized(userObj) {
         if (!userObj) return "Колега";
@@ -1279,7 +1313,8 @@
 
     function renderMeetButton(user) {
         const container = document.getElementById('meetButtonContainer');
-        if (user && user.meetLink) {
+        // Показуємо кнопку тільки в тому випадку, якщо це ВЛАСНИЙ кабінет (не режим перегляду)
+        if (user && user.meetLink && !windowViewingEmployee) {
             let dateTxt = user.meetDate ? `<div style="font-size:12px; font-weight:600; color:var(--text-muted); margin-top:2px;">${escapeHTMLAttr(user.meetDate)}</div>` : '';
             container.innerHTML = `
                 <a href="${escapeHTMLAttr(user.meetLink)}" target="_blank" style="text-decoration:none; display:block;">
@@ -1443,7 +1478,7 @@
                 else if (m.started > 0) borderCol = 'rgba(245, 158, 11, 0.6)';
             }
             let storeTxt = (u.store && u.store !== "-") ? `📍 ${escapeHTMLAttr(u.store)}` : "";
-            let mgrTxt = u.manager ? `👤 Керівник: ${escapeHTMLAttr(u.manager)}` : "";
+            let mgrTxt = (u.manager && u.manager !== "-") ? `👤 Керівник: ${escapeHTMLAttr(formatManagerName(u.manager))}` : "";
             
             return `
                 <div class="list-card" style="border-color: ${borderCol}; padding: 14px 16px;" onclick="selectEmployeeFromModal('${escapeHTMLAttr(u.login)}')">
@@ -1486,7 +1521,7 @@
         let metaParts = [];
         if (emp.role) metaParts.push(emp.role);
         if (emp.store && emp.store !== "-") metaParts.push(emp.store);
-        if (emp.manager) metaParts.push(`Керівник: ${emp.manager}`);
+        if (emp.manager && emp.manager !== "-") metaParts.push(`Керівник: ${formatManagerName(emp.manager)}`);
         
         document.getElementById('viewingEmployeeMeta').innerText = metaParts.join(' • ');
         
@@ -1532,7 +1567,6 @@
         let deadlineInput = document.getElementById('assignDeadlineInput');
         deadlineInput.value = originalDeadline;
 
-        // Керівник не може змінювати дедлайн, якщо він вже стоїть (більше 0)
         if (windowUserRole === 'manager' && originalDeadline && parseInt(originalDeadline) > 0) {
             deadlineInput.disabled = true;
         } else {
@@ -1544,7 +1578,7 @@
                 if (!c.name || c.name.trim() === '') return;
                 
                 let cleanKey = c.name.toLowerCase().replace(/[^a-zа-яёієїґ0-9]/g, '');
-                let isAssigned = windowViewingEmployee.assigned.some(a => getCleanName(a) === cleanKey);
+                let isAssigned = (windowViewingEmployee.assigned || []).some(a => getCleanName(a) === cleanKey);
                 
                 originalAssignments[cleanKey] = isAssigned;
                 pendingAssignments[cleanKey] = isAssigned;
@@ -1601,6 +1635,12 @@
         document.getElementById('saveAssignBtn').style.display = hasChanges ? 'flex' : 'none';
     }
 
+    function getOriginalCourseNameByKey(cleanKey) {
+        if (!db || !db.courseCatalog) return cleanKey;
+        let catCourse = db.courseCatalog.find(c => getCleanName(c.name) === cleanKey);
+        return catCourse ? catCourse.name : cleanKey; 
+    }
+
     async function saveAssignments() {
         let changes = {};
         for (let key in pendingAssignments) {
@@ -1610,7 +1650,7 @@
         }
         
         const saveBtn = document.getElementById('saveAssignBtn');
-        saveBtn.innerHTML = '<div class="spinner" style="width:20px;height:20px;margin:0;border-width:2px;border-top-color:#fff;"></div>';
+        saveBtn.innerHTML = '<img src="https://raw.githubusercontent.com/StepStepi4/SkillHUB-Assistant/main/education/save.svg" class="ui-icon" style="width:20px; height:20px; filter: brightness(0) invert(1);"> ЗБЕРЕЖЕННЯ...'; 
         saveBtn.disabled = true;
 
         let payload = { 
@@ -1623,19 +1663,68 @@
             payload.deadlineDays = pendingDeadline;
         }
 
-        try {
-            await fetch(API_URL, {
-                method: 'POST', mode: 'no-cors', cache: 'no-store',
-                body: JSON.stringify(payload)
-            });
-            
-            closeAssignModal();
-            setTimeout(() => { forceRefresh(); }, 500); 
-        } catch(e) {
-            alert("Помилка збереження!");
-            saveBtn.innerHTML = `<img src="https://raw.githubusercontent.com/StepStepi4/SkillHUB-Assistant/main/education/save.svg" class="ui-icon" style="width:20px; height:20px; filter: brightness(0) invert(1);"> ЗБЕРЕГТИ`;
-            saveBtn.disabled = false;
+        // --- МИТТЄВЕ ЛОКАЛЬНЕ ОНОВЛЕННЯ ДАНИХ (Optimistic UI) ---
+        if (payload.deadlineDays !== undefined) {
+            windowViewingEmployee.deadlineDays = payload.deadlineDays;
         }
+        
+        let newAssigned = [...(windowViewingEmployee.assigned || [])];
+        for (let key in changes) {
+            let originalName = getOriginalCourseNameByKey(key);
+            if (changes[key] === true) {
+                if (!newAssigned.some(c => getCleanName(c) === key)) {
+                    newAssigned.push(originalName);
+                }
+            } else {
+                newAssigned = newAssigned.filter(c => getCleanName(c) !== key);
+            }
+        }
+        windowViewingEmployee.assigned = newAssigned;
+
+        // Оновлюємо у спільній базі
+        let dbUser = db.users.find(u => u.login === windowViewingEmployee.login);
+        if (dbUser) {
+            dbUser.deadlineDays = windowViewingEmployee.deadlineDays;
+            dbUser.assigned = windowViewingEmployee.assigned;
+        }
+
+        // Відправка запиту у фоні
+        fetch(API_URL, {
+            method: 'POST', mode: 'no-cors', cache: 'no-store',
+            body: JSON.stringify(payload)
+        }).catch(e => console.log("Фонове збереження не вдалося", e));
+
+        // Закриваємо модалку миттєво
+        closeAssignModal();
+
+        // Повертаємо кнопку в початковий стан (непомітно для користувача)
+        setTimeout(() => {
+            saveBtn.innerHTML = '<img src="https://raw.githubusercontent.com/StepStepi4/SkillHUB-Assistant/main/education/save.svg" class="ui-icon" style="width:20px; height:20px; filter: brightness(0) invert(1);"> ЗБЕРЕГТИ';
+            saveBtn.disabled = false;
+            saveBtn.style.display = 'none';
+        }, 300);
+
+        // Перемальовуємо інтерфейс з новими даними миттєво
+        buildCoursesMap(windowViewingEmployee);
+        renderCabinetStatsAndCourses(windowViewingEmployee);
+        renderEmployeeAchievementsAndTests(windowViewingEmployee);
+        startDeadlineTimer();
+    }
+
+    // --- МОДАЛЬНЕ ВІКНО Iframe SkillHUB ---
+    function openSkillhubFrame(url) {
+        if (!url) return;
+        document.getElementById('skillhubIframe').src = url;
+        document.getElementById('skillhubModalOverlay').classList.add('active');
+        document.getElementById('skillhubModal').classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeSkillhubFrame() {
+        document.getElementById('skillhubIframe').src = '';
+        document.getElementById('skillhubModalOverlay').classList.remove('active');
+        document.getElementById('skillhubModal').classList.remove('active');
+        document.body.style.overflow = '';
     }
 
     function computeUserMetrics(user) {
@@ -1911,7 +2000,7 @@
         let linkBtnHtml = '';
         if (currentProductData.skillhubLink) {
             linkBtnHtml = `
-            <a href="${escapeHTMLAttr(currentProductData.skillhubLink)}" target="_blank" rel="noopener noreferrer" class="btn btn-secondary" style="margin-bottom: 20px; border-color: var(--primary); color: var(--primary); padding: 12px; font-size: 13px; text-decoration: none; display: flex; justify-content: center; align-items: center; gap: 8px;">
+            <a href="javascript:void(0)" class="btn btn-secondary" style="margin-bottom: 20px; border-color: var(--primary); color: var(--primary); padding: 12px; font-size: 13px; text-decoration: none; display: flex; justify-content: center; align-items: center; gap: 8px;" onclick="openSkillhubFrame('${escapeHTMLAttr(currentProductData.skillhubLink)}')">
                 <img src="https://raw.githubusercontent.com/StepStepi4/SkillHUB-Assistant/main/education/info.svg" class="ui-icon" onerror="this.style.display='none'">
                 Детально про послугу
             </a>`;
