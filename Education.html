@@ -6,20 +6,17 @@
     <title>Навчання - SkillHUB</title>
     <meta name="theme-color" content="#f2f2f7">
     
-    <!-- Оптимізація завантаження -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
 
-    <!-- Ініціалізація теми та МИТТЄВИЙ запуск (безшовність) -->
     <script>
         (function() {
             try {
                 var theme = localStorage.getItem('theme') || 'light';
                 document.documentElement.setAttribute('data-theme', theme);
                 
-                // Перевіряємо ЄДИНИЙ спільний кеш
                 if (localStorage.getItem('skillhub_v6_cache') && localStorage.getItem('skillhub_edu_creds')) {
                     document.documentElement.style.setProperty('--edu-loader-display', 'none');
                     document.documentElement.classList.add('fast-boot');
@@ -29,32 +26,28 @@
     </script>
 
     <style>
-        /* --- БАЗОВІ СТИЛІ ТА ЗМІННІ --- */
-        *, *::before, *::after { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        *, *::before, *::after { 
+            box-sizing: border-box; 
+            -webkit-tap-highlight-color: transparent; 
+        }
 
         :root {
             --bg: #f2f2f7; 
             --card-bg: #ffffff;
-            --text-main: #164f58; /* Збігається з Index */
+            --text-main: #164f58;
             --text-muted: #8e8e93; 
-            
-            /* КОРПОРАТИВНИЙ КОЛІР */
             --primary: #164f58; 
             --primary-light: rgba(22, 79, 88, 0.15);
-            
             --border: #e5e5ea;
             --input-bg: #f9fafb;
             --danger: #ef4444;
             --danger-bg: rgba(239, 68, 68, 0.08);
             --success: #10b981;
-            
-            /* Адаптовані кольори для кнопок-світіння під корп. стиль */
             --rozetka-green-light: #237a88;
             --rozetka-green-dark: #164f58;
-            
             --tab-bg: #e5e7eb;
             --tab-active: #ffffff;
-            --edu-loader-display: flex; /* Керується через JS в head */
+            --edu-loader-display: flex;
         }
 
         [data-theme="dark"] {
@@ -62,11 +55,8 @@
             --card-bg: #1c1c1e;
             --text-main: #f5f5f5; 
             --text-muted: #98989d; 
-            
-            /* КОРПОРАТИВНИЙ КОЛІР (ДЛЯ ТЕМНОЇ ТЕМИ) */
             --primary: #164f58;
             --primary-light: rgba(22, 79, 88, 0.25);
-            
             --border: #38383a;
             --input-bg: #2c2c2e;
             --danger: #ff453a;
@@ -76,25 +66,41 @@
             --tab-active: #1c1c1e;
         }
 
-        /* --- ПРАВИЛА ДЛЯ МИТТЄВОГО ВХОДУ --- */
-        html.fast-boot body .view { display: none !important; animation: none !important; }
-        html.fast-boot body #cabinetView { display: block !important; opacity: 1 !important; transform: none !important; animation: none !important; }
+        html.fast-boot body .view { 
+            display: none !important; 
+            animation: none !important; 
+        }
+        html.fast-boot body #cabinetView { 
+            display: block !important; 
+            opacity: 1 !important; 
+            transform: none !important; 
+            animation: none !important; 
+        }
 
-        /* Стилі фону та контейнеру синхронізовані з Index.html */
         body { 
-            font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text-main); 
-            margin: 0; padding: 0; display: flex; justify-content: center; align-items: flex-start; 
-            min-height: 100vh; -webkit-font-smoothing: antialiased; 
+            font-family: 'Inter', sans-serif; 
+            background: var(--bg); 
+            color: var(--text-main); 
+            margin: 0; 
+            padding: 0; 
+            display: flex; 
+            justify-content: center; 
+            align-items: flex-start; 
+            min-height: 100vh; 
+            -webkit-font-smoothing: antialiased; 
             transition: background 0.3s ease, color 0.3s ease;
         }
         
         .container { 
-            position: relative; width: 100%; max-width: 480px; 
-            padding: 20px 16px; margin-bottom: 85px; 
-            display: flex; flex-direction: column;
+            position: relative; 
+            width: 100%; 
+            max-width: 480px; 
+            padding: 20px 16px; 
+            margin-bottom: 85px; 
+            display: flex; 
+            flex-direction: column;
         }
 
-        /* Єдиний клас для всіх іконок у кнопках та меню */
         .ui-icon {
             width: 24px;
             height: 24px;
@@ -103,37 +109,50 @@
             display: inline-block;
         }
 
-        /* --- АНІМАЦІЇ ТА ВІДОБРАЖЕННЯ ЕКРАНІВ (SPA) --- */
-        .view { display: none; animation: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1); will-change: opacity, transform; }
-        .view.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .view { 
+            display: none; 
+            animation: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1); 
+            will-change: opacity, transform; 
+        }
+        .view.active { 
+            display: block; 
+        }
+        @keyframes fadeIn { 
+            from { opacity: 0; transform: translateY(10px); } 
+            to { opacity: 1; transform: translateY(0); } 
+        }
 
-        /* --- ЛОАДЕР --- */
         .loader-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: var(--bg); display: var(--edu-loader-display); flex-direction: column; justify-content: center; align-items: center;
+            background: var(--bg); display: var(--edu-loader-display); 
+            flex-direction: column; justify-content: center; align-items: center;
             z-index: 9999; transition: opacity 0.2s ease, visibility 0.2s ease;
         }
-        .spinner { width: 44px; height: 44px; border: 4px solid var(--border); border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 16px; }
+        .spinner { 
+            width: 44px; height: 44px; border: 4px solid var(--border); 
+            border-top-color: var(--primary); border-radius: 50%; 
+            animation: spin 1s linear infinite; margin-bottom: 16px; 
+        }
         @keyframes spin { 100% { transform: rotate(360deg); } }
 
-        /* --- ТИПОГРАФІКА --- */
         h1 { font-size: 26px; font-weight: 800; margin: 0 0 22px 0; text-align: center; letter-spacing: -0.5px; }
         p.subtitle { font-size: 14px; color: var(--text-muted); text-align: center; margin-bottom: 24px; font-weight: 500; }
         .section-title { font-size: 12px; font-weight: 800; margin: 24px 0 12px 0; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; display: flex; align-items: center; justify-content: flex-start; gap: 8px; }
         .big-emoji { text-align: center; font-size: 64px; margin-bottom: 16px; line-height: 1; display: flex; justify-content: center; }
 
-        /* --- ЕКРАН АВТОРИЗАЦІЇ --- */
         .login-wrapper { display: flex; flex-direction: column; justify-content: center; min-height: 80vh; }
         .login-card { background: var(--card-bg); border-radius: 24px; padding: 32px 24px; box-shadow: 0 12px 32px rgba(0,0,0,0.06); border: 1px solid var(--border); }
         .input-group { margin-bottom: 20px; position: relative; }
         .input-label { display: block; font-size: 12px; font-weight: 700; color: var(--text-muted); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
-        input[type="text"], input[type="password"] { 
+        input[type="text"], input[type="password"], input[type="number"] { 
             width: 100%; padding: 16px; border-radius: 14px; font-size: 16px; font-weight: 500;
             background: var(--input-bg); border: 1.5px solid transparent; outline: none; transition: 0.2s;
             box-shadow: inset 0 2px 4px rgba(0,0,0,0.02); color: var(--text-main);
         }
-        input[type="text"]:focus, input[type="password"]:focus { background: var(--card-bg); border-color: var(--primary); box-shadow: 0 0 0 4px var(--primary-light); }
+        input[type="text"]:focus, input[type="password"]:focus, input[type="number"]:focus { 
+            background: var(--card-bg); border-color: var(--primary); box-shadow: 0 0 0 4px var(--primary-light); 
+        }
+        input[type="number"]:disabled { opacity: 0.6; cursor: not-allowed; }
         
         .custom-checkbox-wrapper { display: flex; align-items: center; gap: 10px; cursor: pointer; margin-bottom: 28px; font-size: 14px; font-weight: 600; color: var(--text-muted); transition: color 0.2s; }
         .custom-checkbox-wrapper:hover { color: var(--text-main); }
@@ -143,7 +162,6 @@
         .custom-checkmark::after { content: ''; width: 5px; height: 10px; border: solid white; border-width: 0 2.5px 2.5px 0; transform: rotate(45deg); display: none; margin-bottom: 2px; }
         .custom-checkbox-wrapper input:checked + .custom-checkmark::after { display: block; }
 
-        /* --- КНОПКИ --- */
         .btn { width: 100%; padding: 16px; border-radius: 14px; font-size: 15px; font-weight: 800; cursor: pointer; border: none; transition: 0.2s; text-align: center; display: flex; justify-content: center; align-items: center; gap: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
         .btn-glow { background: linear-gradient(135deg, var(--rozetka-green-light) 0%, var(--rozetka-green-dark) 100%); color: white; box-shadow: 0 8px 20px var(--primary-light); }
         .btn-glow:active { transform: scale(0.96); box-shadow: 0 4px 10px var(--primary-light); }
@@ -151,7 +169,6 @@
         .btn-secondary { background: var(--input-bg); color: var(--text-main); border: 1px solid var(--border); }
         .btn-secondary:active { transform: scale(0.96); background: var(--border); }
 
-        /* --- НАВІГАЦІЯ ТА ПАНЕЛЬ КНОПОК --- */
         .nav-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; gap: 10px; }
         .nav-header h2 { font-size: 22px !important; margin: 0; font-weight: 800; letter-spacing: -0.5px; line-height: 1.2; color: var(--text-main); }
         .nav-actions { display: flex; gap: 6px; align-items: center; flex-shrink: 0; }
@@ -160,7 +177,6 @@
         .back-btn-sleek:active { transform: scale(0.92); background: var(--input-bg); }
         .back-btn-sleek.active-nav { border-color: var(--primary); background: var(--primary-light); }
 
-        /* Швидкі кнопки ролі */
         .role-action-bar { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 18px; }
         .role-action-btn { background: var(--card-bg); border: 1.5px solid var(--border); border-radius: 14px; padding: 11px 12px; font-size: 13px; font-weight: 800; color: var(--text-main); display: flex; align-items: center; justify-content: center; gap: 7px; cursor: pointer; transition: all 0.2s; box-shadow: 0 3px 10px rgba(0,0,0,0.02); }
         .role-action-btn:active { transform: scale(0.96); }
@@ -169,28 +185,19 @@
 
         @keyframes pulse-ring { 0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); } 70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); } 100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); } }
         .ach-btn.has-new { animation: pulse-ring 2s infinite; border-radius: 50%; }
+        
         .floating-exit { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); width: auto; height: 46px; background: rgba(255,255,255,0.92); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); border: 1px solid var(--border); border-radius: 24px; padding: 0 20px; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 8px 24px rgba(0,0,0,0.12); z-index: 9000; cursor: pointer; transition: 0.2s; color: #111827; font-weight: 700; font-size: 14px; text-transform: uppercase; }
         [data-theme="dark"] .floating-exit { background: rgba(28,28,30,0.92); color: #ffffff; }
         .floating-exit:active { transform: translateX(-50%) scale(0.95); }
 
-        /* --- ВКЛАДКИ (ТАБИ) --- */
         .tabs-container { display: flex; background: var(--tab-bg); border-radius: 12px; padding: 4px; margin-bottom: 20px; }
         .tab-btn { flex: 1; display: flex; align-items: center; justify-content: center; gap: 6px; padding: 10px; border-radius: 10px; font-size: 14px; font-weight: 700; color: var(--text-muted); cursor: pointer; transition: 0.3s; }
         .tab-btn.active { background: var(--tab-active); color: var(--text-main); box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
         .tab-content { display: none; animation: fadeIn 0.3s; }
         .tab-content.active { display: block; }
 
-        /* --- ПРОГРЕС-БАР ТА СТАТИСТИКА --- */
-        .adaptive-progress-bar { 
-            position: relative; width: 100%; overflow: hidden; display: flex; 
-            align-items: center; justify-content: flex-start;
-            z-index: 0; isolation: isolate; transform: translateZ(0); 
-        }
-        .apb-fill { 
-            position: absolute; left: 0; top: 0; height: 100%; 
-            transition: width 0.8s cubic-bezier(0.34, 1.56, 0.64, 1); 
-            z-index: 1; will-change: width; 
-        }
+        .adaptive-progress-bar { position: relative; width: 100%; overflow: hidden; display: flex; align-items: center; justify-content: flex-start; z-index: 0; isolation: isolate; transform: translateZ(0); }
+        .apb-fill { position: absolute; left: 0; top: 0; height: 100%; transition: width 0.8s cubic-bezier(0.34, 1.56, 0.64, 1); z-index: 1; will-change: width; }
         .apb-text { position: relative; z-index: 2; }
 
         .stats-grid-8 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
@@ -200,26 +207,20 @@
         
         .chart-wrapper { position: relative; height: 260px; width: 100%; background: var(--card-bg); border: 1px solid var(--border); border-radius: 16px; padding: 16px; margin-bottom: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.02); }
 
-        /* --- КАРТКИ --- */
         .list-card { background: var(--card-bg); border-radius: 20px; border: 1.5px solid var(--border); margin-bottom: 12px; padding: 16px 18px; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 4px 12px rgba(0,0,0,0.02); }
         .list-card:active { transform: scale(0.97); background: var(--input-bg); }
         .list-card.completed { border-color: rgba(22, 79, 88, 0.55); }
         .list-card-title { font-size: 15px; font-weight: 700; color: var(--text-main); display: flex; align-items: center; gap: 10px; line-height: 1.3; }
         .list-card-arrow { color: var(--text-muted); font-weight: bold; }
 
-        /* --- ДЕДЛАЙН ТА ПУЛЬСАЦІЯ --- */
         #deadlineContainer { background: var(--input-bg); border: 1px solid var(--border); border-radius: 16px; padding: 9px 16px; display: flex; align-items: center; justify-content: center; gap: 8px; margin: 0 auto 18px auto; max-width: 100%; transition: 0.3s; }
         #deadlineText { font-size: 13.5px; font-weight: 800; color: var(--text-main); }
-        @keyframes urgentDeadlinePulse {
-            0%, 100% { color: var(--danger); opacity: 1; transform: scale(1); }
-            50% { color: #ff0000; opacity: 0.45; transform: scale(1.03); }
-        }
+        @keyframes urgentDeadlinePulse { 0%, 100% { color: var(--danger); opacity: 1; transform: scale(1); } 50% { color: #ff0000; opacity: 0.45; transform: scale(1.03); } }
         .deadline-urgent #deadlineText { color: var(--danger) !important; animation: urgentDeadlinePulse 1.1s infinite ease-in-out; }
         .deadline-urgent { background: rgba(239, 68, 68, 0.1) !important; border-color: rgba(239, 68, 68, 0.35) !important; }
         .deadline-expired #deadlineText { color: var(--danger) !important; }
         .deadline-expired { background: rgba(239, 68, 68, 0.12) !important; border-color: rgba(239, 68, 68, 0.3) !important; }
 
-        /* --- ТЕОРІЯ ТА ТЕСТИ --- */
         .theory-box { background: var(--card-bg); border-radius: 24px; border: 1px solid var(--border); margin-bottom: 24px; padding: 8px 0; box-shadow: 0 8px 24px rgba(0,0,0,0.04); }
         .theory-line { padding: 14px 20px; border-bottom: 1px solid var(--input-bg); font-size: 15px; line-height: 1.5; }
         .theory-line:last-child { border-bottom: none; }
@@ -242,7 +243,6 @@
         .timer-box { font-size: 16px; font-weight: 800; color: var(--danger); background: var(--danger-bg); padding: 8px 16px; border-radius: 12px; transition: 0.3s; display: flex; align-items: center; gap: 6px; }
         #errorMsg { color: var(--danger); font-size: 14px; font-weight: 700; text-align: center; margin-bottom: 20px; display: none; background: rgba(239, 68, 68, 0.1); padding: 14px; border-radius: 12px; }
 
-        /* --- АЧІВКИ ТА МОДАЛЬНІ ВІКНА --- */
         .drawer-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.45); z-index: 10000; display: none; opacity: 0; transition: 0.3s ease; backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px); }
         .drawer-overlay.active { display: block; opacity: 1; }
         .ach-drawer { position: fixed; top: 0; right: -100%; width: 100%; max-width: 370px; height: 100%; background: var(--bg); z-index: 10001; transition: right 0.4s cubic-bezier(0.16, 1, 0.3, 1); box-shadow: -8px 0 32px rgba(0,0,0,0.15); overflow-y: auto; padding: 24px; }
@@ -273,7 +273,6 @@
 
         .notification-dot { position: absolute; top: 4px; right: 4px; width: 12px; height: 12px; background-color: var(--danger); border-radius: 50%; border: 2px solid var(--card-bg); display: none; }
 
-        /* --- МОДАЛЬНЕ ВІКНО 📊 СТАТИСТИКА СПІВРОБІТНИКІВ З ПОШУКОМ ТА АВТОПІДКАЗКАМИ --- */
         .stats-modal {
             position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.92);
             background: var(--bg); z-index: 10002; width: 94%; max-width: 460px;
@@ -296,7 +295,6 @@
         .search-icon-left { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); font-size: 16px; color: var(--text-muted); pointer-events: none; }
         .search-clear-btn { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; font-size: 16px; color: var(--text-muted); cursor: pointer; display: none; }
 
-        /* Випадаючий список-підказка при введенні символів */
         .search-suggestions {
             position: absolute; top: calc(100% + 6px); left: 0; right: 0;
             background: var(--card-bg); border: 1.5px solid var(--primary);
@@ -315,7 +313,6 @@
 
         .employees-scroll-list { flex: 1; overflow-y: auto; padding-right: 2px; }
 
-        /* Банер перегляду співробітника */
         .viewing-banner {
             background: linear-gradient(135deg, rgba(22, 79, 88, 0.12), rgba(35, 122, 136, 0.12));
             border: 1.5px solid rgba(22, 79, 88, 0.3);
@@ -325,7 +322,6 @@
 
         .no-select { user-select: none; -webkit-user-select: none; }
 
-        /* --- АНТИ-ЧІТ ШИРМА --- */
         #antiCheatScreen {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             background: #000; color: #fff; z-index: 999999;
@@ -335,23 +331,6 @@
         body.cheating .container { display: none !important; }
         body.cheating #antiCheatScreen { display: flex !important; }
 
-        /* --- НОВІ МОДАЛЬНІ ВІКНА --- */
-        /* iframe для SkillHUB */
-        .skillhub-modal {
-            position: fixed; top: 5%; left: 5%; width: 90%; height: 90%;
-            background: var(--bg); z-index: 10005; border-radius: 20px;
-            opacity: 0; display: none; flex-direction: column; overflow: hidden;
-            box-shadow: 0 24px 48px rgba(0,0,0,0.3); transform: scale(0.95);
-            transition: all 0.3s ease;
-        }
-        .skillhub-modal.active { opacity: 1; display: flex; transform: scale(1); }
-        .skillhub-header {
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 14px 20px; background: var(--card-bg); border-bottom: 1px solid var(--border);
-        }
-        .skillhub-iframe { flex: 1; width: 100%; border: none; background: #fff; }
-
-        /* Вікно призначення курсів */
         .assign-modal {
             position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.92);
             background: var(--bg); z-index: 10003; width: 94%; max-width: 420px;
@@ -365,48 +344,52 @@
 </head>
 <body>
 
-<!-- АНТИ-ЧІТ ЕКРАН -->
 <div id="antiCheatScreen">
     <div style="font-size: 70px; margin-bottom: 24px;">🚨</div>
     <div style="font-size: 24px; font-weight: 800;">ТЕСТ ЗАБЛОКОВАНО</div>
-    <div style="font-size: 14px; font-weight: 500; color: #98989d; margin-top: 12px;">Виконано спробу згорнути вікно або згорнути браузер.<br>Захист від списування активовано.</div>
+    <div style="font-size: 14px; font-weight: 500; color: #98989d; margin-top: 12px;">
+        Виконано спробу згорнути вікно або згорнути браузер.<br>Захист від списування активовано.
+    </div>
 </div>
 
-<!-- ЕКРАН ЗАВАНТАЖЕННЯ (Тепер тільки по факту необхідності) -->
 <div id="loader" class="loader-overlay" style="display: none;">
     <div class="spinner"></div>
     <div style="font-weight: 600; color: var(--text-muted);" id="loaderText">Синхронізація з базою...</div>
 </div>
 
-<!-- КНОПКА НАЗАД (ПЛАВАЮЧА) -->
 <div class="floating-exit" id="floatingExitBtn" onclick="handleFloatingBack()" style="display: none;">
-    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="19" y1="12" x2="5" y2="12"></line>
+        <polyline points="12 19 5 12 12 5"></polyline>
+    </svg>
     <span>Назад</span>
 </div>
 
-<!-- БОКОВЕ МЕНЮ 🏆 АЧІВКИ -->
 <div class="drawer-overlay" id="achOverlay" onclick="toggleAchievements()"></div>
 <div class="ach-drawer" id="achDrawer">
     <div class="ach-title" style="color: var(--primary);">
         <div style="display:flex; align-items:center; gap:8px;">
-            <img src="https://raw.githubusercontent.com/StepStepi4/SkillHUB-Assistant/main/education/Achievement.svg" class="ui-icon" onerror="this.style.display='none'"> Зароблені відзнаки
+            <img src="https://raw.githubusercontent.com/StepStepi4/SkillHUB-Assistant/main/education/Achievement.svg" class="ui-icon" onerror="this.style.display='none'"> 
+            Зароблені відзнаки
         </div>
         <button class="modal-close-btn" onclick="toggleAchievements()">✕</button>
     </div>
     <div id="achList"></div>
 </div>
 
-<!-- МОДАЛЬНЕ ВІКНО 📊 СТАТИСТИКА СПІВРОБІТНИКІВ -->
 <div class="drawer-overlay" id="statsModalOverlay" onclick="closeStatsModal()"></div>
 <div class="stats-modal" id="statsModal">
     <div class="stats-modal-header">
-        <div class="stats-modal-title"><img src="https://raw.githubusercontent.com/StepStepi4/SkillHUB-Assistant/main/education/Statistic.svg" class="ui-icon"> Статистика співробітників</div>
+        <div class="stats-modal-title">
+            <img src="https://raw.githubusercontent.com/StepStepi4/SkillHUB-Assistant/main/education/Statistic.svg" class="ui-icon"> 
+            Статистика
+        </div>
         <button class="modal-close-btn" onclick="closeStatsModal()">✕</button>
     </div>
 
     <div class="search-box-wrap">
         <span class="search-icon-left">🔍</span>
-        <input type="text" id="empSearchInput" class="search-input-modern" placeholder="Пошук за ПІБ співробітника..." autocomplete="off" oninput="onEmployeeSearchInput(this.value)" onfocus="onEmployeeSearchInput(this.value)">
+        <input type="text" id="empSearchInput" class="search-input-modern" placeholder="Пошук за ПІБ..." autocomplete="off" oninput="onEmployeeSearchInput(this.value)" onfocus="onEmployeeSearchInput(this.value)">
         <button class="search-clear-btn" id="empSearchClearBtn" onclick="clearEmployeeSearch()">✕</button>
         <div class="search-suggestions" id="empSearchSuggestions"></div>
     </div>
@@ -419,33 +402,30 @@
     <div class="employees-scroll-list" id="statsModalUsersList"></div>
 </div>
 
-<!-- МОДАЛЬНЕ ВІКНО ПРИЗНАЧЕННЯ КУРСІВ -->
 <div class="drawer-overlay" id="assignModalOverlay" onclick="closeAssignModal()"></div>
 <div class="assign-modal" id="assignModal">
     <div class="stats-modal-header">
-        <div class="stats-modal-title"><img src="https://raw.githubusercontent.com/StepStepi4/SkillHUB-Assistant/main/education/Education.svg" class="ui-icon"> Призначити курси</div>
+        <div class="stats-modal-title">
+            <img src="https://raw.githubusercontent.com/StepStepi4/SkillHUB-Assistant/main/education/Education.svg" class="ui-icon"> 
+            Призначити
+        </div>
         <button class="modal-close-btn" onclick="closeAssignModal()">✕</button>
     </div>
-    <div class="assign-list" id="assignCourseList"></div>
-    <button class="btn btn-glow" id="saveAssignBtn" onclick="saveAssignments()" style="display:none;">ЗБЕРЕГТИ</button>
-</div>
-
-<!-- Iframe вікно для SkillHUB Site -->
-<div class="drawer-overlay" id="skillhubModalOverlay" onclick="closeSkillhubFrame()"></div>
-<div class="skillhub-modal" id="skillhubModal">
-    <div class="skillhub-header">
-        <div style="font-weight:800; color:var(--text-main); display:flex; align-items:center; gap:8px;">
-            <img src="https://raw.githubusercontent.com/StepStepi4/SkillHUB-Assistant/main/education/info.svg" class="ui-icon" onerror="this.style.display='none'"> 
-            Детально про послугу
-        </div>
-        <button class="modal-close-btn" onclick="closeSkillhubFrame()">✕</button>
+    
+    <div style="margin-bottom: 14px; flex-shrink: 0;">
+        <label class="input-label" style="margin-bottom: 6px;">Дедлайн курсів (днів)</label>
+        <input type="number" id="assignDeadlineInput" class="search-input-modern" placeholder="Наприклад: 31" oninput="toggleDeadline(this.value)" min="0">
     </div>
-    <iframe class="skillhub-iframe" id="skillhubIframe" src=""></iframe>
+    
+    <div class="assign-list" id="assignCourseList"></div>
+    
+    <button class="btn btn-glow" id="saveAssignBtn" onclick="saveAssignments()" style="display:none; flex-shrink: 0; justify-content: center; align-items: center; gap: 8px;">
+        <img src="https://raw.githubusercontent.com/StepStepi4/SkillHUB-Assistant/main/education/save.svg" class="ui-icon" style="width:20px; height:20px; filter: brightness(0) invert(1);"> ЗБЕРЕГТИ
+    </button>
 </div>
 
 <div class="container">
 
-    <!-- ЕКРАН 1: ВХІД -->
     <div id="loginView" class="view active">
         <div class="login-wrapper">
             <div class="login-card">
@@ -476,7 +456,6 @@
         </div>
     </div>
 
-    <!-- ЕКРАН 2: КАБІНЕТ ТА СТАТИСТИКА -->
     <div id="cabinetView" class="view">
         <div class="nav-header">
             <div style="display: flex; gap: 12px; align-items: stretch; height: 48px;">
@@ -487,13 +466,11 @@
                 </div>
             </div>
 
-            <!-- Верхні кнопки -->
             <div class="nav-actions" id="cabinetNavActions">
                 <button id="achBtn" class="back-btn-sleek ach-btn" onclick="toggleAchievements()" title="Зароблені відзнаки">
                     <img src="https://raw.githubusercontent.com/StepStepi4/SkillHUB-Assistant/main/education/Achievement.svg" class="ui-icon">
                     <div class="notification-dot" id="achNotificationDot"></div>
                 </button>
-                <!-- Ручне оновлення даних -->
                 <button class="back-btn-sleek" onclick="forceRefresh()" title="Оновлення">
                     <img src="https://raw.githubusercontent.com/StepStepi4/SkillHUB-Assistant/main/education/Update.svg" class="ui-icon">
                 </button>
@@ -505,14 +482,15 @@
 
         <div id="managerActionBar" class="role-action-bar" style="display: none;">
             <button id="btnMyEducation" class="role-action-btn active" onclick="switchToMyCabinet()">
-                <img src="https://raw.githubusercontent.com/StepStepi4/SkillHUB-Assistant/main/education/Education.svg" class="ui-icon"> <span>Навчання</span>
+                <img src="https://raw.githubusercontent.com/StepStepi4/SkillHUB-Assistant/main/education/Education.svg" class="ui-icon"> 
+                <span>Навчання</span>
             </button>
             <button id="btnTeamStats" class="role-action-btn" onclick="openStatsModal()">
-                <img src="https://raw.githubusercontent.com/StepStepi4/SkillHUB-Assistant/main/education/Statistic.svg" class="ui-icon"> <span>Статистика співробітників</span>
+                <img src="https://raw.githubusercontent.com/StepStepi4/SkillHUB-Assistant/main/education/Statistic.svg" class="ui-icon"> 
+                <span>Команда</span>
             </button>
         </div>
 
-        <!-- Банер перегляду співробітника -->
         <div id="viewingEmployeeBanner" class="viewing-banner">
             <div style="display: flex; flex-direction: column; gap: 2px;">
                 <span style="font-size: 11px; font-weight: 800; text-transform: uppercase; color: var(--primary);">Перегляд співробітника</span>
@@ -525,50 +503,53 @@
             </div>
         </div>
 
-        <!-- Блок дедлайну -->
         <div id="deadlineContainer" style="display:none;">
             <span id="deadlineIcon"><img src="https://raw.githubusercontent.com/StepStepi4/SkillHUB-Assistant/main/education/Time.svg" class="ui-icon"></span>
             <span id="deadlineText"></span>
         </div>
 
-        <!-- Контейнер для кнопки Google Meet -->
         <div id="meetButtonContainer" style="display: none; margin-bottom: 20px;"></div>
 
-        <!-- Перемикач: Персональна статистика / Призначені курси -->
         <div class="tabs-container" id="cabinetTabs">
             <div class="tab-btn active" id="tabBtnStats" onclick="switchCabinetTab('stats', this)">
-                <img src="https://raw.githubusercontent.com/StepStepi4/SkillHUB-Assistant/main/education/My%20statistic.svg" class="ui-icon"> Персональна статистика
+                <img src="https://raw.githubusercontent.com/StepStepi4/SkillHUB-Assistant/main/education/My%20statistic.svg" class="ui-icon"> 
+                Статистика
             </div>
             <div class="tab-btn" id="tabBtnCourses" onclick="switchCabinetTab('courses', this)">
-                <img src="https://raw.githubusercontent.com/StepStepi4/SkillHUB-Assistant/main/education/Test.svg" class="ui-icon"> Призначені курси
+                <img src="https://raw.githubusercontent.com/StepStepi4/SkillHUB-Assistant/main/education/Test.svg" class="ui-icon"> 
+                Курси
             </div>
         </div>
 
-        <!-- ВКЛАДКА 1: ПЕРСОНАЛЬНА СТАТИСТИКА -->
         <div id="tabStats" class="tab-content active">
             <div class="section-title">
-                <img src="https://raw.githubusercontent.com/StepStepi4/SkillHUB-Assistant/main/education/Statistic.svg" class="ui-icon"> <span>Діаграма проходження курсів</span>
+                <img src="https://raw.githubusercontent.com/StepStepi4/SkillHUB-Assistant/main/education/Statistic.svg" class="ui-icon"> 
+                <span>Діаграма проходження</span>
             </div>
             
             <div class="chart-wrapper" id="chartContainerBox">
                 <canvas id="progressChart"></canvas>
             </div>
 
-            <!-- 8 показників -->
             <div id="learningAnalyticsBlock"></div>
 
             <div id="employeeEarnedAchievementsSection" style="display: none;">
-                <div class="section-title"><img src="https://raw.githubusercontent.com/StepStepi4/SkillHUB-Assistant/main/education/Achievement.svg" class="ui-icon"> Зароблені відзнаки</div>
+                <div class="section-title">
+                    <img src="https://raw.githubusercontent.com/StepStepi4/SkillHUB-Assistant/main/education/Achievement.svg" class="ui-icon"> 
+                    Зароблені відзнаки
+                </div>
                 <div id="employeeEarnedAchievementsList"></div>
             </div>
 
             <div id="employeeTestsResultsSection" style="display: none;">
-                <div class="section-title"><img src="https://raw.githubusercontent.com/StepStepi4/SkillHUB-Assistant/main/education/Test.svg" class="ui-icon"> Список тестів та результати</div>
+                <div class="section-title">
+                    <img src="https://raw.githubusercontent.com/StepStepi4/SkillHUB-Assistant/main/education/Test.svg" class="ui-icon"> 
+                    Список тестів та результати
+                </div>
                 <div id="employeeTestsResultsList"></div>
             </div>
         </div>
 
-        <!-- ВКЛАДКА 2: ПРИЗНАЧЕНІ КУРСИ -->
         <div id="tabCourses" class="tab-content">
             <div class="section-title" id="courseListTitle">
                 <img src="https://raw.githubusercontent.com/StepStepi4/SkillHUB-Assistant/main/education/Test.svg" class="ui-icon">
@@ -578,7 +559,6 @@
         </div>
     </div>
 
-    <!-- ЕКРАН 3: СПИСОК ТЕМ КУРСУ -->
     <div id="productView" class="view">
         <div class="nav-header">
             <div style="display: flex; gap: 12px; align-items: center; height: 48px;">
@@ -592,7 +572,6 @@
         <div id="productList"></div>
     </div>
 
-    <!-- ЕКРАН 4: ТЕОРІЯ -->
     <div id="theoryView" class="view">
         <div class="nav-header">
             <div style="display: flex; gap: 12px; align-items: center; height: 48px;">
@@ -607,7 +586,7 @@
             <img src="https://raw.githubusercontent.com/StepStepi4/SkillHUB-Assistant/main/education/Course.svg" style="width: 60px; height: 60px; object-fit: contain; margin: 0 auto; display: block;">
         </div>
         
-        <div id="theoryContentContainer"></div> <!-- Контейнер для всього (кнопки інфо + теорії) -->
+        <div id="theoryContentContainer"></div>
 
         <div style="background: rgba(239, 68, 68, 0.08); border: 1px solid rgba(239, 68, 68, 0.2); border-radius: 16px; padding: 16px; margin-bottom: 24px; text-align: left;" id="testWarningBox">
             <div style="font-size: 14px; font-weight: 800; color: var(--danger); margin-bottom: 6px; display: flex; align-items: center; gap: 8px;">
@@ -621,7 +600,6 @@
         <button class="btn btn-glow" id="startTestButton" onclick="startTest()">ПРОЙТИ ТЕСТ</button>
     </div>
 
-    <!-- ЕКРАН 5: ПОПЕРЕДЖЕННЯ ПЕРЕД ТЕСТОМ -->
     <div id="warningView" class="view">
         <div style="min-height: 70vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;">
             <div class="big-emoji" style="font-size: 80px;">⚠️</div>
@@ -642,7 +620,6 @@
         </div>
     </div>
 
-    <!-- ЕКРАН 6: ТЕСТУВАННЯ -->
     <div id="testView" class="view no-select">
         <div class="nav-header" style="align-items: center;">
             <div style="display: flex; align-items: center; gap: 12px;">
@@ -656,7 +633,6 @@
         <button class="btn btn-glow" id="submitTestBtn">НАСТУПНЕ ПИТАННЯ</button>
     </div>
 
-    <!-- ЕКРАН 7: РЕЗУЛЬТАТ -->
     <div id="resultView" class="view">
         <div style="min-height: 70vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;">
             <div class="big-emoji" id="resultEmoji" style="font-size: 80px;">🏆</div>
@@ -669,7 +645,6 @@
 
 </div>
 
-<!-- СКРИПТИ -->
 <script>
     const API_URL = 'https://script.google.com/macros/s/AKfycbyeoKV6uQRE_h0jy_QjkbQI7k_Py_UOYMvckWhHmGITT-q-Ai832__GWVxbdjxBgQ6zqA/exec'; 
     const CACHE_KEY = 'skillhub_v6_cache'; 
@@ -748,11 +723,11 @@
     window.sessionTotalTime = 0;
     window.theoryEntryTime = 0;
 
-    // --- СИСТЕМА ЖОРСТКОГО КОНТРОЛЮ СЕСІЙ (АНТИ-МУЛЬТИАККАУНТ) ---
     let sessionCheckInterval = null;
 
     function verifySingleDeviceSession() {
         if (!currentUser || !db || !db.activeSessions) return false;
+        
         let keyLow = String(currentUser).toLowerCase().trim();
         let serverToken = db.activeSessions[keyLow] || db.activeSessions[currentUser];
         let myToken = localStorage.getItem('skillhub_session_token');
@@ -768,10 +743,16 @@
         stopSessionHeartbeat();
         sessionCheckInterval = setInterval(async () => {
             if (!currentUser || !navigator.onLine) return;
+            
             try {
                 const controller = new AbortController();
                 const timeoutId = setTimeout(() => controller.abort(), 10000);
-                const response = await fetch(API_URL + '?nocache=' + Date.now(), { signal: controller.signal, cache: 'no-store' });
+                
+                const response = await fetch(API_URL + '?nocache=' + Date.now(), { 
+                    signal: controller.signal, 
+                    cache: 'no-store' 
+                });
+                
                 clearTimeout(timeoutId);
                 const data = await response.json();
                 
@@ -784,7 +765,9 @@
     }
 
     function stopSessionHeartbeat() {
-        if (sessionCheckInterval) clearInterval(sessionCheckInterval);
+        if (sessionCheckInterval) {
+            clearInterval(sessionCheckInterval);
+        }
     }
 
     window.addEventListener('storage', (e) => {
@@ -796,7 +779,6 @@
         }
     });
 
-    // --- ДОПОМІЖНІ ФУНКЦІЇ ---
     function cleanCourseTitle(str) { return !str ? "" : String(str).replace(/^✦\s*/, '').trim(); }
     function getCleanName(str) { return !str ? "" : cleanCourseTitle(str).toLowerCase().replace(/[^a-zа-яёієїґ0-9]/g, ''); }
     function escapeHTMLAttr(str) { return !str ? "" : String(str).replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/'/g, "&#39;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
@@ -812,6 +794,7 @@
     function parseTestResultString(resStr) {
         let out = { attempts: 0, time: 0, violations: 0, score: 0, raw: String(resStr || "").trim() };
         if (!out.raw) return out;
+        
         let m4 = out.raw.match(/^(\d+)\s*\/\s*(\d+)\s*\/\s*(\d+)\s*\/\s*(\d+)%?$/);
         if (m4) {
             out.attempts = parseInt(m4[1], 10) || 0;
@@ -820,6 +803,7 @@
             out.score = parseInt(m4[4], 10) || 0;
             return out;
         }
+        
         let m3 = out.raw.match(/^(\d+)\s*\/\s*(\d+)%(?:\/(\d+))?$/);
         if (m3) {
             out.attempts = parseInt(m3[1], 10) || 0;
@@ -827,6 +811,7 @@
             out.time = parseInt(m3[3], 10) || 0;
             return out;
         }
+        
         let m1 = out.raw.match(/^(\d+)%$/);
         if (m1) {
             out.attempts = 1;
@@ -840,6 +825,7 @@
         let h = Math.floor(secs / 3600);
         let m = Math.floor((secs % 3600) / 60);
         let s = secs % 60;
+        
         if (h > 0) return `${h} год ${m} хв ${s} с`;
         return `${m} хв ${s} с`;
     }
@@ -859,7 +845,6 @@
         }
     }
 
-    // --- НАВІГАЦІЯ ЕКРАНІВ З ПІДТРИМКОЮ BFCache ---
     function goBackToIndex() {
         if (document.referrer && document.referrer.includes('index.html')) {
             window.history.back(); 
@@ -875,8 +860,11 @@
         if (activeView === 'loginView') {
             goBackToIndex();
         } else if (activeView === 'cabinetView') {
-            if (windowViewingEmployee) switchToMyCabinet();
-            else goBackToIndex();
+            if (windowViewingEmployee) {
+                switchToMyCabinet();
+            } else {
+                goBackToIndex();
+            }
         } else if (activeView === 'productView') {
             switchView('cabinetView');
             switchCabinetTab('courses');
@@ -895,8 +883,10 @@
 
     function switchView(viewId) {
         document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
+        
         let target = document.getElementById(viewId);
         if (target) target.classList.add('active');
+        
         window.scrollTo(0, 0);
 
         const exitBtn = document.getElementById('floatingExitBtn');
@@ -922,7 +912,6 @@
         });
     }
 
-    // --- ОФЛАЙН-ЧЕРГА ТА СИНХРОНІЗАЦІЯ З БАЗОЮ ---
     function saveOfflineResult(login, product, score, time, violations) {
         try {
             let queue = JSON.parse(localStorage.getItem('skillhub_offline_queue') || '[]');
@@ -936,13 +925,17 @@
         try {
             let queueStr = localStorage.getItem('skillhub_offline_queue');
             if (!queueStr) return;
+            
             let queue = JSON.parse(queueStr);
             if (!Array.isArray(queue) || queue.length === 0) return;
 
             let remainingQueue = [];
             for (let item of queue) {
                 try {
-                    await fetch(API_URL, { method: 'POST', cache: 'no-store', mode: 'no-cors', body: JSON.stringify(item) });
+                    await fetch(API_URL, { 
+                        method: 'POST', cache: 'no-store', mode: 'no-cors', 
+                        body: JSON.stringify(item) 
+                    });
                 } catch (e) { remainingQueue.push(item); }
             }
             localStorage.setItem('skillhub_offline_queue', JSON.stringify(remainingQueue));
@@ -956,6 +949,7 @@
         try {
             const controller = new AbortController();
             const timeoutId = setTimeout(() => controller.abort(), 15000);
+            
             const response = await fetch(API_URL + '?nocache=' + Date.now(), { cache: 'no-store', signal: controller.signal });
             clearTimeout(timeoutId);
 
@@ -968,6 +962,7 @@
 
                 if (currentUser) {
                     if (verifySingleDeviceSession()) return;
+                    
                     let user = db.users.find(u => String(u.login).toLowerCase() === String(currentUser).toLowerCase());
                     if (user) {
                         if (document.getElementById('cabinetView').classList.contains('active')) {
@@ -1005,11 +1000,12 @@
         document.getElementById('loaderText').innerText = "Синхронізація з базою...";
     }
 
-    // --- ЛОГІКА ДЕДЛАЙНУ ---
     function computeRemainingDeadlineMs(userObj) {
         if (!userObj) return null;
+        
         let days = parseFloat(String(userObj.deadlineDays || "").replace(',', '.'));
         let assignStr = String(userObj.assignDate || "").trim();
+        
         if (!isNaN(days) && days > 0 && assignStr) {
             let m = assignStr.match(/^(\d{2})\.(\d{2})\.(\d{4})(?:\s+(\d{2}):(\d{2})(?::(\d{2}))?)?/);
             if (m) {
@@ -1020,17 +1016,29 @@
                 }
             }
         }
+        
         let rawK = String(userObj.deadline || "").trim();
         if (!rawK) return null;
         let lowK = rawK.toLowerCase();
         if (lowK.includes("вийшов") || lowK.includes("закрито") || lowK.includes("завершено") || lowK.includes("прострочено")) return -1;
 
-        let dMatch = rawK.match(/(\d+)\s*дн/i), hMatch = rawK.match(/(\d+)\s*год/i), mMatch = rawK.match(/(\d+)\s*хв/i);
+        let dMatch = rawK.match(/(\d+)\s*дн/i);
+        let hMatch = rawK.match(/(\d+)\s*год/i);
+        let mMatch = rawK.match(/(\d+)\s*хв/i);
+        
         if (dMatch || hMatch || mMatch) {
-            let totalMs = (((dMatch ? parseInt(dMatch[1], 10) : 0) * 24 + (hMatch ? parseInt(hMatch[1], 10) : 0)) * 60 + (mMatch ? parseInt(mMatch[1], 10) : 0)) * 60 * 1000;
+            let d = dMatch ? parseInt(dMatch[1], 10) : 0;
+            let h = hMatch ? parseInt(hMatch[1], 10) : 0;
+            let mins = mMatch ? parseInt(mMatch[1], 10) : 0;
+            let totalMs = ((d * 24 + h) * 60 + mins) * 60 * 1000;
+            
             let cacheKey = `dl_sync_${userObj.login}_${rawK}`;
             let syncEpoch = parseInt(sessionStorage.getItem(cacheKey), 10);
-            if (!syncEpoch) { syncEpoch = Date.now(); sessionStorage.setItem(cacheKey, String(syncEpoch)); }
+            
+            if (!syncEpoch) { 
+                syncEpoch = Date.now(); 
+                sessionStorage.setItem(cacheKey, String(syncEpoch)); 
+            }
             return totalMs - (Date.now() - syncEpoch);
         }
         return null;
@@ -1038,11 +1046,13 @@
 
     function startDeadlineTimer() {
         if (deadlineInterval) clearInterval(deadlineInterval);
+        
         const container = document.getElementById('deadlineContainer');
         const textEl = document.getElementById('deadlineText');
         const iconEl = document.getElementById('deadlineIcon');
 
         let user = windowViewingEmployee || (db && db.users ? db.users.find(u => String(u.login).toLowerCase() === String(currentUser).toLowerCase()) : null);
+        
         if (!user || detectRoleGroup(user.role) === 'guest') {
             container.style.display = 'none';
             window.isDeadlinePassed = false;
@@ -1052,6 +1062,7 @@
 
         const tick = () => {
             let diffMs = computeRemainingDeadlineMs(user);
+            
             if (diffMs === null) {
                 container.style.display = 'none';
                 container.classList.remove('deadline-urgent', 'deadline-expired');
@@ -1059,7 +1070,9 @@
                 updateTestButtonState();
                 return;
             }
+            
             container.style.display = 'flex';
+            
             if (diffMs <= 0) {
                 iconEl.style.display = 'none';
                 textEl.innerText = "🔒Час вийшов";
@@ -1070,11 +1083,18 @@
             } else {
                 iconEl.style.display = 'inline-block';
                 let totalMinutes = Math.floor(diffMs / (1000 * 60));
-                let d = Math.floor(totalMinutes / (60 * 24)), h = Math.floor((totalMinutes % (60 * 24)) / 60), m = totalMinutes % 60;
+                let d = Math.floor(totalMinutes / (60 * 24));
+                let h = Math.floor((totalMinutes % (60 * 24)) / 60);
+                let m = totalMinutes % 60;
+                
                 textEl.innerText = `Залишок до дедлайну: ${d} дн. ${h} год. ${String(m).padStart(2, '0')} хв.`;
                 window.isDeadlinePassed = false;
-                if (diffMs < 60 * 60 * 1000) { container.classList.add('deadline-urgent'); container.classList.remove('deadline-expired'); } 
-                else { container.classList.remove('deadline-urgent', 'deadline-expired'); }
+                
+                if (diffMs < 60 * 60 * 1000) { 
+                    container.classList.add('deadline-urgent'); container.classList.remove('deadline-expired'); 
+                } else { 
+                    container.classList.remove('deadline-urgent', 'deadline-expired'); 
+                }
                 updateTestButtonState();
             }
         };
@@ -1086,24 +1106,37 @@
         const btn = document.getElementById('startTestButton');
         const warnBox = document.getElementById('testWarningBox');
         if (!btn) return;
+        
         if (windowViewingEmployee || windowUserRole === 'guest') {
             btn.style.display = 'none';
             if (warnBox) warnBox.style.display = 'none';
             return;
         }
+        
         btn.style.display = 'flex';
         if (warnBox) warnBox.style.display = 'block';
 
-        if (window.isDeadlinePassed) { btn.disabled = true; btn.innerText = "🔒Час вийшов"; } 
-        else { btn.disabled = false; btn.innerText = "ПРОЙТИ ТЕСТ"; }
+        if (window.isDeadlinePassed) { 
+            btn.disabled = true; btn.innerText = "🔒Час вийшов"; 
+        } else { 
+            btn.disabled = false; btn.innerText = "ПРОЙТИ ТЕСТ"; 
+        }
     }
 
-    // --- АВТОРИЗАЦІЯ ТА СЕСІЇ ---
     function handleLoginSync(l, p) {
-        let user = db && db.users ? db.users.find(u => String(u.login || "").trim().toLowerCase() === String(l || "").toLowerCase() && (String(u.pass || "").trim().toLowerCase() === "" || String(u.pass || "").trim().toLowerCase() === String(p || "").toLowerCase())) : null;
+        let user = null;
+        if (db && db.users) {
+            user = db.users.find(u => {
+                let isLoginMatch = String(u.login || "").trim().toLowerCase() === String(l || "").toLowerCase();
+                let dbPass = String(u.pass || "").trim().toLowerCase();
+                let isPassMatch = (dbPass === "") || (dbPass === String(p || "").toLowerCase());
+                return isLoginMatch && isPassMatch;
+            });
+        }
         if (user) {
             currentUser = user.login;
             let userKeyLow = String(currentUser).toLowerCase().trim();
+            
             let myToken = localStorage.getItem('skillhub_session_token');
             let serverToken = db.activeSessions ? (db.activeSessions[userKeyLow] || db.activeSessions[currentUser]) : null;
             
@@ -1131,7 +1164,11 @@
         try {
             const l = document.getElementById('loginInput').value.trim();
             const p = document.getElementById('passInput').value.trim();
-            if (!l) { if (!isAuto) { err.innerText = "Введіть логін"; err.style.display = 'block'; } return; }
+            
+            if (!l) { 
+                if (!isAuto) { err.innerText = "Введіть логін"; err.style.display = 'block'; } 
+                return; 
+            }
             if (!isAuto && loginBtn) { loginBtn.disabled = true; loginBtn.innerText = "ВХІД..."; }
             err.style.display = 'none';
 
@@ -1140,7 +1177,13 @@
                 else { err.innerText = "База даних порожня. Перевірте інтернет!"; err.style.display = 'block'; return; }
             }
 
-            const findUser = (u) => String(u.login || "").trim().toLowerCase() === l.toLowerCase() && (String(u.pass || "").trim().toLowerCase() === "" || String(u.pass || "").trim().toLowerCase() === p.toLowerCase());
+            const findUser = (u) => {
+                let isLoginMatch = String(u.login || "").trim().toLowerCase() === l.toLowerCase();
+                let dbPass = String(u.pass || "").trim().toLowerCase();
+                let isPassMatch = (dbPass === "") || (dbPass === p.toLowerCase());
+                return isLoginMatch && isPassMatch;
+            };
+
             let user = db && db.users && db.users.find(findUser);
 
             if (!user && navigator.onLine && !isAuto) {
@@ -1155,6 +1198,7 @@
                 err.style.display = 'none';
 
                 let myToken = localStorage.getItem('skillhub_session_token');
+                
                 if (isAuto) {
                     let serverToken = db.activeSessions ? (db.activeSessions[userKeyLow] || db.activeSessions[currentUser]) : null;
                     if (serverToken && myToken && serverToken !== myToken) { logout(true, false); return; }
@@ -1196,6 +1240,7 @@
             try { fetch(API_URL, { method: 'POST', cache: 'no-store', mode: 'no-cors', body: JSON.stringify({ action: 'set_session', login: userKeyLow, token: '' }) }); } catch(e) {}
         }
         if (deadlineInterval) clearInterval(deadlineInterval);
+        
         closeStatsModal();
         closeAssignModal();
 
@@ -1210,6 +1255,7 @@
     function buildCoursesMap(user) {
         coursesMap = {};
         if (!user || !db) return;
+        
         let roleGroup = detectRoleGroup(user.role);
         let currentUserAssigned = user.assigned || [];
 
@@ -1223,8 +1269,8 @@
                 if (!coursesMap[groupName]) coursesMap[groupName] = [];
                 if (!coursesMap[groupName].some(existing => getCleanName(existing.product) === pClean)) {
                     coursesMap[groupName].push({
-                        course: groupName, product: cleanProdTitle, info: c.info, test: c.test, presentations: c.presentations || [],
-                        skillhubLink: c.skillhubLink || ""
+                        course: groupName, product: cleanProdTitle, info: c.info, test: c.test, 
+                        presentations: c.presentations || [], skillhubLink: c.skillhubLink || ""
                     });
                 }
             }
@@ -1238,7 +1284,7 @@
             container.innerHTML = `
                 <a href="${escapeHTMLAttr(user.meetLink)}" target="_blank" style="text-decoration:none; display:block;">
                     <div class="list-card" style="border-color: var(--primary); background: var(--primary-light); margin-bottom: 0;">
-                        <img src="https://raw.githubusercontent.com/StepStepi4/SkillHUB-Assistant/main/education/info.svg" class="ui-icon" style="width:28px; height:28px;" onerror="this.style.display='none'">
+                        <img src="https://raw.githubusercontent.com/StepStepi4/SkillHUB-Assistant/main/education/Meet.svg" class="ui-icon" style="width:28px; height:28px;" onerror="this.style.display='none'">
                         <div style="flex:1; margin-left: 14px;">
                             <div style="font-size: 15px; font-weight: 800; color: var(--primary);">Посилання на зустріч</div>
                             ${dateTxt}
@@ -1262,6 +1308,7 @@
 
         windowUserRole = detectRoleGroup(user.role);
         let firstName = extractFirstNameCapitalized(user);
+        
         document.getElementById('cabinetTitle').innerText = 'Особистий кабінет';
         document.getElementById('userWelcome').innerHTML = `Вітаю, ${escapeHTMLAttr(firstName)} <span style="font-size: 15px; margin-left: 4px;">👋</span>`;
 
@@ -1285,16 +1332,15 @@
         checkNewAchievements(user);
         
         startSessionHeartbeat();
-
         switchView('cabinetView');
         switchCabinetTab('stats');
     }
 
-    // --- МОДАЛЬНЕ ВІКНО СТАТИСТИКИ СПІВРОБІТНИКІВ ---
     function getAccessibleEmployeesList() {
         if (!db || !db.users) return [];
         let me = db.users.find(u => String(u.login).toLowerCase() === String(currentUser).toLowerCase());
         if (!me) return [];
+        
         let myNameLow = String(me.name || "").toLowerCase().trim();
         let myParts = myNameLow.split(/\s+/).filter(Boolean);
         let myShort = myParts.length >= 2 ? `${myParts[0]} ${myParts[1]}` : myNameLow;
@@ -1314,12 +1360,14 @@
 
     function openStatsModal() {
         if (windowUserRole !== 'owner' && windowUserRole !== 'manager') return;
+        
         document.getElementById('btnMyEducation').classList.remove('active');
         document.getElementById('btnTeamStats').classList.add('active');
         document.getElementById('modalRoleScopeHint').innerText = windowUserRole === 'owner' ? 'Усі співробітники (Власник)' : 'Підпорядковані співробітники (Керівник)';
         document.getElementById('empSearchInput').value = '';
         document.getElementById('empSearchClearBtn').style.display = 'none';
         document.getElementById('empSearchSuggestions').classList.remove('open');
+        
         renderStatsModalEmployees('');
         document.getElementById('statsModalOverlay').classList.add('active');
         document.getElementById('statsModal').classList.add('active');
@@ -1331,6 +1379,7 @@
         document.getElementById('statsModal').classList.remove('active');
         document.getElementById('empSearchSuggestions').classList.remove('open');
         document.body.style.overflow = '';
+        
         if (!windowViewingEmployee && (windowUserRole === 'owner' || windowUserRole === 'manager')) {
             document.getElementById('btnMyEducation').classList.add('active');
             document.getElementById('btnTeamStats').classList.remove('active');
@@ -1349,6 +1398,7 @@
     function onEmployeeSearchInput(query) {
         let q = String(query || "").trim();
         let qLow = q.toLowerCase();
+        
         const clearBtn = document.getElementById('empSearchClearBtn');
         const suggBox = document.getElementById('empSearchSuggestions');
         clearBtn.style.display = q.length > 0 ? 'block' : 'none';
@@ -1394,6 +1444,7 @@
             }
             let storeTxt = (u.store && u.store !== "-") ? `📍 ${escapeHTMLAttr(u.store)}` : "";
             let mgrTxt = u.manager ? `👤 Керівник: ${escapeHTMLAttr(u.manager)}` : "";
+            
             return `
                 <div class="list-card" style="border-color: ${borderCol}; padding: 14px 16px;" onclick="selectEmployeeFromModal('${escapeHTMLAttr(u.login)}')">
                     <div style="flex: 1; padding-right: 10px;">
@@ -1423,11 +1474,12 @@
     function selectEmployeeFromModal(login) {
         let emp = db.users.find(u => String(u.login).toLowerCase() === String(login).toLowerCase());
         if (!emp) return;
+        
         windowViewingEmployee = emp;
         closeStatsModal();
+        
         document.getElementById('btnMyEducation').classList.remove('active');
         document.getElementById('btnTeamStats').classList.add('active');
-
         document.getElementById('cabinetTitle').innerText = 'Статистика співробітника';
         document.getElementById('userWelcome').innerHTML = `<strong style="color:var(--text-main); font-size: 16px;">${escapeHTMLAttr(emp.name)}</strong>`;
 
@@ -1435,6 +1487,7 @@
         if (emp.role) metaParts.push(emp.role);
         if (emp.store && emp.store !== "-") metaParts.push(emp.store);
         if (emp.manager) metaParts.push(`Керівник: ${emp.manager}`);
+        
         document.getElementById('viewingEmployeeMeta').innerText = metaParts.join(' • ');
         
         let assignBtn = document.getElementById('assignCoursesBtn');
@@ -1459,9 +1512,12 @@
     // --- ПРИЗНАЧЕННЯ КУРСІВ (МОДАЛЬНЕ ВІКНО) ---
     let originalAssignments = {};
     let pendingAssignments = {};
+    let originalDeadline = "";
+    let pendingDeadline = "";
 
     function openAssignModal() {
         if (!windowViewingEmployee) return;
+        
         const modal = document.getElementById('assignModal');
         const overlay = document.getElementById('assignModalOverlay');
         const list = document.getElementById('assignCourseList');
@@ -1470,10 +1526,23 @@
         let html = '';
         originalAssignments = {};
         pendingAssignments = {};
+        originalDeadline = String(windowViewingEmployee.deadlineDays || "").trim();
+        pendingDeadline = originalDeadline;
+
+        let deadlineInput = document.getElementById('assignDeadlineInput');
+        deadlineInput.value = originalDeadline;
+
+        // Керівник не може змінювати дедлайн, якщо він вже стоїть (більше 0)
+        if (windowUserRole === 'manager' && originalDeadline && parseInt(originalDeadline) > 0) {
+            deadlineInput.disabled = true;
+        } else {
+            deadlineInput.disabled = false;
+        }
 
         if (db.courseCatalog && db.courseCatalog.length > 0) {
             db.courseCatalog.forEach(c => {
                 if (!c.name || c.name.trim() === '') return;
+                
                 let cleanKey = c.name.toLowerCase().replace(/[^a-zа-яёієїґ0-9]/g, '');
                 let isAssigned = windowViewingEmployee.assigned.some(a => getCleanName(a) === cleanKey);
                 
@@ -1482,7 +1551,7 @@
 
                 let isDisabled = false;
                 if (windowUserRole === 'manager' && isAssigned) {
-                    isDisabled = true; // Керівник не може знімати галочки
+                    isDisabled = true; 
                 }
 
                 html += `
@@ -1510,13 +1579,26 @@
         document.body.style.overflow = '';
     }
 
+    function toggleDeadline(val) {
+        pendingDeadline = String(val).trim();
+        checkAssignChanges();
+    }
+
     function toggleAssign(key, isChecked) {
         pendingAssignments[key] = isChecked;
+        checkAssignChanges();
+    }
+
+    function checkAssignChanges() {
         let hasChanges = false;
+        if (pendingDeadline !== originalDeadline) hasChanges = true;
         for (let k in pendingAssignments) {
-            if (pendingAssignments[k] !== originalAssignments[k]) { hasChanges = true; break; }
+            if (pendingAssignments[k] !== originalAssignments[k]) { 
+                hasChanges = true; 
+                break; 
+            }
         }
-        document.getElementById('saveAssignBtn').style.display = hasChanges ? 'block' : 'none';
+        document.getElementById('saveAssignBtn').style.display = hasChanges ? 'flex' : 'none';
     }
 
     async function saveAssignments() {
@@ -1526,49 +1608,47 @@
                 changes[key] = pendingAssignments[key];
             }
         }
+        
         const saveBtn = document.getElementById('saveAssignBtn');
-        saveBtn.innerText = "ЗБЕРЕЖЕННЯ..."; saveBtn.disabled = true;
+        saveBtn.innerHTML = '<div class="spinner" style="width:20px;height:20px;margin:0;border-width:2px;border-top-color:#fff;"></div>';
+        saveBtn.disabled = true;
+
+        let payload = { 
+            action: 'assign_courses', 
+            targetLogin: windowViewingEmployee.login, 
+            assignments: changes 
+        };
+        
+        if (pendingDeadline !== originalDeadline) {
+            payload.deadlineDays = pendingDeadline;
+        }
 
         try {
             await fetch(API_URL, {
                 method: 'POST', mode: 'no-cors', cache: 'no-store',
-                body: JSON.stringify({ action: 'assign_courses', targetLogin: windowViewingEmployee.login, assignments: changes })
+                body: JSON.stringify(payload)
             });
+            
             closeAssignModal();
-            // Оновлюємо дані локально
             setTimeout(() => { forceRefresh(); }, 500); 
         } catch(e) {
             alert("Помилка збереження!");
-            saveBtn.innerText = "ЗБЕРЕГТИ"; saveBtn.disabled = false;
+            saveBtn.innerHTML = `<img src="https://raw.githubusercontent.com/StepStepi4/SkillHUB-Assistant/main/education/save.svg" class="ui-icon" style="width:20px; height:20px; filter: brightness(0) invert(1);"> ЗБЕРЕГТИ`;
+            saveBtn.disabled = false;
         }
     }
 
-    // --- МОДАЛЬНЕ ВІКНО Iframe SkillHUB ---
-    function openSkillhubFrame(url) {
-        if (!url) return;
-        document.getElementById('skillhubIframe').src = url;
-        document.getElementById('skillhubModalOverlay').classList.add('active');
-        document.getElementById('skillhubModal').classList.add('active');
-        document.body.style.overflow = 'hidden';
-    }
-
-    function closeSkillhubFrame() {
-        document.getElementById('skillhubIframe').src = '';
-        document.getElementById('skillhubModalOverlay').classList.remove('active');
-        document.getElementById('skillhubModal').classList.remove('active');
-        document.body.style.overflow = '';
-    }
-
-    // --- РОЗРАХУНОК ПОКАЗНИКІВ СТАТИСТИКИ ---
     function computeUserMetrics(user) {
         let st = user.stats || {};
         let assignedList = user.assigned || [];
         let resMap = user.results || {};
+        
         let calcStarted = 0, calcCompleted = 0, calcAttempts = 0, calcTime = 0, calcViolations = 0, scoreSum = 0, scoreCount = 0;
 
         assignedList.forEach(courseName => {
             let key = getCleanName(courseName);
             let rawStr = resMap[courseName] || resMap[key];
+            
             if (rawStr) {
                 let parsed = parseTestResultString(rawStr);
                 if (parsed.attempts > 0 || parsed.score > 0) {
@@ -1645,8 +1725,7 @@
         };
 
         const bgColor = document.documentElement.getAttribute('data-theme') === 'dark' ? '#1c1c1e' : '#ffffff';
-        const colorPassed = '#164f58', colorProgress = '#3a9c9f';
-        const colorRemaining = document.documentElement.getAttribute('data-theme') === 'dark' ? '#38383a' : '#e5e7eb';
+        const colorPassed = '#164f58', colorProgress = '#3a9c9f', colorRemaining = document.documentElement.getAttribute('data-theme') === 'dark' ? '#38383a' : '#e5e7eb';
 
         window.progressChartInstance = new Chart(ctx, {
             type: 'doughnut',
@@ -1690,20 +1769,15 @@
             coursesHtml = '<div style="text-align:center; background: var(--card-bg); border-radius: 16px; border: 1px solid var(--border); color: var(--text-muted); padding: 30px 20px; font-weight: 600;">Наразі не призначено жодного курсу.</div>';
         } else {
             coursesHtml = courseNames.map(name => {
-                let parsed = formatWithCustomEmoji(name, '📘');
-                let safeName = escapeHTMLAttr(name);
-                let courseProducts = coursesMap[name] || [];
+                let parsed = formatWithCustomEmoji(name, '📘'), safeName = escapeHTMLAttr(name), courseProducts = coursesMap[name] || [];
                 let cTotal = courseProducts.length, cPassed = 0;
 
                 courseProducts.forEach(p => {
-                    let cleanP = getCleanName(p.product);
-                    let resStr = res[p.product] || res[cleanP];
+                    let cleanP = getCleanName(p.product), resStr = res[p.product] || res[cleanP];
                     if (resStr) { let pr = parseTestResultString(resStr); if (pr.score >= 80) cPassed++; }
                 });
 
-                let isCourseDone = (cTotal > 0 && cPassed === cTotal);
-                let cardClass = isCourseDone ? "list-card completed" : "list-card";
-
+                let cardClass = (cTotal > 0 && cPassed === cTotal) ? "list-card completed" : "list-card";
                 return `
                 <div class="${cardClass}" onclick="openCourse(this.getAttribute('data-name'))" data-name="${safeName}">
                     <div class="list-card-title" style="flex: 1;"><span style="font-size: 16px;">${parsed.title}</span></div>
@@ -1837,10 +1911,10 @@
         let linkBtnHtml = '';
         if (currentProductData.skillhubLink) {
             linkBtnHtml = `
-            <button class="btn btn-secondary" style="margin-bottom: 20px; border-color: var(--primary); color: var(--primary); padding: 12px; font-size: 13px;" onclick="openSkillhubFrame('${escapeHTMLAttr(currentProductData.skillhubLink)}')">
+            <a href="${escapeHTMLAttr(currentProductData.skillhubLink)}" target="_blank" rel="noopener noreferrer" class="btn btn-secondary" style="margin-bottom: 20px; border-color: var(--primary); color: var(--primary); padding: 12px; font-size: 13px; text-decoration: none; display: flex; justify-content: center; align-items: center; gap: 8px;">
                 <img src="https://raw.githubusercontent.com/StepStepi4/SkillHUB-Assistant/main/education/info.svg" class="ui-icon" onerror="this.style.display='none'">
                 Детально про послугу
-            </button>`;
+            </a>`;
         }
 
         let rawLines = String(currentProductData.info || "Теоретичний матеріал відсутній.").split('\n').filter(l => l.trim() !== "");
@@ -1862,7 +1936,6 @@
         switchView('theoryView');
     }
 
-    // --- АЧІВКИ ---
     function checkNewAchievements(user) {
         if (!user) return;
         let achCodes = user.achievements ? String(user.achievements).split(',').map(s => s.trim()).filter(Boolean) : [];
@@ -1921,7 +1994,6 @@
         requestAnimationFrame(() => { document.getElementById('achList').innerHTML = html; });
     }
 
-    // --- ПАРСИНГ ТА ПРОХОДЖЕННЯ ТЕСТІВ ---
     function parseTestString(testStr) {
         let lines = String(testStr || "").split('\n').map(l => l.trim()).filter(Boolean), questions = [], currentQ = null;
         lines.forEach(line => {
@@ -2068,7 +2140,6 @@
         } else { saveOfflineResult(currentUser, cleanTitle, totalScore, timeSpentNow, violationAdded); }
     }
 
-    // --- АНТИ-ЧІТ ---
     document.addEventListener('contextmenu', event => { if (document.getElementById('testView').classList.contains('active')) event.preventDefault(); });
     document.addEventListener('copy', event => { if (document.getElementById('testView').classList.contains('active')) { event.preventDefault(); alert("Копіювання матеріалів тесту заборонено!"); } });
     document.addEventListener('keydown', (e) => {
@@ -2094,7 +2165,6 @@
         if (wrap && sugg && !wrap.contains(e.target)) sugg.classList.remove('open');
     });
 
-    // --- ІНІЦІАЛІЗАЦІЯ ---
     document.addEventListener('DOMContentLoaded', async () => {
         let hasCache = false;
         try {
