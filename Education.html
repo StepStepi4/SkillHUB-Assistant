@@ -320,7 +320,7 @@
             background: linear-gradient(135deg, rgba(22, 79, 88, 0.12), rgba(35, 122, 136, 0.12));
             border: 1.5px solid rgba(22, 79, 88, 0.3);
             border-radius: 16px; padding: 12px 14px; margin-bottom: 16px;
-            display: none; align-items: center; justify-content: space-between; gap: 10px;
+            display: none; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap;
         }
 
         .no-select { user-select: none; -webkit-user-select: none; }
@@ -334,6 +334,33 @@
         }
         body.cheating .container { display: none !important; }
         body.cheating #antiCheatScreen { display: flex !important; }
+
+        /* --- НОВІ МОДАЛЬНІ ВІКНА --- */
+        /* iframe для SkillHUB */
+        .skillhub-modal {
+            position: fixed; top: 5%; left: 5%; width: 90%; height: 90%;
+            background: var(--bg); z-index: 10005; border-radius: 20px;
+            opacity: 0; display: none; flex-direction: column; overflow: hidden;
+            box-shadow: 0 24px 48px rgba(0,0,0,0.3); transform: scale(0.95);
+            transition: all 0.3s ease;
+        }
+        .skillhub-modal.active { opacity: 1; display: flex; transform: scale(1); }
+        .skillhub-header {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 14px 20px; background: var(--card-bg); border-bottom: 1px solid var(--border);
+        }
+        .skillhub-iframe { flex: 1; width: 100%; border: none; background: #fff; }
+
+        /* Вікно призначення курсів */
+        .assign-modal {
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.92);
+            background: var(--bg); z-index: 10003; width: 94%; max-width: 420px;
+            border-radius: 24px; padding: 22px 18px; opacity: 0; display: none;
+            transition: all 0.3s ease; box-shadow: 0 24px 48px rgba(0,0,0,0.25);
+            flex-direction: column; max-height: 80vh;
+        }
+        .assign-modal.active { opacity: 1; transform: translate(-50%, -50%) scale(1); display: flex; }
+        .assign-list { flex: 1; overflow-y: auto; margin-bottom: 16px; padding-right: 4px; }
     </style>
 </head>
 <body>
@@ -390,6 +417,30 @@
     </div>
 
     <div class="employees-scroll-list" id="statsModalUsersList"></div>
+</div>
+
+<!-- МОДАЛЬНЕ ВІКНО ПРИЗНАЧЕННЯ КУРСІВ -->
+<div class="drawer-overlay" id="assignModalOverlay" onclick="closeAssignModal()"></div>
+<div class="assign-modal" id="assignModal">
+    <div class="stats-modal-header">
+        <div class="stats-modal-title"><img src="https://raw.githubusercontent.com/StepStepi4/SkillHUB-Assistant/main/education/Education.svg" class="ui-icon"> Призначити курси</div>
+        <button class="modal-close-btn" onclick="closeAssignModal()">✕</button>
+    </div>
+    <div class="assign-list" id="assignCourseList"></div>
+    <button class="btn btn-glow" id="saveAssignBtn" onclick="saveAssignments()" style="display:none;">ЗБЕРЕГТИ</button>
+</div>
+
+<!-- Iframe вікно для SkillHUB Site -->
+<div class="drawer-overlay" id="skillhubModalOverlay" onclick="closeSkillhubFrame()"></div>
+<div class="skillhub-modal" id="skillhubModal">
+    <div class="skillhub-header">
+        <div style="font-weight:800; color:var(--text-main); display:flex; align-items:center; gap:8px;">
+            <img src="https://raw.githubusercontent.com/StepStepi4/SkillHUB-Assistant/main/education/info.svg" class="ui-icon" onerror="this.style.display='none'"> 
+            Детально про послугу
+        </div>
+        <button class="modal-close-btn" onclick="closeSkillhubFrame()">✕</button>
+    </div>
+    <iframe class="skillhub-iframe" id="skillhubIframe" src=""></iframe>
 </div>
 
 <div class="container">
@@ -467,7 +518,8 @@
                 <span style="font-size: 11px; font-weight: 800; text-transform: uppercase; color: var(--primary);">Перегляд співробітника</span>
                 <span id="viewingEmployeeMeta" style="font-size: 12px; font-weight: 600; color: var(--text-muted);"></span>
             </div>
-            <div style="display: flex; gap: 6px;">
+            <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+                <button id="assignCoursesBtn" class="btn-secondary" style="padding: 8px 12px; border-radius: 10px; font-size: 12px; font-weight: 800; cursor: pointer; display:none;" onclick="openAssignModal()">Призначити курси</button>
                 <button class="btn-secondary" style="padding: 8px 12px; border-radius: 10px; font-size: 12px; font-weight: 800; cursor: pointer;" onclick="openStatsModal()">Змінити</button>
                 <button class="btn-secondary" style="padding: 8px 12px; border-radius: 10px; font-size: 12px; font-weight: 800; cursor: pointer; color: var(--primary);" onclick="switchToMyCabinet()">Мій кабінет</button>
             </div>
@@ -478,6 +530,9 @@
             <span id="deadlineIcon"><img src="https://raw.githubusercontent.com/StepStepi4/SkillHUB-Assistant/main/education/Time.svg" class="ui-icon"></span>
             <span id="deadlineText"></span>
         </div>
+
+        <!-- Контейнер для кнопки Google Meet -->
+        <div id="meetButtonContainer" style="display: none; margin-bottom: 20px;"></div>
 
         <!-- Перемикач: Персональна статистика / Призначені курси -->
         <div class="tabs-container" id="cabinetTabs">
@@ -551,7 +606,8 @@
         <div class="big-emoji" id="theoryEmoji">
             <img src="https://raw.githubusercontent.com/StepStepi4/SkillHUB-Assistant/main/education/Course.svg" style="width: 60px; height: 60px; object-fit: contain; margin: 0 auto; display: block;">
         </div>
-        <div id="theoryContent" class="theory-box"></div>
+        
+        <div id="theoryContentContainer"></div> <!-- Контейнер для всього (кнопки інфо + теорії) -->
 
         <div style="background: rgba(239, 68, 68, 0.08); border: 1px solid rgba(239, 68, 68, 0.2); border-radius: 16px; padding: 16px; margin-bottom: 24px; text-align: left;" id="testWarningBox">
             <div style="font-size: 14px; font-weight: 800; color: var(--danger); margin-bottom: 6px; display: flex; align-items: center; gap: 8px;">
@@ -702,7 +758,7 @@
         let myToken = localStorage.getItem('skillhub_session_token');
         
         if (serverToken && myToken && serverToken !== myToken) {
-            logout(true, false); // true = примусовий логаут з алертом
+            logout(true, false);
             return true;
         }
         return false;
@@ -713,7 +769,6 @@
         sessionCheckInterval = setInterval(async () => {
             if (!currentUser || !navigator.onLine) return;
             try {
-                // Фоново скачуємо актуальні сесії, не турбуючи UI
                 const controller = new AbortController();
                 const timeoutId = setTimeout(() => controller.abort(), 10000);
                 const response = await fetch(API_URL + '?nocache=' + Date.now(), { signal: controller.signal, cache: 'no-store' });
@@ -722,44 +777,29 @@
                 
                 if (data && data.educationData && data.educationData.activeSessions) {
                     db.activeSessions = data.educationData.activeSessions;
-                    verifySingleDeviceSession(); // Перевіряємо чи наш токен ще актуальний
+                    verifySingleDeviceSession(); 
                 }
-            } catch(e) {
-                // Ігноруємо помилки мережі під час фонової перевірки
-            }
-        }, 12000); // Перевірка кожні 12 секунд
+            } catch(e) {}
+        }, 12000);
     }
 
     function stopSessionHeartbeat() {
         if (sessionCheckInterval) clearInterval(sessionCheckInterval);
     }
 
-    // Відстеження зміни токену в інших вкладках цього ж браузера (Моментально)
     window.addEventListener('storage', (e) => {
-        if (e.key === 'skillhub_session_token') {
-            if (currentUser && e.newValue !== e.oldValue) {
-                // Токен змінився в іншій вкладці - відразу викидаємо
-                verifySingleDeviceSession();
-            }
+        if (e.key === 'skillhub_session_token' && currentUser && e.newValue !== e.oldValue) {
+            verifySingleDeviceSession();
         }
-        if (e.key === 'skillhub_edu_creds' && e.newValue === null) {
-            if (currentUser) logout(false, false);
+        if (e.key === 'skillhub_edu_creds' && e.newValue === null && currentUser) {
+            logout(false, false);
         }
     });
-    // -------------------------------------------------------------
 
     // --- ДОПОМІЖНІ ФУНКЦІЇ ---
-    function cleanCourseTitle(str) {
-        return !str ? "" : String(str).replace(/^✦\s*/, '').trim();
-    }
-
-    function getCleanName(str) {
-        return !str ? "" : cleanCourseTitle(str).toLowerCase().replace(/[^a-zа-яёієїґ0-9]/g, '');
-    }
-
-    function escapeHTMLAttr(str) {
-        return !str ? "" : String(str).replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/'/g, "&#39;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-    }
+    function cleanCourseTitle(str) { return !str ? "" : String(str).replace(/^✦\s*/, '').trim(); }
+    function getCleanName(str) { return !str ? "" : cleanCourseTitle(str).toLowerCase().replace(/[^a-zа-яёієїґ0-9]/g, ''); }
+    function escapeHTMLAttr(str) { return !str ? "" : String(str).replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/'/g, "&#39;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
 
     function extractFirstNameCapitalized(userObj) {
         if (!userObj) return "Колега";
@@ -772,7 +812,6 @@
     function parseTestResultString(resStr) {
         let out = { attempts: 0, time: 0, violations: 0, score: 0, raw: String(resStr || "").trim() };
         if (!out.raw) return out;
-
         let m4 = out.raw.match(/^(\d+)\s*\/\s*(\d+)\s*\/\s*(\d+)\s*\/\s*(\d+)%?$/);
         if (m4) {
             out.attempts = parseInt(m4[1], 10) || 0;
@@ -781,7 +820,6 @@
             out.score = parseInt(m4[4], 10) || 0;
             return out;
         }
-
         let m3 = out.raw.match(/^(\d+)\s*\/\s*(\d+)%(?:\/(\d+))?$/);
         if (m3) {
             out.attempts = parseInt(m3[1], 10) || 0;
@@ -789,7 +827,6 @@
             out.time = parseInt(m3[3], 10) || 0;
             return out;
         }
-
         let m1 = out.raw.match(/^(\d+)%$/);
         if (m1) {
             out.attempts = 1;
@@ -838,11 +875,8 @@
         if (activeView === 'loginView') {
             goBackToIndex();
         } else if (activeView === 'cabinetView') {
-            if (windowViewingEmployee) {
-                switchToMyCabinet();
-            } else {
-                goBackToIndex();
-            }
+            if (windowViewingEmployee) switchToMyCabinet();
+            else goBackToIndex();
         } else if (activeView === 'productView') {
             switchView('cabinetView');
             switchCabinetTab('courses');
@@ -868,7 +902,6 @@
         const exitBtn = document.getElementById('floatingExitBtn');
         exitBtn.style.display = (viewId === 'testView') ? 'none' : 'flex';
 
-        // Знімаємо fast-boot після відображення контенту, щоб зберегти безшовність
         requestAnimationFrame(() => {
             document.documentElement.classList.remove('fast-boot');
         });
@@ -928,16 +961,13 @@
 
             const data = await response.json();
             if (!data.error && data.educationData) {
-                try { 
-                    localStorage.setItem(CACHE_KEY, JSON.stringify(data)); 
-                } catch(e) {}
+                try { localStorage.setItem(CACHE_KEY, JSON.stringify(data)); } catch(e) {}
                 
                 db = data.educationData;
                 globalAchievements = data.achievementData || [];
 
                 if (currentUser) {
                     if (verifySingleDeviceSession()) return;
-
                     let user = db.users.find(u => String(u.login).toLowerCase() === String(currentUser).toLowerCase());
                     if (user) {
                         if (document.getElementById('cabinetView').classList.contains('active')) {
@@ -978,53 +1008,31 @@
     // --- ЛОГІКА ДЕДЛАЙНУ ---
     function computeRemainingDeadlineMs(userObj) {
         if (!userObj) return null;
-
         let days = parseFloat(String(userObj.deadlineDays || "").replace(',', '.'));
         let assignStr = String(userObj.assignDate || "").trim();
         if (!isNaN(days) && days > 0 && assignStr) {
             let m = assignStr.match(/^(\d{2})\.(\d{2})\.(\d{4})(?:\s+(\d{2}):(\d{2})(?::(\d{2}))?)?/);
             if (m) {
-                let dObj = new Date(
-                    parseInt(m[3], 10),
-                    parseInt(m[2], 10) - 1,
-                    parseInt(m[1], 10),
-                    parseInt(m[4] || "0", 10),
-                    parseInt(m[5] || "0", 10),
-                    parseInt(m[6] || "0", 10)
-                );
+                let dObj = new Date(parseInt(m[3], 10), parseInt(m[2], 10) - 1, parseInt(m[1], 10), parseInt(m[4] || "0", 10), parseInt(m[5] || "0", 10), parseInt(m[6] || "0", 10));
                 if (!isNaN(dObj.getTime())) {
                     let targetMs = dObj.getTime() + days * 24 * 60 * 60 * 1000;
                     return targetMs - Date.now();
                 }
             }
         }
-
         let rawK = String(userObj.deadline || "").trim();
         if (!rawK) return null;
         let lowK = rawK.toLowerCase();
-        if (lowK.includes("вийшов") || lowK.includes("закрито") || lowK.includes("завершено") || lowK.includes("прострочено")) {
-            return -1;
-        }
+        if (lowK.includes("вийшов") || lowK.includes("закрито") || lowK.includes("завершено") || lowK.includes("прострочено")) return -1;
 
-        let dMatch = rawK.match(/(\d+)\s*дн/i);
-        let hMatch = rawK.match(/(\d+)\s*год/i);
-        let mMatch = rawK.match(/(\d+)\s*хв/i);
-
+        let dMatch = rawK.match(/(\d+)\s*дн/i), hMatch = rawK.match(/(\d+)\s*год/i), mMatch = rawK.match(/(\d+)\s*хв/i);
         if (dMatch || hMatch || mMatch) {
-            let d = dMatch ? parseInt(dMatch[1], 10) : 0;
-            let h = hMatch ? parseInt(hMatch[1], 10) : 0;
-            let mins = mMatch ? parseInt(mMatch[1], 10) : 0;
-            let totalMs = ((d * 24 + h) * 60 + mins) * 60 * 1000;
-
+            let totalMs = (((dMatch ? parseInt(dMatch[1], 10) : 0) * 24 + (hMatch ? parseInt(hMatch[1], 10) : 0)) * 60 + (mMatch ? parseInt(mMatch[1], 10) : 0)) * 60 * 1000;
             let cacheKey = `dl_sync_${userObj.login}_${rawK}`;
             let syncEpoch = parseInt(sessionStorage.getItem(cacheKey), 10);
-            if (!syncEpoch) {
-                syncEpoch = Date.now();
-                sessionStorage.setItem(cacheKey, String(syncEpoch));
-            }
+            if (!syncEpoch) { syncEpoch = Date.now(); sessionStorage.setItem(cacheKey, String(syncEpoch)); }
             return totalMs - (Date.now() - syncEpoch);
         }
-
         return null;
     }
 
@@ -1051,38 +1059,25 @@
                 updateTestButtonState();
                 return;
             }
-
             container.style.display = 'flex';
-
             if (diffMs <= 0) {
                 iconEl.style.display = 'none';
                 textEl.innerText = "🔒Час вийшов";
-                container.classList.remove('deadline-urgent');
-                container.classList.add('deadline-expired');
+                container.classList.remove('deadline-urgent'); container.classList.add('deadline-expired');
                 window.isDeadlinePassed = true;
                 clearInterval(deadlineInterval);
                 updateTestButtonState();
             } else {
                 iconEl.style.display = 'inline-block';
                 let totalMinutes = Math.floor(diffMs / (1000 * 60));
-                let d = Math.floor(totalMinutes / (60 * 24));
-                let h = Math.floor((totalMinutes % (60 * 24)) / 60);
-                let m = totalMinutes % 60;
-                let mPad = String(m).padStart(2, '0');
-
-                textEl.innerText = `Залишок до дедлайну: ${d} дн. ${h} год. ${mPad} хв.`;
+                let d = Math.floor(totalMinutes / (60 * 24)), h = Math.floor((totalMinutes % (60 * 24)) / 60), m = totalMinutes % 60;
+                textEl.innerText = `Залишок до дедлайну: ${d} дн. ${h} год. ${String(m).padStart(2, '0')} хв.`;
                 window.isDeadlinePassed = false;
-
-                if (diffMs < 60 * 60 * 1000) {
-                    container.classList.add('deadline-urgent');
-                    container.classList.remove('deadline-expired');
-                } else {
-                    container.classList.remove('deadline-urgent', 'deadline-expired');
-                }
+                if (diffMs < 60 * 60 * 1000) { container.classList.add('deadline-urgent'); container.classList.remove('deadline-expired'); } 
+                else { container.classList.remove('deadline-urgent', 'deadline-expired'); }
                 updateTestButtonState();
             }
         };
-
         tick();
         deadlineInterval = setInterval(tick, 1000);
     }
@@ -1091,65 +1086,37 @@
         const btn = document.getElementById('startTestButton');
         const warnBox = document.getElementById('testWarningBox');
         if (!btn) return;
-
         if (windowViewingEmployee || windowUserRole === 'guest') {
             btn.style.display = 'none';
             if (warnBox) warnBox.style.display = 'none';
             return;
         }
-
         btn.style.display = 'flex';
         if (warnBox) warnBox.style.display = 'block';
 
-        if (window.isDeadlinePassed) {
-            btn.disabled = true;
-            btn.innerText = "🔒Час вийшов";
-        } else {
-            btn.disabled = false;
-            btn.innerText = "ПРОЙТИ ТЕСТ";
-        }
+        if (window.isDeadlinePassed) { btn.disabled = true; btn.innerText = "🔒Час вийшов"; } 
+        else { btn.disabled = false; btn.innerText = "ПРОЙТИ ТЕСТ"; }
     }
 
     // --- АВТОРИЗАЦІЯ ТА СЕСІЇ ---
     function handleLoginSync(l, p) {
-        let user = null;
-        if (db && db.users) {
-            user = db.users.find(u => {
-                let isLoginMatch = String(u.login || "").trim().toLowerCase() === String(l || "").toLowerCase();
-                let dbPass = String(u.pass || "").trim().toLowerCase();
-                let isPassMatch = (dbPass === "") || (dbPass === String(p || "").toLowerCase());
-                return isLoginMatch && isPassMatch;
-            });
-        }
-
+        let user = db && db.users ? db.users.find(u => String(u.login || "").trim().toLowerCase() === String(l || "").toLowerCase() && (String(u.pass || "").trim().toLowerCase() === "" || String(u.pass || "").trim().toLowerCase() === String(p || "").toLowerCase())) : null;
         if (user) {
             currentUser = user.login;
             let userKeyLow = String(currentUser).toLowerCase().trim();
-            
             let myToken = localStorage.getItem('skillhub_session_token');
             let serverToken = db.activeSessions ? (db.activeSessions[userKeyLow] || db.activeSessions[currentUser]) : null;
             
-            if (serverToken && myToken && serverToken !== myToken) {
-                logout(true, false);
-                return;
-            }
+            if (serverToken && myToken && serverToken !== myToken) { logout(true, false); return; }
             if (!myToken || (serverToken && serverToken !== myToken)) {
                 myToken = Date.now().toString() + "_" + Math.random().toString(36).substring(2, 10);
                 localStorage.setItem('skillhub_session_token', myToken);
             }
-            
             if (navigator.onLine) {
-                try {
-                    fetch(API_URL, {
-                        method: 'POST', cache: 'no-store', mode: 'no-cors',
-                        body: JSON.stringify({ action: 'set_session', login: userKeyLow, token: myToken })
-                    });
-                } catch(e) {}
+                try { fetch(API_URL, { method: 'POST', cache: 'no-store', mode: 'no-cors', body: JSON.stringify({ action: 'set_session', login: userKeyLow, token: myToken }) }); } catch(e) {}
             }
-
             windowUserRole = detectRoleGroup(user.role);
             windowViewingEmployee = null;
-
             switchToMyCabinet();
         } else {
             document.documentElement.classList.remove('fast-boot');
@@ -1161,20 +1128,11 @@
     async function handleLogin(isAuto = false) {
         const loginBtn = document.getElementById('loginSubmitBtn');
         const err = document.getElementById('errorMsg');
-
         try {
             const l = document.getElementById('loginInput').value.trim();
             const p = document.getElementById('passInput').value.trim();
-
-            if (!l) {
-                if (!isAuto) { err.innerText = "Введіть логін"; err.style.display = 'block'; }
-                return;
-            }
-
-            if (!isAuto && loginBtn) {
-                loginBtn.disabled = true;
-                loginBtn.innerText = "ВХІД...";
-            }
+            if (!l) { if (!isAuto) { err.innerText = "Введіть логін"; err.style.display = 'block'; } return; }
+            if (!isAuto && loginBtn) { loginBtn.disabled = true; loginBtn.innerText = "ВХІД..."; }
             err.style.display = 'none';
 
             if (!db || !db.users || db.users.length === 0) {
@@ -1182,13 +1140,7 @@
                 else { err.innerText = "База даних порожня. Перевірте інтернет!"; err.style.display = 'block'; return; }
             }
 
-            const findUser = (u) => {
-                let isLoginMatch = String(u.login || "").trim().toLowerCase() === l.toLowerCase();
-                let dbPass = String(u.pass || "").trim().toLowerCase();
-                let isPassMatch = (dbPass === "") || (dbPass === p.toLowerCase());
-                return isLoginMatch && isPassMatch;
-            };
-
+            const findUser = (u) => String(u.login || "").trim().toLowerCase() === l.toLowerCase() && (String(u.pass || "").trim().toLowerCase() === "" || String(u.pass || "").trim().toLowerCase() === p.toLowerCase());
             let user = db && db.users && db.users.find(findUser);
 
             if (!user && navigator.onLine && !isAuto) {
@@ -1205,127 +1157,110 @@
                 let myToken = localStorage.getItem('skillhub_session_token');
                 if (isAuto) {
                     let serverToken = db.activeSessions ? (db.activeSessions[userKeyLow] || db.activeSessions[currentUser]) : null;
-                    if (serverToken && myToken && serverToken !== myToken) {
-                        logout(true, false);
-                        return;
-                    }
+                    if (serverToken && myToken && serverToken !== myToken) { logout(true, false); return; }
                     if (!myToken || (serverToken && serverToken !== myToken)) {
                         myToken = Date.now().toString() + "_" + Math.random().toString(36).substring(2, 10);
                         localStorage.setItem('skillhub_session_token', myToken);
                     }
                 } else {
-                    // При ручному вході завжди генеруємо новий токен, щоб "викинути" старі пристрої
                     myToken = Date.now().toString() + "_" + Math.random().toString(36).substring(2, 10);
                     localStorage.setItem('skillhub_session_token', myToken);
                 }
 
                 if (navigator.onLine) {
-                    try {
-                        fetch(API_URL, {
-                            method: 'POST', cache: 'no-store', mode: 'no-cors',
-                            body: JSON.stringify({ action: 'set_session', login: userKeyLow, token: myToken })
-                        });
-                    } catch(e) {}
+                    try { fetch(API_URL, { method: 'POST', cache: 'no-store', mode: 'no-cors', body: JSON.stringify({ action: 'set_session', login: userKeyLow, token: myToken }) }); } catch(e) {}
                 }
 
-                if (document.getElementById('rememberMe').checked) {
-                    localStorage.setItem('skillhub_edu_creds', JSON.stringify({ login: l, pass: p }));
-                } else {
-                    localStorage.removeItem('skillhub_edu_creds');
-                }
+                if (document.getElementById('rememberMe').checked) { localStorage.setItem('skillhub_edu_creds', JSON.stringify({ login: l, pass: p })); } 
+                else { localStorage.removeItem('skillhub_edu_creds'); }
 
                 windowUserRole = detectRoleGroup(user.role);
                 windowViewingEmployee = null;
-
                 switchToMyCabinet();
             } else {
-                err.innerText = "Невірний логін або пароль!";
-                err.style.display = 'block';
-                if (isAuto) {
-                    switchView('loginView');
-                }
+                err.innerText = "Невірний логін або пароль!"; err.style.display = 'block';
+                if (isAuto) switchView('loginView');
             }
         } catch (error) {
-            err.innerText = "Сталася помилка з'єднання. Спробуйте ще раз.";
-            err.style.display = 'block';
+            err.innerText = "Сталася помилка з'єднання. Спробуйте ще раз."; err.style.display = 'block';
         } finally {
             if (loginBtn) { loginBtn.disabled = false; loginBtn.innerText = "УВІЙТИ"; }
         }
     }
 
     function logout(forced = false, explicit = false) {
-        stopSessionHeartbeat(); // Зупиняємо таймер
-        
-        if (forced) {
-            alert("Ваш акаунт було відкрито на іншому пристрої. Сесію на цьому пристрої завершено.");
-        } else if (explicit && currentUser && navigator.onLine) {
+        stopSessionHeartbeat();
+        if (forced) { alert("Ваш акаунт було відкрито на іншому пристрої. Сесію на цьому пристрої завершено."); } 
+        else if (explicit && currentUser && navigator.onLine) {
             let userKeyLow = String(currentUser).toLowerCase().trim();
-            try {
-                fetch(API_URL, {
-                    method: 'POST', cache: 'no-store', mode: 'no-cors',
-                    body: JSON.stringify({ action: 'set_session', login: userKeyLow, token: '' })
-                });
-            } catch(e) {}
+            try { fetch(API_URL, { method: 'POST', cache: 'no-store', mode: 'no-cors', body: JSON.stringify({ action: 'set_session', login: userKeyLow, token: '' }) }); } catch(e) {}
         }
-
         if (deadlineInterval) clearInterval(deadlineInterval);
         closeStatsModal();
+        closeAssignModal();
 
-        currentUser = null;
-        windowViewingEmployee = null;
-        coursesMap = {};
+        currentUser = null; windowViewingEmployee = null; coursesMap = {};
         localStorage.removeItem('skillhub_session_token');
 
-        if (explicit || forced) {
-            localStorage.removeItem('skillhub_edu_creds');
-        }
-        if (explicit) {
-            document.getElementById('loginInput').value = '';
-            document.getElementById('passInput').value = '';
-        }
+        if (explicit || forced) localStorage.removeItem('skillhub_edu_creds');
+        if (explicit) { document.getElementById('loginInput').value = ''; document.getElementById('passInput').value = ''; }
         switchView('loginView');
     }
 
     function buildCoursesMap(user) {
         coursesMap = {};
         if (!user || !db) return;
-
         let roleGroup = detectRoleGroup(user.role);
         let currentUserAssigned = user.assigned || [];
 
         (db.courses || []).forEach(c => {
             let cleanProdTitle = cleanCourseTitle(c.product);
             let pClean = getCleanName(cleanProdTitle);
-
-            let isAssigned = (roleGroup === 'guest') || currentUserAssigned.some(assignedName => {
-                return getCleanName(assignedName) === pClean;
-            });
+            let isAssigned = (roleGroup === 'guest') || currentUserAssigned.some(assignedName => getCleanName(assignedName) === pClean);
 
             if (isAssigned) {
                 let groupName = String(c.course || "Курси").trim();
                 if (!coursesMap[groupName]) coursesMap[groupName] = [];
                 if (!coursesMap[groupName].some(existing => getCleanName(existing.product) === pClean)) {
                     coursesMap[groupName].push({
-                        course: groupName,
-                        product: cleanProdTitle,
-                        info: c.info,
-                        test: c.test,
-                        presentations: c.presentations || []
+                        course: groupName, product: cleanProdTitle, info: c.info, test: c.test, presentations: c.presentations || [],
+                        skillhubLink: c.skillhubLink || ""
                     });
                 }
             }
         });
     }
 
+    function renderMeetButton(user) {
+        const container = document.getElementById('meetButtonContainer');
+        if (user && user.meetLink) {
+            let dateTxt = user.meetDate ? `<div style="font-size:12px; font-weight:600; color:var(--text-muted); margin-top:2px;">${escapeHTMLAttr(user.meetDate)}</div>` : '';
+            container.innerHTML = `
+                <a href="${escapeHTMLAttr(user.meetLink)}" target="_blank" style="text-decoration:none; display:block;">
+                    <div class="list-card" style="border-color: var(--primary); background: var(--primary-light); margin-bottom: 0;">
+                        <img src="https://raw.githubusercontent.com/StepStepi4/SkillHUB-Assistant/main/education/info.svg" class="ui-icon" style="width:28px; height:28px;" onerror="this.style.display='none'">
+                        <div style="flex:1; margin-left: 14px;">
+                            <div style="font-size: 15px; font-weight: 800; color: var(--primary);">Посилання на зустріч</div>
+                            ${dateTxt}
+                        </div>
+                        <div class="list-card-arrow">❯</div>
+                    </div>
+                </a>
+            `;
+            container.style.display = 'block';
+        } else {
+            container.style.display = 'none';
+        }
+    }
+
     function switchToMyCabinet() {
         windowViewingEmployee = null;
-        closeStatsModal();
+        closeStatsModal(); closeAssignModal();
 
         let user = db.users.find(u => String(u.login).toLowerCase() === String(currentUser).toLowerCase());
         if (!user) return;
 
         windowUserRole = detectRoleGroup(user.role);
-
         let firstName = extractFirstNameCapitalized(user);
         document.getElementById('cabinetTitle').innerText = 'Особистий кабінет';
         document.getElementById('userWelcome').innerHTML = `Вітаю, ${escapeHTMLAttr(firstName)} <span style="font-size: 15px; margin-left: 4px;">👋</span>`;
@@ -1343,12 +1278,13 @@
         document.getElementById('employeeEarnedAchievementsSection').style.display = 'none';
         document.getElementById('employeeTestsResultsSection').style.display = 'none';
 
+        renderMeetButton(user);
         buildCoursesMap(user);
         renderCabinetStatsAndCourses(user);
         startDeadlineTimer();
         checkNewAchievements(user);
         
-        startSessionHeartbeat(); // ЗАПУСКАЄМО ТАЙМЕР ЗАХИСТУ
+        startSessionHeartbeat();
 
         switchView('cabinetView');
         switchCabinetTab('stats');
@@ -1359,7 +1295,6 @@
         if (!db || !db.users) return [];
         let me = db.users.find(u => String(u.login).toLowerCase() === String(currentUser).toLowerCase());
         if (!me) return [];
-
         let myNameLow = String(me.name || "").toLowerCase().trim();
         let myParts = myNameLow.split(/\s+/).filter(Boolean);
         let myShort = myParts.length >= 2 ? `${myParts[0]} ${myParts[1]}` : myNameLow;
@@ -1367,10 +1302,8 @@
         return db.users.filter(u => {
             if (!u.name || String(u.name).trim() === "") return false;
             if (detectRoleGroup(u.role) === 'guest') return false;
-
-            if (windowUserRole === 'owner') {
-                return true;
-            } else if (windowUserRole === 'manager') {
+            if (windowUserRole === 'owner') return true;
+            if (windowUserRole === 'manager') {
                 let uManager = String(u.manager || u.director || "").toLowerCase().trim();
                 if (!uManager) return false;
                 return uManager === myNameLow || uManager.includes(myShort) || myNameLow.includes(uManager);
@@ -1381,17 +1314,12 @@
 
     function openStatsModal() {
         if (windowUserRole !== 'owner' && windowUserRole !== 'manager') return;
-
         document.getElementById('btnMyEducation').classList.remove('active');
         document.getElementById('btnTeamStats').classList.add('active');
-
-        const scopeHint = document.getElementById('modalRoleScopeHint');
-        scopeHint.innerText = windowUserRole === 'owner' ? 'Усі співробітники (Власник)' : 'Підпорядковані співробітники (Керівник)';
-
+        document.getElementById('modalRoleScopeHint').innerText = windowUserRole === 'owner' ? 'Усі співробітники (Власник)' : 'Підпорядковані співробітники (Керівник)';
         document.getElementById('empSearchInput').value = '';
         document.getElementById('empSearchClearBtn').style.display = 'none';
         document.getElementById('empSearchSuggestions').classList.remove('open');
-
         renderStatsModalEmployees('');
         document.getElementById('statsModalOverlay').classList.add('active');
         document.getElementById('statsModal').classList.add('active');
@@ -1403,7 +1331,6 @@
         document.getElementById('statsModal').classList.remove('active');
         document.getElementById('empSearchSuggestions').classList.remove('open');
         document.body.style.overflow = '';
-
         if (!windowViewingEmployee && (windowUserRole === 'owner' || windowUserRole === 'manager')) {
             document.getElementById('btnMyEducation').classList.add('active');
             document.getElementById('btnTeamStats').classList.remove('active');
@@ -1424,11 +1351,9 @@
         let qLow = q.toLowerCase();
         const clearBtn = document.getElementById('empSearchClearBtn');
         const suggBox = document.getElementById('empSearchSuggestions');
-
         clearBtn.style.display = q.length > 0 ? 'block' : 'none';
 
         let list = getAccessibleEmployeesList();
-
         if (q.length > 0) {
             let matches = list.filter(u => String(u.name).toLowerCase().includes(qLow)).slice(0, 6);
             if (matches.length > 0) {
@@ -1437,38 +1362,26 @@
                     let regex = new RegExp(`(${q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
                     let highlighted = safeName.replace(regex, '<span class="suggestion-highlight">$1</span>');
                     let st = computeUserMetrics(u);
-                    return `
-                        <div class="suggestion-item" onclick="selectEmployeeFromModal('${escapeHTMLAttr(u.login)}')">
-                            <span>${highlighted}</span>
-                            <span style="font-size:12px; color:var(--text-muted);">${st.completed}/${st.totalAssigned}</span>
-                        </div>
-                    `;
+                    return `<div class="suggestion-item" onclick="selectEmployeeFromModal('${escapeHTMLAttr(u.login)}')">
+                                <span>${highlighted}</span><span style="font-size:12px; color:var(--text-muted);">${st.completed}/${st.totalAssigned}</span>
+                            </div>`;
                 }).join('');
                 suggBox.classList.add('open');
             } else {
                 suggBox.innerHTML = `<div style="padding: 12px 16px; font-size: 13px; color: var(--text-muted);">Збігів за ПІБ не знайдено</div>`;
                 suggBox.classList.add('open');
             }
-        } else {
-            suggBox.classList.remove('open');
-        }
-
+        } else { suggBox.classList.remove('open'); }
         renderStatsModalEmployees(qLow);
     }
 
     function renderStatsModalEmployees(filterQueryLow) {
         let employees = getAccessibleEmployeesList();
-        if (filterQueryLow) {
-            employees = employees.filter(u => String(u.name).toLowerCase().includes(filterQueryLow));
-        }
-
+        if (filterQueryLow) employees = employees.filter(u => String(u.name).toLowerCase().includes(filterQueryLow));
         document.getElementById('modalEmpCount').innerText = `Знайдено: ${employees.length}`;
-
+        
         if (employees.length === 0) {
-            document.getElementById('statsModalUsersList').innerHTML = `
-                <div style="text-align:center; padding: 32px 16px; color: var(--text-muted); font-weight: 600;">
-                    Співробітників не знайдено
-                </div>`;
+            document.getElementById('statsModalUsersList').innerHTML = `<div style="text-align:center; padding: 32px 16px; color: var(--text-muted); font-weight: 600;">Співробітників не знайдено</div>`;
             return;
         }
 
@@ -1479,10 +1392,8 @@
                 if (m.completed === m.totalAssigned) borderCol = 'rgba(22, 79, 88, 0.7)';
                 else if (m.started > 0) borderCol = 'rgba(245, 158, 11, 0.6)';
             }
-
             let storeTxt = (u.store && u.store !== "-") ? `📍 ${escapeHTMLAttr(u.store)}` : "";
             let mgrTxt = u.manager ? `👤 Керівник: ${escapeHTMLAttr(u.manager)}` : "";
-
             return `
                 <div class="list-card" style="border-color: ${borderCol}; padding: 14px 16px;" onclick="selectEmployeeFromModal('${escapeHTMLAttr(u.login)}')">
                     <div style="flex: 1; padding-right: 10px;">
@@ -1506,17 +1417,14 @@
                 </div>
             `;
         }).join('');
-
         document.getElementById('statsModalUsersList').innerHTML = html;
     }
 
     function selectEmployeeFromModal(login) {
         let emp = db.users.find(u => String(u.login).toLowerCase() === String(login).toLowerCase());
         if (!emp) return;
-
         windowViewingEmployee = emp;
         closeStatsModal();
-
         document.getElementById('btnMyEducation').classList.remove('active');
         document.getElementById('btnTeamStats').classList.add('active');
 
@@ -1528,8 +1436,17 @@
         if (emp.store && emp.store !== "-") metaParts.push(emp.store);
         if (emp.manager) metaParts.push(`Керівник: ${emp.manager}`);
         document.getElementById('viewingEmployeeMeta').innerText = metaParts.join(' • ');
+        
+        let assignBtn = document.getElementById('assignCoursesBtn');
+        if (windowUserRole === 'manager' || windowUserRole === 'owner') {
+            assignBtn.style.display = 'inline-block';
+        } else {
+            assignBtn.style.display = 'none';
+        }
+        
         document.getElementById('viewingEmployeeBanner').style.display = 'flex';
 
+        renderMeetButton(emp);
         buildCoursesMap(emp);
         renderCabinetStatsAndCourses(emp);
         renderEmployeeAchievementsAndTests(emp);
@@ -1539,19 +1456,115 @@
         switchCabinetTab('stats');
     }
 
+    // --- ПРИЗНАЧЕННЯ КУРСІВ (МОДАЛЬНЕ ВІКНО) ---
+    let originalAssignments = {};
+    let pendingAssignments = {};
+
+    function openAssignModal() {
+        if (!windowViewingEmployee) return;
+        const modal = document.getElementById('assignModal');
+        const overlay = document.getElementById('assignModalOverlay');
+        const list = document.getElementById('assignCourseList');
+        const saveBtn = document.getElementById('saveAssignBtn');
+
+        let html = '';
+        originalAssignments = {};
+        pendingAssignments = {};
+
+        if (db.courseCatalog && db.courseCatalog.length > 0) {
+            db.courseCatalog.forEach(c => {
+                if (!c.name || c.name.trim() === '') return;
+                let cleanKey = c.name.toLowerCase().replace(/[^a-zа-яёієїґ0-9]/g, '');
+                let isAssigned = windowViewingEmployee.assigned.some(a => getCleanName(a) === cleanKey);
+                
+                originalAssignments[cleanKey] = isAssigned;
+                pendingAssignments[cleanKey] = isAssigned;
+
+                let isDisabled = false;
+                if (windowUserRole === 'manager' && isAssigned) {
+                    isDisabled = true; // Керівник не може знімати галочки
+                }
+
+                html += `
+                <label class="answer-label" style="display:flex; justify-content:space-between; align-items:center; opacity: ${isDisabled ? 0.6 : 1}; margin-bottom: 8px;">
+                    <span style="font-weight:700;">${escapeHTMLAttr(c.name)}</span>
+                    <input type="checkbox" onchange="toggleAssign('${cleanKey}', this.checked)" ${isAssigned ? 'checked' : ''} ${isDisabled ? 'disabled' : ''}>
+                </label>
+                `;
+            });
+        } else {
+            html = `<div style="text-align:center; padding: 20px; color: var(--text-muted);">Каталог курсів порожній</div>`;
+        }
+
+        list.innerHTML = html;
+        saveBtn.style.display = 'none';
+        
+        modal.classList.add('active');
+        overlay.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeAssignModal() {
+        document.getElementById('assignModal').classList.remove('active');
+        document.getElementById('assignModalOverlay').classList.remove('active');
+        document.body.style.overflow = '';
+    }
+
+    function toggleAssign(key, isChecked) {
+        pendingAssignments[key] = isChecked;
+        let hasChanges = false;
+        for (let k in pendingAssignments) {
+            if (pendingAssignments[k] !== originalAssignments[k]) { hasChanges = true; break; }
+        }
+        document.getElementById('saveAssignBtn').style.display = hasChanges ? 'block' : 'none';
+    }
+
+    async function saveAssignments() {
+        let changes = {};
+        for (let key in pendingAssignments) {
+            if (pendingAssignments[key] !== originalAssignments[key]) {
+                changes[key] = pendingAssignments[key];
+            }
+        }
+        const saveBtn = document.getElementById('saveAssignBtn');
+        saveBtn.innerText = "ЗБЕРЕЖЕННЯ..."; saveBtn.disabled = true;
+
+        try {
+            await fetch(API_URL, {
+                method: 'POST', mode: 'no-cors', cache: 'no-store',
+                body: JSON.stringify({ action: 'assign_courses', targetLogin: windowViewingEmployee.login, assignments: changes })
+            });
+            closeAssignModal();
+            // Оновлюємо дані локально
+            setTimeout(() => { forceRefresh(); }, 500); 
+        } catch(e) {
+            alert("Помилка збереження!");
+            saveBtn.innerText = "ЗБЕРЕГТИ"; saveBtn.disabled = false;
+        }
+    }
+
+    // --- МОДАЛЬНЕ ВІКНО Iframe SkillHUB ---
+    function openSkillhubFrame(url) {
+        if (!url) return;
+        document.getElementById('skillhubIframe').src = url;
+        document.getElementById('skillhubModalOverlay').classList.add('active');
+        document.getElementById('skillhubModal').classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeSkillhubFrame() {
+        document.getElementById('skillhubIframe').src = '';
+        document.getElementById('skillhubModalOverlay').classList.remove('active');
+        document.getElementById('skillhubModal').classList.remove('active');
+        document.body.style.overflow = '';
+    }
+
     // --- РОЗРАХУНОК ПОКАЗНИКІВ СТАТИСТИКИ ---
     function computeUserMetrics(user) {
         let st = user.stats || {};
         let assignedList = user.assigned || [];
         let resMap = user.results || {};
-
-        let calcStarted = 0;
-        let calcCompleted = 0;
-        let calcAttempts = 0;
-        let calcTime = 0;
-        let calcViolations = 0;
-        let scoreSum = 0;
-        let scoreCount = 0;
+        let calcStarted = 0, calcCompleted = 0, calcAttempts = 0, calcTime = 0, calcViolations = 0, scoreSum = 0, scoreCount = 0;
 
         assignedList.forEach(courseName => {
             let key = getCleanName(courseName);
@@ -1559,12 +1572,8 @@
             if (rawStr) {
                 let parsed = parseTestResultString(rawStr);
                 if (parsed.attempts > 0 || parsed.score > 0) {
-                    calcStarted++;
-                    calcAttempts += parsed.attempts;
-                    calcTime += parsed.time;
-                    calcViolations += parsed.violations;
-                    scoreSum += parsed.score;
-                    scoreCount++;
+                    calcStarted++; calcAttempts += parsed.attempts; calcTime += parsed.time; calcViolations += parsed.violations;
+                    scoreSum += parsed.score; scoreCount++;
                     if (parsed.score >= 80) calcCompleted++;
                 }
             }
@@ -1582,54 +1591,31 @@
         if (st.avgScore && String(st.avgScore).trim() !== "" && String(st.avgScore).trim() !== "0,0%") {
             avgScoreFormatted = String(st.avgScore).trim();
             if (!avgScoreFormatted.endsWith('%')) avgScoreFormatted += '%';
-        } else if (scoreCount > 0) {
-            avgScoreFormatted = Math.round(scoreSum / scoreCount) + "%";
-        }
+        } else if (scoreCount > 0) { avgScoreFormatted = Math.round(scoreSum / scoreCount) + "%"; }
 
         let inProgress = Math.max(0, started - completed);
         let notStarted = Math.max(0, totalAssigned - started);
 
         return {
-            totalAssigned,
-            started,
-            completed,
-            remaining,
-            attempts,
-            avgScoreFormatted,
-            timeSpent,
-            timeFormatted: formatTimeSeconds(timeSpent),
-            violations,
-            inProgress,
-            notStarted
+            totalAssigned, started, completed, remaining, attempts, avgScoreFormatted, timeSpent,
+            timeFormatted: formatTimeSeconds(timeSpent), violations, inProgress, notStarted
         };
     }
 
-    // --- КІЛЬЦЕВА ДІАГРАМА (НОВИЙ ПЛАГІН OUTSIDE LABELS + КОРП. КОЛЬОРИ) ---
     function renderProgressChart(passed, inProgress, notStarted) {
         let ctx = document.getElementById('progressChart');
         if (!ctx) return;
-
-        if (typeof Chart === 'undefined') {
-            setTimeout(() => renderProgressChart(passed, inProgress, notStarted), 150);
-            return;
-        }
-
-        if (window.progressChartInstance) {
-            window.progressChartInstance.destroy();
-        }
+        if (typeof Chart === 'undefined') { setTimeout(() => renderProgressChart(passed, inProgress, notStarted), 150); return; }
+        if (window.progressChartInstance) window.progressChartInstance.destroy();
 
         let total = passed + inProgress + notStarted;
         let dataArr = total > 0 ? [passed, inProgress, notStarted] : [0, 0, 1];
 
-        // Кастомний плагін: лінії назовні + текст
         const outsideLabelsPlugin = {
             id: 'outsideLabels',
             afterDraw: (chart) => {
-                const ctx = chart.ctx;
-                const dataset = chart.data.datasets[0];
-                const meta = chart.getDatasetMeta(0);
+                const ctx = chart.ctx, dataset = chart.data.datasets[0], meta = chart.getDatasetMeta(0);
                 if (!meta.data || meta.data.length === 0) return;
-
                 const cTotal = dataset.data.reduce((a, b) => a + b, 0);
                 if (cTotal === 0) return;
 
@@ -1637,144 +1623,61 @@
                     const dataVal = dataset.data[index];
                     if (dataVal > 0) { 
                         const percentage = Math.round((dataVal / cTotal) * 100) + '%';
-                        
-                        const startAngle = element.startAngle;
-                        const endAngle = element.endAngle;
-                        const middleAngle = startAngle + (endAngle - startAngle) / 2;
-                        
-                        const outerRadius = element.outerRadius;
-                        const xCenter = element.x;
-                        const yCenter = element.y;
+                        const startAngle = element.startAngle, endAngle = element.endAngle, middleAngle = startAngle + (endAngle - startAngle) / 2;
+                        const outerRadius = element.outerRadius, xCenter = element.x, yCenter = element.y;
 
-                        // Крапка на дузі
-                        const xArc = xCenter + outerRadius * Math.cos(middleAngle);
-                        const yArc = yCenter + outerRadius * Math.sin(middleAngle);
-
-                        // Злам лінії
+                        const xArc = xCenter + outerRadius * Math.cos(middleAngle), yArc = yCenter + outerRadius * Math.sin(middleAngle);
                         const offset = 8; 
-                        const xBreak = xCenter + (outerRadius + offset) * Math.cos(middleAngle);
-                        const yBreak = yCenter + (outerRadius + offset) * Math.sin(middleAngle);
-
-                        // Кінець лінії
+                        const xBreak = xCenter + (outerRadius + offset) * Math.cos(middleAngle), yBreak = yCenter + (outerRadius + offset) * Math.sin(middleAngle);
                         const isRight = Math.cos(middleAngle) >= 0;
-                        const xEnd = xBreak + (isRight ? 10 : -10); 
-                        const yEnd = yBreak;
+                        const xEnd = xBreak + (isRight ? 10 : -10), yEnd = yBreak;
 
-                        // Малюємо лінію
-                        ctx.beginPath();
-                        ctx.moveTo(xArc, yArc);
-                        ctx.lineTo(xBreak, yBreak);
-                        ctx.lineTo(xEnd, yEnd);
+                        ctx.beginPath(); ctx.moveTo(xArc, yArc); ctx.lineTo(xBreak, yBreak); ctx.lineTo(xEnd, yEnd);
                         ctx.strokeStyle = document.documentElement.getAttribute('data-theme') === 'dark' ? '#98989d' : '#8e8e93';
-                        ctx.lineWidth = 1.5;
-                        ctx.stroke();
+                        ctx.lineWidth = 1.5; ctx.stroke();
 
-                        // Текст
                         ctx.fillStyle = document.documentElement.getAttribute('data-theme') === 'dark' ? '#ffffff' : '#111827';
-                        ctx.font = 'bold 13px Inter, sans-serif';
-                        ctx.textAlign = isRight ? 'left' : 'right';
-                        ctx.textBaseline = 'middle';
-                        const textX = isRight ? xEnd + 4 : xEnd - 4;
-                        ctx.fillText(percentage, textX, yEnd);
+                        ctx.font = 'bold 13px Inter, sans-serif'; ctx.textAlign = isRight ? 'left' : 'right'; ctx.textBaseline = 'middle';
+                        ctx.fillText(percentage, isRight ? xEnd + 4 : xEnd - 4, yEnd);
                     }
                 });
             }
         };
 
         const bgColor = document.documentElement.getAttribute('data-theme') === 'dark' ? '#1c1c1e' : '#ffffff';
-        const colorPassed = '#164f58'; // Корпоративний
-        const colorProgress = '#3a9c9f'; // Світліший
+        const colorPassed = '#164f58', colorProgress = '#3a9c9f';
         const colorRemaining = document.documentElement.getAttribute('data-theme') === 'dark' ? '#38383a' : '#e5e7eb';
 
         window.progressChartInstance = new Chart(ctx, {
             type: 'doughnut',
-            data: {
-                labels: ['Пройдено', 'В процесі', 'Залишилось'],
-                datasets: [{
-                    data: dataArr,
-                    backgroundColor: [colorPassed, colorProgress, colorRemaining],
-                    borderWidth: 3,
-                    borderColor: bgColor,
-                    hoverOffset: 4
-                }]
-            },
+            data: { labels: ['Пройдено', 'В процесі', 'Залишилось'], datasets: [{ data: dataArr, backgroundColor: [colorPassed, colorProgress, colorRemaining], borderWidth: 3, borderColor: bgColor, hoverOffset: 4 }] },
             options: {
-                layout: {
-                    padding: {
-                        left: 60,
-                        right: 60,
-                        top: 25,
-                        bottom: 25
-                    }
-                },
-                responsive: true,
-                maintainAspectRatio: false,
-                cutout: '45%', 
+                layout: { padding: { left: 60, right: 60, top: 25, bottom: 25 } }, responsive: true, maintainAspectRatio: false, cutout: '45%', 
                 plugins: {
-                    legend: {
-                        position: 'bottom',
-                        labels: {
-                            font: { family: 'Inter', size: 12, weight: '600' },
-                            color: document.documentElement.getAttribute('data-theme') === 'dark' ? '#fff' : '#111827',
-                            padding: 14,
-                            usePointStyle: true,
-                            pointStyle: 'rect'
-                        }
-                    },
-                    tooltip: {
-                        backgroundColor: 'rgba(0,0,0,0.82)',
-                        titleFont: { family: 'Inter', size: 13 },
-                        bodyFont: { family: 'Inter', size: 13 },
-                        padding: 12,
-                        cornerRadius: 8,
-                        displayColors: false
-                    }
+                    legend: { position: 'bottom', labels: { font: { family: 'Inter', size: 12, weight: '600' }, color: document.documentElement.getAttribute('data-theme') === 'dark' ? '#fff' : '#111827', padding: 14, usePointStyle: true, pointStyle: 'rect' } },
+                    tooltip: { backgroundColor: 'rgba(0,0,0,0.82)', titleFont: { family: 'Inter', size: 13 }, bodyFont: { family: 'Inter', size: 13 }, padding: 12, cornerRadius: 8, displayColors: false }
                 }
             },
             plugins: [outsideLabelsPlugin]
         });
     }
 
-    // --- ВІДОБРАЖЕННЯ 8 ПОКАЗНИКІВ ТА СПИСКУ КУРСІВ ---
     function renderCabinetStatsAndCourses(user) {
         let m = computeUserMetrics(user);
-
         document.getElementById('chartContainerBox').style.display = 'block';
         renderProgressChart(m.completed, m.inProgress, m.notStarted);
 
         let statsHtml = `
             <div class="stats-grid-8">
-                <div class="stat-item">
-                    <div class="stat-val-modern">${m.totalAssigned}</div>
-                    <div class="stat-label-modern">Загалом назначено курсів</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-val-modern" style="color: #3b82f6;">${m.started}</div>
-                    <div class="stat-label-modern">Розпочато курсів</div>
-                </div>
-                <div class="stat-item" style="border-color: rgba(22, 79, 88, 0.4);">
-                    <div class="stat-val-modern" style="color: var(--success);">${m.completed}</div>
-                    <div class="stat-label-modern">Пройдено курсів</div>
-                </div>
-                <div class="stat-item" style="border-color: rgba(245, 158, 11, 0.4);">
-                    <div class="stat-val-modern" style="color: #f59e0b;">${m.remaining}</div>
-                    <div class="stat-label-modern">Залишилось курсів</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-val-modern">${m.attempts}</div>
-                    <div class="stat-label-modern">Кількість спроб</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-val-modern">${m.avgScoreFormatted}</div>
-                    <div class="stat-label-modern">Середній бал</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-val-modern" style="font-size: 16px;">${m.timeFormatted}</div>
-                    <div class="stat-label-modern">Витрачено часу</div>
-                </div>
+                <div class="stat-item"><div class="stat-val-modern">${m.totalAssigned}</div><div class="stat-label-modern">Загалом назначено курсів</div></div>
+                <div class="stat-item"><div class="stat-val-modern" style="color: #3b82f6;">${m.started}</div><div class="stat-label-modern">Розпочато курсів</div></div>
+                <div class="stat-item" style="border-color: rgba(22, 79, 88, 0.4);"><div class="stat-val-modern" style="color: var(--success);">${m.completed}</div><div class="stat-label-modern">Пройдено курсів</div></div>
+                <div class="stat-item" style="border-color: rgba(245, 158, 11, 0.4);"><div class="stat-val-modern" style="color: #f59e0b;">${m.remaining}</div><div class="stat-label-modern">Залишилось курсів</div></div>
+                <div class="stat-item"><div class="stat-val-modern">${m.attempts}</div><div class="stat-label-modern">Кількість спроб</div></div>
+                <div class="stat-item"><div class="stat-val-modern">${m.avgScoreFormatted}</div><div class="stat-label-modern">Середній бал</div></div>
+                <div class="stat-item"><div class="stat-val-modern" style="font-size: 16px;">${m.timeFormatted}</div><div class="stat-label-modern">Витрачено часу</div></div>
                 <div class="stat-item" style="border-color: ${m.violations > 0 ? 'rgba(239,68,68,0.45)' : 'var(--border)'}; background: ${m.violations > 0 ? 'var(--danger-bg)' : 'var(--card-bg)'};">
-                    <div class="stat-val-modern" style="color: ${m.violations > 0 ? 'var(--danger)' : 'var(--text-main)'};">${m.violations}</div>
-                    <div class="stat-label-modern">Кількість порушень</div>
+                    <div class="stat-val-modern" style="color: ${m.violations > 0 ? 'var(--danger)' : 'var(--text-main)'};">${m.violations}</div><div class="stat-label-modern">Кількість порушень</div>
                 </div>
             </div>
         `;
@@ -1790,16 +1693,12 @@
                 let parsed = formatWithCustomEmoji(name, '📘');
                 let safeName = escapeHTMLAttr(name);
                 let courseProducts = coursesMap[name] || [];
-                let cTotal = courseProducts.length;
-                let cPassed = 0;
+                let cTotal = courseProducts.length, cPassed = 0;
 
                 courseProducts.forEach(p => {
                     let cleanP = getCleanName(p.product);
                     let resStr = res[p.product] || res[cleanP];
-                    if (resStr) {
-                        let pr = parseTestResultString(resStr);
-                        if (pr.score >= 80) cPassed++;
-                    }
+                    if (resStr) { let pr = parseTestResultString(resStr); if (pr.score >= 80) cPassed++; }
                 });
 
                 let isCourseDone = (cTotal > 0 && cPassed === cTotal);
@@ -1807,9 +1706,7 @@
 
                 return `
                 <div class="${cardClass}" onclick="openCourse(this.getAttribute('data-name'))" data-name="${safeName}">
-                    <div class="list-card-title" style="flex: 1;">
-                        <span style="font-size: 16px;">${parsed.title}</span>
-                    </div>
+                    <div class="list-card-title" style="flex: 1;"><span style="font-size: 16px;">${parsed.title}</span></div>
                     <div style="display: flex; align-items: center; gap: 10px;">
                         <div style="font-size: 15px; font-weight: 800; color: var(--text-main);">${cPassed} <span style="font-size: 13px; font-weight: 600; color: var(--text-muted);">/ ${cTotal}</span></div>
                         <div class="list-card-arrow">❯</div>
@@ -1825,69 +1722,47 @@
         });
     }
 
-    // --- ЗАРОБЛЕНІ АЧІВКИ ТА СПИСОК ТЕСТІВ І РЕЗУЛЬТАТІВ У КАРТЦІ СПІВРОБІТНИКА ---
     function renderEmployeeAchievementsAndTests(emp) {
-        const achSec = document.getElementById('employeeEarnedAchievementsSection');
-        const achContainer = document.getElementById('employeeEarnedAchievementsList');
-        const testsSec = document.getElementById('employeeTestsResultsSection');
-        const testsContainer = document.getElementById('employeeTestsResultsList');
+        const achSec = document.getElementById('employeeEarnedAchievementsSection'), achContainer = document.getElementById('employeeEarnedAchievementsList');
+        const testsSec = document.getElementById('employeeTestsResultsSection'), testsContainer = document.getElementById('employeeTestsResultsList');
 
-        achSec.style.display = 'block';
-        testsSec.style.display = 'block';
+        achSec.style.display = 'block'; testsSec.style.display = 'block';
 
         let achCodes = emp.achievements ? String(emp.achievements).split(',').map(s => s.trim()).filter(Boolean) : [];
         if (achCodes.length === 0) {
             achContainer.innerHTML = `<div style="background: var(--card-bg); border: 1px solid var(--border); border-radius: 16px; padding: 16px; text-align: center; color: var(--text-muted); font-size: 13px; font-weight: 600;">У співробітника поки немає зароблених відзнак</div>`;
         } else {
-            let earnedHtml = achCodes.map(code => {
+            achContainer.innerHTML = achCodes.map(code => {
                 let achInfo = (globalAchievements || []).find(a => String(a.code).trim() === code);
-                let title = achInfo && achInfo.name ? achInfo.name : `Відзнака #${code}`;
-                let desc = achInfo && achInfo.description ? achInfo.description : "";
-                let safeCode = escapeHTMLAttr(code);
-
+                let title = achInfo && achInfo.name ? achInfo.name : `Відзнака #${code}`, desc = achInfo && achInfo.description ? achInfo.description : "", safeCode = escapeHTMLAttr(code);
                 return `
                     <div class="ach-card earned" onclick="toggleAchZoom(this)">
-                        <div class="ach-icon-wrapper">
-                            <img src="Achievement/${safeCode}.png" onerror="this.src='medal.svg'" class="ach-img">
-                        </div>
+                        <div class="ach-icon-wrapper"><img src="Achievement/${safeCode}.png" onerror="this.src='medal.svg'" class="ach-img"></div>
                         <div style="display: flex; flex-direction: column; justify-content: center; flex: 1;">
-                            <div class="ach-card-title">${escapeHTMLAttr(title)}</div>
-                            <div class="ach-card-desc">${escapeHTMLAttr(desc)}</div>
+                            <div class="ach-card-title">${escapeHTMLAttr(title)}</div><div class="ach-card-desc">${escapeHTMLAttr(desc)}</div>
                             <div style="margin-top:6px;"><span style="color:var(--success); font-size:11px; font-weight:800;">НАТИСНІТЬ ДЛЯ ОПИСУ</span></div>
                         </div>
                     </div>
                 `;
             }).join('');
-            achContainer.innerHTML = earnedHtml;
         }
 
-        let assigned = emp.assigned || [];
-        let res = emp.results || {};
+        let assigned = emp.assigned || [], res = emp.results || {};
         if (assigned.length === 0) {
             testsContainer.innerHTML = `<div style="background: var(--card-bg); border: 1px solid var(--border); border-radius: 16px; padding: 16px; text-align: center; color: var(--text-muted); font-size: 13px; font-weight: 600;">Немає призначених тестів</div>`;
         } else {
-            let testsHtml = assigned.map((courseTitle, idx) => {
-                let cleanTitle = cleanCourseTitle(courseTitle);
-                let key = getCleanName(cleanTitle);
-                let rawRes = res[cleanTitle] || res[key] || "";
-                let parsed = parseTestResultString(rawRes);
-
-                let badgeColor = 'var(--text-muted)';
-                let statusText = 'Не розпочато';
+            testsContainer.innerHTML = assigned.map((courseTitle, idx) => {
+                let cleanTitle = cleanCourseTitle(courseTitle), key = getCleanName(cleanTitle), rawRes = res[cleanTitle] || res[key] || "";
+                let parsed = parseTestResultString(rawRes), badgeColor = 'var(--text-muted)', statusText = 'Не розпочато';
                 if (rawRes) {
                     statusText = `${parsed.score}%`;
-                    if (parsed.score === 100) badgeColor = 'var(--success)';
-                    else if (parsed.score >= 80) badgeColor = '#059669';
-                    else badgeColor = 'var(--danger)';
+                    if (parsed.score === 100) badgeColor = 'var(--success)'; else if (parsed.score >= 80) badgeColor = '#059669'; else badgeColor = 'var(--danger)';
                 }
-
                 return `
                     <div class="list-card" style="cursor: default; margin-bottom: 10px; padding: 14px 16px;">
                         <div style="flex: 1; padding-right: 10px;">
                             <div style="font-size: 14px; font-weight: 800; color: var(--text-main); margin-bottom: 4px;">${idx + 1}. ${escapeHTMLAttr(cleanTitle)}</div>
-                            <div style="font-size: 12px; font-weight: 600; color: var(--text-muted);">
-                                Спроб: <b>${parsed.attempts}</b> • Час: <b>${parsed.time} с</b> • Порушень: <b style="color:${parsed.violations > 0 ? 'var(--danger)' : 'inherit'};">${parsed.violations}</b>
-                            </div>
+                            <div style="font-size: 12px; font-weight: 600; color: var(--text-muted);">Спроб: <b>${parsed.attempts}</b> • Час: <b>${parsed.time} с</b> • Порушень: <b style="color:${parsed.violations > 0 ? 'var(--danger)' : 'inherit'};">${parsed.violations}</b></div>
                         </div>
                         <div style="text-align: right; flex-shrink: 0;">
                             <div style="font-size: 16px; font-weight: 900; color: ${badgeColor};">${statusText}</div>
@@ -1896,11 +1771,9 @@
                     </div>
                 `;
             }).join('');
-            testsContainer.innerHTML = testsHtml;
         }
     }
 
-    // --- ВІДКРИТТЯ НАПРЯМКУ КУРСІВ ТА ТЕОРІЇ ---
     function openCourse(name) {
         currentCourseName = name;
         let parsedCourse = formatWithCustomEmoji(name, '');
@@ -1912,12 +1785,8 @@
 
         let completedCount = 0;
         products.forEach(p => {
-            let cleanP = getCleanName(p.product);
-            let resStr = userResults[p.product] || userResults[cleanP];
-            if (resStr) {
-                let pr = parseTestResultString(resStr);
-                if (pr.score >= 80) completedCount++;
-            }
+            let cleanP = getCleanName(p.product), resStr = userResults[p.product] || userResults[cleanP];
+            if (resStr) { let pr = parseTestResultString(resStr); if (pr.score >= 80) completedCount++; }
         });
 
         let percent = products.length > 0 ? Math.round((completedCount / products.length) * 100) : 0;
@@ -1931,33 +1800,20 @@
         `;
 
         let productsHtml = products.map((p, index) => {
-            let cleanP = getCleanName(p.product);
-            let resStr = userResults[p.product] || userResults[cleanP];
-            let pr = parseTestResultString(resStr);
-            let score = pr.score;
-
-            let scoreColor = 'var(--text-muted)';
-            let scoreText = (windowUserRole === 'guest') ? 'Огляд' : 'Почати';
+            let cleanP = getCleanName(p.product), resStr = userResults[p.product] || userResults[cleanP];
+            let pr = parseTestResultString(resStr), score = pr.score;
+            let scoreColor = 'var(--text-muted)', scoreText = (windowUserRole === 'guest') ? 'Огляд' : 'Почати';
             if (resStr && (pr.attempts > 0 || score > 0)) {
-                if (score === 100) { scoreColor = 'var(--success)'; scoreText = '100%'; }
-                else if (score >= 90) { scoreColor = '#f97316'; scoreText = score + '%'; }
-                else if (score >= 80) { scoreColor = '#a16207'; scoreText = score + '%'; }
-                else { scoreColor = '#ef4444'; scoreText = score + '%'; }
+                if (score === 100) { scoreColor = 'var(--success)'; scoreText = '100%'; } else if (score >= 90) { scoreColor = '#f97316'; scoreText = score + '%'; } else if (score >= 80) { scoreColor = '#a16207'; scoreText = score + '%'; } else { scoreColor = '#ef4444'; scoreText = score + '%'; }
             }
-
-            let parsed = formatWithCustomEmoji(p.product, '📄');
-            let cardClass = (score >= 80) ? "list-card completed" : "list-card";
-
+            let parsed = formatWithCustomEmoji(p.product, '📄'), cardClass = (score >= 80) ? "list-card completed" : "list-card";
             return `
             <div class="${cardClass}" onclick="openProduct(${index})">
                 <div style="display: flex; align-items: center; gap: 14px; flex: 1; padding-right:10px;">
-                    <div style="display: flex; flex-direction: column; justify-content: center;">
-                        <span style="font-size: 15px; font-weight: 700; color: var(--text-main); line-height: 1.25;">${escapeHTMLAttr(parsed.title)}</span>
-                    </div>
+                    <div style="display: flex; flex-direction: column; justify-content: center;"><span style="font-size: 15px; font-weight: 700; color: var(--text-main); line-height: 1.25;">${escapeHTMLAttr(parsed.title)}</span></div>
                 </div>
                 <div style="display: flex; align-items: center; gap: 12px; flex-shrink:0;">
-                    <div style="font-size: 14px; font-weight: 800; color: ${scoreColor};">${scoreText}</div>
-                    <div class="list-card-arrow">❯</div>
+                    <div style="font-size: 14px; font-weight: 800; color: ${scoreColor};">${scoreText}</div><div class="list-card-arrow">❯</div>
                 </div>
             </div>
             `;
@@ -1978,25 +1834,30 @@
         let parsed = formatWithCustomEmoji(currentProductData.product, '📘');
         document.getElementById('theoryTitle').innerText = parsed.title;
 
-        let rawLines = String(currentProductData.info || "Теоретичний матеріал відсутній.").split('\n').filter(l => l.trim() !== "");
-        let contentHtml = rawLines.map(line => `<div class="theory-line">${line}</div>`).join('');
-
-        if (currentProductData.presentations && currentProductData.presentations.length > 0) {
-            contentHtml += `<div class="theory-line" style="display:flex; flex-direction:column; gap:8px;">
-                <div style="font-size:12px; font-weight:800; color:var(--text-muted); text-transform:uppercase;">Додаткові матеріали та презентації:</div>
-                ${currentProductData.presentations.map((link, idx) => `
-                    <a href="${escapeHTMLAttr(link)}" target="_blank" rel="noopener noreferrer" class="btn btn-secondary" style="text-decoration:none; padding:12px; font-size:13px;">
-                        📎 Відкрити матеріал ${idx + 1}
-                    </a>
-                `).join('')}
-            </div>`;
+        let linkBtnHtml = '';
+        if (currentProductData.skillhubLink) {
+            linkBtnHtml = `
+            <button class="btn btn-secondary" style="margin-bottom: 20px; border-color: var(--primary); color: var(--primary); padding: 12px; font-size: 13px;" onclick="openSkillhubFrame('${escapeHTMLAttr(currentProductData.skillhubLink)}')">
+                <img src="https://raw.githubusercontent.com/StepStepi4/SkillHUB-Assistant/main/education/info.svg" class="ui-icon" onerror="this.style.display='none'">
+                Детально про послугу
+            </button>`;
         }
 
-        document.getElementById('theoryContent').innerHTML = contentHtml;
+        let rawLines = String(currentProductData.info || "Теоретичний матеріал відсутній.").split('\n').filter(l => l.trim() !== "");
+        let contentHtml = `<div class="theory-box">` + rawLines.map(line => `<div class="theory-line">${line}</div>`).join('') + `</div>`;
 
-        window.sessionTotalTime = 0;
-        window.theoryEntryTime = Date.now();
+        if (currentProductData.presentations && currentProductData.presentations.length > 0) {
+            contentHtml += `<div class="theory-box"><div class="theory-line" style="display:flex; flex-direction:column; gap:8px;">
+                <div style="font-size:12px; font-weight:800; color:var(--text-muted); text-transform:uppercase;">Додаткові матеріали:</div>
+                ${currentProductData.presentations.map((link, idx) => `
+                    <a href="${escapeHTMLAttr(link)}" target="_blank" rel="noopener noreferrer" class="btn btn-secondary" style="text-decoration:none; padding:12px; font-size:13px;">📎 Відкрити матеріал ${idx + 1}</a>
+                `).join('')}
+            </div></div>`;
+        }
 
+        document.getElementById('theoryContentContainer').innerHTML = linkBtnHtml + contentHtml;
+
+        window.sessionTotalTime = 0; window.theoryEntryTime = Date.now();
         updateTestButtonState();
         switchView('theoryView');
     }
@@ -2006,52 +1867,30 @@
         if (!user) return;
         let achCodes = user.achievements ? String(user.achievements).split(',').map(s => s.trim()).filter(Boolean) : [];
         let savedCount = parseInt(localStorage.getItem(`ach_count_${user.login}`)) || 0;
-
         const achBtn = document.getElementById('achBtn');
-        if (achCodes.length > savedCount) {
-            document.getElementById('achNotificationDot').style.display = 'block';
-            if (achBtn) achBtn.classList.add('has-new');
-        } else {
-            document.getElementById('achNotificationDot').style.display = 'none';
-            if (achBtn) achBtn.classList.remove('has-new');
-        }
+        if (achCodes.length > savedCount) { document.getElementById('achNotificationDot').style.display = 'block'; if (achBtn) achBtn.classList.add('has-new'); } 
+        else { document.getElementById('achNotificationDot').style.display = 'none'; if (achBtn) achBtn.classList.remove('has-new'); }
     }
 
     function toggleAchievements() {
-        const drawer = document.getElementById('achDrawer');
-        const overlay = document.getElementById('achOverlay');
-
+        const drawer = document.getElementById('achDrawer'), overlay = document.getElementById('achOverlay');
         if (drawer.classList.contains('open')) {
-            drawer.classList.remove('open');
-            overlay.classList.remove('active');
-            document.body.style.overflow = '';
+            drawer.classList.remove('open'); overlay.classList.remove('active'); document.body.style.overflow = '';
             document.querySelectorAll('.ach-card.zoomed').forEach(c => c.classList.remove('zoomed'));
         } else {
             document.getElementById('achNotificationDot').style.display = 'none';
-            const achBtn = document.getElementById('achBtn');
-            if (achBtn) achBtn.classList.remove('has-new');
-
+            const achBtn = document.getElementById('achBtn'); if (achBtn) achBtn.classList.remove('has-new');
             document.body.style.overflow = 'hidden';
-
             let user = db.users.find(u => String(u.login).toLowerCase() === String(currentUser).toLowerCase());
-            if (user && user.achievements) {
-                let count = String(user.achievements).split(',').filter(s => s.trim() !== "").length;
-                localStorage.setItem(`ach_count_${user.login}`, count);
-            }
-
-            renderAchievements();
-            drawer.classList.add('open');
-            overlay.classList.add('active');
+            if (user && user.achievements) { let count = String(user.achievements).split(',').filter(s => s.trim() !== "").length; localStorage.setItem(`ach_count_${user.login}`, count); }
+            renderAchievements(); drawer.classList.add('open'); overlay.classList.add('active');
         }
     }
 
     function toggleAchZoom(element) {
         let isZoomed = element.classList.contains('zoomed');
         document.querySelectorAll('.ach-card.zoomed').forEach(card => card.classList.remove('zoomed'));
-        if (!isZoomed) {
-            element.classList.add('zoomed');
-            setTimeout(() => { element.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }, 50);
-        }
+        if (!isZoomed) { element.classList.add('zoomed'); setTimeout(() => { element.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }, 50); }
     }
 
     function renderAchievements() {
@@ -2064,42 +1903,27 @@
             html = '<div style="text-align:center; color:var(--text-muted); margin-top: 20px;">Список нагород порожній.</div>';
         } else {
             globalAchievements.forEach(achInfo => {
-                let code = String(achInfo.code).trim();
-                let isEarned = isGuest || achCodes.includes(code);
+                let code = String(achInfo.code).trim(), isEarned = isGuest || achCodes.includes(code);
                 let displayName = (achInfo && achInfo.name) ? achInfo.name.replace(/\.(svg|png|jpg|jpeg|webp|gif)$/i, '') : `Відзнака #${code}`;
-                let desc = (achInfo && achInfo.description) ? achInfo.description : "";
-                let safeCode = escapeHTMLAttr(code);
-
+                let desc = (achInfo && achInfo.description) ? achInfo.description : "", safeCode = escapeHTMLAttr(code);
                 let stateClass = isEarned ? 'earned' : 'locked';
-                let stateText = isEarned
-                    ? '<span style="color:var(--success); font-size:12px; font-weight:800;">ОТРИМАНО</span>'
-                    : '<span style="color:var(--text-muted); font-size:12px; font-weight:700;">ЗАКРИТО</span>';
-
+                let stateText = isEarned ? '<span style="color:var(--success); font-size:12px; font-weight:800;">ОТРИМАНО</span>' : '<span style="color:var(--text-muted); font-size:12px; font-weight:700;">ЗАКРИТО</span>';
                 html += `
                 <div class="ach-card ${stateClass}" onclick="if('${stateClass}' === 'earned') toggleAchZoom(this)">
-                    <div class="ach-icon-wrapper">
-                        <img src="Achievement/${safeCode}.png" onerror="this.src='medal.svg'" class="ach-img">
-                    </div>
+                    <div class="ach-icon-wrapper"><img src="Achievement/${safeCode}.png" onerror="this.src='medal.svg'" class="ach-img"></div>
                     <div style="display: flex; flex-direction: column; justify-content: center; flex: 1;">
-                        <div class="ach-card-title">${escapeHTMLAttr(displayName)}</div>
-                        <div class="ach-card-desc">${escapeHTMLAttr(desc)}</div>
+                        <div class="ach-card-title">${escapeHTMLAttr(displayName)}</div><div class="ach-card-desc">${escapeHTMLAttr(desc)}</div>
                         <div style="margin-top:6px;">${stateText}</div>
                     </div>
                 </div>`;
             });
         }
-
-        requestAnimationFrame(() => {
-            document.getElementById('achList').innerHTML = html;
-        });
+        requestAnimationFrame(() => { document.getElementById('achList').innerHTML = html; });
     }
 
     // --- ПАРСИНГ ТА ПРОХОДЖЕННЯ ТЕСТІВ ---
     function parseTestString(testStr) {
-        let lines = String(testStr || "").split('\n').map(l => l.trim()).filter(Boolean);
-        let questions = [];
-        let currentQ = null;
-
+        let lines = String(testStr || "").split('\n').map(l => l.trim()).filter(Boolean), questions = [], currentQ = null;
         lines.forEach(line => {
             let qMatch = line.match(/^(\d+)\.\s*(.*)/);
             if (qMatch) {
@@ -2108,22 +1932,14 @@
             } else {
                 let aMatch = line.match(/^\d+\/[a-zа-яA-ZА-ЯіІїЇєЄґҐ0-9]\)\s*(.*)/);
                 if (aMatch && currentQ) {
-                    let ansText = aMatch[1];
-                    let isCorrect = false;
-                    if (ansText.includes('(+)')) {
-                        isCorrect = true;
-                        ansText = ansText.replace(/\(\+\)/g, '').trim();
-                    }
+                    let ansText = aMatch[1], isCorrect = false;
+                    if (ansText.includes('(+)')) { isCorrect = true; ansText = ansText.replace(/\(\+\)/g, '').trim(); }
                     currentQ.answers.push({ text: ansText, correct: isCorrect });
                 }
             }
         });
         if (currentQ) questions.push(currentQ);
-
-        questions.forEach(q => {
-            let correctCount = q.answers.filter(a => a.correct).length;
-            if (correctCount > 1) q.type = 'checkbox';
-        });
+        questions.forEach(q => { let correctCount = q.answers.filter(a => a.correct).length; if (correctCount > 1) q.type = 'checkbox'; });
         return questions;
     }
 
@@ -2133,202 +1949,104 @@
             q.answers.forEach((ans, idx) => {
                 ans.selected = (idx === aIndex);
                 let label = document.getElementById(`lbl_q${qIndex}_a${idx}`);
-                if (label) {
-                    if (ans.selected) label.classList.add('selected');
-                    else label.classList.remove('selected');
-                }
+                if (label) { if (ans.selected) label.classList.add('selected'); else label.classList.remove('selected'); }
             });
         } else {
             let input = document.getElementById(`q${qIndex}_a${aIndex}`);
             q.answers[aIndex].selected = input.checked;
             let label = document.getElementById(`lbl_q${qIndex}_a${aIndex}`);
-            if (input.checked) label.classList.add('selected');
-            else label.classList.remove('selected');
+            if (input.checked) label.classList.add('selected'); else label.classList.remove('selected');
         }
     }
 
     function updateTimerUI() {
-        let m = Math.floor(timeRemaining / 60).toString().padStart(2, '0');
-        let s = (timeRemaining % 60).toString().padStart(2, '0');
+        let m = Math.floor(timeRemaining / 60).toString().padStart(2, '0'), s = (timeRemaining % 60).toString().padStart(2, '0');
         let el = document.getElementById('testTimer');
         el.innerText = `${m}:${s}`;
-        if (timeRemaining <= 10) {
-            el.style.color = "white";
-            el.style.background = "var(--danger)";
-        } else {
-            el.style.color = "var(--danger)";
-            el.style.background = "var(--danger-bg)";
-        }
+        if (timeRemaining <= 10) { el.style.color = "white"; el.style.background = "var(--danger)"; } 
+        else { el.style.color = "var(--danger)"; el.style.background = "var(--danger-bg)"; }
     }
 
     function showQuestion(index) {
-        if (index >= parsedQuestions.length) {
-            submitTest(false);
-            return;
-        }
-
-        let q = parsedQuestions[index];
-        let titleText = `Питання ${index + 1} з ${parsedQuestions.length}`;
-
+        if (index >= parsedQuestions.length) { submitTest(false); return; }
+        let q = parsedQuestions[index], titleText = `Питання ${index + 1} з ${parsedQuestions.length}`;
         let answersHtml = q.answers.map((ans, aIndex) => {
-            let checkedAttr = ans.selected ? 'checked' : '';
-            let selectedClass = ans.selected ? 'selected' : '';
-            return `
-            <label class="answer-label ${selectedClass}" id="lbl_q${index}_a${aIndex}">
-                <input type="${q.type}" name="q_${index}" id="q${index}_a${aIndex}" ${checkedAttr} onchange="updateSelection(${index}, ${aIndex})">
-                <span style="flex:1;">${ans.text}</span>
-            </label>`;
+            let checkedAttr = ans.selected ? 'checked' : '', selectedClass = ans.selected ? 'selected' : '';
+            return `<label class="answer-label ${selectedClass}" id="lbl_q${index}_a${aIndex}"><input type="${q.type}" name="q_${index}" id="q${index}_a${aIndex}" ${checkedAttr} onchange="updateSelection(${index}, ${aIndex})"><span style="flex:1;">${ans.text}</span></label>`;
         }).join('');
-
         let hint = q.type === 'checkbox' ? `<span style="font-size:13px; font-weight:500; color:var(--text-muted); display:block; margin-top:6px;">(Множинний вибір)</span>` : '';
         let containerHtml = `<div class="question-card"><div class="question-title">${q.text} ${hint}</div>${answersHtml}</div>`;
 
         requestAnimationFrame(() => {
             document.getElementById('testHeaderTitle').innerText = titleText;
             document.getElementById('testContainer').innerHTML = containerHtml;
-
             let btn = document.getElementById('submitTestBtn');
-            if (index === parsedQuestions.length - 1) {
-                btn.innerText = "ЗАВЕРШИТИ ТЕСТ";
-                btn.onclick = () => submitTest(false);
-            } else {
-                btn.innerText = "НАСТУПНЕ ПИТАННЯ";
-                btn.onclick = () => nextQuestion();
-            }
+            if (index === parsedQuestions.length - 1) { btn.innerText = "ЗАВЕРШИТИ ТЕСТ"; btn.onclick = () => submitTest(false); } 
+            else { btn.innerText = "НАСТУПНЕ ПИТАННЯ"; btn.onclick = () => nextQuestion(); }
         });
 
-        timeRemaining = TIME_PER_QUESTION;
-        updateTimerUI();
-
+        timeRemaining = TIME_PER_QUESTION; updateTimerUI();
         if (testTimerInterval) clearInterval(testTimerInterval);
         testTimerInterval = setInterval(() => {
-            timeRemaining--;
-            totalTimeSpent++;
-            updateTimerUI();
-            if (timeRemaining <= 0) {
-                clearInterval(testTimerInterval);
-                nextQuestion();
-            }
+            timeRemaining--; totalTimeSpent++; updateTimerUI();
+            if (timeRemaining <= 0) { clearInterval(testTimerInterval); nextQuestion(); }
         }, 1000);
     }
 
-    function nextQuestion() {
-        if (testTimerInterval) clearInterval(testTimerInterval);
-        currentQuestionIndex++;
-        showQuestion(currentQuestionIndex);
-    }
+    function nextQuestion() { if (testTimerInterval) clearInterval(testTimerInterval); currentQuestionIndex++; showQuestion(currentQuestionIndex); }
 
     function startTest() {
         if (window.isDeadlinePassed || windowViewingEmployee || windowUserRole === 'guest') return;
-        if (!currentProductData || !currentProductData.test || currentProductData.test.trim() === "") {
-            alert("Тест для цього курсу відсутній.");
-            return;
-        }
-
+        if (!currentProductData || !currentProductData.test || currentProductData.test.trim() === "") { alert("Тест для цього курсу відсутній."); return; }
         let warningShown = sessionStorage.getItem('skillhub_test_warning_shown');
-        if (!warningShown) switchView('warningView');
-        else proceedToTest();
+        if (!warningShown) switchView('warningView'); else proceedToTest();
     }
 
-    function acceptWarningAndStart() {
-        sessionStorage.setItem('skillhub_test_warning_shown', 'true');
-        proceedToTest();
-    }
+    function acceptWarningAndStart() { sessionStorage.setItem('skillhub_test_warning_shown', 'true'); proceedToTest(); }
 
     function proceedToTest() {
         parsedQuestions = parseTestString(currentProductData.test);
-        if (parsedQuestions.length === 0) {
-            alert("Помилка обробки тесту. Перевірте формат питань у таблиці.");
-            return;
-        }
-
-        if (window.theoryEntryTime > 0) {
-            window.sessionTotalTime += Math.floor((Date.now() - window.theoryEntryTime) / 1000);
-            window.theoryEntryTime = 0;
-        }
+        if (parsedQuestions.length === 0) { alert("Помилка обробки тесту."); return; }
+        if (window.theoryEntryTime > 0) { window.sessionTotalTime += Math.floor((Date.now() - window.theoryEntryTime) / 1000); window.theoryEntryTime = 0; }
         totalTimeSpent = window.sessionTotalTime || 0;
-
         shuffleArray(parsedQuestions);
-        parsedQuestions.forEach(q => {
-            shuffleArray(q.answers);
-            q.answers.forEach(a => a.selected = false);
-        });
-
-        currentQuestionIndex = 0;
-        isTestActive = true;
-        isCheatingTriggered = false;
-
-        switchView('testView');
-        showQuestion(currentQuestionIndex);
+        parsedQuestions.forEach(q => { shuffleArray(q.answers); q.answers.forEach(a => a.selected = false); });
+        currentQuestionIndex = 0; isTestActive = true; isCheatingTriggered = false;
+        switchView('testView'); showQuestion(currentQuestionIndex);
     }
 
-    function retryTest() {
-        window.sessionTotalTime = 0;
-        window.theoryEntryTime = 0;
-        startTest();
-    }
-
-    function repeatTheory() {
-        window.sessionTotalTime = 0;
-        window.theoryEntryTime = Date.now();
-        switchView('theoryView');
-    }
+    function retryTest() { window.sessionTotalTime = 0; window.theoryEntryTime = 0; startTest(); }
+    function repeatTheory() { window.sessionTotalTime = 0; window.theoryEntryTime = Date.now(); switchView('theoryView'); }
 
     async function submitTest(forceZeroByCheat = false) {
-        isTestActive = false;
-        if (testTimerInterval) clearInterval(testTimerInterval);
-
+        isTestActive = false; if (testTimerInterval) clearInterval(testTimerInterval);
         let correctCount = 0;
         if (!forceZeroByCheat) {
             parsedQuestions.forEach(q => {
-                let isQuestionCorrect = true;
-                let answeredAnything = false;
-                q.answers.forEach(ans => {
-                    if (ans.selected) answeredAnything = true;
-                    if (!!ans.selected !== ans.correct) isQuestionCorrect = false;
-                });
+                let isQuestionCorrect = true, answeredAnything = false;
+                q.answers.forEach(ans => { if (ans.selected) answeredAnything = true; if (!!ans.selected !== ans.correct) isQuestionCorrect = false; });
                 if (isQuestionCorrect && answeredAnything) correctCount++;
             });
         }
-
         let totalScore = forceZeroByCheat ? 0 : Math.round((correctCount / parsedQuestions.length) * 100);
-        let passed = totalScore >= 80;
-        let timeSpentNow = Math.max(1, totalTimeSpent);
-        let violationAdded = forceZeroByCheat ? 1 : 0;
-
-        let cleanTitle = cleanCourseTitle(currentProductData.product);
-        let cleanKey = getCleanName(cleanTitle);
+        let passed = totalScore >= 80, timeSpentNow = Math.max(1, totalTimeSpent), violationAdded = forceZeroByCheat ? 1 : 0;
+        let cleanTitle = cleanCourseTitle(currentProductData.product), cleanKey = getCleanName(cleanTitle);
 
         let currentUserObj = db.users.find(u => String(u.login).toLowerCase() === String(currentUser).toLowerCase());
         if (currentUserObj) {
             if (!currentUserObj.results) currentUserObj.results = {};
-            let prevRaw = currentUserObj.results[cleanTitle] || currentUserObj.results[cleanKey] || "";
-            let prev = parseTestResultString(prevRaw);
-
-            let newAttempts = prev.attempts + 1;
-            let newTotalTime = prev.time + timeSpentNow;
-            let newViolations = prev.violations + violationAdded;
-            let newBestScore = Math.max(prev.score, totalScore);
-
+            let prevRaw = currentUserObj.results[cleanTitle] || currentUserObj.results[cleanKey] || "", prev = parseTestResultString(prevRaw);
+            let newAttempts = prev.attempts + 1, newTotalTime = prev.time + timeSpentNow, newViolations = prev.violations + violationAdded, newBestScore = Math.max(prev.score, totalScore);
             let formattedResult = `${newAttempts}/${newTotalTime}/${newViolations}/${newBestScore}%`;
-            currentUserObj.results[cleanTitle] = formattedResult;
-            currentUserObj.results[cleanKey] = formattedResult;
-
+            currentUserObj.results[cleanTitle] = formattedResult; currentUserObj.results[cleanKey] = formattedResult;
             if (currentUserObj.stats) {
                 currentUserObj.stats.attempts = (currentUserObj.stats.attempts || 0) + 1;
                 currentUserObj.stats.timeSpent = (currentUserObj.stats.timeSpent || 0) + timeSpentNow;
                 currentUserObj.stats.violations = (currentUserObj.stats.violations || 0) + violationAdded;
             }
         }
-
-        window.sessionTotalTime = 0;
-        window.theoryEntryTime = 0;
-
-        try {
-            let fullCache = JSON.parse(localStorage.getItem(CACHE_KEY) || "{}");
-            fullCache.educationData = db;
-            localStorage.setItem(CACHE_KEY, JSON.stringify(fullCache));
-        } catch(e) {}
+        window.sessionTotalTime = 0; window.theoryEntryTime = 0;
+        try { let fullCache = JSON.parse(localStorage.getItem(CACHE_KEY) || "{}"); fullCache.educationData = db; localStorage.setItem(CACHE_KEY, JSON.stringify(fullCache)); } catch(e) {}
 
         let actionHtml = passed
             ? `<button class="btn btn-glow" onclick="openCourse(this.getAttribute('data-course'))" data-course="${escapeHTMLAttr(currentCourseName)}">ПЕРЕЙТИ ДАЛІ</button>`
@@ -2343,99 +2061,48 @@
             switchView('resultView');
         });
 
-        let payload = {
-            action: 'save_score',
-            login: currentUser,
-            product: cleanTitle,
-            score: totalScore,
-            time: timeSpentNow,
-            violations: violationAdded
-        };
-
+        let payload = { action: 'save_score', login: currentUser, product: cleanTitle, score: totalScore, time: timeSpentNow, violations: violationAdded };
         if (navigator.onLine) {
-            try {
-                fetch(API_URL, {
-                    method: 'POST', cache: 'no-store', mode: 'no-cors',
-                    body: JSON.stringify(payload)
-                }).catch(() => saveOfflineResult(currentUser, cleanTitle, totalScore, timeSpentNow, violationAdded));
-            } catch (e) {
-                saveOfflineResult(currentUser, cleanTitle, totalScore, timeSpentNow, violationAdded);
-            }
-        } else {
-            saveOfflineResult(currentUser, cleanTitle, totalScore, timeSpentNow, violationAdded);
-        }
+            try { fetch(API_URL, { method: 'POST', cache: 'no-store', mode: 'no-cors', body: JSON.stringify(payload) }).catch(() => saveOfflineResult(currentUser, cleanTitle, totalScore, timeSpentNow, violationAdded)); } 
+            catch (e) { saveOfflineResult(currentUser, cleanTitle, totalScore, timeSpentNow, violationAdded); }
+        } else { saveOfflineResult(currentUser, cleanTitle, totalScore, timeSpentNow, violationAdded); }
     }
 
     // --- АНТИ-ЧІТ ---
-    document.addEventListener('contextmenu', event => {
-        if (document.getElementById('testView').classList.contains('active')) event.preventDefault();
-    });
-    document.addEventListener('copy', event => {
-        if (document.getElementById('testView').classList.contains('active')) {
-            event.preventDefault();
-            alert("Копіювання матеріалів тесту заборонено!");
-        }
-    });
+    document.addEventListener('contextmenu', event => { if (document.getElementById('testView').classList.contains('active')) event.preventDefault(); });
+    document.addEventListener('copy', event => { if (document.getElementById('testView').classList.contains('active')) { event.preventDefault(); alert("Копіювання матеріалів тесту заборонено!"); } });
     document.addEventListener('keydown', (e) => {
         if (document.getElementById('testView').classList.contains('active')) {
             if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'i')) || (e.ctrlKey && (e.key === 'p' || e.key === 'P' || e.key === 's' || e.key === 'S' || e.key === 'f' || e.key === 'F'))) {
-                e.preventDefault();
-                alert("Ця дія тимчасово заблокована задля чесності тестування!");
+                e.preventDefault(); alert("Ця дія тимчасово заблокована задля чесності тестування!");
             }
         }
     });
 
     function triggerAntiCheat() {
         if (!isTestActive || isCheatingTriggered) return;
-        isCheatingTriggered = true;
-        isTestActive = false;
-
+        isCheatingTriggered = true; isTestActive = false;
         if (testTimerInterval) clearInterval(testTimerInterval);
         document.body.classList.add('cheating');
-
-        if (currentUser) {
-            let cheats = parseInt(localStorage.getItem('cheats_' + currentUser)) || 0;
-            localStorage.setItem('cheats_' + currentUser, cheats + 1);
-        }
-
-        setTimeout(() => {
-            alert("⛔ Порушення правил! Ви згорнули вікно або відвели фокус. Спробу зараховано з результатом 0%.");
-            document.body.classList.remove('cheating');
-            submitTest(true);
-        }, 150);
+        if (currentUser) { let cheats = parseInt(localStorage.getItem('cheats_' + currentUser)) || 0; localStorage.setItem('cheats_' + currentUser, cheats + 1); }
+        setTimeout(() => { alert("⛔ Порушення правил! Ви згорнули вікно або відвели фокус. Спробу зараховано з результатом 0%."); document.body.classList.remove('cheating'); submitTest(true); }, 150);
     }
-
-    window.addEventListener('blur', triggerAntiCheat);
-    window.addEventListener('pagehide', triggerAntiCheat);
-    document.addEventListener('visibilitychange', () => { if (document.hidden) triggerAntiCheat(); });
-    document.addEventListener('touchcancel', triggerAntiCheat);
+    window.addEventListener('blur', triggerAntiCheat); window.addEventListener('pagehide', triggerAntiCheat); document.addEventListener('visibilitychange', () => { if (document.hidden) triggerAntiCheat(); }); document.addEventListener('touchcancel', triggerAntiCheat);
 
     document.addEventListener('click', (e) => {
-        const wrap = document.querySelector('.search-box-wrap');
-        const sugg = document.getElementById('empSearchSuggestions');
-        if (wrap && sugg && !wrap.contains(e.target)) {
-            sugg.classList.remove('open');
-        }
+        const wrap = document.querySelector('.search-box-wrap'), sugg = document.getElementById('empSearchSuggestions');
+        if (wrap && sugg && !wrap.contains(e.target)) sugg.classList.remove('open');
     });
 
     // --- ІНІЦІАЛІЗАЦІЯ ---
-    
     document.addEventListener('DOMContentLoaded', async () => {
         let hasCache = false;
         try {
             let cachedData = localStorage.getItem(CACHE_KEY);
-            if (cachedData) {
-                let parsedDb = JSON.parse(cachedData);
-                if (parsedDb && parsedDb.educationData) {
-                    db = parsedDb.educationData;
-                    globalAchievements = parsedDb.achievementData || [];
-                    hasCache = true;
-                }
-            }
+            if (cachedData) { let parsedDb = JSON.parse(cachedData); if (parsedDb && parsedDb.educationData) { db = parsedDb.educationData; globalAchievements = parsedDb.achievementData || []; hasCache = true; } }
         } catch(e) {}
 
-        let savedCreds = localStorage.getItem('skillhub_edu_creds');
-        let parsedCreds = null;
+        let savedCreds = localStorage.getItem('skillhub_edu_creds'), parsedCreds = null;
         try { parsedCreds = savedCreds ? JSON.parse(savedCreds) : null; } catch(e) {}
 
         if (parsedCreds && parsedCreds.login) {
@@ -2444,35 +2111,26 @@
             document.getElementById('rememberMe').checked = true;
 
             if (hasCache && db && db.users && db.users.length > 0) {
-                document.getElementById('loader').style.display = 'none';
-                handleLoginSync(parsedCreds.login, parsedCreds.pass);
+                document.getElementById('loader').style.display = 'none'; handleLoginSync(parsedCreds.login, parsedCreds.pass);
             } else {
                 document.documentElement.classList.remove('fast-boot');
-                document.documentElement.style.setProperty('--edu-loader-display', 'flex');
-                document.getElementById('loader').style.display = 'flex';
+                document.documentElement.style.setProperty('--edu-loader-display', 'flex'); document.getElementById('loader').style.display = 'flex';
                 await fetchFreshDataSilent(true);
                 document.getElementById('loader').style.display = 'none';
-                if (db && db.users && db.users.length > 0) await handleLogin(true);
-                else switchView('loginView');
+                if (db && db.users && db.users.length > 0) await handleLogin(true); else switchView('loginView');
             }
         } else {
             document.documentElement.classList.remove('fast-boot');
             document.documentElement.style.setProperty('--edu-loader-display', 'flex');
-            if (!hasCache && navigator.onLine) {
-                document.getElementById('loader').style.display = 'flex';
-                await fetchFreshDataSilent(true);
-            }
-            document.getElementById('loader').style.display = 'none';
-            switchView('loginView');
+            if (!hasCache && navigator.onLine) { document.getElementById('loader').style.display = 'flex'; await fetchFreshDataSilent(true); }
+            document.getElementById('loader').style.display = 'none'; switchView('loginView');
         }
     });
 
     window.addEventListener('pageshow', function(event) {
         if (event.persisted) {
             document.documentElement.style.setProperty('--edu-loader-display', 'none');
-            const loader = document.getElementById('loader');
-            if (loader) loader.style.display = 'none';
-            
+            const loader = document.getElementById('loader'); if (loader) loader.style.display = 'none';
             document.documentElement.classList.remove('fast-boot');
         }
     });
