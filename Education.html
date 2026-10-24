@@ -393,6 +393,7 @@
     <span>Назад</span>
 </div>
 
+<!-- БОКОВЕ МЕНЮ 🏆 АЧІВКИ -->
 <div class="drawer-overlay" id="achOverlay" onclick="toggleAchievements()"></div>
 <div class="ach-drawer" id="achDrawer">
     <div class="ach-title" style="color: var(--primary);">
@@ -405,6 +406,7 @@
     <div id="achList"></div>
 </div>
 
+<!-- МОДАЛЬНЕ ВІКНО 📊 СТАТИСТИКА -->
 <div class="drawer-overlay" id="statsModalOverlay" onclick="closeStatsModal()"></div>
 <div class="stats-modal" id="statsModal">
     <div class="stats-modal-header">
@@ -454,11 +456,13 @@
         <button class="modal-close-btn" onclick="closeAssignModal()">✕</button>
     </div>
     
+    <!-- Блок дедлайну -->
     <div style="margin-bottom: 14px; flex-shrink: 0;">
         <label class="input-label" style="margin-bottom: 6px;">Дедлайн курсів (днів)</label>
         <input type="number" id="assignDeadlineInput" class="search-input-modern" placeholder="Наприклад: 31" oninput="toggleDeadline(this.value)" min="0">
     </div>
 
+    <!-- Блок Google Meet (тільки для власника) -->
     <div id="ownerMeetInputs" style="display:none; flex-direction:column; gap:14px; margin-bottom: 14px; flex-shrink: 0; background: var(--card-bg); padding: 16px; border-radius: 16px; border: 1px solid var(--border);">
         <div style="font-size: 12px; font-weight: 800; color: var(--primary); text-transform: uppercase;">Зустріч Google Meet</div>
         <div>
@@ -478,6 +482,7 @@
     </button>
 </div>
 
+<!-- Iframe вікно для SkillHUB Site -->
 <div class="drawer-overlay" id="skillhubModalOverlay" onclick="closeSkillhubFrame()"></div>
 <div class="skillhub-modal" id="skillhubModal">
     <div class="skillhub-header">
@@ -492,6 +497,7 @@
 
 <div class="container">
 
+    <!-- ЕКРАН 1: ВХІД -->
     <div id="loginView" class="view active">
         <div class="login-wrapper">
             <div class="login-card">
@@ -522,6 +528,7 @@
         </div>
     </div>
 
+    <!-- ЕКРАН 2: КАБІНЕТ ТА СТАТИСТИКА -->
     <div id="cabinetView" class="view">
         <div class="nav-header">
             <div style="display: flex; gap: 12px; align-items: stretch; height: 48px;">
@@ -532,6 +539,7 @@
                 </div>
             </div>
 
+            <!-- Верхні кнопки -->
             <div class="nav-actions" id="cabinetNavActions">
                 <button id="achBtn" class="back-btn-sleek ach-btn" onclick="toggleAchievements()" title="Зароблені відзнаки">
                     <img src="https://raw.githubusercontent.com/StepStepi4/SkillHUB-Assistant/main/education/Achievement.svg" class="ui-icon">
@@ -561,6 +569,7 @@
             </button>
         </div>
 
+        <!-- Банер перегляду співробітника -->
         <div id="viewingEmployeeBanner" class="viewing-banner">
             <div style="display: flex; flex-direction: column; gap: 2px;">
                 <span style="font-size: 11px; font-weight: 800; text-transform: uppercase; color: var(--primary);">Перегляд співробітника</span>
@@ -573,13 +582,16 @@
             </div>
         </div>
 
+        <!-- Блок дедлайну -->
         <div id="deadlineContainer" style="display:none;">
             <span id="deadlineIcon"><img src="https://raw.githubusercontent.com/StepStepi4/SkillHUB-Assistant/main/education/Time.svg" class="ui-icon"></span>
             <span id="deadlineText"></span>
         </div>
 
+        <!-- Контейнер для кнопки Google Meet (тільки у ВЛАСНОМУ кабінеті) -->
         <div id="meetButtonContainer" style="display: none; margin-bottom: 20px;"></div>
 
+        <!-- Перемикач: Персональна статистика / Призначені курси -->
         <div class="tabs-container" id="cabinetTabs">
             <div class="tab-btn active" id="tabBtnStats" onclick="switchCabinetTab('stats', this)">
                 <img src="https://raw.githubusercontent.com/StepStepi4/SkillHUB-Assistant/main/education/My%20statistic.svg" class="ui-icon"> 
@@ -591,6 +603,7 @@
             </div>
         </div>
 
+        <!-- ВКЛАДКА 1: ПЕРСОНАЛЬНА СТАТИСТИКА -->
         <div id="tabStats" class="tab-content active">
             <div class="section-title">
                 <img src="https://raw.githubusercontent.com/StepStepi4/SkillHUB-Assistant/main/education/Statistic.svg" class="ui-icon"> 
@@ -601,6 +614,7 @@
                 <canvas id="progressChart"></canvas>
             </div>
 
+            <!-- 8 показників -->
             <div id="learningAnalyticsBlock"></div>
 
             <div id="employeeEarnedAchievementsSection" style="display: none;">
@@ -620,6 +634,7 @@
             </div>
         </div>
 
+        <!-- ВКЛАДКА 2: ПРИЗНАЧЕНІ КУРСИ -->
         <div id="tabCourses" class="tab-content">
             <div class="section-title" id="courseListTitle">
                 <img src="https://raw.githubusercontent.com/StepStepi4/SkillHUB-Assistant/main/education/Test.svg" class="ui-icon">
@@ -629,6 +644,7 @@
         </div>
     </div>
 
+    <!-- ЕКРАН 3: СПИСОК ТЕМ КУРСУ -->
     <div id="productView" class="view">
         <div class="nav-header">
             <div style="display: flex; gap: 12px; align-items: center; height: 48px;">
@@ -642,6 +658,7 @@
         <div id="productList"></div>
     </div>
 
+    <!-- ЕКРАН 4: ТЕОРІЯ -->
     <div id="theoryView" class="view">
         <div class="nav-header">
             <div style="display: flex; gap: 12px; align-items: center; height: 48px;">
@@ -670,6 +687,7 @@
         <button class="btn btn-glow" id="startTestButton" onclick="startTest()">ПРОЙТИ ТЕСТ</button>
     </div>
 
+    <!-- ЕКРАН 5: ПОПЕРЕДЖЕННЯ ПЕРЕД ТЕСТОМ -->
     <div id="warningView" class="view">
         <div style="min-height: 70vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;">
             <div class="big-emoji" style="font-size: 80px;">⚠️</div>
@@ -690,6 +708,7 @@
         </div>
     </div>
 
+    <!-- ЕКРАН 6: ТЕСТУВАННЯ -->
     <div id="testView" class="view no-select">
         <div class="nav-header" style="align-items: center;">
             <div style="display: flex; align-items: center; gap: 12px;">
@@ -703,6 +722,7 @@
         <button class="btn btn-glow" id="submitTestBtn">НАСТУПНЕ ПИТАННЯ</button>
     </div>
 
+    <!-- ЕКРАН 7: РЕЗУЛЬТАТ -->
     <div id="resultView" class="view">
         <div style="min-height: 70vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;">
             <div class="big-emoji" id="resultEmoji" style="font-size: 80px;">🏆</div>
@@ -715,6 +735,7 @@
 
 </div>
 
+<!-- СКРИПТИ -->
 <script>
     const API_URL = 'https://script.google.com/macros/s/AKfycbyeoKV6uQRE_h0jy_QjkbQI7k_Py_UOYMvckWhHmGITT-q-Ai832__GWVxbdjxBgQ6zqA/exec'; 
     const CACHE_KEY = 'skillhub_v6_cache'; 
@@ -843,6 +864,7 @@
         }
     });
 
+    // Утиліти дат
     function parseUaDate(dateStr) {
         if (!dateStr) return null;
         let m = String(dateStr).match(/^(\d{2})\.(\d{2})\.(\d{4})(?:\s+(\d{2}):(\d{2})(?::(\d{2}))?)?/);
@@ -953,11 +975,8 @@
         if (activeView === 'loginView') {
             goBackToIndex();
         } else if (activeView === 'cabinetView') {
-            if (windowViewingEmployee) {
-                switchToMyCabinet();
-            } else {
-                goBackToIndex();
-            }
+            if (windowViewingEmployee) switchToMyCabinet();
+            else goBackToIndex();
         } else if (activeView === 'productView') {
             switchView('cabinetView');
             switchCabinetTab('courses');
@@ -992,7 +1011,6 @@
         requestAnimationFrame(() => {
             document.querySelectorAll('#cabinetTabs .tab-btn').forEach(btn => btn.classList.remove('active'));
             document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
-
             if (tabName === 'stats') {
                 document.getElementById('tabBtnStats').classList.add('active');
                 document.getElementById('tabStats').classList.add('active');
@@ -1032,7 +1050,6 @@
     async function fetchFreshDataSilent(isManual = false) {
         if (!navigator.onLine) return;
         processOfflineQueue();
-
         try {
             const controller = new AbortController();
             const timeoutId = setTimeout(() => controller.abort(), 15000);
@@ -1290,6 +1307,7 @@
 
     function renderMeetButton(user) {
         const container = document.getElementById('meetButtonContainer');
+        // Показуємо кнопку тільки в тому випадку, якщо це ВЛАСНИЙ кабінет (не режим перегляду)
         if (user && user.meetLink && !windowViewingEmployee) {
             let dateTxt = user.meetDate ? `<div style="font-size:12px; font-weight:600; color:var(--text-muted); margin-top:2px;">${escapeHTMLAttr(user.meetDate)}</div>` : '';
             container.innerHTML = `
