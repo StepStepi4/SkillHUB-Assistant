@@ -1978,7 +1978,7 @@
         pendingDeadline = originalDeadline;
         
         originalMeetLink = String(windowViewingEmployee.meetLink || "").trim();
-        originalMeetDate = String(windowViewingEmployee.meetDate || "").trim(); 
+        originalMeetDate = normalizeUaDate(windowViewingEmployee.meetDate);
 
         let deadlineInput = document.getElementById('assignDeadlineInput');
         deadlineInput.value = originalDeadline;
@@ -2403,7 +2403,6 @@
         });
     }
 
-    // ВИПРАВЛЕНО: Кнопку опису курсу перенесено під текст, змінено назву та додано target="_blank"
     function openProduct(index) {
         const products = coursesMap[currentCourseName] || [];
         currentProductData = products[index];
@@ -2425,15 +2424,6 @@
                 <img src="https://raw.githubusercontent.com/StepStepi4/SkillHUB-Assistant/main/education/info.svg" class="ui-icon" onerror="this.style.display='none'">
                 Детальний опис курсу
             </a>`;
-        }
-
-        if (currentProductData.presentations && currentProductData.presentations.length > 0) {
-            contentHtml += `<div class="theory-box"><div class="theory-line" style="display:flex; flex-direction:column; gap:8px;">
-                <div style="font-size:12px; font-weight:800; color:var(--text-muted); text-transform:uppercase;">Додаткові матеріали:</div>
-                ${currentProductData.presentations.map((link, idx) => `
-                    <a href="${escapeHTMLAttr(link)}" target="_blank" rel="noopener noreferrer" class="btn btn-secondary" style="text-decoration:none; padding:12px; font-size:13px;">📎 Відкрити матеріал ${idx + 1}</a>
-                `).join('')}
-            </div></div>`;
         }
 
         document.getElementById('theoryContentContainer').innerHTML = contentHtml;
@@ -2655,4 +2645,3 @@
     });
 </script>
 </body>
-</html>
