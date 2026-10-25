@@ -955,11 +955,13 @@
     function parseUaDate(dateStr) {
         if (!dateStr) return null;
         let dStr = String(dateStr).trim();
+        
         // Спочатку намагаємось знайти формат DD.MM.YYYY HH:MM
         let m = dStr.match(/^(\d{2})\.(\d{2})\.(\d{4})(?:\s+(\d{2}):(\d{2})(?::(\d{2}))?)?/);
         if (m) {
             return new Date(m[3], parseInt(m[2])-1, m[1], m[4]||0, m[5]||0, m[6]||0);
         }
+        
         // Резервний варіант: стандартний Date парсер JavaScript
         let d = new Date(dStr);
         if (!isNaN(d.getTime())) return d;
@@ -1395,21 +1397,36 @@
         });
     }
 
+    // ПОКРАЩЕНИЙ ВИВІД КНОПКИ У ВЛАСНОМУ КАБІНЕТІ СПІВРОБІТНИКА
     function renderMeetButton(user) {
         const container = document.getElementById('meetButtonContainer');
-        if (user && user.meetLink && !windowViewingEmployee) {
-            let dateTxt = user.meetDate ? `<div style="font-size:12px; font-weight:600; color:var(--text-muted); margin-top:2px;">${escapeHTMLAttr(user.meetDate)}</div>` : '';
+        
+        let hasLink = user && user.meetLink && String(user.meetLink).trim() !== "" && String(user.meetLink).trim() !== "-";
+        let hasDate = user && user.meetDate && String(user.meetDate).trim() !== "" && String(user.meetDate).trim() !== "-";
+
+        if ((hasLink || hasDate) && !windowViewingEmployee) {
+            let dateTxt = hasDate ? `<div style="font-size:12px; font-weight:600; color:var(--text-muted); margin-top:2px;">🗓 ${escapeHTMLAttr(user.meetDate)}</div>` : '';
+            
+            let linkBtn = '';
+            if (hasLink && String(user.meetLink).includes("http")) {
+                linkBtn = `<a href="${escapeHTMLAttr(user.meetLink)}" target="_blank" class="btn btn-glow" style="padding: 8px 14px; border-radius: 10px; font-size: 12px; text-decoration:none; white-space: nowrap;">ПРИЄДНАТИСЯ</a>`;
+            } else if (hasLink) {
+                linkBtn = `<div style="font-size:12px; font-weight:700; color:var(--text-muted);">${escapeHTMLAttr(user.meetLink)}</div>`;
+            } else {
+                linkBtn = `<div class="btn btn-secondary" style="padding: 8px 14px; border-radius: 10px; font-size: 12px; opacity: 0.6; white-space: nowrap; cursor: default;">ОЧІКУЄТЬСЯ</div>`;
+            }
+
             container.innerHTML = `
-                <a href="${escapeHTMLAttr(user.meetLink)}" target="_blank" style="text-decoration:none; display:block;">
-                    <div class="list-card" style="border-color: var(--primary); background: var(--primary-light); margin-bottom: 0;">
-                        <img src="https://raw.githubusercontent.com/StepStepi4/SkillHUB-Assistant/main/education/Meet.svg" class="ui-icon" style="width:28px; height:28px;" onerror="this.style.display='none'">
-                        <div style="flex:1; margin-left: 14px;">
-                            <div style="font-size: 15px; font-weight: 800; color: var(--primary);">Посилання на зустріч</div>
-                            ${dateTxt}
-                        </div>
-                        <div class="list-card-arrow">❯</div>
+                <div class="list-card" style="border-color: var(--primary); background: var(--primary-light); margin-bottom: 0; cursor: default;">
+                    <img src="https://raw.githubusercontent.com/StepStepi4/SkillHUB-Assistant/main/education/Meet.svg" class="ui-icon" style="width:28px; height:28px;" onerror="this.style.display='none'">
+                    <div style="flex:1; margin-left: 14px; padding-right: 10px;">
+                        <div style="font-size: 15px; font-weight: 800; color: var(--primary);">Google Meet</div>
+                        ${dateTxt}
                     </div>
-                </a>
+                    <div style="display: flex; flex-direction: column; align-items: flex-end; justify-content: center; flex-shrink: 0;">
+                        ${linkBtn}
+                    </div>
+                </div>
             `;
             container.style.display = 'block';
         } else {
@@ -1695,19 +1712,17 @@
         checkUpcomingMeets();
     }
 
-    // ПОКРАЩЕНИЙ ВИВІД СПИСКУ ЗУСТРІЧЕЙ
+    // ПОКРАЩЕНИЙ ВИВІД СПИСКУ ЗУСТРІЧЕЙ (В МОДАЛЦІ ВЛАСНИКА)
     function renderMeetList() {
         let listContainer = document.getElementById('meetModalList');
         if (!db || !db.users) return;
 
-        // Збираємо всіх, у кого вказано хоча б дату або хоча б посилання
         let meets = db.users.filter(u => {
             let hasLink = u.meetLink && String(u.meetLink).trim() !== "" && String(u.meetLink).trim() !== "-";
             let hasDate = u.meetDate && String(u.meetDate).trim() !== "" && String(u.meetDate).trim() !== "-";
             return hasLink || hasDate;
         }).map(u => {
             let dObj = parseUaDate(u.meetDate);
-            // Для сортування: якщо дати немає, кидаємо користувача в кінець списку
             let sortDate = dObj ? dObj.getTime() : 9999999999999;
             return { user: u, dateObj: dObj, sortDate: sortDate };
         }).sort((a, b) => a.sortDate - b.sortDate);
@@ -1730,13 +1745,15 @@
             let borderCol = isApproaching ? 'var(--primary)' : 'var(--border)';
             let bgClass = isApproaching ? 'background: var(--primary-light);' : '';
             
-            let dateDisplay = u.meetDate ? escapeHTMLAttr(u.meetDate) : "Дата не вказана";
+            let dateDisplay = u.meetDate && u.meetDate !== "-" ? escapeHTMLAttr(u.meetDate) : "Дата не вказана";
             let linkBtn = "";
             
             if (u.meetLink && String(u.meetLink).includes("http")) {
-                linkBtn = `<a href="${escapeHTMLAttr(u.meetLink)}" target="_blank" class="btn btn-glow" style="padding: 8px 14px; border-radius: 10px; font-size: 12px; text-decoration:none;">ПРИЄДНАТИСЯ</a>`;
-            } else if (u.meetLink) {
+                linkBtn = `<a href="${escapeHTMLAttr(u.meetLink)}" target="_blank" class="btn btn-glow" style="padding: 8px 14px; border-radius: 10px; font-size: 12px; text-decoration:none; white-space:nowrap;">ПРИЄДНАТИСЯ</a>`;
+            } else if (u.meetLink && u.meetLink !== "-") {
                 linkBtn = `<div style="font-size:12px; font-weight:700; color:var(--text-muted); margin-top:8px;">${escapeHTMLAttr(u.meetLink)}</div>`;
+            } else {
+                linkBtn = `<div class="btn btn-secondary" style="padding: 8px 14px; border-radius: 10px; font-size: 12px; opacity: 0.6; white-space:nowrap; cursor: default;">ОЧІКУЄТЬСЯ</div>`;
             }
 
             return `
