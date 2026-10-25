@@ -167,6 +167,19 @@
         }
         input:disabled { opacity: 0.6; cursor: not-allowed; }
         
+        select.search-input-modern {
+            appearance: none;
+            -webkit-appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238e8e93' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E") !important;
+            background-repeat: no-repeat !important;
+            background-position: right 14px center !important;
+            background-size: 16px !important;
+            padding-right: 40px !important;
+        }
+        [data-theme="dark"] select.search-input-modern {
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2398989d' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E") !important;
+        }
+
         .custom-checkbox-wrapper { display: flex; align-items: center; gap: 10px; cursor: pointer; margin-bottom: 28px; font-size: 14px; font-weight: 600; color: var(--text-muted); transition: color 0.2s; }
         .custom-checkbox-wrapper:hover { color: var(--text-main); }
         .custom-checkbox-wrapper input { display: none; }
@@ -303,7 +316,7 @@
         .stats-modal-title { font-size: 20px; font-weight: 800; color: var(--primary); display: flex; align-items: center; gap: 8px; }
         .modal-close-btn { background: var(--card-bg); border: 1px solid var(--border); width: 36px; height: 36px; border-radius: 12px; font-size: 18px; font-weight: 800; color: var(--text-muted); cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
 
-        .search-box-wrap { position: relative; margin-bottom: 14px; flex-shrink: 0; }
+        .search-box-wrap { position: relative; flex: 1; margin-bottom: 0; }
         .search-input-modern {
             width: 100%; padding: 14px 40px 14px 42px !important; border-radius: 14px !important;
             background: var(--card-bg) !important; border: 1.5px solid var(--border) !important;
@@ -420,11 +433,51 @@
         <button class="modal-close-btn" onclick="closeStatsModal()">✕</button>
     </div>
 
-    <div class="search-box-wrap">
-        <span class="search-icon-left">🔍</span>
-        <input type="text" id="empSearchInput" class="search-input-modern" placeholder="Пошук за ПІБ..." autocomplete="off" oninput="onEmployeeSearchInput(this.value)" onfocus="onEmployeeSearchInput(this.value)">
-        <button class="search-clear-btn" id="empSearchClearBtn" onclick="clearEmployeeSearch()">✕</button>
-        <div class="search-suggestions" id="empSearchSuggestions"></div>
+    <!-- Рядок пошуку та фільтрів -->
+    <div style="display: flex; gap: 8px; margin-bottom: 14px; flex-shrink: 0; align-items: center;">
+        <div class="search-box-wrap">
+            <span class="search-icon-left">🔍</span>
+            <input type="text" id="empSearchInput" class="search-input-modern" placeholder="Пошук за ПІБ..." autocomplete="off" oninput="onEmployeeSearchInput(this.value)" onfocus="onEmployeeSearchInput(this.value)">
+            <button class="search-clear-btn" id="empSearchClearBtn" onclick="clearEmployeeSearch()">✕</button>
+            <div class="search-suggestions" id="empSearchSuggestions"></div>
+        </div>
+        <button class="back-btn-sleek" onclick="toggleFilterMenu()" style="width: 48px; height: 48px; border-radius: 14px; flex-shrink: 0; background: var(--card-bg);">
+            <img src="https://raw.githubusercontent.com/StepStepi4/SkillHUB-Assistant/main/education/filters.svg" class="ui-icon" onerror="this.src='https://raw.githubusercontent.com/StepStepi4/SkillHUB-Assistant/main/education/info.svg'">
+            <div class="notification-dot" id="filterActiveDot" style="top: -2px; right: -2px;"></div>
+        </button>
+    </div>
+
+    <!-- Панель фільтрів -->
+    <div id="filterPanel" style="display: none; background: var(--card-bg); border: 1.5px solid var(--border); border-radius: 16px; padding: 16px; margin-bottom: 14px; flex-shrink: 0; flex-direction: column; gap: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.02);">
+        <div style="font-size: 12px; font-weight: 800; color: var(--primary); text-transform: uppercase; margin-bottom: 4px;">Фільтрація співробітників</div>
+        
+        <label class="custom-checkbox-wrapper" style="margin-bottom: 0;">
+            <input type="checkbox" id="f_assigned" onchange="applyFilters()">
+            <div class="custom-checkmark"></div>
+            <span>Призначені курси</span>
+        </label>
+        <label class="custom-checkbox-wrapper" style="margin-bottom: 0;">
+            <input type="checkbox" id="f_deadline" onchange="applyFilters()">
+            <div class="custom-checkmark"></div>
+            <span>Активний дедлайн</span>
+        </label>
+        <label class="custom-checkbox-wrapper" style="margin-bottom: 0;">
+            <input type="checkbox" id="f_oral" onchange="applyFilters()">
+            <div class="custom-checkmark"></div>
+            <span>Усний залік</span>
+        </label>
+        <label class="custom-checkbox-wrapper" style="margin-bottom: 0;">
+            <input type="checkbox" id="f_meet" onchange="applyFilters()">
+            <div class="custom-checkmark"></div>
+            <span>Зустрічі Google Meet</span>
+        </label>
+        
+        <div style="margin-top: 8px;">
+            <label class="input-label" style="margin-bottom: 6px;">Керівник</label>
+            <select id="f_manager" class="search-input-modern" style="padding: 12px 16px !important; border-radius: 12px;" onchange="applyFilters()">
+                <option value="">Всі керівники</option>
+            </select>
+        </div>
     </div>
 
     <div style="font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px; display: flex; justify-content: space-between;">
@@ -469,7 +522,6 @@
     <div id="ownerMeetInputs" style="display:none; flex-direction:column; gap:14px; margin-bottom: 14px; flex-shrink: 0; background: var(--card-bg); padding: 16px; border-radius: 16px; border: 1px solid var(--border);">
         <div style="font-size: 12px; font-weight: 800; color: var(--primary); text-transform: uppercase;">Зустріч Google Meet</div>
         <div>
-            <!-- ТИП ВВЕДЕННЯ ЗМІНЕНО НА TEXT, ЩОБ ПУСКАЛО БУДЬ-ЯКИЙ ФОРМАТ ПОСИЛАННЯ -->
             <label class="input-label" style="margin-bottom: 6px;">Посилання на зустріч</label>
             <input type="text" id="assignMeetLink" class="search-input-modern" placeholder="https://meet.google.com/..." oninput="checkAssignChanges()">
         </div>
@@ -820,6 +872,42 @@
     window.theoryEntryTime = 0;
 
     let sessionCheckInterval = null;
+
+    function toggleFilterMenu() {
+        let panel = document.getElementById('filterPanel');
+        if (panel.style.display === 'none' || panel.style.display === '') {
+            panel.style.display = 'flex';
+        } else {
+            panel.style.display = 'none';
+        }
+    }
+
+    function applyFilters() {
+        let q = document.getElementById('empSearchInput').value.toLowerCase();
+        renderStatsModalEmployees(q);
+    }
+
+    function populateManagerFilter() {
+        let employees = getAccessibleEmployeesList();
+        let managers = new Set();
+        employees.forEach(u => {
+            let m = formatManagerName(u.manager);
+            if (m && m !== "-") managers.add(m);
+        });
+        
+        let select = document.getElementById('f_manager');
+        if (!select) return;
+        
+        let currentVal = select.value;
+        select.innerHTML = `<option value="">Всі керівники</option>` + 
+            Array.from(managers).sort().map(m => `<option value="${escapeHTMLAttr(m)}">${escapeHTMLAttr(m)}</option>`).join('');
+        
+        if (managers.has(currentVal)) {
+            select.value = currentVal;
+        } else {
+            select.value = "";
+        }
+    }
 
     // --- ФУНКЦІЇ ДЛЯ РОБОТИ З ВІДЗНАКАМИ (АЧІВКАМИ) ---
     function checkNewAchievements(user) {
@@ -1404,7 +1492,6 @@
         });
     }
 
-    // ВИВІД КНОПКИ ЗУСТРІЧІ В КАБІНЕТІ СПІВРОБІТНИКА (СВІЙ КАБІНЕТ АБО ПРИ ПЕРЕГЛЯДІ)
     function renderMeetButton(user) {
         const container = document.getElementById('meetButtonContainer');
         
@@ -1554,9 +1641,20 @@
         if (windowUserRole === 'owner') document.getElementById('btnMyMeets').classList.remove('active');
         
         document.getElementById('modalRoleScopeHint').innerText = windowUserRole === 'owner' ? 'Усі співробітники (Власник)' : 'Підпорядковані співробітники (Керівник)';
+        
         document.getElementById('empSearchInput').value = '';
         document.getElementById('empSearchClearBtn').style.display = 'none';
         document.getElementById('empSearchSuggestions').classList.remove('open');
+        
+        // Reset filters
+        document.getElementById('f_assigned').checked = false;
+        document.getElementById('f_deadline').checked = false;
+        document.getElementById('f_oral').checked = false;
+        document.getElementById('f_meet').checked = false;
+        document.getElementById('filterPanel').style.display = 'none';
+        document.getElementById('filterActiveDot').style.display = 'none';
+        
+        populateManagerFilter();
         
         renderStatsModalEmployees('');
         document.getElementById('statsModalOverlay').classList.add('active');
@@ -1594,6 +1692,10 @@
         clearBtn.style.display = q.length > 0 ? 'block' : 'none';
 
         let list = getAccessibleEmployeesList();
+        
+        // Застосовуємо фільтри при підказках також
+        list = filterEmployeesLogic(list);
+
         if (q.length > 0) {
             let matches = list.filter(u => String(u.name).toLowerCase().includes(qLow)).slice(0, 6);
             if (matches.length > 0) {
@@ -1612,12 +1714,63 @@
                 suggBox.classList.add('open');
             }
         } else { suggBox.classList.remove('open'); }
+        
         renderStatsModalEmployees(qLow);
+    }
+
+    function filterEmployeesLogic(employees) {
+        const f_assigned = document.getElementById('f_assigned') ? document.getElementById('f_assigned').checked : false;
+        const f_deadline = document.getElementById('f_deadline') ? document.getElementById('f_deadline').checked : false;
+        const f_meet = document.getElementById('f_meet') ? document.getElementById('f_meet').checked : false;
+        const f_oral = document.getElementById('f_oral') ? document.getElementById('f_oral').checked : false;
+        const f_manager = document.getElementById('f_manager') ? document.getElementById('f_manager').value : "";
+
+        return employees.filter(u => {
+            if (f_assigned && (!u.assigned || u.assigned.length === 0)) return false;
+            
+            if (f_deadline) {
+                let hasD = u.deadlineDays && parseFloat(u.deadlineDays) > 0;
+                let hasD2 = u.deadline && u.deadline.trim() !== "-" && u.deadline.trim() !== "";
+                if (!hasD && !hasD2) return false;
+            }
+
+            if (f_meet) {
+                let hasL = u.meetLink && String(u.meetLink).trim() !== "" && String(u.meetLink).trim() !== "-";
+                let hasD = u.meetDate && String(u.meetDate).trim() !== "" && String(u.meetDate).trim() !== "-";
+                if (!hasL && !hasD) return false;
+            }
+
+            if (f_oral) {
+                let o = String(u.oralExam || "").trim().toLowerCase();
+                if (o === "" || o === "-" || o === "немає" || o === "ні" || o === "false" || o === "0") return false;
+            }
+
+            if (f_manager && f_manager !== "") {
+                if (formatManagerName(u.manager) !== f_manager) return false;
+            }
+
+            return true;
+        });
     }
 
     function renderStatsModalEmployees(filterQueryLow) {
         let employees = getAccessibleEmployeesList();
-        if (filterQueryLow) employees = employees.filter(u => String(u.name).toLowerCase().includes(filterQueryLow));
+        
+        employees = filterEmployeesLogic(employees);
+
+        if (filterQueryLow) {
+            employees = employees.filter(u => String(u.name).toLowerCase().includes(filterQueryLow));
+        }
+
+        // Встановлення індикатора фільтру
+        const f_assigned = document.getElementById('f_assigned').checked;
+        const f_deadline = document.getElementById('f_deadline').checked;
+        const f_meet = document.getElementById('f_meet').checked;
+        const f_oral = document.getElementById('f_oral').checked;
+        const f_manager = document.getElementById('f_manager').value;
+        let hasActiveFilters = f_assigned || f_deadline || f_meet || f_oral || (f_manager !== "");
+        document.getElementById('filterActiveDot').style.display = hasActiveFilters ? 'block' : 'none';
+
         document.getElementById('modalEmpCount').innerText = `Знайдено: ${employees.length}`;
         
         if (employees.length === 0) {
@@ -1728,7 +1881,6 @@
         checkUpcomingMeets();
     }
 
-    // ПОКРАЩЕНИЙ ВИВІД СПИСКУ ЗУСТРІЧЕЙ В МОДАЛЦІ ВЛАСНИКА
     function renderMeetList() {
         let listContainer = document.getElementById('meetModalList');
         if (!db || !db.users) return;
