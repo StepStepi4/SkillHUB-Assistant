@@ -1404,25 +1404,33 @@
         });
     }
 
-    // ТЕПЕР ВІДОБРАЖАЄТЬСЯ І В ЧУЖОМУ КАБІНЕТІ, І КЛІКАБЕЛЬНА 100%
+    // ВИВІД КНОПКИ ЗУСТРІЧІ В КАБІНЕТІ СПІВРОБІТНИКА (СВІЙ КАБІНЕТ АБО ПРИ ПЕРЕГЛЯДІ)
     function renderMeetButton(user) {
         const container = document.getElementById('meetButtonContainer');
         
-        let hasLink = user && user.meetLink && String(user.meetLink).trim() !== "" && String(user.meetLink).trim() !== "-";
-        let hasDate = user && user.meetDate && String(user.meetDate).trim() !== "" && String(user.meetDate).trim() !== "-";
+        let linkVal = String(user.meetLink || "").trim();
+        let dateVal = String(user.meetDate || "").trim();
+        if (linkVal === "-") linkVal = "";
+        if (dateVal === "-") dateVal = "";
+        
+        let hasLink = linkVal !== "";
+        let hasDate = dateVal !== "";
 
         if (hasLink || hasDate) {
-            let dateTxt = hasDate ? `<div style="font-size:12px; font-weight:600; color:var(--text-muted); margin-top:2px;">🗓 ${escapeHTMLAttr(user.meetDate)}</div>` : '';
+            let dateTxt = hasDate ? `<div style="font-size:12px; font-weight:600; color:var(--text-muted); margin-top:2px;">🗓 ${escapeHTMLAttr(dateVal)}</div>` : '';
             
-            let linkBtn = '';
-            if (hasLink && String(user.meetLink).includes("http")) {
-                linkBtn = `<a href="${escapeHTMLAttr(user.meetLink)}" target="_blank" class="btn btn-glow" style="padding: 8px 14px; border-radius: 10px; font-size: 12px; text-decoration:none; white-space: nowrap;">ПРИЄДНАТИСЯ</a>`;
-            } else if (hasLink) {
-                // Якщо введено без http, автоматично підставляємо для клікабельності
-                linkBtn = `<a href="https://${escapeHTMLAttr(user.meetLink).replace(/^https?:\/\//,'')}" target="_blank" class="btn btn-glow" style="padding: 8px 14px; border-radius: 10px; font-size: 12px; text-decoration:none; white-space: nowrap;">ПРИЄДНАТИСЯ</a>`;
+            let linkHref = "javascript:void(0)";
+            let onclick = "alert('Посилання на зустріч ще не додано. Зверніться до керівника.');";
+            let btnStyle = "padding: 8px 14px; border-radius: 10px; font-size: 12px; text-decoration:none; white-space: nowrap;";
+            
+            if (hasLink) {
+                linkHref = linkVal.includes("http") ? escapeHTMLAttr(linkVal) : "https://" + escapeHTMLAttr(linkVal).replace(/^https?:\/\//,'');
+                onclick = "";
             } else {
-                linkBtn = `<div class="btn btn-secondary" style="padding: 8px 14px; border-radius: 10px; font-size: 12px; opacity: 0.6; white-space: nowrap; cursor: default;">ОЧІКУЄТЬСЯ</div>`;
+                btnStyle += " opacity: 0.6;";
             }
+
+            let linkBtn = `<a href="${linkHref}" target="${hasLink ? '_blank' : '_self'}" onclick="${onclick}" class="btn btn-glow" style="${btnStyle}">ПРИЄДНАТИСЯ</a>`;
 
             container.innerHTML = `
                 <div class="list-card" style="border-color: var(--primary); background: var(--primary-light); margin-bottom: 0; cursor: default;">
@@ -1452,7 +1460,7 @@
             let now = Date.now();
             hasApproaching = db.users.some(u => {
                 let d = parseUaDate(u.meetDate);
-                if (!d || !u.meetLink) return false;
+                if (!d) return false;
                 let diff = d.getTime() - now;
                 return diff > 0 && diff <= 60 * 60 * 1000;
             });
@@ -1720,14 +1728,15 @@
         checkUpcomingMeets();
     }
 
+    // ПОКРАЩЕНИЙ ВИВІД СПИСКУ ЗУСТРІЧЕЙ В МОДАЛЦІ ВЛАСНИКА
     function renderMeetList() {
         let listContainer = document.getElementById('meetModalList');
         if (!db || !db.users) return;
 
         let meets = db.users.filter(u => {
-            let hasLink = u.meetLink && String(u.meetLink).trim() !== "" && String(u.meetLink).trim() !== "-";
-            let hasDate = u.meetDate && String(u.meetDate).trim() !== "" && String(u.meetDate).trim() !== "-";
-            return hasLink || hasDate;
+            let l = String(u.meetLink || "").trim();
+            let d = String(u.meetDate || "").trim();
+            return (l !== "" && l !== "-") || (d !== "" && d !== "-");
         }).map(u => {
             let dObj = parseUaDate(u.meetDate);
             let sortDate = dObj ? dObj.getTime() : 9999999999999;
@@ -1752,20 +1761,26 @@
             let borderCol = isApproaching ? 'var(--primary)' : 'var(--border)';
             let bgClass = isApproaching ? 'background: var(--primary-light);' : '';
             
-            let dateDisplay = u.meetDate && u.meetDate !== "-" ? escapeHTMLAttr(u.meetDate) : "Дата не вказана";
-            let linkBtn = "";
+            let dateVal = String(u.meetDate || "").trim();
+            let linkVal = String(u.meetLink || "").trim();
+            if (linkVal === "-") linkVal = "";
+            if (dateVal === "-") dateVal = "";
             
-            let hasLink = u.meetLink && String(u.meetLink).trim() !== "" && String(u.meetLink).trim() !== "-";
-
-            if (hasLink && String(u.meetLink).includes("http")) {
-                linkBtn = `<a href="${escapeHTMLAttr(u.meetLink)}" target="_blank" class="btn btn-glow" style="padding: 8px 14px; border-radius: 10px; font-size: 12px; text-decoration:none; white-space:nowrap;">ПРИЄДНАТИСЯ</a>`;
-            } else if (hasLink) {
-                // Якщо введено без http, автоматично підставляємо для клікабельності
-                let href = "https://" + escapeHTMLAttr(u.meetLink).replace(/^https?:\/\//,'');
-                linkBtn = `<a href="${href}" target="_blank" class="btn btn-glow" style="padding: 8px 14px; border-radius: 10px; font-size: 12px; text-decoration:none; white-space:nowrap;">ПРИЄДНАТИСЯ</a>`;
+            let hasLink = linkVal !== "";
+            let dateDisplay = dateVal !== "" ? escapeHTMLAttr(dateVal) : "Дата не вказана";
+            
+            let linkHref = "javascript:void(0)";
+            let onclick = "alert('Посилання на зустріч ще не додано. Оновіть дані або перевірте пізніше.');";
+            let btnStyle = "padding: 8px 14px; border-radius: 10px; font-size: 12px; text-decoration:none; white-space:nowrap;";
+            
+            if (hasLink) {
+                linkHref = linkVal.includes("http") ? escapeHTMLAttr(linkVal) : "https://" + escapeHTMLAttr(linkVal).replace(/^https?:\/\//,'');
+                onclick = "";
             } else {
-                linkBtn = `<div class="btn btn-secondary" style="padding: 8px 14px; border-radius: 10px; font-size: 12px; opacity: 0.6; white-space:nowrap; cursor: default;">ОЧІКУЄТЬСЯ</div>`;
+                btnStyle += " opacity: 0.6;";
             }
+            
+            let linkBtn = `<a href="${linkHref}" target="${hasLink ? '_blank' : '_self'}" onclick="${onclick}" class="btn btn-glow" style="${btnStyle}">ПРИЄДНАТИСЯ</a>`;
 
             return `
                 <div class="list-card" style="border-color: ${borderCol}; ${bgClass} padding: 14px 16px; cursor:default;">
@@ -1810,7 +1825,7 @@
         pendingDeadline = originalDeadline;
         
         originalMeetLink = String(windowViewingEmployee.meetLink || "").trim();
-        originalMeetDate = normalizeUaDate(windowViewingEmployee.meetDate);
+        originalMeetDate = String(windowViewingEmployee.meetDate || "").trim(); 
 
         let deadlineInput = document.getElementById('assignDeadlineInput');
         deadlineInput.value = originalDeadline;
@@ -1913,8 +1928,6 @@
         if (windowUserRole === 'owner') {
             let mLink = document.getElementById('assignMeetLink').value.trim();
             let mDate = formatFromDatetimeLocal(document.getElementById('assignMeetDate').value);
-            
-            // Відправляємо 100% те що в полях, навіть якщо змінилось одне з двох
             payload.meetLink = mLink;
             payload.meetDate = mDate;
         }
