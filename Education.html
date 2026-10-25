@@ -469,8 +469,9 @@
     <div id="ownerMeetInputs" style="display:none; flex-direction:column; gap:14px; margin-bottom: 14px; flex-shrink: 0; background: var(--card-bg); padding: 16px; border-radius: 16px; border: 1px solid var(--border);">
         <div style="font-size: 12px; font-weight: 800; color: var(--primary); text-transform: uppercase;">Зустріч Google Meet</div>
         <div>
+            <!-- ТИП ВВЕДЕННЯ ЗМІНЕНО НА TEXT, ЩОБ ПУСКАЛО БУДЬ-ЯКИЙ ФОРМАТ ПОСИЛАННЯ -->
             <label class="input-label" style="margin-bottom: 6px;">Посилання на зустріч</label>
-            <input type="url" id="assignMeetLink" class="search-input-modern" placeholder="https://meet.google.com/..." oninput="checkAssignChanges()">
+            <input type="text" id="assignMeetLink" class="search-input-modern" placeholder="https://meet.google.com/..." oninput="checkAssignChanges()">
         </div>
         <div>
             <label class="input-label" style="margin-bottom: 6px;">Дата та час</label>
@@ -948,18 +949,16 @@
         }
     });
 
-    // ПОКРАЩЕНЕ ПАРСИНГ ДАТИ (З ПІДТРИМКОЮ БУДЬ-ЯКОГО ФОРМАТУ)
+    // Універсальний парсер дати
     function parseUaDate(dateStr) {
         if (!dateStr) return null;
         let dStr = String(dateStr).trim();
         
-        // Спочатку намагаємось знайти формат DD.MM.YYYY HH:MM
         let m = dStr.match(/^(\d{2})\.(\d{2})\.(\d{4})(?:\s+(\d{2}):(\d{2})(?::(\d{2}))?)?/);
         if (m) {
             return new Date(m[3], parseInt(m[2])-1, m[1], m[4]||0, m[5]||0, m[6]||0);
         }
         
-        // Резервний варіант: стандартний Date парсер JavaScript
         let d = new Date(dStr);
         if (!isNaN(d.getTime())) return d;
         
@@ -1405,7 +1404,7 @@
         });
     }
 
-    // ПОКРАЩЕНИЙ ВИВІД КНОПКИ ЗУСТРІЧЕЙ
+    // ТЕПЕР ВІДОБРАЖАЄТЬСЯ І В ЧУЖОМУ КАБІНЕТІ, І КЛІКАБЕЛЬНА 100%
     function renderMeetButton(user) {
         const container = document.getElementById('meetButtonContainer');
         
@@ -1419,7 +1418,8 @@
             if (hasLink && String(user.meetLink).includes("http")) {
                 linkBtn = `<a href="${escapeHTMLAttr(user.meetLink)}" target="_blank" class="btn btn-glow" style="padding: 8px 14px; border-radius: 10px; font-size: 12px; text-decoration:none; white-space: nowrap;">ПРИЄДНАТИСЯ</a>`;
             } else if (hasLink) {
-                linkBtn = `<div style="font-size:12px; font-weight:700; color:var(--text-muted);">${escapeHTMLAttr(user.meetLink)}</div>`;
+                // Якщо введено без http, автоматично підставляємо для клікабельності
+                linkBtn = `<a href="https://${escapeHTMLAttr(user.meetLink).replace(/^https?:\/\//,'')}" target="_blank" class="btn btn-glow" style="padding: 8px 14px; border-radius: 10px; font-size: 12px; text-decoration:none; white-space: nowrap;">ПРИЄДНАТИСЯ</a>`;
             } else {
                 linkBtn = `<div class="btn btn-secondary" style="padding: 8px 14px; border-radius: 10px; font-size: 12px; opacity: 0.6; white-space: nowrap; cursor: default;">ОЧІКУЄТЬСЯ</div>`;
             }
@@ -1720,7 +1720,6 @@
         checkUpcomingMeets();
     }
 
-    // ПОКРАЩЕНИЙ ВИВІД СПИСКУ ЗУСТРІЧЕЙ (В МОДАЛЦІ ВЛАСНИКА)
     function renderMeetList() {
         let listContainer = document.getElementById('meetModalList');
         if (!db || !db.users) return;
@@ -1756,10 +1755,14 @@
             let dateDisplay = u.meetDate && u.meetDate !== "-" ? escapeHTMLAttr(u.meetDate) : "Дата не вказана";
             let linkBtn = "";
             
-            if (u.meetLink && String(u.meetLink).includes("http")) {
+            let hasLink = u.meetLink && String(u.meetLink).trim() !== "" && String(u.meetLink).trim() !== "-";
+
+            if (hasLink && String(u.meetLink).includes("http")) {
                 linkBtn = `<a href="${escapeHTMLAttr(u.meetLink)}" target="_blank" class="btn btn-glow" style="padding: 8px 14px; border-radius: 10px; font-size: 12px; text-decoration:none; white-space:nowrap;">ПРИЄДНАТИСЯ</a>`;
-            } else if (u.meetLink && u.meetLink !== "-") {
-                linkBtn = `<div style="font-size:12px; font-weight:700; color:var(--text-muted); margin-top:8px;">${escapeHTMLAttr(u.meetLink)}</div>`;
+            } else if (hasLink) {
+                // Якщо введено без http, автоматично підставляємо для клікабельності
+                let href = "https://" + escapeHTMLAttr(u.meetLink).replace(/^https?:\/\//,'');
+                linkBtn = `<a href="${href}" target="_blank" class="btn btn-glow" style="padding: 8px 14px; border-radius: 10px; font-size: 12px; text-decoration:none; white-space:nowrap;">ПРИЄДНАТИСЯ</a>`;
             } else {
                 linkBtn = `<div class="btn btn-secondary" style="padding: 8px 14px; border-radius: 10px; font-size: 12px; opacity: 0.6; white-space:nowrap; cursor: default;">ОЧІКУЄТЬСЯ</div>`;
             }
@@ -1807,7 +1810,6 @@
         pendingDeadline = originalDeadline;
         
         originalMeetLink = String(windowViewingEmployee.meetLink || "").trim();
-        // Відрізаємо зайві секунди з Google Sheets для коректного порівняння при зміні
         originalMeetDate = normalizeUaDate(windowViewingEmployee.meetDate);
 
         let deadlineInput = document.getElementById('assignDeadlineInput');
@@ -1911,8 +1913,10 @@
         if (windowUserRole === 'owner') {
             let mLink = document.getElementById('assignMeetLink').value.trim();
             let mDate = formatFromDatetimeLocal(document.getElementById('assignMeetDate').value);
-            if (mLink !== originalMeetLink) payload.meetLink = mLink;
-            if (mDate !== originalMeetDate) payload.meetDate = mDate;
+            
+            // Відправляємо 100% те що в полях, навіть якщо змінилось одне з двох
+            payload.meetLink = mLink;
+            payload.meetDate = mDate;
         }
 
         if (payload.deadlineDays !== undefined) windowViewingEmployee.deadlineDays = payload.deadlineDays;
