@@ -145,7 +145,6 @@
         .input-group { margin-bottom: 20px; position: relative; }
         .input-label { display: block; font-size: 12px; font-weight: 700; color: var(--text-muted); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
         
-        /* Виправлена ширина для всіх полів вводу, включаючи datetime-local */
         input[type="text"], input[type="password"], input[type="number"], input[type="url"], input[type="datetime-local"] { 
             width: 100%; 
             display: block;
@@ -588,7 +587,7 @@
             <span id="deadlineText"></span>
         </div>
 
-        <!-- Контейнер для кнопки Google Meet (тільки у ВЛАСНОМУ кабінеті) -->
+        <!-- Контейнер для кнопки Google Meet -->
         <div id="meetButtonContainer" style="display: none; margin-bottom: 20px;"></div>
 
         <!-- Перемикач: Персональна статистика / Призначені курси -->
@@ -816,6 +815,87 @@
     window.theoryEntryTime = 0;
 
     let sessionCheckInterval = null;
+
+    // --- ФУНКЦІЇ ДЛЯ РОБОТИ З ВІДЗНАКАМИ (АЧІВКАМИ) ---
+    function checkNewAchievements(user) {
+        if (!user || !user.achievements) return;
+        let achCodes = String(user.achievements).split(',').map(s => s.trim()).filter(Boolean);
+        let storedKey = 'skillhub_achievements_' + user.login;
+        let viewedCodes = [];
+        try { viewedCodes = JSON.parse(localStorage.getItem(storedKey) || '[]'); } catch (e) {}
+        let hasNew = achCodes.some(code => !viewedCodes.includes(code));
+        let dot = document.getElementById('achNotificationDot');
+        let btn = document.getElementById('achBtn');
+        if (hasNew) {
+            if (dot) dot.style.display = 'block';
+            if (btn) btn.classList.add('has-new');
+        } else {
+            if (dot) dot.style.display = 'none';
+            if (btn) btn.classList.remove('has-new');
+        }
+    }
+
+    function toggleAchievements() {
+        let drawer = document.getElementById('achDrawer');
+        let overlay = document.getElementById('achOverlay');
+        if (drawer.classList.contains('open')) {
+            drawer.classList.remove('open');
+            overlay.classList.remove('active');
+            document.body.style.overflow = '';
+        } else {
+            renderAchievementsList();
+            drawer.classList.add('open');
+            overlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+            if (currentUser) {
+                let user = db.users.find(u => String(u.login).toLowerCase() === String(currentUser).toLowerCase());
+                if (user && user.achievements) {
+                    let achCodes = String(user.achievements).split(',').map(s => s.trim()).filter(Boolean);
+                    localStorage.setItem('skillhub_achievements_' + user.login, JSON.stringify(achCodes));
+                    checkNewAchievements(user); 
+                }
+            }
+        }
+    }
+
+    function toggleAchZoom(el) {
+        if (el.classList.contains('locked')) return;
+        if (el.classList.contains('zoomed')) {
+            el.classList.remove('zoomed');
+        } else {
+            document.querySelectorAll('.ach-card.zoomed').forEach(c => c.classList.remove('zoomed'));
+            el.classList.add('zoomed');
+        }
+    }
+
+    function renderAchievementsList() {
+        let container = document.getElementById('achList');
+        if (!container) return;
+        let user = db.users.find(u => String(u.login).toLowerCase() === String(currentUser).toLowerCase());
+        let earnedCodes = user && user.achievements ? String(user.achievements).split(',').map(s => s.trim()).filter(Boolean) : [];
+        if (!globalAchievements || globalAchievements.length === 0) {
+            container.innerHTML = '<div style="text-align:center; padding: 20px; color: var(--text-muted); font-weight:600;">Відзнаки відсутні в базі</div>';
+            return;
+        }
+        let html = globalAchievements.map(ach => {
+            let isEarned = earnedCodes.includes(String(ach.code).trim());
+            let safeCode = escapeHTMLAttr(ach.code);
+            let safeTitle = escapeHTMLAttr(ach.name);
+            let safeDesc = escapeHTMLAttr(ach.description);
+            let cardClass = isEarned ? "ach-card earned" : "ach-card locked";
+            return `
+                <div class="${cardClass}" onclick="toggleAchZoom(this)">
+                    <div class="ach-icon-wrapper"><img src="Achievement/${safeCode}.png" onerror="this.src='medal.svg'" class="ach-img"></div>
+                    <div style="display: flex; flex-direction: column; justify-content: center; flex: 1;">
+                        <div class="ach-card-title">${safeTitle}</div>
+                        <div class="ach-card-desc">${safeDesc}</div>
+                        ${isEarned ? `<div style="margin-top:6px;"><span style="color:var(--success); font-size:11px; font-weight:800;">НАТИСНІТЬ ДЛЯ ОПИСУ</span></div>` : ''}
+                    </div>
+                </div>
+            `;
+        }).join('');
+        container.innerHTML = html;
+    }
 
     function verifySingleDeviceSession() {
         if (!currentUser || !db || !db.activeSessions) return false;
@@ -1064,7 +1144,6 @@
                 globalAchievements = data.achievementData || [];
 
                 if (currentUser) {
-                    // Знято блокуючу перевірку verifySingleDeviceSession() тут, щоб не ламало оптимістичний UI
                     let user = db.users.find(u => String(u.login).toLowerCase() === String(currentUser).toLowerCase());
                     if (user) {
                         if (document.getElementById('cabinetView').classList.contains('active')) {
@@ -1189,7 +1268,6 @@
             currentUser = user.login;
             let userKeyLow = String(currentUser).toLowerCase().trim();
             
-            // Завжди при успішному вході даємо новий токен, щоб не було конфліктів кэшу
             let myToken = Date.now().toString() + "_" + Math.random().toString(36).substring(2, 10);
             localStorage.setItem('skillhub_session_token', myToken);
             
@@ -1236,7 +1314,6 @@
                 let userKeyLow = String(currentUser).toLowerCase().trim();
                 err.style.display = 'none';
 
-                // Завжди генеруємо новий токен
                 let myToken = Date.now().toString() + "_" + Math.random().toString(36).substring(2, 10);
                 localStorage.setItem('skillhub_session_token', myToken);
 
@@ -1307,7 +1384,6 @@
 
     function renderMeetButton(user) {
         const container = document.getElementById('meetButtonContainer');
-        // Показуємо кнопку тільки в тому випадку, якщо це ВЛАСНИЙ кабінет (не режим перегляду)
         if (user && user.meetLink && !windowViewingEmployee) {
             let dateTxt = user.meetDate ? `<div style="font-size:12px; font-weight:600; color:var(--text-muted); margin-top:2px;">${escapeHTMLAttr(user.meetDate)}</div>` : '';
             container.innerHTML = `
@@ -1579,7 +1655,6 @@
         switchCabinetTab('stats');
     }
 
-    // --- МОДАЛЬНЕ ВІКНО МОЇ ЗУСТРІЧІ (ДЛЯ ВЛАСНИКА) ---
     function openMeetModal() {
         if (windowUserRole !== 'owner') return;
         document.getElementById('btnMyEducation').classList.remove('active');
@@ -1648,7 +1723,6 @@
         listContainer.innerHTML = html;
     }
 
-    // --- ПРИЗНАЧЕННЯ КУРСІВ ТА ЗУСТРІЧЕЙ (МОДАЛЬНЕ ВІКНО) ---
     let originalAssignments = {};
     let pendingAssignments = {};
     let originalDeadline = "";
@@ -1780,7 +1854,6 @@
             if (mDate !== originalMeetDate) payload.meetDate = mDate;
         }
 
-        // --- МИТТЄВЕ ЛОКАЛЬНЕ ОНОВЛЕННЯ ДАНИХ (Optimistic UI) ---
         if (payload.deadlineDays !== undefined) windowViewingEmployee.deadlineDays = payload.deadlineDays;
         if (payload.meetLink !== undefined) windowViewingEmployee.meetLink = payload.meetLink;
         if (payload.meetDate !== undefined) windowViewingEmployee.meetDate = payload.meetDate;
@@ -1796,7 +1869,6 @@
         }
         windowViewingEmployee.assigned = newAssigned;
 
-        // Оновлюємо у локальній базі
         let dbUser = db.users.find(u => u.login === windowViewingEmployee.login);
         if (dbUser) {
             dbUser.deadlineDays = windowViewingEmployee.deadlineDays;
@@ -1805,23 +1877,19 @@
             dbUser.meetDate = windowViewingEmployee.meetDate;
         }
 
-        // Відправка запиту у фоні
         fetch(API_URL, {
             method: 'POST', mode: 'no-cors', cache: 'no-store',
             body: JSON.stringify(payload)
         }).catch(e => console.log("Фонове збереження не вдалося", e));
 
-        // Закриваємо модалку миттєво
         closeAssignModal();
 
-        // Повертаємо кнопку в початковий стан (непомітно для користувача)
         setTimeout(() => {
             saveBtn.innerHTML = '<img src="https://raw.githubusercontent.com/StepStepi4/SkillHUB-Assistant/main/education/save.svg" class="ui-icon" style="width:20px; height:20px; filter: brightness(0) invert(1);"> ЗБЕРЕГТИ';
             saveBtn.disabled = false;
             saveBtn.style.display = 'none';
         }, 300);
 
-        // Перемальовуємо інтерфейс з новими даними миттєво
         buildCoursesMap(windowViewingEmployee);
         renderCabinetStatsAndCourses(windowViewingEmployee);
         renderEmployeeAchievementsAndTests(windowViewingEmployee);
@@ -1829,7 +1897,6 @@
         checkUpcomingMeets();
     }
 
-    // --- МОДАЛЬНЕ ВІКНО Iframe SkillHUB ---
     function openSkillhubFrame(url) {
         if (!url) return;
         document.getElementById('skillhubIframe').src = url;
