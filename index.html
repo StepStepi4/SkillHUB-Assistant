@@ -87,6 +87,11 @@
             --clr-seller-market-bg: #3b0764; --clr-seller-market-text: #e9d5ff;
         }
 
+        /* ІНВЕРСІЯ SVG ІКОНОК У ТЕМНІЙ ТЕМІ (з зеленого у білий) */
+        [data-theme="dark"] .dynamic-svg-icon {
+            filter: brightness(0) invert(1);
+        }
+
         body.modal-open { overflow: hidden; position: fixed; width: 100%; }
         
         body { 
@@ -521,7 +526,7 @@
             <div class="header-row" id="mainHeader" style="margin-bottom: 4px; justify-content: space-between; align-items: center;">
                 <h2 id="headerTitle" style="line-height: 1; font-size: 24px; margin: 0;">Пошук</h2>
                 <button id="topFavBtn" class="fav-btn-top" onclick="window.openFavoritesQuickMenu()" style="display:none;">
-                    <img src="icons_skillHUB/Favorite.svg" alt="Fav" style="width: 20px; height: 20px; object-fit: contain;">
+                    <img src="icons_skillHUB/Favorite.svg" alt="Fav" class="dynamic-svg-icon" style="width: 20px; height: 20px; object-fit: contain;">
                 </button>
             </div>
             <div style="font-size: 13px; font-weight: 600; color: var(--text-muted); display: flex; align-items: center; line-height: 1;">
@@ -996,11 +1001,13 @@
         }
     }
 
+    // Оновлена функція додає клас dynamic-svg-icon до всіх SVG файлів
     window.renderIcon = function(val) {
         if (!val) return '';
         let clean = String(val).trim();
         if (clean.toLowerCase().endsWith('.svg') || clean.toLowerCase().endsWith('.png')) {
-            return `<img src="icons_skillHUB/${clean}" alt="icon" style="width: 100%; height: 100%; object-fit: contain; display: block;">`;
+            let svgClass = clean.toLowerCase().endsWith('.svg') ? 'class="dynamic-svg-icon"' : '';
+            return `<img src="icons_skillHUB/${clean}" alt="icon" ${svgClass} style="width: 100%; height: 100%; object-fit: contain; display: block;">`;
         }
         return clean;
     };
