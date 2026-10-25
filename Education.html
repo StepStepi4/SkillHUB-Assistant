@@ -196,6 +196,12 @@
         .role-action-btn.active { border-color: var(--primary); background: var(--primary-light); color: var(--primary); }
         [data-theme="dark"] .role-action-btn.active { color: var(--primary); }
 
+        /* Прямокутна пульсація для нових кнопок меню (щоб не ламалась форма) */
+        .role-action-btn.has-new { animation: pulse-ring-rect 2s infinite; border-color: var(--danger); color: var(--danger); }
+        [data-theme="dark"] .role-action-btn.has-new { color: var(--danger); }
+        @keyframes pulse-ring-rect { 0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); } 70% { box-shadow: 0 0 0 6px rgba(239, 68, 68, 0); } 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); } }
+
+        /* Кругла пульсація для маленьких іконок */
         @keyframes pulse-ring { 0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); } 70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); } 100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); } }
         .ach-btn.has-new { animation: pulse-ring 2s infinite; border-radius: 50%; }
         
@@ -562,7 +568,8 @@
                 <img src="https://raw.githubusercontent.com/StepStepi4/SkillHUB-Assistant/main/education/Statistic.svg" class="ui-icon"> 
                 <span>Команда</span>
             </button>
-            <button id="btnMyMeets" class="role-action-btn ach-btn" onclick="openMeetModal()" style="display: none;">
+            <!-- З КНОПКИ ЗУСТРІЧЕЙ ПРИБРАНО КЛАС ach-btn ЩОБ ВОНА НЕ РОБИЛАСЯ КРУГЛОЮ -->
+            <button id="btnMyMeets" class="role-action-btn" onclick="openMeetModal()" style="display: none;">
                 <img src="https://raw.githubusercontent.com/StepStepi4/SkillHUB-Assistant/main/education/Meet.svg" class="ui-icon"> 
                 <span>Мої зустрічі</span>
             </button>
@@ -944,13 +951,19 @@
         }
     });
 
-    // Утиліти дат
+    // ПОКРАЩЕНЕ ПАРСИНГ ДАТИ (З ПІДТРИМКОЮ БУДЬ-ЯКОГО ФОРМАТУ)
     function parseUaDate(dateStr) {
         if (!dateStr) return null;
-        let m = String(dateStr).match(/^(\d{2})\.(\d{2})\.(\d{4})(?:\s+(\d{2}):(\d{2})(?::(\d{2}))?)?/);
+        let dStr = String(dateStr).trim();
+        // Спочатку намагаємось знайти формат DD.MM.YYYY HH:MM
+        let m = dStr.match(/^(\d{2})\.(\d{2})\.(\d{4})(?:\s+(\d{2}):(\d{2})(?::(\d{2}))?)?/);
         if (m) {
             return new Date(m[3], parseInt(m[2])-1, m[1], m[4]||0, m[5]||0, m[6]||0);
         }
+        // Резервний варіант: стандартний Date парсер JavaScript
+        let d = new Date(dStr);
+        if (!isNaN(d.getTime())) return d;
+        
         return null;
     }
 
@@ -1682,13 +1695,22 @@
         checkUpcomingMeets();
     }
 
+    // ПОКРАЩЕНИЙ ВИВІД СПИСКУ ЗУСТРІЧЕЙ
     function renderMeetList() {
         let listContainer = document.getElementById('meetModalList');
         if (!db || !db.users) return;
 
-        let meets = db.users.filter(u => u.meetDate && u.meetLink).map(u => {
-            return { user: u, dateObj: parseUaDate(u.meetDate) };
-        }).filter(item => item.dateObj !== null).sort((a, b) => a.dateObj - b.dateObj); 
+        // Збираємо всіх, у кого вказано хоча б дату або хоча б посилання
+        let meets = db.users.filter(u => {
+            let hasLink = u.meetLink && String(u.meetLink).trim() !== "" && String(u.meetLink).trim() !== "-";
+            let hasDate = u.meetDate && String(u.meetDate).trim() !== "" && String(u.meetDate).trim() !== "-";
+            return hasLink || hasDate;
+        }).map(u => {
+            let dObj = parseUaDate(u.meetDate);
+            // Для сортування: якщо дати немає, кидаємо користувача в кінець списку
+            let sortDate = dObj ? dObj.getTime() : 9999999999999;
+            return { user: u, dateObj: dObj, sortDate: sortDate };
+        }).sort((a, b) => a.sortDate - b.sortDate);
 
         if (meets.length === 0) {
             listContainer.innerHTML = `<div style="text-align:center; padding: 32px 16px; color: var(--text-muted); font-weight: 600;">Немає запланованих зустрічей</div>`;
@@ -1699,10 +1721,23 @@
             let u = item.user;
             let storeTxt = (u.store && u.store !== "-") ? `📍 ${escapeHTMLAttr(u.store)}` : "";
             
-            let timeDiff = item.dateObj.getTime() - Date.now();
-            let isApproaching = timeDiff > 0 && timeDiff <= 60 * 60 * 1000;
+            let isApproaching = false;
+            if (item.dateObj) {
+                let timeDiff = item.dateObj.getTime() - Date.now();
+                isApproaching = timeDiff > 0 && timeDiff <= 60 * 60 * 1000;
+            }
+            
             let borderCol = isApproaching ? 'var(--primary)' : 'var(--border)';
             let bgClass = isApproaching ? 'background: var(--primary-light);' : '';
+            
+            let dateDisplay = u.meetDate ? escapeHTMLAttr(u.meetDate) : "Дата не вказана";
+            let linkBtn = "";
+            
+            if (u.meetLink && String(u.meetLink).includes("http")) {
+                linkBtn = `<a href="${escapeHTMLAttr(u.meetLink)}" target="_blank" class="btn btn-glow" style="padding: 8px 14px; border-radius: 10px; font-size: 12px; text-decoration:none;">ПРИЄДНАТИСЯ</a>`;
+            } else if (u.meetLink) {
+                linkBtn = `<div style="font-size:12px; font-weight:700; color:var(--text-muted); margin-top:8px;">${escapeHTMLAttr(u.meetLink)}</div>`;
+            }
 
             return `
                 <div class="list-card" style="border-color: ${borderCol}; ${bgClass} padding: 14px 16px; cursor:default;">
@@ -1710,11 +1745,11 @@
                         <div style="font-size: 15px; font-weight: 800; color: var(--primary); margin-bottom: 4px;">${escapeHTMLAttr(u.name)}</div>
                         <div style="font-size: 12px; font-weight: 600; color: var(--text-muted); display: flex; flex-direction: column; gap: 2px;">
                             ${storeTxt ? `<span>${storeTxt}</span>` : ''}
-                            <span>🗓 ${escapeHTMLAttr(u.meetDate)}</span>
+                            <span>🗓 ${dateDisplay}</span>
                         </div>
                     </div>
                     <div style="display: flex; flex-direction: column; align-items: flex-end; justify-content: center; flex-shrink: 0;">
-                        <a href="${escapeHTMLAttr(u.meetLink)}" target="_blank" class="btn btn-glow" style="padding: 8px 14px; border-radius: 10px; font-size: 12px; text-decoration:none;">ПРИЄДНАТИСЯ</a>
+                        ${linkBtn}
                     </div>
                 </div>
             `;
