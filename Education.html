@@ -1492,6 +1492,7 @@
         });
     }
 
+    // ВИВІД КНОПКИ ЗУСТРІЧІ В КАБІНЕТІ СПІВРОБІТНИКА (СВІЙ КАБІНЕТ АБО ПРИ ПЕРЕГЛЯДІ)
     function renderMeetButton(user) {
         const container = document.getElementById('meetButtonContainer');
         
@@ -1646,7 +1647,7 @@
         document.getElementById('empSearchClearBtn').style.display = 'none';
         document.getElementById('empSearchSuggestions').classList.remove('open');
         
-        // Reset filters
+        // Скидання фільтрів при відкритті
         document.getElementById('f_assigned').checked = false;
         document.getElementById('f_deadline').checked = false;
         document.getElementById('f_oral').checked = false;
@@ -2402,6 +2403,7 @@
         });
     }
 
+    // ВИПРАВЛЕНО: Кнопку опису курсу перенесено під текст, змінено назву та додано target="_blank"
     function openProduct(index) {
         const products = coursesMap[currentCourseName] || [];
         currentProductData = products[index];
@@ -2410,17 +2412,20 @@
         let parsed = formatWithCustomEmoji(currentProductData.product, '📘');
         document.getElementById('theoryTitle').innerText = parsed.title;
 
-        let linkBtnHtml = '';
-        if (currentProductData.skillhubLink) {
-            linkBtnHtml = `
-            <a href="javascript:void(0)" class="btn btn-secondary" style="margin-bottom: 20px; border-color: var(--primary); color: var(--primary); padding: 12px; font-size: 13px; text-decoration: none; display: flex; justify-content: center; align-items: center; gap: 8px;" onclick="openSkillhubFrame('${escapeHTMLAttr(currentProductData.skillhubLink)}')">
-                <img src="https://raw.githubusercontent.com/StepStepi4/SkillHUB-Assistant/main/education/info.svg" class="ui-icon" onerror="this.style.display='none'">
-                Детально про послугу
-            </a>`;
-        }
-
         let rawLines = String(currentProductData.info || "Теоретичний матеріал відсутній.").split('\n').filter(l => l.trim() !== "");
         let contentHtml = `<div class="theory-box">` + rawLines.map(line => `<div class="theory-line">${line}</div>`).join('') + `</div>`;
+
+        if (currentProductData.skillhubLink) {
+            let sLink = escapeHTMLAttr(currentProductData.skillhubLink);
+            if (sLink && !sLink.startsWith('http')) {
+                sLink = "https://" + sLink.replace(/^https?:\/\//,'');
+            }
+            contentHtml += `
+            <a href="${sLink}" target="_blank" rel="noopener noreferrer" class="btn btn-secondary" style="margin-bottom: 24px; border-color: var(--primary); color: var(--primary); padding: 14px; font-size: 14px; font-weight: 800; text-decoration: none; display: flex; justify-content: center; align-items: center; gap: 8px; border-radius: 14px; box-shadow: 0 4px 10px rgba(0,0,0,0.02);">
+                <img src="https://raw.githubusercontent.com/StepStepi4/SkillHUB-Assistant/main/education/info.svg" class="ui-icon" onerror="this.style.display='none'">
+                Детальний опис курсу
+            </a>`;
+        }
 
         if (currentProductData.presentations && currentProductData.presentations.length > 0) {
             contentHtml += `<div class="theory-box"><div class="theory-line" style="display:flex; flex-direction:column; gap:8px;">
@@ -2431,7 +2436,7 @@
             </div></div>`;
         }
 
-        document.getElementById('theoryContentContainer').innerHTML = linkBtnHtml + contentHtml;
+        document.getElementById('theoryContentContainer').innerHTML = contentHtml;
 
         window.sessionTotalTime = 0; window.theoryEntryTime = Date.now();
         updateTestButtonState();
