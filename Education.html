@@ -203,11 +203,49 @@
         .back-btn-sleek:active { transform: scale(0.92); background: var(--input-bg); }
         .back-btn-sleek.active-nav { border-color: var(--primary); background: var(--primary-light); }
 
-        .role-action-bar { display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 8px; margin-bottom: 18px; }
-        .role-action-btn { background: var(--card-bg); border: 1.5px solid var(--border); border-radius: 14px; padding: 11px 12px; font-size: 13px; font-weight: 800; color: var(--text-main); display: flex; align-items: center; justify-content: center; gap: 7px; cursor: pointer; transition: all 0.2s; box-shadow: 0 3px 10px rgba(0,0,0,0.02); }
+        /* Симетрична сітка та суворий контроль висоти кнопок панелі */
+        .role-action-bar { display: grid; gap: 8px; margin-bottom: 18px; }
+        .role-action-btn { 
+            background: var(--card-bg); 
+            border: 1.5px solid var(--border); 
+            border-radius: 12px; 
+            padding: 4px 6px; 
+            height: 46px; /* Строго фіксована зменшена висота */
+            font-size: 11px; /* Зменшений шрифт для вміщення довгого тексту */
+            font-weight: 800; 
+            color: var(--text-main); 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            gap: 6px; 
+            cursor: pointer; 
+            transition: all 0.2s; 
+            box-shadow: 0 3px 10px rgba(0,0,0,0.02);
+            overflow: hidden; 
+        }
         .role-action-btn:active { transform: scale(0.96); }
         .role-action-btn.active { border-color: var(--primary); background: var(--primary-light); color: var(--primary); }
         [data-theme="dark"] .role-action-btn.active { color: var(--primary); }
+
+        .role-action-btn span {
+            line-height: 1.15;
+            text-align: left;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            white-space: normal;
+        }
+
+        /* Заборона розтягування SVG-іконок */
+        .role-action-btn .ui-icon {
+            width: 22px !important;
+            height: 22px !important;
+            min-width: 22px !important;
+            min-height: 22px !important;
+            flex-shrink: 0 !important;
+            object-fit: contain !important;
+        }
 
         .role-action-btn.has-new { animation: pulse-ring-rect 2s infinite; border-color: var(--danger); color: var(--danger); }
         [data-theme="dark"] .role-action-btn.has-new { color: var(--danger); }
@@ -610,6 +648,7 @@
             </div>
         </div>
 
+        <!-- Симетрична панель кнопок для керівника/власника -->
         <div id="managerActionBar" class="role-action-bar" style="display: none;">
             <button id="btnMyEducation" class="role-action-btn active" onclick="switchToMyCabinet()">
                 <img src="https://raw.githubusercontent.com/StepStepi4/SkillHUB-Assistant/main/education/Education.svg" class="ui-icon"> 
@@ -840,6 +879,7 @@
             #deadlineText { font-size: calc(13.5px * ${scale}) !important; }
             #userWelcome { font-size: calc(14px * ${scale}) !important; }
             .timer-box { font-size: calc(16px * ${scale}) !important; }
+            .role-action-btn span { font-size: calc(11px * ${scale}) !important; }
         `;
     };
 
@@ -909,7 +949,6 @@
         }
     }
 
-    // --- ФУНКЦІЇ ДЛЯ РОБОТИ З ВІДЗНАКАМИ (АЧІВКАМИ) ---
     function checkNewAchievements(user) {
         if (!user || !user.achievements) return;
         let achCodes = String(user.achievements).split(',').map(s => s.trim()).filter(Boolean);
@@ -1037,7 +1076,6 @@
         }
     });
 
-    // Універсальний парсер дати
     function parseUaDate(dateStr) {
         if (!dateStr) return null;
         let dStr = String(dateStr).trim();
@@ -1492,7 +1530,6 @@
         });
     }
 
-    // ВИВІД КНОПКИ ЗУСТРІЧІ В КАБІНЕТІ СПІВРОБІТНИКА (СВІЙ КАБІНЕТ АБО ПРИ ПЕРЕГЛЯДІ)
     function renderMeetButton(user) {
         const container = document.getElementById('meetButtonContainer');
         
@@ -2130,10 +2167,7 @@
 
     function openSkillhubFrame(url) {
         if (!url) return;
-        document.getElementById('skillhubIframe').src = url;
-        document.getElementById('skillhubModalOverlay').classList.add('active');
-        document.getElementById('skillhubModal').classList.add('active');
-        document.body.style.overflow = 'hidden';
+        window.open(url, '_blank');
     }
 
     function closeSkillhubFrame() {
@@ -2414,6 +2448,7 @@
         let rawLines = String(currentProductData.info || "Теоретичний матеріал відсутній.").split('\n').filter(l => l.trim() !== "");
         let contentHtml = `<div class="theory-box">` + rawLines.map(line => `<div class="theory-line">${line}</div>`).join('') + `</div>`;
 
+        // ВИПРАВЛЕНО: Кнопка перенесена ПІД основний опис, змінено назву та target="_blank"
         if (currentProductData.skillhubLink) {
             let sLink = escapeHTMLAttr(currentProductData.skillhubLink);
             if (sLink && !sLink.startsWith('http')) {
@@ -2424,6 +2459,15 @@
                 <img src="https://raw.githubusercontent.com/StepStepi4/SkillHUB-Assistant/main/education/info.svg" class="ui-icon" onerror="this.style.display='none'">
                 Детальний опис курсу
             </a>`;
+        }
+
+        if (currentProductData.presentations && currentProductData.presentations.length > 0) {
+            contentHtml += `<div class="theory-box"><div class="theory-line" style="display:flex; flex-direction:column; gap:8px;">
+                <div style="font-size:12px; font-weight:800; color:var(--text-muted); text-transform:uppercase;">Додаткові матеріали:</div>
+                ${currentProductData.presentations.map((link, idx) => `
+                    <a href="${escapeHTMLAttr(link)}" target="_blank" rel="noopener noreferrer" class="btn btn-secondary" style="text-decoration:none; padding:12px; font-size:13px;">📎 Відкрити матеріал ${idx + 1}</a>
+                `).join('')}
+            </div></div>`;
         }
 
         document.getElementById('theoryContentContainer').innerHTML = contentHtml;
@@ -2645,3 +2689,4 @@
     });
 </script>
 </body>
+</html>
