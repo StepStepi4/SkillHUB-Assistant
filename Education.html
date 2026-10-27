@@ -9,7 +9,9 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
+    <link rel="preconnect" href="https://script.google.com" crossorigin>
+    <link rel="dns-prefetch" href="https://raw.githubusercontent.com">
+    <!-- Chart.js підвантажується ліниво (тільки коли потрібна діаграма) -->
 
     <script>
         (function() {
@@ -17,7 +19,7 @@
                 var theme = localStorage.getItem('theme') || 'light';
                 document.documentElement.setAttribute('data-theme', theme);
                 
-                if (localStorage.getItem('skillhub_v6_cache') && localStorage.getItem('skillhub_edu_creds')) {
+                if ((localStorage.getItem('skillhub_has_cache') === '1' || localStorage.getItem('skillhub_v6_cache')) && localStorage.getItem('skillhub_edu_creds')) {
                     document.documentElement.style.setProperty('--edu-loader-display', 'none');
                     document.documentElement.classList.add('fast-boot');
                 }
@@ -834,6 +836,91 @@
 <script>
     const API_URL = 'https://script.google.com/macros/s/AKfycbyeoKV6uQRE_h0jy_QjkbQI7k_Py_UOYMvckWhHmGITT-q-Ai832__GWVxbdjxBgQ6zqA/exec'; 
     const CACHE_KEY = 'skillhub_v6_cache'; 
+
+    // ====================== СХОВИЩЕ: IndexedDB (спільне з index.html) + localStorage як запасне ======================
+    const IDB_NAME = 'skillhub_store';
+    const IDB_STORE = 'kv';
+    let _idbPromise = null;
+    window.fullData = null; // повна відповідь API (educationData + achievementData + ...)
+
+    function openIDB() {
+        if (_idbPromise) return _idbPromise;
+        _idbPromise = new Promise((resolve, reject) => {
+            try {
+                if (!window.indexedDB) return reject(new Error('no idb'));
+                const req = indexedDB.open(IDB_NAME, 1);
+                req.onupgradeneeded = () => { req.result.createObjectStore(IDB_STORE); };
+                req.onsuccess = () => resolve(req.result);
+                req.onerror = () => reject(req.error);
+                req.onblocked = () => reject(new Error('idb blocked'));
+            } catch (e) { reject(e); }
+        });
+        _idbPromise.catch(() => { _idbPromise = null; });
+        return _idbPromise;
+    }
+    async function idbGet(key) {
+        const idb = await openIDB();
+        return new Promise((resolve, reject) => {
+            const rq = idb.transaction(IDB_STORE, 'readonly').objectStore(IDB_STORE).get(key);
+            rq.onsuccess = () => resolve(rq.result);
+            rq.onerror = () => reject(rq.error);
+        });
+    }
+    async function idbSet(key, value) {
+        const idb = await openIDB();
+        return new Promise((resolve, reject) => {
+            const tx = idb.transaction(IDB_STORE, 'readwrite');
+            tx.objectStore(IDB_STORE).put(value, key);
+            tx.oncomplete = () => resolve(true);
+            tx.onerror = () => reject(tx.error);
+            tx.onabort = () => reject(tx.error);
+        });
+    }
+    async function saveCache(dataStr) {
+        let ok = false;
+        try { await idbSet(CACHE_KEY, dataStr); ok = true; } catch (e) {}
+        try { localStorage.setItem(CACHE_KEY, dataStr); ok = true; } catch (e) {}
+        if (ok) { try { localStorage.setItem('skillhub_has_cache', '1'); } catch (e) {} }
+        return ok;
+    }
+    async function loadCache() {
+        let candidates = [];
+        try { const v = await idbGet(CACHE_KEY); if (v) candidates.push(v); } catch (e) {}
+        try { const v = localStorage.getItem(CACHE_KEY); if (v) candidates.push(v); } catch (e) {}
+        for (const str of candidates) {
+            try {
+                const parsed = JSON.parse(str);
+                if (parsed && parsed.educationData && parsed.educationData.users) return parsed;
+            } catch (e) {}
+        }
+        return null;
+    }
+    // Відкладений запис (не блокує інтерфейс), об'єднує часті виклики
+    let _saveTimer = null;
+    function saveCacheLater() {
+        if (_saveTimer) clearTimeout(_saveTimer);
+        _saveTimer = setTimeout(() => {
+            _saveTimer = null;
+            const run = () => { try { if (window.fullData) saveCache(JSON.stringify(window.fullData)); } catch (e) {} };
+            if (window.requestIdleCallback) requestIdleCallback(run, { timeout: 2000 }); else run();
+        }, 400);
+    }
+    try { if (navigator.storage && navigator.storage.persist) navigator.storage.persist(); } catch (e) {}
+
+    // ====================== Ліниве завантаження Chart.js ======================
+    let _chartPromise = null;
+    function loadChartJs() {
+        if (typeof Chart !== 'undefined') return Promise.resolve();
+        if (_chartPromise) return _chartPromise;
+        _chartPromise = new Promise((resolve, reject) => {
+            const sc = document.createElement('script');
+            sc.src = 'https://cdn.jsdelivr.net/npm/chart.js';
+            sc.onload = () => resolve();
+            sc.onerror = () => { _chartPromise = null; reject(new Error('chart load failed')); };
+            document.head.appendChild(sc);
+        });
+        return _chartPromise;
+    }
     const TIME_PER_QUESTION = 35; 
 
     const CONFIG = {
@@ -1029,42 +1116,98 @@
         container.innerHTML = html;
     }
 
+    function getSessionKey() { return String(currentUser || '').toLowerCase().trim(); }
+    function getServerToken() {
+        if (!currentUser || !db || !db.activeSessions) return '';
+        return db.activeSessions[getSessionKey()] || db.activeSessions[currentUser] || '';
+    }
+    function tokenTs(t) { let n = parseInt(String(t || '').split('_')[0], 10); return isNaN(n) ? 0 : n; }
+
+    // Стан поточної сесії цього пристрою
+    const sess = { confirmed: false, attempts: 0, offlineClaim: false, inFlight: false };
+
+    function sendSessionToServer(token) {
+        // Повертає true, якщо запит вдалося відправити в мережу
+        if (!navigator.onLine) return Promise.resolve(false);
+        try {
+            return fetch(API_URL, { method: 'POST', cache: 'no-store', mode: 'no-cors', keepalive: true,
+                body: JSON.stringify({ action: 'set_session', login: getSessionKey(), token: token }) })
+                .then(() => true).catch(() => false);
+        } catch (e) { return Promise.resolve(false); }
+    }
+
+    // Заявити сесію на цьому пристрої. allowReuse: автовхід може лишити поточний токен, якщо сервер його визнає
+    function claimSession(allowReuse) {
+        let existing = null; try { existing = localStorage.getItem('skillhub_session_token'); } catch (e) {}
+        let serverTok = getServerToken();
+        if (allowReuse && existing && serverTok && serverTok === existing) {
+            sess.confirmed = true; sess.attempts = 0; sess.offlineClaim = false;
+            return;
+        }
+        let myToken = Date.now().toString() + '_' + Math.random().toString(36).substring(2, 10);
+        try { localStorage.setItem('skillhub_session_token', myToken); } catch (e) {}
+        sess.confirmed = false; sess.attempts = 0; sess.offlineClaim = !navigator.onLine;
+        if (!db.activeSessions) db.activeSessions = {};
+        sendSessionToServer(myToken).then(ok => { if (!ok) sess.offlineClaim = true; });
+    }
+
+    // Порівнюємо токен цього пристрою з серверним. Повертає false, якщо сесію перехоплено
     function verifySingleDeviceSession() {
-        if (!currentUser || !db || !db.activeSessions) return false;
-        
-        let keyLow = String(currentUser).toLowerCase().trim();
-        let serverToken = db.activeSessions[keyLow] || db.activeSessions[currentUser];
-        let myToken = localStorage.getItem('skillhub_session_token');
-        
-        if (serverToken && myToken && serverToken !== myToken) {
-            logout(true, false);
+        if (!currentUser || !db) return true;
+        let myToken = null; try { myToken = localStorage.getItem('skillhub_session_token'); } catch (e) {}
+        if (!myToken) { logout(false, false); return false; } // вийшли в іншій вкладці цього ж пристрою
+
+        let serverToken = getServerToken();
+        if (!serverToken) {
+            // Сервер ще не отримав/втратив токен - повторно заявляємо свій
+            sendSessionToServer(myToken);
             return true;
         }
-        return false;
+        if (serverToken === myToken) { sess.confirmed = true; sess.attempts = 0; return true; }
+
+        // Токени різні
+        let newerElsewhere = tokenTs(serverToken) > tokenTs(myToken);
+        if (sess.confirmed || (sess.offlineClaim && newerElsewhere) || sess.attempts >= 3) {
+            logout(true, false);
+            return false;
+        }
+        // Наш запит ще не дійшов (або гонка при одночасному вході) - повторюємо
+        sess.attempts++;
+        sendSessionToServer(myToken);
+        return true;
+    }
+
+    // Миттєва перевірка з сервера (для старту тесту, повернення у вкладку, відновлення мережі)
+    async function checkSessionNow(maxWaitMs = 5000) {
+        if (!currentUser) return true;
+        if (!navigator.onLine) return true; // офлайн - перевіримо одразу, як з'явиться мережа
+        if (sess.inFlight) return true;
+        sess.inFlight = true;
+        try {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), maxWaitMs);
+            const response = await fetch(API_URL + '?nocache=' + Date.now(), { signal: controller.signal, cache: 'no-store' });
+            clearTimeout(timeoutId);
+            const data = await response.json();
+            if (data && data.educationData && data.educationData.activeSessions && db) {
+                db.activeSessions = data.educationData.activeSessions;
+            }
+        } catch (e) { sess.inFlight = false; return true; }
+        sess.inFlight = false;
+        return verifySingleDeviceSession();
     }
 
     function startSessionHeartbeat() {
         stopSessionHeartbeat();
-        sessionCheckInterval = setInterval(async () => {
-            if (!currentUser || !navigator.onLine) return;
-            try {
-                const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), 10000);
-                const response = await fetch(API_URL + '?nocache=' + Date.now(), { signal: controller.signal, cache: 'no-store' });
-                clearTimeout(timeoutId);
-                const data = await response.json();
-                if (data && data.educationData && data.educationData.activeSessions) {
-                    db.activeSessions = data.educationData.activeSessions;
-                    verifySingleDeviceSession(); 
-                }
-            } catch(e) {}
-        }, 12000);
+        setTimeout(() => { if (currentUser) checkSessionNow(); }, 2500);
+        sessionCheckInterval = setInterval(() => {
+            if (!currentUser || document.hidden) return;
+            checkSessionNow(10000);
+        }, 10000);
     }
 
     function stopSessionHeartbeat() {
-        if (sessionCheckInterval) {
-            clearInterval(sessionCheckInterval);
-        }
+        if (sessionCheckInterval) { clearInterval(sessionCheckInterval); sessionCheckInterval = null; }
     }
 
     window.addEventListener('storage', (e) => {
@@ -1075,6 +1218,11 @@
             logout(false, false);
         }
     });
+
+    // Повернулися у вкладку / з'явився інтернет / сторінку відновлено з bfcache - перевіряємо одразу
+    document.addEventListener('visibilitychange', () => { if (!document.hidden && currentUser) checkSessionNow(); });
+    window.addEventListener('focus', () => { if (currentUser) checkSessionNow(); });
+    window.addEventListener('online', () => { if (currentUser) { checkSessionNow(); } processOfflineQueue(); });
 
     function parseUaDate(dateStr) {
         if (!dateStr) return null;
@@ -1275,8 +1423,13 @@
         } catch(e) { localStorage.removeItem('skillhub_offline_queue'); }
     }
 
+    let _eduFetching = false;
     async function fetchFreshDataSilent(isManual = false) {
-        if (!navigator.onLine) return;
+        if (!navigator.onLine || _eduFetching) return;
+        _eduFetching = true;
+        try { await _fetchFreshDataSilentInner(isManual); } finally { _eduFetching = false; }
+    }
+    async function _fetchFreshDataSilentInner(isManual = false) {
         processOfflineQueue();
         try {
             const controller = new AbortController();
@@ -1284,12 +1437,18 @@
             const response = await fetch(API_URL + '?nocache=' + Date.now(), { cache: 'no-store', signal: controller.signal });
             clearTimeout(timeoutId);
 
-            const data = await response.json();
-            if (!data.error && data.educationData) {
-                try { localStorage.setItem(CACHE_KEY, JSON.stringify(data)); } catch(e) {}
+            const rawText = await response.text();
+            const data = JSON.parse(rawText);
+            if (!data.error && data.educationData && data.educationData.users) {
+                // Кеш оновлюється тільки після успішної відповіді (IndexedDB + запасний localStorage)
+                window.fullData = data;
+                saveCache(rawText);
                 
                 db = data.educationData;
                 globalAchievements = data.achievementData || [];
+
+                // Строга перевірка єдиної сесії на кожне оновлення даних
+                if (currentUser && !verifySingleDeviceSession()) return;
 
                 if (currentUser) {
                     let user = db.users.find(u => String(u.login).toLowerCase() === String(currentUser).toLowerCase());
@@ -1414,14 +1573,7 @@
         let user = db && db.users ? db.users.find(u => String(u.login || "").trim().toLowerCase() === String(l || "").toLowerCase() && (String(u.pass || "").trim().toLowerCase() === "" || String(u.pass || "").trim().toLowerCase() === String(p || "").toLowerCase())) : null;
         if (user) {
             currentUser = user.login;
-            let userKeyLow = String(currentUser).toLowerCase().trim();
-            
-            let myToken = Date.now().toString() + "_" + Math.random().toString(36).substring(2, 10);
-            localStorage.setItem('skillhub_session_token', myToken);
-            
-            if (navigator.onLine) {
-                try { fetch(API_URL, { method: 'POST', cache: 'no-store', mode: 'no-cors', body: JSON.stringify({ action: 'set_session', login: userKeyLow, token: myToken }) }); } catch(e) {}
-            }
+            claimSession(true);
             
             windowUserRole = detectRoleGroup(user.role);
             windowViewingEmployee = null;
@@ -1459,15 +1611,9 @@
 
             if (user) {
                 currentUser = user.login;
-                let userKeyLow = String(currentUser).toLowerCase().trim();
                 err.style.display = 'none';
 
-                let myToken = Date.now().toString() + "_" + Math.random().toString(36).substring(2, 10);
-                localStorage.setItem('skillhub_session_token', myToken);
-
-                if (navigator.onLine) {
-                    try { fetch(API_URL, { method: 'POST', cache: 'no-store', mode: 'no-cors', body: JSON.stringify({ action: 'set_session', login: userKeyLow, token: myToken }) }); } catch(e) {}
-                }
+                claimSession(!!isAuto);
 
                 if (document.getElementById('rememberMe').checked) { localStorage.setItem('skillhub_edu_creds', JSON.stringify({ login: l, pass: p })); } 
                 else { localStorage.removeItem('skillhub_edu_creds'); }
@@ -1488,6 +1634,8 @@
 
     function logout(forced = false, explicit = false) {
         stopSessionHeartbeat();
+        isTestActive = false; if (testTimerInterval) { clearInterval(testTimerInterval); testTimerInterval = null; }
+        sess.confirmed = false; sess.attempts = 0;
         if (forced) { alert("Ваш акаунт було відкрито на іншому пристрої. Сесію на цьому пристрої завершено."); } 
         else if (explicit && currentUser && navigator.onLine) {
             let userKeyLow = String(currentUser).toLowerCase().trim();
@@ -1499,7 +1647,7 @@
         closeStatsModal(); closeAssignModal(); closeMeetModal();
 
         currentUser = null; windowViewingEmployee = null; coursesMap = {};
-        localStorage.removeItem('skillhub_session_token');
+        try { localStorage.removeItem('skillhub_session_token'); } catch (e) {}
 
         if (explicit || forced) localStorage.removeItem('skillhub_edu_creds');
         if (explicit) { document.getElementById('loginInput').value = ''; document.getElementById('passInput').value = ''; }
@@ -2222,7 +2370,7 @@
     function renderProgressChart(passed, inProgress, notStarted) {
         let ctx = document.getElementById('progressChart');
         if (!ctx) return;
-        if (typeof Chart === 'undefined') { setTimeout(() => renderProgressChart(passed, inProgress, notStarted), 150); return; }
+        if (typeof Chart === 'undefined') { loadChartJs().then(() => renderProgressChart(passed, inProgress, notStarted)).catch(() => {}); return; }
         if (window.progressChartInstance) window.progressChartInstance.destroy();
 
         let total = passed + inProgress + notStarted;
@@ -2448,7 +2596,7 @@
         let rawLines = String(currentProductData.info || "Теоретичний матеріал відсутній.").split('\n').filter(l => l.trim() !== "");
         let contentHtml = `<div class="theory-box">` + rawLines.map(line => `<div class="theory-line">${line}</div>`).join('') + `</div>`;
 
-        // ВИПРАВЛЕНО: Кнопка перенесена ПІД основний опис, змінено назву та target="_blank"
+        // Кнопка «Детальніше про цей курс» - внизу блоку теорії (замість «Додаткових матеріалів»)
         if (currentProductData.skillhubLink) {
             let sLink = escapeHTMLAttr(currentProductData.skillhubLink);
             if (sLink && !sLink.startsWith('http')) {
@@ -2457,17 +2605,8 @@
             contentHtml += `
             <a href="${sLink}" target="_blank" rel="noopener noreferrer" class="btn btn-secondary" style="margin-bottom: 24px; border-color: var(--primary); color: var(--primary); padding: 14px; font-size: 14px; font-weight: 800; text-decoration: none; display: flex; justify-content: center; align-items: center; gap: 8px; border-radius: 14px; box-shadow: 0 4px 10px rgba(0,0,0,0.02);">
                 <img src="https://raw.githubusercontent.com/StepStepi4/SkillHUB-Assistant/main/education/info.svg" class="ui-icon" onerror="this.style.display='none'">
-                Детальний опис курсу
+                Детальніше про цей курс
             </a>`;
-        }
-
-        if (currentProductData.presentations && currentProductData.presentations.length > 0) {
-            contentHtml += `<div class="theory-box"><div class="theory-line" style="display:flex; flex-direction:column; gap:8px;">
-                <div style="font-size:12px; font-weight:800; color:var(--text-muted); text-transform:uppercase;">Додаткові матеріали:</div>
-                ${currentProductData.presentations.map((link, idx) => `
-                    <a href="${escapeHTMLAttr(link)}" target="_blank" rel="noopener noreferrer" class="btn btn-secondary" style="text-decoration:none; padding:12px; font-size:13px;">📎 Відкрити матеріал ${idx + 1}</a>
-                `).join('')}
-            </div></div>`;
         }
 
         document.getElementById('theoryContentContainer').innerHTML = contentHtml;
@@ -2550,14 +2689,15 @@
 
     function nextQuestion() { if (testTimerInterval) clearInterval(testTimerInterval); currentQuestionIndex++; showQuestion(currentQuestionIndex); }
 
-    function startTest() {
+    async function startTest() {
         if (window.isDeadlinePassed || windowViewingEmployee || windowUserRole === 'guest') return;
         if (!currentProductData || !currentProductData.test || currentProductData.test.trim() === "") { alert("Тест для цього курсу відсутній."); return; }
+        if (!(await checkSessionNow(4000))) return; // сесію перехоплено на іншому пристрої
         let warningShown = sessionStorage.getItem('skillhub_test_warning_shown');
         if (!warningShown) switchView('warningView'); else proceedToTest();
     }
 
-    function acceptWarningAndStart() { sessionStorage.setItem('skillhub_test_warning_shown', 'true'); proceedToTest(); }
+    async function acceptWarningAndStart() { sessionStorage.setItem('skillhub_test_warning_shown', 'true'); if (!(await checkSessionNow(4000))) return; proceedToTest(); }
 
     function proceedToTest() {
         parsedQuestions = parseTestString(currentProductData.test);
@@ -2601,7 +2741,7 @@
             }
         }
         window.sessionTotalTime = 0; window.theoryEntryTime = 0;
-        try { let fullCache = JSON.parse(localStorage.getItem(CACHE_KEY) || "{}"); fullCache.educationData = db; localStorage.setItem(CACHE_KEY, JSON.stringify(fullCache)); } catch(e) {}
+        if (window.fullData) { window.fullData.educationData = db; saveCacheLater(); }
 
         let actionHtml = passed
             ? `<button class="btn btn-glow" onclick="openCourse(this.getAttribute('data-course'))" data-course="${escapeHTMLAttr(currentCourseName)}">ПЕРЕЙТИ ДАЛІ</button>`
@@ -2650,13 +2790,16 @@
 
     document.addEventListener('DOMContentLoaded', async () => {
         let hasCache = false;
-        try {
-            let cachedData = localStorage.getItem(CACHE_KEY);
-            if (cachedData) { let parsedDb = JSON.parse(cachedData); if (parsedDb && parsedDb.educationData) { db = parsedDb.educationData; globalAchievements = parsedDb.achievementData || []; hasCache = true; } }
-        } catch(e) {}
+        const cached = await loadCache();
+        if (cached) {
+            window.fullData = cached;
+            db = cached.educationData;
+            globalAchievements = cached.achievementData || [];
+            hasCache = true;
+        }
 
-        let savedCreds = localStorage.getItem('skillhub_edu_creds'), parsedCreds = null;
-        try { parsedCreds = savedCreds ? JSON.parse(savedCreds) : null; } catch(e) {}
+        let savedCreds = null, parsedCreds = null;
+        try { savedCreds = localStorage.getItem('skillhub_edu_creds'); parsedCreds = savedCreds ? JSON.parse(savedCreds) : null; } catch(e) {}
 
         if (parsedCreds && parsedCreds.login) {
             document.getElementById('loginInput').value = parsedCreds.login;
@@ -2664,7 +2807,9 @@
             document.getElementById('rememberMe').checked = true;
 
             if (hasCache && db && db.users && db.users.length > 0) {
+                // Миттєвий старт із кешу, свіжі дані - тихо у фоні
                 document.getElementById('loader').style.display = 'none'; handleLoginSync(parsedCreds.login, parsedCreds.pass);
+                setTimeout(() => { if (navigator.onLine) fetchFreshDataSilent(); }, 200);
             } else {
                 document.documentElement.classList.remove('fast-boot');
                 document.documentElement.style.setProperty('--edu-loader-display', 'flex'); document.getElementById('loader').style.display = 'flex';
@@ -2677,6 +2822,7 @@
             document.documentElement.style.setProperty('--edu-loader-display', 'flex');
             if (!hasCache && navigator.onLine) { document.getElementById('loader').style.display = 'flex'; await fetchFreshDataSilent(true); }
             document.getElementById('loader').style.display = 'none'; switchView('loginView');
+            if (hasCache && navigator.onLine) setTimeout(() => fetchFreshDataSilent(), 300);
         }
     });
 
@@ -2685,6 +2831,7 @@
             document.documentElement.style.setProperty('--edu-loader-display', 'none');
             const loader = document.getElementById('loader'); if (loader) loader.style.display = 'none';
             document.documentElement.classList.remove('fast-boot');
+            if (currentUser) checkSessionNow();
         }
     });
 </script>
