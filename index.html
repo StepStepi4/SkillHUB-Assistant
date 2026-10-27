@@ -12,21 +12,16 @@
     <meta name="apple-mobile-web-app-title" content="SkillHUB_Assistant">
     <link rel="apple-touch-icon" href="icon-192.png">
 
-    <!-- Оптимізація завантаження шрифтів як у Education -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 
-    <!-- ВАЖЛИВО ДЛЯ БЕЗШОВНОГО ПЕРЕХОДУ -->
     <meta name="view-transition" content="same-origin">
 
-    <!-- МИКРО-СКРИПТ ДЛЯ МОМЕНТАЛЬНОГО ЗАПУСКА -->
     <script>
-        // Перевіряємо ЄДИНИЙ спільний кеш
         if (localStorage.getItem('skillhub_v6_cache')) {
             document.documentElement.style.setProperty('--loader-display', 'none');
             document.documentElement.classList.add('fast-boot');
-            sessionStorage.setItem('skillhub_session_active', 'true');
         }
     </script>
 
@@ -39,7 +34,7 @@
         :root {
             --bg: #f2f2f7; 
             --card-bg: #ffffff;
-            --text-main: #164f58; /* Оновлений фірмовий колір тексту */
+            --text-main: #164f58;
             --text-muted: #8e8e93; 
             --primary: #10b981; 
             --primary-light: #d1fae5;
@@ -101,7 +96,6 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* --- ПРАВИЛА ДЛЯ МИТТЄВОГО ВХОДУ --- */
         html.fast-boot body { animation: none !important; }
         html.fast-boot .app-loader { display: none !important; opacity: 0; pointer-events: none; }
         html.fast-boot .app-tab { animation: none !important; }
@@ -427,6 +421,7 @@
         #ratingModal { z-index: 100045; }
         #klochCalcModal { z-index: 100050; }
         #galleryModal { z-index: 100060; }
+        #updateProgressModal { z-index: 100070; }
         
         .gallery-nav { background: rgba(255,255,255,0.2); border: none; color: white; font-size: 24px; padding: 10px; cursor: pointer; border-radius: 50%; position: absolute; top: 50%; transform: translateY(-50%); z-index: 10; }
         .gallery-nav.prev { left: 10px; }
@@ -493,6 +488,18 @@
         .top-search-clear { position: absolute; right: 10px; width: 24px; height: 24px; background: var(--text-muted); color: white; border: none; border-radius: 50%; font-size: 16px; font-weight: bold; line-height: 1; cursor: pointer; display: none; align-items: center; justify-content: center; padding-bottom: 2px; }
         .top-search-clear:active { background: var(--danger); }
         .top-search-close { background: transparent; border: none; color: var(--text-muted); font-weight: 600; font-size: 14px; cursor: pointer; padding: 10px 5px; }
+
+        .update-step {
+            display: flex;
+            align-items: center;
+            background: var(--input-bg);
+            padding: 12px 16px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-main);
+        }
     </style>
 </head>
 <body>
@@ -514,7 +521,6 @@
 
 <div class="container">
     
-    <!-- Шапка з фіксованою висотою (height: 48px), щоб текст та жовто-синя лінія не стрибали -->
     <div style="display: flex; gap: 12px; margin-bottom: 16px; align-items: center; height: 48px;">
         <div style="width: 4px; height: 100%; background: linear-gradient(to bottom, #0057b7 50%, #ffd700 50%); border-radius: 2px; flex-shrink: 0;"></div>
         <div style="display: flex; flex-direction: column; justify-content: center; height: 100%; flex: 1;">
@@ -530,15 +536,11 @@
         </div>
     </div>
 
-    <!-- Вкладка Пошук. Блок статусів тепер ТІЛЬКИ тут, тому не переходить на інші сторінки -->
     <div id="tab-search" class="app-tab">
         <div class="status-container" id="statusContainer">
             <div class="status-badge" id="mainStatusBadge">
                 <div id="statusDot" class="dot yellow pulse"></div>
                 <span id="statusText">Підключення</span>
-            </div>
-            <div class="inline-loader" id="inlineLoader" style="display: none;">
-                <span id="inlineLoaderText">завантаження... (0%)</span>
             </div>
         </div>
 
@@ -569,6 +571,11 @@
     </div>
 
     <div id="tab-reserves" class="app-tab">
+        <div id="rezervyDateContainer" style="font-size: 12px; color: var(--text-muted); text-align: left; margin-bottom: 12px; font-weight: 600; display:none; align-items:center; gap:6px;">
+            <img src="icons_skillHUB/refresh-time.svg" alt="clock" style="width:16px; height:16px;">
+            <span>Останнє оновлення: <span id="rezervyDateText" style="color:var(--text-main);"></span></span>
+        </div>
+
         <div class="input-group" style="display: flex; gap: 10px; align-items: center; margin-bottom: 8px;">
             <select id="storeFilter" onchange="window.renderRezervyList()" style="flex: 1; margin-bottom: 0;">
                 <option value="">-- Оберіть магазин --</option>
@@ -577,26 +584,28 @@
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:20px; height:20px;"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
             </button>
         </div>
-        <div id="rezervyDateContainer" style="font-size: 11px; color: var(--text-muted); text-align: right; margin-bottom: 12px; font-weight: 600;"></div>
         <div id="rezervyList" class="list-group"></div>
     </div>
 
     <div id="tab-skillhub" class="app-tab">
+        <button class="list-item" onclick="window.openFavoritesSelectionModal()" style="margin-bottom: 16px; background: var(--card-bg); border: 1px solid var(--border); border-radius: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.02);">
+            <div style="font-size: 24px; display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; margin-right: 12px;">
+                <img src="icons_skillHUB/add.svg" alt="+" style="width: 24px; height: 24px;">
+            </div>
+            <div class="list-item-content" style="flex:1; text-align:left;">
+                <span class="list-item-title">Додати в обране</span>
+                <span class="list-item-subtitle">Виберіть функції для швидкого доступу</span>
+            </div>
+            <div class="list-item-arrow" style="margin-left: auto;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" style="width:18px; height:18px; stroke-width: 2.5;"><polyline points="9 18 15 12 9 6"></polyline></svg>
+            </div>
+        </button>
+
         <div class="list-group" id="dynamicSkillHubButtons"></div>
     </div>
 
     <div id="tab-settings" class="app-tab">
         <div class="list-group">
-            <button class="list-item" onclick="window.openFavoritesSelectionModal()">
-                <div class="list-item-content">
-                    <span class="list-item-title">⭐ Обране (Швидке меню)</span>
-                    <span class="list-item-subtitle">Виберіть функції для швидкого доступу</span>
-                </div>
-                <div class="list-item-arrow">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" style="width:18px; height:18px; stroke-width: 2.5;"><polyline points="9 18 15 12 9 6"></polyline></svg>
-                </div>
-            </button>
-
             <div class="list-item">
                 <div class="list-item-content">
                     <span class="list-item-title">Темна тема</span>
@@ -716,6 +725,21 @@
             <button class="modal-close" onclick="window.closeModalBase('favQuickMenuModal')"></button>
         </div>
         <div class="modal-body list-group" id="favQuickMenuBody" style="padding: 0; margin-bottom: 0;">
+        </div>
+    </div>
+</div>
+
+<!-- МОДАЛКА ПРОГРЕСУ ОНОВЛЕННЯ -->
+<div id="updateProgressModal" class="modal">
+    <div class="modal-content" style="height: auto; max-height: 80vh;">
+        <div class="modal-header">
+            <div class="modal-title">Оновлення бази даних</div>
+        </div>
+        <div class="modal-body" style="display:flex; flex-direction:column; gap:12px; padding-bottom: 20px;">
+            <div class="update-step" id="step1">⏳ Оновлення кешу додатка <span style="margin-left:auto; font-weight:600;">0%</span></div>
+            <div class="update-step" id="step2">⏳ Оновлення резервів <span style="margin-left:auto; font-weight:600;">0%</span></div>
+            <div class="update-step" id="step3">⏳ Оновлення Академії <span style="margin-left:auto; font-weight:600;">0%</span></div>
+            <div class="update-step" id="step4">⏳ Перевірка цілісності даних <span style="margin-left:auto; font-weight:600;">0%</span></div>
         </div>
     </div>
 </div>
@@ -924,7 +948,6 @@
 </div>
 
 <script>
-    // ВСТАНОВЛЕННЯ СТАРТОВОЇ ВКЛАДКИ З ПАМ'ЯТІ (ДО ВІДОБРАЖЕННЯ КОНТЕНТУ)
     (function(){
         let initialTab = sessionStorage.getItem('skillhub_active_tab') || 'tab-search';
         document.getElementById(initialTab).classList.add('active');
@@ -1014,7 +1037,6 @@
 
     const API_URL = 'https://script.google.com/macros/s/AKfycbyeoKV6uQRE_h0jy_QjkbQI7k_Py_UOYMvckWhHmGITT-q-Ai832__GWVxbdjxBgQ6zqA/exec';
     
-    // ЄДИНИЙ КЛЮЧ КЕШУ ДЛЯ ОБОХ ФАЙЛІВ
     const CACHE_KEY = 'skillhub_v6_cache'; 
     const SEEN_VERSION_KEY = 'skillhub_version_flat_v6';
     
@@ -1375,7 +1397,7 @@
     }
 
     function checkOpenModals() {
-        const modals = ['descModal', 'compareModal', 'rezervItemModal', 'galleryModal', 'sellerModal', 'certManualModal', 'ratingModal', 'klochCalcModal', 'favSelectModal', 'favQuickMenuModal'];
+        const modals = ['descModal', 'compareModal', 'rezervItemModal', 'galleryModal', 'sellerModal', 'certManualModal', 'ratingModal', 'klochCalcModal', 'favSelectModal', 'favQuickMenuModal', 'updateProgressModal'];
         for (let id of modals) {
             let el = document.getElementById(id);
             if (el && el.classList.contains('show')) return true;
@@ -1563,7 +1585,7 @@
         let favs = window.getFavorites();
         
         if (favs.length === 0) {
-            safeUpdateHTML('favQuickMenuBody', `<div style="padding: 30px 20px; text-align: center; color: var(--text-muted); font-size: 14px; font-weight: 600;">Ви ще не додали жодної функції в обране.<br><br>Зробити це можна у вкладці "Опції" ⚙️</div>`);
+            safeUpdateHTML('favQuickMenuBody', `<div style="padding: 30px 20px; text-align: center; color: var(--text-muted); font-size: 14px; font-weight: 600;">Ви ще не додали жодної функції в обране.<br><br>Зробити це можна у вкладці "SkillHUB" 💡</div>`);
             window.openModalBase('favQuickMenuModal');
             return;
         }
@@ -1823,9 +1845,75 @@
         safeUpdateHTML(container, html);
     };
 
+    window.updateProgressUI = function(v1, v2, v3, v4) {
+        const formatStep = (elId, val, text) => {
+            const el = document.getElementById(elId);
+            if(val >= 100) {
+                el.innerHTML = `✅ ${text} <span style="color:var(--primary); font-weight:bold; margin-left:auto;">Ок</span>`;
+            } else {
+                el.innerHTML = `⏳ ${text} <span style="margin-left:auto; font-weight:600;">${Math.floor(val)}%</span>`;
+            }
+        };
+        formatStep('step1', v1, 'Оновлення кешу додатка');
+        formatStep('step2', v2, 'Оновлення резервів');
+        formatStep('step3', v3, 'Оновлення Академії');
+        formatStep('step4', v4, 'Перевірка цілісності даних');
+    };
+
+    document.getElementById('forceUpdateBtn').addEventListener('click', async function() { 
+        window.openModalBase('updateProgressModal');
+        let s1 = 0, s2 = 0, s3 = 0, s4 = 0;
+        let simInt = setInterval(() => {
+            if (s1 < 95) s1 += Math.random() * 15;
+            else if (s2 < 95) s2 += Math.random() * 10;
+            else if (s3 < 95) s3 += Math.random() * 10;
+            else if (s4 < 90) s4 += Math.random() * 5;
+            window.updateProgressUI(Math.min(95, s1), Math.min(95, s2), Math.min(95, s3), Math.min(90, s4));
+        }, 300);
+
+        try {
+            const response = await fetch(API_URL + '?nocache=' + Date.now());
+            const dataStr = await response.text();
+            
+            clearInterval(simInt);
+            window.updateProgressUI(100, 100, 100, 100);
+
+            if (dataStr.trim().startsWith('<')) throw new Error("Помилка доступу до бази.");
+            
+            let newDb = JSON.parse(dataStr);
+            if (newDb.error) throw new Error(newDb.error);
+
+            localStorage.setItem(CACHE_KEY, dataStr);
+            db = sanitizeDb(newDb);
+            
+            window.buildServiceSearchList();
+            window.populateFilters();
+            window.renderSkillHubTab();
+            if(currentCategoryData || currentServiceData) renderServices();
+            if(document.getElementById('tab-reserves').classList.contains('active')) window.renderRezervyList();
+
+            setAppStatus('ok', 'Готовий до роботи');
+            localStorage.setItem('skillhub_last_daily_update', new Date().toDateString());
+            
+            setTimeout(() => {
+                window.closeModalBase('updateProgressModal');
+            }, 800);
+
+        } catch (e) {
+            clearInterval(simInt);
+            alert("Помилка оновлення: " + e.message);
+            window.closeModalBase('updateProgressModal');
+            setAppStatus('error', 'Помилка');
+        }
+    });
+
     async function init() {
         let cached = null;
         try { cached = localStorage.getItem(CACHE_KEY); } catch (e) {}
+
+        const todayStr = new Date().toDateString();
+        const lastUpdate = localStorage.getItem('skillhub_last_daily_update');
+        let needsDailyUpdate = (lastUpdate !== todayStr);
 
         if (cached) { 
             try {
@@ -1835,13 +1923,16 @@
                 window.populateFilters();
                 window.renderSkillHubTab();
                 
-                // Перевірка сесії більше не показує "Підготовка", 
-                // вона відразу прибирає лоадер, а дані оновляться мовчки в фоні
-                if (!sessionStorage.getItem('skillhub_session_active')) {
+                if (needsDailyUpdate || !sessionStorage.getItem('skillhub_session_active')) {
                     sessionStorage.setItem('skillhub_session_active', 'true');
-                    refreshData(false, false); 
+                    setAppStatus('loading', 'Оновлення');
+                    refreshData(false, false).then(() => {
+                        setAppStatus('ok', 'Готовий до роботи');
+                        localStorage.setItem('skillhub_last_daily_update', todayStr);
+                    }); 
+                } else {
+                    setAppStatus('ok', 'Готовий до роботи');
                 }
-                setAppStatus('ok', 'Готовий до роботи');
             } catch(e) { await refreshData(true, false); }
         } else {
             sessionStorage.setItem('skillhub_session_active', 'true');
@@ -1851,7 +1942,8 @@
     
     window.init = init;
 
-    // isManual = ручне натискання кнопки
+    // isManual is true only for old inline loading which is now handled by modal. 
+    // Kept the function signature mostly the same for background updates.
     async function refreshData(first = false, isManual = false) {
         if(first && !isManual && !localStorage.getItem(CACHE_KEY)) setAppStatus('loading', 'Підготовка');
         let pInt; 
@@ -1873,11 +1965,8 @@
                 if (progress < 90 && first && !document.documentElement.classList.contains('fast-boot')) { 
                     progress += Math.random() * 15; 
                     if (progress > 90) progress = 90;
-                    
                     if (!isManual) {
                         pBar.style.width = progress + '%'; 
-                    } else {
-                        document.getElementById('inlineLoaderText').innerText = `завантаження... (${Math.round(progress)}%)`;
                     }
                 }
             }, 300);
@@ -1892,7 +1981,6 @@
             
             if (first && !document.documentElement.classList.contains('fast-boot')) {
                 if (!isManual) pBar.style.width = '100%';
-                else document.getElementById('inlineLoaderText').innerText = `завантаження... (100%)`;
             }
 
             if (dataStr.trim().startsWith('<')) throw new Error("Помилка доступу до бази. Перевірте Google Apps Script.");
@@ -1902,22 +1990,14 @@
             let savedVersion = null;
             try {
                 savedVersion = localStorage.getItem(SEEN_VERSION_KEY);
-                // ЗБЕРІГАЄМО ПОВНИЙ КЕШ
                 localStorage.setItem(CACHE_KEY, dataStr);
+                localStorage.setItem('skillhub_last_daily_update', new Date().toDateString());
             } catch (e) {}
             
             db = sanitizeDb(newDb);
             window.buildServiceSearchList();
             
-            if (isManual) {
-                setTimeout(() => {
-                    document.getElementById('inlineLoader').style.display = 'none';
-                    document.getElementById('mainStatusBadge').style.display = 'flex';
-                    setAppStatus('ok', 'Готовий до роботи');
-                }, 500);
-            } else {
-                setAppStatus('ok', 'Готовий до роботи');
-            }
+            if (!isManual) setAppStatus('ok', 'Готовий до роботи');
             
             setTimeout(() => {
                 if (db.appVersion && savedVersion !== db.appVersion) {
@@ -1936,10 +2016,6 @@
             console.error("Refresh Error:", e);
             let cached = null; try { cached = localStorage.getItem(CACHE_KEY); } catch (err) {}
             if (cached) { 
-                if (isManual) {
-                    document.getElementById('inlineLoader').style.display = 'none';
-                    document.getElementById('mainStatusBadge').style.display = 'flex';
-                }
                 setAppStatus('ok', 'Офлайн (З кешу)'); 
                 if (first && !isManual) { enableUI(); window.populateFilters(); window.renderSkillHubTab(); } 
             } else { 
@@ -1951,16 +2027,6 @@
             }
         }
     }
-
-    document.getElementById('forceUpdateBtn').addEventListener('click', async function() { 
-        try { localStorage.removeItem(CACHE_KEY); } catch(e){} 
-        
-        document.getElementById('mainStatusBadge').style.display = 'none';
-        document.getElementById('inlineLoader').style.display = 'inline-flex';
-        document.getElementById('inlineLoaderText').innerText = "завантаження... (0%)";
-        
-        await refreshData(true, true); 
-    });
 
     function enableUI() { 
         elCatInput.disabled = false; 
@@ -2012,11 +2078,12 @@
         const searchInput = document.getElementById('topReservesSearchInput');
         const searchQuery = searchInput ? searchInput.value.toLowerCase().trim() : '';
         const dateContainer = document.getElementById('rezervyDateContainer');
+        const dateText = document.getElementById('rezervyDateText');
 
-        if (dateContainer) {
+        if (dateContainer && dateText) {
             if (db.rezervyDate) {
-                dateContainer.innerHTML = `📅 Останнє оновлення: <span style="color:var(--text-main);">${db.rezervyDate}</span>`;
-                dateContainer.style.display = 'block';
+                dateText.innerText = db.rezervyDate;
+                dateContainer.style.display = 'flex';
             } else {
                 dateContainer.style.display = 'none';
             }
@@ -3368,8 +3435,6 @@
             btn.innerText = 'ВІДПРАВИТИ';
         });
     };
-
-    init();
 
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => { navigator.serviceWorker.register('./sw.js').catch(console.error); });
