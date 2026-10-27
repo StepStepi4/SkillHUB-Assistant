@@ -736,7 +736,7 @@
 <div id="updateProgressModal" class="modal">
     <div class="modal-content" style="height: auto; max-height: 80vh;">
         <div class="modal-header">
-            <div class="modal-title">Оновлення бази даних</div>
+            <div class="modal-title">Оновлення базы данных</div>
         </div>
         <div class="modal-body" style="display:flex; flex-direction:column; gap:12px; padding-bottom: 20px;">
             <div class="update-step" id="step1">⏳ Оновлення кешу додатка <span style="margin-left:auto; font-weight:600;">0%</span></div>
@@ -1643,7 +1643,7 @@
 
     window.factoryReset = function() {
         if(confirm("Ви впевнені, що хочете повністю скинути всі налаштування, кеш додатку та збережені дані? Це поверне додаток до початкового стану.")) {
-                        try { localStorage.clear(); } catch (e) {}
+            try { localStorage.clear(); } catch (e) {}
             try { sessionStorage.clear(); } catch (e) {}
             try { indexedDB.deleteDatabase(IDB_NAME); } catch (e) {}
             setTimeout(() => window.location.reload(), 150);
@@ -1665,36 +1665,57 @@
         window.closeModalBase('klochCalcModal');
     }
 
+    // ==========================================
+    // ВЫПРАВЛЕННАЯ ЛОГИКА КАЛЬКУЛЯТОРА
+    // ==========================================
     window.calculateKlochBonus = function() {
         let price = parseFloat(document.getElementById('klochPrice').value) || 0;
         let qty = parseInt(document.getElementById('klochQty').value) || 1;
 
         let result = 0;
-        let appliedPercent = 0;
+        let displayPercent = 0; // Число для отображения, например 6.2
+        let calcMultiplier = 0; // Реальный множитель, например 0.062
 
         if (price > 0 && db.klochCalcData && db.klochCalcData.rules && db.klochCalcData.rules.length > 0) {
             let rules = [...db.klochCalcData.rules];
             rules.sort((a, b) => a.min - b.min);
 
             let matchedRule = rules.find(r => price >= r.min && price <= r.max);
+            let rawPercent = 0;
 
             if (matchedRule) {
-                appliedPercent = matchedRule.percent;
+                rawPercent = matchedRule.percent;
             } else if (rules.length > 0 && price > rules[rules.length - 1].max) {
-                appliedPercent = rules[rules.length - 1].percent;
+                rawPercent = rules[rules.length - 1].percent;
             }
 
-            result = (price * (appliedPercent / 100)) * qty;
+            // Коригування для правильного зчитування % з Google Таблиць (де 6.20% = 0.062)
+            if (typeof rawPercent === 'string' && rawPercent.includes('%')) {
+                displayPercent = parseFloat(rawPercent);
+                calcMultiplier = displayPercent / 100;
+            } else if (rawPercent > 0 && rawPercent < 1) {
+                // Если данные приходят как 0.062
+                calcMultiplier = rawPercent;
+                displayPercent = rawPercent * 100;
+            } else {
+                // Если данные приходят как 6.2
+                displayPercent = parseFloat(rawPercent) || 0;
+                calcMultiplier = displayPercent / 100;
+            }
+
+            result = (price * calcMultiplier) * qty;
         }
 
         let resBox = document.getElementById('klochResultBox');
         resBox.style.transform = 'scale(1.02)';
         setTimeout(() => resBox.style.transform = 'scale(1)', 150);
 
-        document.getElementById('klochResultValue').innerText = result.toFixed(2) + ' ₴';
-        document.getElementById('klochResultFormula').innerText = `Формула: (${price} * ${appliedPercent}\%) *${qty}`;
+        let formattedDisplayPercent = Number.isInteger(displayPercent) ? displayPercent : displayPercent.toFixed(2);
 
-        return { price, qty, percent: appliedPercent, result };
+        document.getElementById('klochResultValue').innerText = result.toFixed(2) + ' ₴';
+        document.getElementById('klochResultFormula').innerText = `Формула: (${price} * ${formattedDisplayPercent}%) * ${qty}`;
+
+        return { price, qty, percent: formattedDisplayPercent, result };
     }
 
     window.addKlochToList = function() {
