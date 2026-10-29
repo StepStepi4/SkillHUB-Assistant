@@ -387,8 +387,37 @@
             background: linear-gradient(135deg, rgba(22, 79, 88, 0.12), rgba(35, 122, 136, 0.12));
             border: 1.5px solid rgba(22, 79, 88, 0.3);
             border-radius: 16px; padding: 12px 14px; margin-bottom: 16px;
-            display: none; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap;
+            display: none; flex-direction: column; align-items: stretch; gap: 12px;
         }
+        .viewing-banner-info { display: flex; flex-direction: column; gap: 2px; text-align: center; }
+
+        /* Кнопки банера: однакові за розміром, рівномірно по всій ширині (кількість колонок = кількість видимих кнопок) */
+        .banner-actions { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); gap: 8px; }
+        .banner-action-btn {
+            background: var(--card-bg);
+            border: 1.5px solid var(--border);
+            border-radius: 12px;
+            min-height: 60px;
+            padding: 8px 4px;
+            font-family: inherit;
+            font-size: 11.5px;
+            font-weight: 800;
+            line-height: 1.1;
+            text-align: center;
+            color: var(--text-main);
+            display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.02);
+            -webkit-tap-highlight-color: transparent;
+        }
+        .banner-action-btn:active { transform: scale(0.96); }
+        .banner-action-btn .ui-icon {
+            width: 22px !important; height: 22px !important;
+            min-width: 22px !important; min-height: 22px !important;
+            object-fit: contain !important;
+        }
+        .banner-action-btn.copied { border-color: var(--primary); background: var(--primary-light); color: var(--primary); }
 
         .no-select { user-select: none; -webkit-user-select: none; }
 
@@ -668,14 +697,23 @@
 
         <!-- Банер перегляду співробітника -->
         <div id="viewingEmployeeBanner" class="viewing-banner">
-            <div style="display: flex; flex-direction: column; gap: 2px;">
+            <div class="viewing-banner-info">
                 <span style="font-size: 11px; font-weight: 800; text-transform: uppercase; color: var(--primary);">Перегляд співробітника</span>
                 <span id="viewingEmployeeMeta" style="font-size: 12px; font-weight: 600; color: var(--text-muted);"></span>
             </div>
-            <div style="display: flex; gap: 6px; flex-wrap: wrap;">
-                <button id="assignCoursesBtn" class="btn-secondary" style="padding: 8px 12px; border-radius: 10px; font-size: 12px; font-weight: 800; cursor: pointer; display:none;" onclick="openAssignModal()">Призначити</button>
-                <button class="btn-secondary" style="padding: 8px 12px; border-radius: 10px; font-size: 12px; font-weight: 800; cursor: pointer;" onclick="openStatsModal()">Змінити</button>
-                <button class="btn-secondary" style="padding: 8px 12px; border-radius: 10px; font-size: 12px; font-weight: 800; cursor: pointer; color: var(--primary);" onclick="switchToMyCabinet()">Мій кабінет</button>
+            <div class="banner-actions">
+                <button id="assignCoursesBtn" class="banner-action-btn" style="display:none;" onclick="openAssignModal()">
+                    <img src="icons_skillHUB/check-mark.svg" class="ui-icon" alt="" onerror="this.style.display='none'">
+                    <span>Призначити</span>
+                </button>
+                <button id="changeStatsBtn" class="banner-action-btn" onclick="openStatsModal()">
+                    <img src="icons_skillHUB/shuffle.svg" class="ui-icon" alt="" onerror="this.style.display='none'">
+                    <span>Змінити</span>
+                </button>
+                <button id="inviteBtn" class="banner-action-btn" style="display:none;" onclick="copyInvite()">
+                    <img src="icons_skillHUB/password-protection.svg" class="ui-icon" alt="" onerror="this.style.display='none'">
+                    <span id="inviteBtnLabel">Інвайт</span>
+                </button>
             </div>
         </div>
 
@@ -967,6 +1005,7 @@
             #userWelcome { font-size: calc(14px * ${scale}) !important; }
             .timer-box { font-size: calc(16px * ${scale}) !important; }
             .role-action-btn span { font-size: calc(11px * ${scale}) !important; }
+            .banner-action-btn span { font-size: calc(11.5px * ${scale}) !important; }
         `;
     };
 
@@ -1746,6 +1785,60 @@
         }
     }
 
+    /* ===== ІНВАЙТ: копіювання тексту для входу в буфер обміну ===== */
+    function buildInviteText(emp) {
+        if (emp && emp.welcomeText) return emp.welcomeText; // готовий текст з колонки CY таблиці
+        return 'Вітаю, ' + extractFirstNameCapitalized(emp) + ' 👋\n' +
+               'Твої дані для входу в SkillHUB Academy\n\n' +
+               '👤 `' + (emp.login || '') + '`\n\n' +
+               '🔑 `' + (emp.pass || '') + '`\n\n' +
+               'Як знайти?\n' +
+               'SkillHUB ➔ SkillHUB Academy';
+    }
+
+    function copyTextToClipboard(text) {
+        if (navigator.clipboard && window.isSecureContext) {
+            return navigator.clipboard.writeText(text);
+        }
+        return new Promise(function (resolve, reject) {
+            const ta = document.createElement('textarea');
+            ta.value = text;
+            ta.setAttribute('readonly', '');
+            ta.style.cssText = 'position:fixed; top:0; left:0; width:1px; height:1px; opacity:0; user-select:text; -webkit-user-select:text;';
+            document.body.appendChild(ta);
+            ta.focus();
+            ta.select();
+            ta.setSelectionRange(0, text.length);
+            let ok = false;
+            try { ok = document.execCommand('copy'); } catch (e) { ok = false; }
+            document.body.removeChild(ta);
+            ok ? resolve() : reject(new Error('copy failed'));
+        });
+    }
+
+    let inviteResetTimer = null;
+    function copyInvite() {
+        const emp = windowViewingEmployee;
+        if (!emp) return;
+        if (!(windowUserRole === 'manager' || windowUserRole === 'owner')) return;
+
+        const btn = document.getElementById('inviteBtn');
+        const label = document.getElementById('inviteBtnLabel');
+        const setLabel = function (text, copied) {
+            label.innerText = text;
+            btn.classList.toggle('copied', !!copied);
+        };
+
+        copyTextToClipboard(buildInviteText(emp)).then(function () {
+            setLabel('Скопійовано ✓', true);
+        }).catch(function () {
+            setLabel('Помилка копіювання', false);
+        }).then(function () {
+            clearTimeout(inviteResetTimer);
+            inviteResetTimer = setTimeout(function () { setLabel('Інвайт', false); }, 1800);
+        });
+    }
+
     function switchToMyCabinet() {
         windowViewingEmployee = null;
         closeStatsModal(); closeAssignModal(); closeMeetModal();
@@ -2021,12 +2114,10 @@
         
         document.getElementById('viewingEmployeeMeta').innerText = metaParts.join(' • ');
         
-        let assignBtn = document.getElementById('assignCoursesBtn');
-        if (windowUserRole === 'manager' || windowUserRole === 'owner') {
-            assignBtn.style.display = 'inline-block';
-        } else {
-            assignBtn.style.display = 'none';
-        }
+        // «Призначити» та «Інвайт» - тільки для Власника і Керівника
+        const canManageTeam = (windowUserRole === 'manager' || windowUserRole === 'owner');
+        document.getElementById('assignCoursesBtn').style.display = canManageTeam ? 'flex' : 'none';
+        document.getElementById('inviteBtn').style.display = canManageTeam ? 'flex' : 'none';
         
         document.getElementById('viewingEmployeeBanner').style.display = 'flex';
 
