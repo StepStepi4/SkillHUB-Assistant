@@ -1158,7 +1158,7 @@
         list = filterEmployeesLogic(list);
 
         if (q.length > 0) {
-            let matches = list.filter(u => String(u.name).toLowerCase().includes(qLow)).slice(0, 6);
+            let matches = window.SearchUtil.filter(list, q, u => u.name).slice(0, 6);
             if (matches.length > 0) {
                 suggBox.innerHTML = matches.map(u => {
                     let safeName = escapeHTMLAttr(u.name);
@@ -1220,7 +1220,7 @@
         employees = filterEmployeesLogic(employees);
 
         if (filterQueryLow) {
-            employees = employees.filter(u => String(u.name).toLowerCase().includes(filterQueryLow));
+            employees = window.SearchUtil.filter(employees, filterQueryLow, u => u.name);
         }
 
         // Встановлення індикатора фільтру
