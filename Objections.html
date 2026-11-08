@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SkillHUB — тренажер: заперечення клієнта</title>
+<link rel="icon" href="assets/brand/icon-192.png">
+<link rel="stylesheet" href="css/fonts.css">
+<style>
+:root{--bg:#f2f2f7;--card:#fff;--text:#164f58;--muted:#6b7280;--primary:#164f58;--border:#e5e5ea;--soft:#f3f4f6;--good:#10b981;--goodbg:#e8f8f1;--mid:#f59e0b;--midbg:#fef6e3;--bad:#ef4444;--badbg:#fdeaea;--client:#eaf0fb}
+@media (prefers-color-scheme:dark){:root{--bg:#000;--card:#1c1c1e;--text:#f5f5f5;--muted:#98989d;--primary:#2fa4b3;--border:#38383a;--soft:#2c2c2e;--good:#34d399;--goodbg:#10291f;--mid:#fbbf24;--midbg:#2b2210;--bad:#f87171;--badbg:#2e1616;--client:#1e2a44}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-serif;padding:14px 14px 60px}
+.wrap{max-width:720px;margin:0 auto}
+.top{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.back{border:1px solid var(--border);background:var(--card);color:var(--text);font:inherit;font-weight:800;font-size:14px;padding:9px 14px;border-radius:12px;cursor:pointer}
+.crumb{font-size:12.5px;color:var(--muted);font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+h1{font-size:22px;margin:8px 0 4px}
+.sub{margin:0 0 14px;color:var(--muted);font-size:14px;line-height:1.45}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:480px){.grid{grid-template-columns:1fr}}
+.card{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:16px;text-align:left;cursor:pointer;font:inherit;color:var(--text);display:block;width:100%;box-shadow:0 2px 8px rgba(0,0,0,.04)}
+.card:active{transform:scale(.99)}
+.card .ic{font-size:30px}
+.card b{display:block;font-size:16px;margin:6px 0 2px}
+.card small{color:var(--muted);font-size:12.5px;display:block}
+.card .meta{margin-top:8px;font-size:12px;font-weight:800;color:var(--primary)}
+.list{display:flex;flex-direction:column;gap:9px}
+.obj{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:14px 16px;text-align:left;cursor:pointer;font:inherit;color:var(--text);display:flex;gap:10px;align-items:flex-start;width:100%}
+.obj .q{font-size:20px;line-height:1.1}
+.obj span.t{flex:1;font-weight:700;font-size:15px;line-height:1.35}
+.obj .st{font-size:18px}
+.bubble{background:var(--client);border-radius:18px 18px 18px 4px;padding:14px 16px;font-size:17px;font-weight:700;line-height:1.4;margin:6px 0 14px;position:relative}
+.bubble .who{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:4px;font-weight:800}
+.seg{display:flex;background:var(--soft);border-radius:12px;padding:3px;margin-bottom:12px}
+.seg button{flex:1;border:0;background:transparent;color:var(--muted);font:inherit;font-weight:800;font-size:13.5px;padding:9px;border-radius:10px;cursor:pointer}
+.seg button.on{background:var(--card);color:var(--text);box-shadow:0 1px 4px rgba(0,0,0,.12)}
+.ans{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:13px 15px;margin-bottom:10px;text-align:left;font:inherit;color:var(--text);width:100%;display:block;cursor:pointer;font-size:15px;line-height:1.45}
+.ans .lbl{display:block;font-size:11.5px;font-weight:900;margin-bottom:5px;letter-spacing:.04em}
+.ans .why{display:none;margin-top:9px;padding-top:9px;border-top:1px dashed var(--border);font-size:13.5px;color:var(--muted)}
+.ans.show .why{display:block}
+.ans.r2.show{border-color:var(--good);background:var(--goodbg)} .ans.r2 .lbl{color:var(--good)}
+.ans.r1.show{border-color:var(--mid);background:var(--midbg)} .ans.r1 .lbl{color:var(--mid)}
+.ans.r0.show{border-color:var(--bad);background:var(--badbg)} .ans.r0 .lbl{color:var(--bad)}
+.ans.picked{outline:3px solid var(--primary);outline-offset:1px}
+.ans.dim{opacity:.55}
+.ans .lbl{display:none} .ans.show .lbl{display:block}
+.actions{display:flex;gap:10px;margin-top:6px}
+.btn{flex:1;border:0;background:var(--primary);color:#fff;font:inherit;font-weight:800;font-size:15px;padding:13px;border-radius:14px;cursor:pointer}
+.btn.g{background:var(--soft);color:var(--text)}
+.score{margin:0 0 10px;font-size:13px;font-weight:800;color:var(--muted)}
+.bar{height:8px;background:var(--soft);border-radius:8px;overflow:hidden;margin-bottom:12px}
+.bar i{display:block;height:100%;background:var(--good);width:0;transition:width .3s}
+.empty{padding:30px 0;text-align:center;color:var(--muted)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top"><button class="back" id="back" aria-label="Назад">← Назад</button><div class="crumb" id="crumb"></div></div>
+  <div id="view"></div>
+</div>
+<script src="js/trainer/objections-data.js"></script>
+<script>
+(function(){
+var DATA=window.OBJ_DATA||[];
+var $=function(s){return document.querySelector(s)};
+var view=$('#view'),crumb=$('#crumb');
+var st={topic:null,obj:null,mode:'train',picked:null};
+var KEY='skillhub_obj_progress';
+var progress={};
+try{progress=JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(progress))}catch(e){}}
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+function shuffle(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t}return a}
+function topic(){return DATA.filter(function(t){return t.id===st.topic})[0]}
+function item(){var t=topic();return t&&t.items.filter(function(i){return i.id===st.obj})[0]}
+function mark(id){var p=progress[id];return p===2?'✅':p===1?'🟡':p===0?'❌':''}
+function topicDone(t){return t.items.filter(function(i){return progress[i.id]===2}).length}
+var LABEL={2:'✅ НАЙКРАЩА ВІДПОВІДЬ',1:'🟡 ПРИЙНЯТНА, АЛЕ МОЖНА КРАЩЕ',0:'❌ СЛАБКА ВІДПОВІДЬ'};
+
+function render(){
+  var h='';
+  if(!st.topic){
+    crumb.textContent='Тренажер';
+    h+='<h1>Заперечення клієнта</h1><p class="sub">Оберіть тему → заперечення клієнта → найкращу відповідь. Одразу побачите, чому вона працює.</p><div class="grid">';
+    DATA.forEach(function(t){h+='<button class="card" data-topic="'+t.id+'"><span class="ic">'+t.icon+'</span><b>'+esc(t.title)+'</b><small>'+esc(t.hint||'')+'</small><div class="meta">Пройдено: '+topicDone(t)+' / '+t.items.length+'</div></button>'});
+    h+='</div><div class="actions"><button class="btn g" id="rand">🎲 Випадкове заперечення</button></div>';
+  }else if(!st.obj){
+    var t=topic();crumb.textContent=t.title;
+    h+='<h1>'+t.icon+' '+esc(t.title)+'</h1><p class="sub">Оберіть заперечення, яке почули від клієнта.</p><div class="list">';
+    t.items.forEach(function(i){h+='<button class="obj" data-obj="'+i.id+'"><span class="q">💬</span><span class="t">'+esc(i.client)+'</span><span class="st">'+mark(i.id)+'</span></button>'});
+    h+='</div>';
+  }else{
+    var t2=topic(),it=item();crumb.textContent=t2.title+' › заперечення';
+    var done=t2.items.filter(function(i){return progress[i.id]!==undefined}).length;
+    h+='<div class="bar"><i style="width:'+Math.round(done/t2.items.length*100)+'%"></i></div>';
+    h+='<div class="bubble"><span class="who">Клієнт каже</span>'+esc(it.client)+'</div>';
+    h+='<div class="seg"><button data-mode="train" class="'+(st.mode==='train'?'on':'')+'">🎯 Тренування</button><button data-mode="all" class="'+(st.mode==='all'?'on':'')+'">📖 Усі відповіді</button></div>';
+    var answers=st.mode==='all'?it.answers.slice().sort(function(a,b){return b.rate-a.rate}):(st.order||(st.order=shuffle(it.answers)));
+    var reveal=st.mode==='all'||st.picked!==null;
+    if(st.mode==='train'&&!reveal)h+='<p class="score">Оберіть відповідь, яку дали б ви:</p>';
+    answers.forEach(function(a,idx){
+      var cls='ans r'+a.rate+(reveal?' show':'');
+      if(st.mode==='train'&&st.picked!==null){if(st.picked===idx)cls+=' picked';else if(a.rate!==2)cls+=' dim'}
+      h+='<button class="'+cls+'" data-ans="'+idx+'"'+(st.mode==='train'&&st.picked!==null?' disabled':'')+'><span class="lbl">'+LABEL[a.rate]+'</span>'+esc(a.t)+(a.why?'<span class="why"><b>Чому:</b> '+esc(a.why)+'</span>':'')+'</button>';
+    });
+    var idx0=t2.items.indexOf(it),nxt=t2.items[idx0+1];
+    h+='<div class="actions">';
+    if(st.mode==='train'&&st.picked!==null)h+='<button class="btn g" id="retry">↺ Ще раз</button>';
+    h+='<button class="btn" id="next">'+(nxt?'Наступне заперечення →':'До списку ✓')+'</button></div>';
+  }
+  view.innerHTML=h;
+  $('#back').style.visibility=(!st.topic)?'hidden':'visible';
+}
+function open_(topicId,objId){
+  st.topic=topicId;st.obj=objId||null;st.picked=null;st.order=null;render();window.scrollTo(0,0);
+  history.pushState({t:st.topic,o:st.obj},'');
+}
+view.addEventListener('click',function(e){
+  var b=e.target.closest('button');if(!b)return;
+  if(b.dataset.topic)return open_(b.dataset.topic);
+  if(b.dataset.obj)return open_(st.topic,b.dataset.obj);
+  if(b.id==='rand'){var t=DATA[Math.floor(Math.random()*DATA.length)];var i=t.items[Math.floor(Math.random()*t.items.length)];return open_(t.id,i.id)}
+  if(b.dataset.mode){st.mode=b.dataset.mode;st.picked=null;st.order=null;return render()}
+  if(b.dataset.ans!==undefined&&st.mode==='train'&&st.picked===null){
+    var it=item(),ans=st.order[+b.dataset.ans];st.picked=+b.dataset.ans;
+    if(progress[it.id]===undefined||ans.rate>progress[it.id])progress[it.id]=ans.rate;
+    save();render();return;
+  }
+  if(b.dataset.ans!==undefined&&st.mode==='all'){b.classList.toggle('show')}
+  if(b.id==='retry'){st.picked=null;st.order=null;return render()}
+  if(b.id==='next'){
+    var t2=topic(),i2=item(),k=t2.items.indexOf(i2),n=t2.items[k+1];
+    if(n)return open_(st.topic,n.id);
+    return open_(st.topic,null);
+  }
+});
+$('#back').addEventListener('click',function(){
+  if(st.obj)st.obj=null;else st.topic=null;
+  st.picked=null;st.order=null;render();window.scrollTo(0,0);
+  history.pushState({t:st.topic,o:st.obj},'');
+});
+window.addEventListener('popstate',function(e){
+  var s=e.state||{};st.topic=s.t||null;st.obj=s.o||null;st.picked=null;st.order=null;render();
+});
+history.replaceState({t:null,o:null},'');
+render();
+})();
+</script>
+</body>
+</html>

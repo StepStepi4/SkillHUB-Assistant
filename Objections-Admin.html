@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>SkillHUB — форма: заперечення та відповіді</title>
+<link rel="icon" href="assets/brand/icon-192.png">
+<link rel="stylesheet" href="css/fonts.css">
+<style>
+:root{--bg:#f2f2f7;--card:#fff;--text:#164f58;--muted:#6b7280;--primary:#164f58;--border:#e5e5ea;--soft:#f3f4f6;--good:#10b981;--mid:#f59e0b;--bad:#ef4444}
+@media (prefers-color-scheme:dark){:root{--bg:#000;--card:#1c1c1e;--text:#f5f5f5;--muted:#98989d;--primary:#2fa4b3;--border:#38383a;--soft:#2c2c2e;--good:#34d399;--mid:#fbbf24;--bad:#f87171}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-serif;padding:14px 14px 110px}
+.wrap{max-width:760px;margin:0 auto}
+h1{font-size:21px;margin:6px 0 4px}
+h2{font-size:16px;margin:0 0 10px}
+.sub{margin:0 0 12px;color:var(--muted);font-size:13.5px;line-height:1.45}
+.box{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:14px;margin-bottom:12px}
+label{display:block;font-size:12px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin:10px 0 4px}
+input[type=text],input[type=password],textarea{width:100%;padding:12px;border:1px solid var(--border);border-radius:11px;background:var(--soft);color:var(--text);font:inherit;font-size:15px}
+textarea{min-height:90px;resize:vertical;line-height:1.4}
+input:disabled{opacity:.6}
+.row2{display:grid;grid-template-columns:1fr 90px;gap:8px}
+.rate{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.rate label{margin:0;text-transform:none;letter-spacing:0;font-size:13px;color:var(--text);border:2px solid var(--border);border-radius:11px;padding:10px 6px;text-align:center;cursor:pointer;font-weight:800;background:var(--soft)}
+.rate input{display:none}
+.rate input:checked+span{display:block}
+.rate label.on2{border-color:var(--good);background:rgba(16,185,129,.12)}
+.rate label.on1{border-color:var(--mid);background:rgba(245,158,11,.14)}
+.rate label.on0{border-color:var(--bad);background:rgba(239,68,68,.12)}
+.btns{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+.btn{border:0;background:var(--primary);color:#fff;font:inherit;font-weight:800;font-size:14.5px;padding:12px 16px;border-radius:12px;cursor:pointer}
+.btn.g{background:var(--soft);color:var(--text);border:1px solid var(--border)}
+.btn.r{background:transparent;color:var(--bad);border:1px solid var(--border)}
+.ctx{background:var(--soft);border-radius:10px;padding:8px 10px;font-size:13px;margin-bottom:6px}
+details.t{background:var(--card);border:1px solid var(--border);border-radius:16px;margin-bottom:10px;overflow:hidden}
+details.t>summary{list-style:none;cursor:pointer;padding:13px 14px;display:flex;align-items:center;gap:8px;font-weight:800;font-size:15px}
+details.t>summary::-webkit-details-marker{display:none}
+details.t>summary .n{margin-left:auto;color:var(--muted);font-size:12px;font-weight:700}
+.ob{border-top:1px solid var(--border);padding:11px 14px}
+.ob .q{font-weight:700;font-size:14.5px;display:flex;gap:8px;align-items:flex-start}
+.ob .q span{flex:1}
+.ans{display:flex;gap:8px;align-items:flex-start;margin-top:8px;font-size:13.5px;line-height:1.4;padding:8px 10px;border-radius:10px;background:var(--soft)}
+.ans .b{font-size:11px;font-weight:900;padding:2px 7px;border-radius:8px;color:#fff;flex:none;margin-top:1px}
+.ans .b.r2{background:var(--good)} .ans .b.r1{background:var(--mid)} .ans .b.r0{background:var(--bad)}
+.ans .tx{flex:1;overflow-wrap:anywhere}
+.ic{border:0;background:transparent;font-size:16px;cursor:pointer;padding:2px 5px;border-radius:8px}
+.ic:hover{background:var(--border)}
+.bar{position:fixed;left:0;right:0;bottom:0;background:var(--card);border-top:1px solid var(--border);padding:10px 14px;display:flex;gap:8px;align-items:center;z-index:30}
+.bar .st{flex:1;font-size:13px;font-weight:800;color:var(--muted)}
+.bar .st.dirty{color:var(--mid)}
+.msg{font-size:13px;margin-top:8px;font-weight:700}
+.msg.ok{color:var(--good)} .msg.err{color:var(--bad)}
+.hint{font-size:12.5px;color:var(--muted);line-height:1.45;margin-top:6px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Заперечення та відповіді</h1>
+  <p class="sub">Форма записує дані тренажера в <code>js/trainer/objections-data.js</code> на GitHub і оновлює версію <code>sw.js</code>, щоб пристрої підтягнули зміни. Тренажер: <a href="Objections.html" style="color:var(--primary);font-weight:800">Objections.html</a></p>
+
+  <details class="box" id="cfgBox">
+    <summary style="font-weight:800;cursor:pointer">⚙️ Підключення до GitHub</summary>
+    <label for="cRepo">Репозиторій</label><input type="text" id="cRepo" placeholder="власник/репозиторій">
+    <label for="cBranch">Гілка</label><input type="text" id="cBranch" placeholder="main">
+    <label for="cToken">Токен доступу (зберігається лише в цьому браузері)</label><input type="password" id="cToken" placeholder="github_pat_…" autocomplete="off">
+    <div class="hint">Створіть токен: GitHub → Settings → Developer settings → Fine-grained tokens → доступ лише до цього репозиторію → <b>Contents: Read and write</b>. Нікому його не передавайте.</div>
+    <div class="btns"><button class="btn" id="cSave">Зберегти налаштування</button><button class="btn g" id="cTest">Перевірити</button></div>
+    <div class="msg" id="cMsg"></div>
+  </details>
+
+  <div class="box" id="formBox">
+    <h2 id="formTitle">Додати відповідь</h2>
+    <div id="ctx" class="ctx" style="display:none"></div>
+    <div class="row2">
+      <div><label for="fTopic">1. Назва теми (головне меню)</label><input type="text" id="fTopic" list="dlTopics" placeholder="Напр. Продовження гарантії" autocomplete="off"></div>
+      <div><label for="fIcon">Іконка</label><input type="text" id="fIcon" placeholder="💬" maxlength="4"></div>
+    </div>
+    <datalist id="dlTopics"></datalist>
+    <label for="fObj">2. Заперечення клієнта</label><input type="text" id="fObj" list="dlObjs" placeholder="Напр. Це дорого" autocomplete="off">
+    <datalist id="dlObjs"></datalist>
+    <label for="fAns">3. Відповідь на нього</label><textarea id="fAns" placeholder="Що відповісти клієнту…"></textarea>
+    <label>4. Оцінка відповіді</label>
+    <div class="rate" id="rate">
+      <label data-v="2"><input type="radio" name="rate" value="2">✅ Найкраща</label>
+      <label data-v="1"><input type="radio" name="rate" value="1" checked>🟡 Прийнятна</label>
+      <label data-v="0"><input type="radio" name="rate" value="0">❌ Слабка</label>
+    </div>
+    <label for="fWhy">Чому так (пояснення, необов'язково)</label><textarea id="fWhy" style="min-height:60px" placeholder="Коротко: що в цій відповіді добре або погано"></textarea>
+    <div class="btns"><button class="btn" id="fAdd">Додати</button><button class="btn g" id="fCancel" style="display:none">Скасувати редагування</button></div>
+    <div class="msg" id="fMsg"></div>
+  </div>
+
+  <h2>Збережені теми, заперечення та відповіді</h2>
+  <div id="tree"></div>
+</div>
+
+<div class="bar"><div class="st" id="state">Завантаження…</div>
+  <button class="btn g" id="bDl">⬇ Файл</button><button class="btn g" id="bRev">↺ Скасувати</button><button class="btn" id="bSave">💾 Зберегти</button></div>
+
+<script>
+(function(){
+var FILE='js/trainer/objections-data.js',SW='sw.js',CFGKEY='obj_admin_cfg';
+var $=function(s){return document.querySelector(s)};
+var openSet={},data=[],snapshot='',editing=null,cfg={repo:'StepStepi4/SkillHUB-Assistant',branch:'main',token:''};
+try{var c=JSON.parse(localStorage.getItem(CFGKEY)||'null');if(c)for(var k in c)cfg[k]=c[k]}catch(e){}
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+function uid(p){return p+Math.random().toString(36).slice(2,8)}
+function slug(s){return (s||'').toLowerCase().replace(/[^a-z0-9а-яіїєґ]+/g,'-').replace(/^-|-$/g,'').slice(0,20)||'t'}
+function msg(el,t,cls){el.textContent=t||'';el.className='msg'+(cls?' '+cls:'')}
+function b64enc(str){var by=new TextEncoder().encode(str),s='';for(var i=0;i<by.length;i++)s+=String.fromCharCode(by[i]);return btoa(s)}
+function b64dec(b){var s=atob(b.replace(/\s/g,'')),by=new Uint8Array(s.length);for(var i=0;i<s.length;i++)by[i]=s.charCodeAt(i);return new TextDecoder().decode(by)}
+function toFile(d){return '/* Дані тренажера «Заперечення клієнта → відповідь».\n   Файл керується формою Objections-Admin.html (можна редагувати й вручну).\n   rate: 2 = найкраща, 1 = прийнятна, 0 = слабка. why — пояснення (необов\'язково). */\nwindow.OBJ_DATA = '+JSON.stringify(d,null,2)+';\n'}
+function parseFile(text){var w={};new Function('window',text)(w);if(!Array.isArray(w.OBJ_DATA))throw new Error('У файлі немає масиву OBJ_DATA');return w.OBJ_DATA}
+
+/* ---------- GitHub API ---------- */
+function api(path,opt){
+  opt=opt||{};
+  if(!cfg.token){var e0=new Error('поле «Токен» порожнє — вставте токен і натисніть «Зберегти налаштування»');e0.status=401;return Promise.reject(e0)}
+  return fetch('https://api.github.com/repos/'+cfg.repo+'/contents/'+path+(opt.method==='PUT'?'':'?ref='+encodeURIComponent(cfg.branch)),{
+    method:opt.method||'GET',
+    headers:{'Accept':'application/vnd.github+json','Authorization':'Bearer '+cfg.token,'X-GitHub-Api-Version':'2022-11-28','Content-Type':'application/json'},
+    body:opt.body?JSON.stringify(opt.body):undefined
+  }).then(function(r){return r.json().then(function(j){if(!r.ok){var e=new Error(j.message||('HTTP '+r.status));e.status=r.status;throw e}return j})});
+}
+function putFile(path,text,sha,message){return api(path,{method:'PUT',body:{message:message,content:b64enc(text),sha:sha,branch:cfg.branch}})}
+
+/* ---------- завантаження ---------- */
+function setData(d){data=d;snapshot=JSON.stringify(d);render()}
+function loadInitial(){
+  var p=cfg.token?api(FILE).then(function(j){return parseFile(b64dec(j.content))}):fetch(FILE+'?t='+Date.now()).then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.text()}).then(parseFile);
+  p.then(setData).catch(function(e){
+    if(cfg.token){return fetch(FILE+'?t='+Date.now()).then(function(r){return r.text()}).then(parseFile).then(setData)}
+    throw e;
+  }).catch(function(e){data=[];snapshot='[]';render();msg($('#fMsg'),'Не вдалося завантажити дані: '+e.message,'err')});
+}
+
+/* ---------- відображення ---------- */
+var RL={2:'Найкраща',1:'Прийнятна',0:'Слабка'};
+function dirty(){return JSON.stringify(data)!==snapshot}
+function render(){
+  var h='';
+  if(!data.length)h='<div class="sub">Поки порожньо. Додайте першу відповідь у формі вище.</div>';
+  data.forEach(function(t){
+    h+='<details class="t" data-id="'+t.id+'"'+(openSet[t.id]?' open':'')+'><summary><span>'+esc(t.icon||'💬')+'</span><span>'+esc(t.title)+'</span><span class="n">'+t.items.length+' запер.</span>'+
+      '<button class="ic" data-act="et" data-t="'+t.id+'" title="Перейменувати тему">✏️</button><button class="ic" data-act="dt" data-t="'+t.id+'" title="Видалити тему">🗑</button></summary>';
+    t.items.forEach(function(o){
+      h+='<div class="ob"><div class="q"><span>💬 '+esc(o.client)+'</span><button class="ic" data-act="aa" data-t="'+t.id+'" data-o="'+o.id+'" title="Додати відповідь">＋</button><button class="ic" data-act="eo" data-t="'+t.id+'" data-o="'+o.id+'" title="Змінити текст заперечення">✏️</button><button class="ic" data-act="do" data-t="'+t.id+'" data-o="'+o.id+'" title="Видалити заперечення">🗑</button></div>';
+      o.answers.forEach(function(a,i){
+        h+='<div class="ans"><span class="b r'+a.rate+'">'+RL[a.rate]+'</span><span class="tx">'+esc(a.t)+'</span><button class="ic" data-act="ea" data-t="'+t.id+'" data-o="'+o.id+'" data-i="'+i+'" title="Редагувати">✏️</button><button class="ic" data-act="da" data-t="'+t.id+'" data-o="'+o.id+'" data-i="'+i+'" title="Видалити">🗑</button></div>';
+      });
+      h+='</div>';
+    });
+    h+='</details>';
+  });
+  $('#tree').innerHTML=h;
+  $('#dlTopics').innerHTML=data.map(function(t){return '<option value="'+esc(t.title)+'">'}).join('');
+  updObjList();
+  var d=dirty();$('#state').textContent=d?'● Є незбережені зміни':'Усі зміни збережено';$('#state').className='st'+(d?' dirty':'');
+  $('#bSave').disabled=!d;$('#bRev').disabled=!d;$('#bSave').style.opacity=d?1:.5;$('#bRev').style.opacity=d?1:.5;
+}
+function findT(id){return data.filter(function(t){return t.id===id})[0]}
+function findTT(title){var s=title.trim().toLowerCase();return data.filter(function(t){return t.title.trim().toLowerCase()===s})[0]}
+function findO(t,id){return t.items.filter(function(o){return o.id===id})[0]}
+function updObjList(){
+  var t=findTT($('#fTopic').value||'');
+  $('#dlObjs').innerHTML=t?t.items.map(function(o){return '<option value="'+esc(o.client)+'">'}).join(''):'';
+}
+function getRate(){return +document.querySelector('input[name=rate]:checked').value}
+function setRate(v){document.querySelector('input[name=rate][value="'+v+'"]').checked=true;paintRate()}
+function paintRate(){Array.prototype.forEach.call(document.querySelectorAll('#rate label'),function(l){l.className=l.querySelector('input').checked?'on'+l.dataset.v:''})}
+
+/* ---------- форма ---------- */
+function resetForm(keepCtx){
+  editing=null;$('#formTitle').textContent='Додати відповідь';$('#fAdd').textContent='Додати';$('#fCancel').style.display='none';
+  $('#fTopic').disabled=false;$('#fObj').disabled=false;$('#ctx').style.display='none';
+  $('#fAns').value='';$('#fWhy').value='';setRate(1);
+  if(!keepCtx){$('#fTopic').value='';$('#fObj').value='';$('#fIcon').value=''}
+}
+function submitForm(){
+  var out=$('#fMsg');msg(out,'');
+  var tt=$('#fTopic').value.trim(),ob=$('#fObj').value.trim(),an=$('#fAns').value.trim(),why=$('#fWhy').value.trim(),ic=$('#fIcon').value.trim();
+  if(!tt)return msg(out,'Вкажіть назву теми','err');
+  if(!ob)return msg(out,'Вкажіть заперечення','err');
+  if(!an)return msg(out,'Напишіть відповідь','err');
+  if(editing){
+    var t0=findT(editing.t),o0=t0&&findO(t0,editing.o),a0=o0&&o0.answers[editing.i];
+    if(!a0)return msg(out,'Відповідь не знайдено','err');
+    a0.t=an;a0.rate=getRate();if(why)a0.why=why;else delete a0.why;
+    resetForm(true);msg(out,'Відповідь змінено (не забудьте зберегти)','ok');render();return;
+  }
+  var t=findTT(tt);
+  if(!t){t={id:slug(tt)+'-'+uid(''),icon:ic||'💬',title:tt,hint:'',items:[]};data.push(t)}
+  else if(ic&&ic!==t.icon)t.icon=ic;
+  openSet[t.id]=true;var key=ob.toLowerCase(),o=t.items.filter(function(x){return x.client.trim().toLowerCase()===key})[0];
+  if(!o){o={id:uid('o'),client:ob,answers:[]};t.items.push(o)}
+  var a={t:an,rate:getRate()};if(why)a.why=why;o.answers.push(a);
+  $('#fAns').value='';$('#fWhy').value='';setRate(1);
+  msg(out,'Додано. Можна додати ще варіант відповіді на це заперечення або натиснути «Зберегти».','ok');render();
+}
+function startEdit(tid,oid,i){
+  var t=findT(tid),o=findO(t,oid),a=o.answers[i];
+  editing={t:tid,o:oid,i:i};
+  $('#formTitle').textContent='Редагування відповіді';$('#fAdd').textContent='Застосувати';$('#fCancel').style.display='';
+  $('#fTopic').value=t.title;$('#fIcon').value=t.icon||'';$('#fObj').value=o.client;$('#fTopic').disabled=true;$('#fObj').disabled=true;
+  $('#ctx').style.display='';$('#ctx').textContent='Змінюється лише відповідь. Тему та заперечення перейменовуйте кнопкою ✏️ у списку.';
+  $('#fAns').value=a.t;$('#fWhy').value=a.why||'';setRate(a.rate);
+  $('#formBox').scrollIntoView({behavior:'smooth',block:'start'});$('#fAns').focus();
+}
+function startAdd(tid,oid){
+  var t=findT(tid),o=findO(t,oid);resetForm(false);
+  $('#fTopic').value=t.title;$('#fIcon').value=t.icon||'';$('#fObj').value=o.client;updObjList();
+  $('#formBox').scrollIntoView({behavior:'smooth',block:'start'});$('#fAns').focus();
+}
+
+$('#tree').addEventListener('click',function(e){
+  var b=e.target.closest('button[data-act]');if(!b)return;e.preventDefault();
+  var a=b.dataset.act,t=findT(b.dataset.t),o=t&&b.dataset.o?findO(t,b.dataset.o):null;
+  if(a==='et'){var nt=prompt('Нова назва теми:',t.title);if(nt&&nt.trim()){t.title=nt.trim();var ni=prompt('Іконка теми (емодзі):',t.icon||'💬');if(ni&&ni.trim())t.icon=ni.trim()}}
+  else if(a==='dt'){if(confirm('Видалити тему «'+t.title+'» разом із усіма запереченнями та відповідями?'))data.splice(data.indexOf(t),1)}
+  else if(a==='eo'){var no=prompt('Текст заперечення:',o.client);if(no&&no.trim())o.client=no.trim()}
+  else if(a==='do'){if(confirm('Видалити заперечення «'+o.client+'» разом з відповідями?'))t.items.splice(t.items.indexOf(o),1)}
+  else if(a==='aa')return startAdd(b.dataset.t,b.dataset.o);
+  else if(a==='ea')return startEdit(b.dataset.t,b.dataset.o,+b.dataset.i);
+  else if(a==='da'){if(confirm('Видалити цю відповідь?'))o.answers.splice(+b.dataset.i,1)}
+  if(a==='dt'||a==='do'||a==='da'){ // прибираємо порожні контейнери
+    data.forEach(function(tt){tt.items=tt.items.filter(function(x){return x.answers.length})});
+  }
+  if(editing)resetForm(false);
+  render();
+});
+$('#tree').addEventListener('toggle',function(e){var d=e.target;if(d.dataset&&d.dataset.id)openSet[d.dataset.id]=d.open},true);
+$('#fAdd').addEventListener('click',submitForm);
+$('#fCancel').addEventListener('click',function(){resetForm(false);msg($('#fMsg'),'')});
+$('#fTopic').addEventListener('input',function(){
+  updObjList();var t=findTT(this.value);if(t&&!editing)$('#fIcon').value=t.icon||'';
+});
+$('#rate').addEventListener('change',paintRate);
+
+/* ---------- збереження ---------- */
+function bumpVersion(text){return text.replace(/const VERSION = '[^']*';/,"const VERSION = 'v-"+Date.now().toString(36)+"';")}
+function saveAll(){
+  var st=$('#state');
+  if(!cfg.token){alert('Спочатку вкажіть токен GitHub у розділі «Підключення».');$('#cfgBox').open=true;return}
+  if(!dirty())return;
+  st.textContent='Збереження…';$('#bSave').disabled=true;
+  api(FILE).then(function(j){return putFile(FILE,toFile(data),j.sha,'Тренажер заперечень: оновлення даних через форму')})
+  .then(function(){snapshot=JSON.stringify(data);render();st.textContent='Дані записано. Оновлюю sw.js…';
+    return api(SW).then(function(j){var cur=b64dec(j.content),nxt=bumpVersion(cur);if(nxt===cur)throw new Error('У sw.js не знайдено VERSION');return putFile(SW,nxt,j.sha,'sw.js: нова версія кешу після зміни даних тренажера')})})
+  .then(function(){st.textContent='✓ Збережено на GitHub. Пристрої оновляться за кілька хвилин.';st.className='st'})
+  .catch(function(e){
+    var m=e.status===401||e.status===403?'Токен не підходить або немає прав Contents: Read and write':e.status===404?'Файл або репозиторій не знайдено (перевірте налаштування)':e.status===409||e.status===422?'Файл на GitHub змінився. Перезавантажте сторінку й повторіть':e.message;
+    st.textContent='Помилка: '+m;st.className='st dirty';render();st.textContent='Помилка: '+m;
+  });
+}
+$('#bSave').addEventListener('click',saveAll);
+$('#bRev').addEventListener('click',function(){if(confirm('Скасувати всі незбережені зміни?')){data=JSON.parse(snapshot);resetForm(false);render()}});
+$('#bDl').addEventListener('click',function(){
+  var blob=new Blob([toFile(data)],{type:'text/javascript'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='objections-data.js';a.click();
+});
+window.addEventListener('beforeunload',function(e){if(dirty()){e.preventDefault();e.returnValue=''}});
+
+/* ---------- налаштування ---------- */
+function fillCfg(){$('#cRepo').value=cfg.repo;$('#cBranch').value=cfg.branch;$('#cToken').value=cfg.token}
+function readCfg(){cfg.repo=$('#cRepo').value.trim().replace(/^https?:\/\/github\.com\//,'').replace(/\/$/,'');cfg.branch=$('#cBranch').value.trim()||'main';cfg.token=$('#cToken').value.trim().replace(/^(Bearer|token)\s+/i,'').replace(/\s+/g,'')}
+$('#cSave').addEventListener('click',function(){readCfg();try{localStorage.setItem(CFGKEY,JSON.stringify(cfg))}catch(e){}msg($('#cMsg'),'Збережено в цьому браузері','ok');if(!dirty())loadInitial()});
+$('#cTest').addEventListener('click',function(){readCfg();msg($('#cMsg'),'Перевірка…');api(FILE).then(function(){msg($('#cMsg'),'✓ Підключення працює','ok')}).catch(function(e){msg($('#cMsg'),e.message==='Bad credentials'?'Помилка: GitHub не прийняв токен. Він недійсний, прострочений або скопійований не повністю. Створіть новий токен і вставте його повністю.':'Помилка: '+e.message,'err')})});
+
+fillCfg();paintRate();loadInitial();
+})();
+</script>
+</body>
+</html>

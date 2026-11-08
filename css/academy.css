@@ -1,0 +1,455 @@
+        #academyApp *,
+#academyApp *::before,
+#academyApp *::after { 
+            box-sizing: border-box; 
+            -webkit-tap-highlight-color: transparent; 
+        }
+
+        #academyApp {
+            --bg: #f2f2f7; 
+            --card-bg: #ffffff;
+            --text-main: #164f58;
+            --text-muted: #8e8e93; 
+            --primary: #164f58; 
+            --primary-light: rgba(22, 79, 88, 0.15);
+            --border: #e5e5ea;
+            --input-bg: #f9fafb;
+            --danger: #ef4444;
+            --danger-bg: rgba(239, 68, 68, 0.08);
+            --success: #10b981;
+            --rozetka-green-light: #237a88;
+            --rozetka-green-dark: #164f58;
+            --tab-bg: #e5e7eb;
+            --tab-active: #ffffff;
+            --edu-loader-display: flex;
+        }
+
+        [data-theme="dark"] #academyApp {
+            --bg: #000000; 
+            --card-bg: #1c1c1e;
+            --text-main: #f5f5f5; 
+            --text-muted: #98989d; 
+            --primary: #164f58;
+            --primary-light: rgba(22, 79, 88, 0.25);
+            --border: #38383a;
+            --input-bg: #2c2c2e;
+            --danger: #ff453a;
+            --danger-bg: rgba(255, 69, 58, 0.15);
+            --success: #34d399;
+            --tab-bg: #2c2c2e;
+            --tab-active: #1c1c1e;
+        }
+
+        html.edu-fast-boot #academyApp .view { 
+            display: none !important; 
+            animation: none !important; 
+        }
+        html.edu-fast-boot #academyApp #cabinetView { 
+            display: block !important; 
+            opacity: 1 !important; 
+            transform: none !important; 
+            animation: none !important; 
+        }
+
+        #academyApp { 
+            font-family: 'Inter', sans-serif; 
+            background: var(--bg); 
+            color: var(--text-main); 
+            margin: 0; 
+            padding: 0; 
+            display: flex; 
+            justify-content: center; 
+            align-items: flex-start; 
+            min-height: 100vh; 
+            -webkit-font-smoothing: antialiased; 
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+        
+        #academyApp .container { 
+            position: relative; 
+            width: 100%; 
+            max-width: 480px; 
+            padding: 20px 16px; 
+            margin-bottom: 85px; 
+            display: flex; 
+            flex-direction: column;
+        }
+
+        #academyApp .ui-icon {
+            width: 24px;
+            height: 24px;
+            object-fit: contain;
+            flex-shrink: 0;
+            display: inline-block;
+        }
+
+        #academyApp .view { 
+            display: none; 
+            animation: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1); 
+            will-change: opacity, transform; 
+        }
+        #academyApp .view.active { 
+            display: block; 
+        }
+        @keyframes fadeIn { 
+            from { opacity: 0; transform: translateY(10px); } 
+            to { opacity: 1; transform: translateY(0); } 
+        }
+
+        #academyApp .loader-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--bg); display: var(--edu-loader-display); 
+            flex-direction: column; justify-content: center; align-items: center;
+            z-index: 9999; transition: opacity 0.2s ease, visibility 0.2s ease;
+        }
+        #academyApp .spinner { 
+            width: 44px; height: 44px; border: 4px solid var(--border); 
+            border-top-color: var(--primary); border-radius: 50%; 
+            animation: spin 1s linear infinite; margin-bottom: 16px; 
+        }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+
+        #academyApp h1 { font-size: 26px; font-weight: 800; margin: 0 0 22px 0; text-align: center; letter-spacing: -0.5px; }
+        #academyApp p.subtitle { font-size: 14px; color: var(--text-muted); text-align: center; margin-bottom: 24px; font-weight: 500; }
+        #academyApp .section-title { font-size: 12px; font-weight: 800; margin: 24px 0 12px 0; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; display: flex; align-items: center; justify-content: flex-start; gap: 8px; }
+        #academyApp .big-emoji { text-align: center; font-size: 64px; margin-bottom: 16px; line-height: 1; display: flex; justify-content: center; }
+
+        #academyApp .login-wrapper { display: flex; flex-direction: column; justify-content: center; min-height: 80vh; }
+        #academyApp .login-card { background: var(--card-bg); border-radius: 24px; padding: 32px 24px; box-shadow: 0 12px 32px rgba(0,0,0,0.06); border: 1px solid var(--border); }
+        #academyApp .input-group { margin-bottom: 20px; position: relative; }
+        #academyApp .input-label { display: block; font-size: 12px; font-weight: 700; color: var(--text-muted); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+        
+        #academyApp input[type="text"],
+#academyApp input[type="password"],
+#academyApp input[type="number"],
+#academyApp input[type="url"],
+#academyApp input[type="datetime-local"] { 
+            width: 100%; 
+            display: block;
+            box-sizing: border-box;
+            padding: 16px; 
+            border-radius: 14px; 
+            font-size: 16px; 
+            font-weight: 500;
+            background: var(--input-bg); 
+            border: 1.5px solid transparent; 
+            outline: none; 
+            transition: 0.2s;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.02); 
+            color: var(--text-main);
+            -webkit-appearance: none;
+        }
+        
+        #academyApp input[type="text"]:focus,
+#academyApp input[type="password"]:focus,
+#academyApp input[type="number"]:focus,
+#academyApp input[type="url"]:focus,
+#academyApp input[type="datetime-local"]:focus { 
+            background: var(--card-bg); border-color: var(--primary); box-shadow: 0 0 0 4px var(--primary-light); 
+        }
+        #academyApp input:disabled { opacity: 0.6; cursor: not-allowed; }
+        
+        #academyApp select.search-input-modern {
+            appearance: none;
+            -webkit-appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238e8e93' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E") !important;
+            background-repeat: no-repeat !important;
+            background-position: right 14px center !important;
+            background-size: 16px !important;
+            padding-right: 40px !important;
+        }
+        [data-theme="dark"] #academyApp select.search-input-modern {
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2398989d' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E") !important;
+        }
+
+        #academyApp .custom-checkbox-wrapper { display: flex; align-items: center; gap: 10px; cursor: pointer; margin-bottom: 28px; font-size: 14px; font-weight: 600; color: var(--text-muted); transition: color 0.2s; }
+        #academyApp .custom-checkbox-wrapper:hover { color: var(--text-main); }
+        #academyApp .custom-checkbox-wrapper input { display: none; }
+        #academyApp .custom-checkmark { width: 22px; height: 22px; border-radius: 6px; background: var(--input-bg); border: 2px solid var(--border); display: flex; align-items: center; justify-content: center; transition: 0.2s; }
+        #academyApp .custom-checkbox-wrapper input:checked + .custom-checkmark { background: var(--primary); border-color: var(--primary); }
+        #academyApp .custom-checkmark::after { content: ''; width: 5px; height: 10px; border: solid white; border-width: 0 2.5px 2.5px 0; transform: rotate(45deg); display: none; margin-bottom: 2px; }
+        #academyApp .custom-checkbox-wrapper input:checked + .custom-checkmark::after { display: block; }
+
+        #academyApp .btn { width: 100%; padding: 16px; border-radius: 14px; font-size: 15px; font-weight: 800; cursor: pointer; border: none; transition: 0.2s; text-align: center; display: flex; justify-content: center; align-items: center; gap: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+        #academyApp .btn-glow { background: linear-gradient(135deg, var(--rozetka-green-light) 0%, var(--rozetka-green-dark) 100%); color: white; box-shadow: 0 8px 20px var(--primary-light); }
+        #academyApp .btn-glow:active { transform: scale(0.96); box-shadow: 0 4px 10px var(--primary-light); }
+        #academyApp .btn-glow:disabled { background: var(--border); box-shadow: none; cursor: not-allowed; opacity: 0.7; color: var(--text-muted); }
+        #academyApp .btn-secondary { background: var(--input-bg); color: var(--text-main); border: 1px solid var(--border); }
+        #academyApp .btn-secondary:active { transform: scale(0.96); background: var(--border); }
+
+        #academyApp .nav-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; gap: 10px; }
+        #academyApp .nav-header h2 { font-size: 22px !important; margin: 0; font-weight: 800; letter-spacing: -0.5px; line-height: 1.2; color: var(--text-main); }
+        #academyApp .nav-actions { display: flex; gap: 6px; align-items: center; flex-shrink: 0; }
+        #academyApp .back-btn-sleek { background: var(--card-bg); border: 1px solid var(--border); width: 42px; height: 42px; border-radius: 13px; display: flex; justify-content: center; align-items: center; color: var(--text-main); transition: all 0.2s; cursor: pointer; padding: 0; position: relative; font-size: 18px; box-shadow: 0 2px 8px rgba(0,0,0,0.03); }
+        #academyApp .back-btn-sleek:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+        #academyApp .back-btn-sleek:active { transform: scale(0.92); background: var(--input-bg); }
+        #academyApp .back-btn-sleek.active-nav { border-color: var(--primary); background: var(--primary-light); }
+
+        /* Симетрична сітка та суворий контроль висоти кнопок панелі */
+        #academyApp .role-action-bar { display: grid; gap: 8px; margin-bottom: 18px; }
+        #academyApp .role-action-btn { 
+            background: var(--card-bg); 
+            border: 1.5px solid var(--border); 
+            border-radius: 12px; 
+            padding: 4px 6px; 
+            height: 46px; /* Строго фіксована зменшена висота */
+            font-size: 11px; /* Зменшений шрифт для вміщення довгого тексту */
+            font-weight: 800; 
+            color: var(--text-main); 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            gap: 6px; 
+            cursor: pointer; 
+            transition: all 0.2s; 
+            box-shadow: 0 3px 10px rgba(0,0,0,0.02);
+            overflow: hidden; 
+        }
+        #academyApp .role-action-btn:active { transform: scale(0.96); }
+        #academyApp .role-action-btn.active { border-color: var(--primary); background: var(--primary-light); color: var(--primary); }
+        [data-theme="dark"] #academyApp .role-action-btn.active { color: var(--primary); }
+
+        #academyApp .role-action-btn span {
+            line-height: 1.15;
+            text-align: left;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            white-space: normal;
+        }
+
+        /* Заборона розтягування SVG-іконок */
+        #academyApp .role-action-btn .ui-icon {
+            width: 22px !important;
+            height: 22px !important;
+            min-width: 22px !important;
+            min-height: 22px !important;
+            flex-shrink: 0 !important;
+            object-fit: contain !important;
+        }
+
+        #academyApp .role-action-btn.has-new { animation: pulse-ring-rect 2s infinite; border-color: var(--danger); color: var(--danger); }
+        [data-theme="dark"] #academyApp .role-action-btn.has-new { color: var(--danger); }
+        @keyframes pulse-ring-rect { 0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); } 70% { box-shadow: 0 0 0 6px rgba(239, 68, 68, 0); } 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); } }
+
+        @keyframes pulse-ring { 0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); } 70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); } 100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); } }
+        #academyApp .ach-btn.has-new { animation: pulse-ring 2s infinite; border-radius: 50%; }
+        
+        #academyApp .floating-exit { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); width: auto; height: 46px; background: rgba(255,255,255,0.92); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); border: 1px solid var(--border); border-radius: 24px; padding: 0 20px; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 8px 24px rgba(0,0,0,0.12); z-index: 9000; cursor: pointer; transition: 0.2s; color: #111827; font-weight: 700; font-size: 14px; text-transform: uppercase; }
+        [data-theme="dark"] #academyApp .floating-exit { background: rgba(28,28,30,0.92); color: #ffffff; }
+        #academyApp .floating-exit:active { transform: translateX(-50%) scale(0.95); }
+
+        #academyApp .tabs-container { display: flex; background: var(--tab-bg); border-radius: 12px; padding: 4px; margin-bottom: 20px; }
+        #academyApp .tab-btn { flex: 1; display: flex; align-items: center; justify-content: center; gap: 6px; padding: 10px; border-radius: 10px; font-size: 14px; font-weight: 700; color: var(--text-muted); cursor: pointer; transition: 0.3s; }
+        #academyApp .tab-btn.active { background: var(--tab-active); color: var(--text-main); box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        #academyApp .tab-content { display: none; animation: fadeIn 0.3s; }
+        #academyApp .tab-content.active { display: block; }
+
+        #academyApp .adaptive-progress-bar { position: relative; width: 100%; overflow: hidden; display: flex; align-items: center; justify-content: flex-start; z-index: 0; isolation: isolate; transform: translateZ(0); }
+        #academyApp .apb-fill { position: absolute; left: 0; top: 0; height: 100%; transition: width 0.8s cubic-bezier(0.34, 1.56, 0.64, 1); z-index: 1; will-change: width; }
+        #academyApp .apb-text { position: relative; z-index: 2; }
+
+        #academyApp .stats-grid-8 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+        #academyApp .stat-item { background: var(--card-bg); border: 1px solid var(--border); border-radius: 16px; padding: 14px 12px; text-align: center; display: flex; flex-direction: column; justify-content: center; box-shadow: 0 4px 10px rgba(0,0,0,0.02); }
+        #academyApp .stat-label-modern { color: var(--text-muted); font-size: 12px; font-weight: 600; margin-top: 4px; line-height: 1.25; }
+        #academyApp .stat-val-modern { color: var(--text-main); font-size: 20px; font-weight: 800; }
+        
+        #academyApp .chart-wrapper { position: relative; height: 260px; width: 100%; background: var(--card-bg); border: 1px solid var(--border); border-radius: 16px; padding: 16px; margin-bottom: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.02); }
+
+        #academyApp .list-card { background: var(--card-bg); border-radius: 20px; border: 1.5px solid var(--border); margin-bottom: 12px; padding: 16px 18px; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 4px 12px rgba(0,0,0,0.02); }
+        #academyApp .list-card:active { transform: scale(0.97); background: var(--input-bg); }
+        #academyApp .list-card.completed { border-color: rgba(22, 79, 88, 0.55); }
+        #academyApp .list-card-title { font-size: 15px; font-weight: 700; color: var(--text-main); display: flex; align-items: center; gap: 10px; line-height: 1.3; }
+        #academyApp .list-card-arrow { color: var(--text-muted); font-weight: bold; }
+
+        #academyApp #deadlineContainer { background: var(--input-bg); border: 1px solid var(--border); border-radius: 16px; padding: 9px 16px; display: flex; align-items: center; justify-content: center; gap: 8px; margin: 0 auto 18px auto; max-width: 100%; transition: 0.3s; }
+        #academyApp #deadlineText { font-size: 13.5px; font-weight: 800; color: var(--text-main); }
+        @keyframes urgentDeadlinePulse { 0%, 100% { color: var(--danger); opacity: 1; transform: scale(1); } 50% { color: #ff0000; opacity: 0.45; transform: scale(1.03); } }
+        #academyApp .deadline-urgent #deadlineText { color: var(--danger) !important; animation: urgentDeadlinePulse 1.1s infinite ease-in-out; }
+        #academyApp .deadline-urgent { background: rgba(239, 68, 68, 0.1) !important; border-color: rgba(239, 68, 68, 0.35) !important; }
+        #academyApp .deadline-expired #deadlineText { color: var(--danger) !important; }
+        #academyApp .deadline-expired { background: rgba(239, 68, 68, 0.12) !important; border-color: rgba(239, 68, 68, 0.3) !important; }
+
+        #academyApp .theory-box { background: var(--card-bg); border-radius: 24px; border: 1px solid var(--border); margin-bottom: 24px; padding: 10px 20px; box-shadow: 0 8px 24px rgba(0,0,0,0.04); }
+        #academyApp .theory-line { padding: 12px 0; border-bottom: 1px solid var(--input-bg); font-size: 15px; line-height: 1.5; }
+        #academyApp .theory-line:last-child { border-bottom: none; }
+        
+        #academyApp .question-card { background: var(--card-bg); border-radius: 24px; padding: 24px; border: 1px solid var(--border); margin-bottom: 20px; box-shadow: 0 8px 24px rgba(0,0,0,0.04); }
+        #academyApp .question-title { font-size: 17px; font-weight: 800; margin-bottom: 20px; line-height: 1.4; color: var(--text-main); }
+        
+        #academyApp .answer-label { display: flex; align-items: center; gap: 14px; padding: 16px; background: var(--card-bg); border: 2px solid var(--input-bg); border-radius: 16px; margin-bottom: 10px; cursor: pointer; transition: all 0.2s ease; font-weight: 600; font-size: 14px; color: var(--text-main); }
+        #academyApp .answer-label:hover { border-color: var(--border); background: var(--input-bg); }
+        #academyApp .answer-label.selected { border-color: var(--primary); background: var(--primary-light); }
+        
+        #academyApp .answer-label input[type="radio"],
+#academyApp .answer-label input[type="checkbox"] { appearance: none; -webkit-appearance: none; width: 22px; height: 22px; flex-shrink: 0; border: 2px solid #d1d5db; margin: 0; display: grid; place-content: center; transition: all 0.2s ease; background: #fff; }
+        #academyApp .answer-label input[type="radio"] { border-radius: 50%; }
+        #academyApp .answer-label input[type="checkbox"] { border-radius: 6px; }
+        #academyApp .answer-label input[type="radio"]::before { content: ""; width: 10px; height: 10px; border-radius: 50%; transform: scale(0); transition: 0.2s transform ease-in-out; background-color: var(--primary); }
+        #academyApp .answer-label input[type="checkbox"]::before { content: ""; width: 14px; height: 14px; transform: scale(0); transition: 0.2s transform ease-in-out; background-color: transparent; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'%3E%3C/polyline%3E%3C/svg%3E"); background-size: contain; background-repeat: no-repeat; }
+        #academyApp .answer-label input:checked { background-color: var(--primary); border-color: var(--primary); }
+        #academyApp .answer-label input:checked::before { transform: scale(1); }
+
+        #academyApp .timer-box { font-size: 16px; font-weight: 800; color: var(--danger); background: var(--danger-bg); padding: 8px 16px; border-radius: 12px; transition: 0.3s; display: flex; align-items: center; gap: 6px; }
+        #academyApp #errorMsg { color: var(--danger); font-size: 14px; font-weight: 700; text-align: center; margin-bottom: 20px; display: none; background: rgba(239, 68, 68, 0.1); padding: 14px; border-radius: 12px; }
+
+        #academyApp .drawer-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.45); z-index: 10000; display: none; opacity: 0; transition: 0.3s ease; backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px); }
+        #academyApp .drawer-overlay.active { display: block; opacity: 1; }
+        #academyApp .ach-drawer { position: fixed; top: 0; right: -100%; width: 100%; max-width: 370px; height: 100%; background: var(--bg); z-index: 10001; transition: right 0.4s cubic-bezier(0.16, 1, 0.3, 1); box-shadow: -8px 0 32px rgba(0,0,0,0.15); overflow-y: auto; padding: 24px; }
+        #academyApp .ach-drawer.open { right: 0; }
+        #academyApp .ach-title { font-size: 22px; font-weight: 800; color: var(--primary); margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; }
+        
+        #academyApp .ach-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 20px; padding: 18px; margin-bottom: 14px; display: flex; align-items: center; gap: 18px; cursor: pointer; box-shadow: 0 4px 16px rgba(0,0,0,0.03); transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1); position: relative; z-index: 1; }
+        #academyApp .ach-card:active:not(.zoomed) { transform: scale(0.96); background: var(--input-bg); } 
+        #academyApp .ach-card.zoomed { padding: 22px 18px; margin: 8px -8px 18px -8px; border-radius: 24px; box-shadow: 0 20px 44px rgba(0,0,0,0.16); border-color: var(--primary); background: var(--card-bg); gap: 18px; z-index: 10; }
+        
+        #academyApp .ach-icon-wrapper { width: 76px; height: 76px; flex-shrink: 0; background: transparent; display: flex; align-items: center; justify-content: center; transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1); }
+        #academyApp .ach-card.locked .ach-icon-wrapper { width: 50px; height: 50px; }
+        #academyApp .ach-card.zoomed .ach-icon-wrapper { width: 112px; height: 112px; }
+        
+        #academyApp .ach-img { width: 100%; height: 100%; object-fit: contain; transition: 0.35s; }
+        #academyApp .ach-card:not(.locked) .ach-img { filter: drop-shadow(0 6px 12px rgba(0,0,0,0.15)); transform: scale(1.05); } 
+        
+        #academyApp .ach-card.locked { opacity: 0.32; filter: grayscale(100%); cursor: default; background: transparent; border-style: dashed; border-color: var(--text-muted); }
+        #academyApp .ach-card.locked:active { transform: none; background: transparent; }
+        #academyApp .ach-card.locked .ach-card-desc { display: none; }
+        
+        #academyApp .ach-card-title { font-size: 16px; font-weight: 800; color: var(--text-main); line-height: 1.3; transition: 0.3s; }
+        #academyApp .ach-card.locked .ach-card-title { font-size: 14px; } 
+        #academyApp .ach-card.zoomed .ach-card-title { font-size: 20px; }
+        
+        #academyApp .ach-card-desc { font-size: 13px; font-weight: 600; color: var(--success); line-height: 1.4; max-height: 0; opacity: 0; overflow: hidden; margin-top: 0; transition: 0.35s; }
+        #academyApp .ach-card.zoomed .ach-card-desc { max-height: 200px; opacity: 1; margin-top: 8px; }
+
+        #academyApp .notification-dot { position: absolute; top: 4px; right: 4px; width: 12px; height: 12px; background-color: var(--danger); border-radius: 50%; border: 2px solid var(--card-bg); display: none; }
+
+        #academyApp .stats-modal {
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.92);
+            background: var(--bg); z-index: 10002; width: 94%; max-width: 460px;
+            border-radius: 26px; padding: 22px 18px; opacity: 0; display: none;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            box-shadow: 0 24px 48px rgba(0,0,0,0.25); height: 85vh; max-height: 760px;
+            flex-direction: column; border: 1px solid var(--border);
+        }
+        #academyApp .stats-modal.active { opacity: 1; transform: translate(-50%, -50%) scale(1); display: flex; }
+        #academyApp .stats-modal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; flex-shrink: 0; }
+        #academyApp .stats-modal-title { font-size: 20px; font-weight: 800; color: var(--primary); display: flex; align-items: center; gap: 8px; }
+        #academyApp .modal-close-btn { background: var(--card-bg); border: 1px solid var(--border); width: 36px; height: 36px; border-radius: 12px; font-size: 18px; font-weight: 800; color: var(--text-muted); cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+
+        #academyApp .search-box-wrap { position: relative; flex: 1; margin-bottom: 0; }
+        #academyApp .search-input-modern {
+            width: 100%; padding: 14px 40px 14px 42px !important; border-radius: 14px !important;
+            background: var(--card-bg) !important; border: 1.5px solid var(--border) !important;
+            font-size: 15px !important; font-weight: 600 !important; color: var(--primary) !important;
+        }
+        #academyApp .search-icon-left { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); font-size: 16px; color: var(--text-muted); pointer-events: none; }
+        #academyApp .search-clear-btn { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; font-size: 16px; color: var(--text-muted); cursor: pointer; display: none; }
+
+        #academyApp .search-suggestions {
+            position: absolute; top: calc(100% + 6px); left: 0; right: 0;
+            background: var(--card-bg); border: 1.5px solid var(--primary);
+            border-radius: 16px; box-shadow: 0 12px 28px rgba(0,0,0,0.15);
+            max-height: 220px; overflow-y: auto; z-index: 30; display: none;
+        }
+        #academyApp .search-suggestions.open { display: block; }
+        #academyApp .suggestion-item {
+            padding: 12px 16px; border-bottom: 1px solid var(--border);
+            font-size: 14px; font-weight: 700; color: var(--text-main);
+            cursor: pointer; display: flex; justify-content: space-between; align-items: center;
+        }
+        #academyApp .suggestion-item:last-child { border-bottom: none; }
+        #academyApp .suggestion-item:hover,
+#academyApp .suggestion-item:active { background: var(--primary-light); }
+        #academyApp .suggestion-highlight { color: var(--primary); font-weight: 900; }
+
+        #academyApp .employees-scroll-list { flex: 1; overflow-y: auto; padding-right: 2px; }
+
+        #academyApp .viewing-banner {
+            background: linear-gradient(135deg, rgba(22, 79, 88, 0.12), rgba(35, 122, 136, 0.12));
+            border: 1.5px solid rgba(22, 79, 88, 0.3);
+            border-radius: 16px; padding: 12px 14px; margin-bottom: 16px;
+            display: none; flex-direction: column; align-items: stretch; gap: 12px;
+        }
+        #academyApp .viewing-banner-info { display: flex; flex-direction: column; gap: 2px; text-align: center; }
+
+        /* Кнопки банера: однакові за розміром, рівномірно по всій ширині (кількість колонок = кількість видимих кнопок) */
+        #academyApp .banner-actions { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); gap: 8px; }
+        #academyApp .banner-action-btn {
+            background: var(--card-bg);
+            border: 1.5px solid var(--border);
+            border-radius: 12px;
+            min-height: 60px;
+            padding: 8px 4px;
+            font-family: inherit;
+            font-size: 11.5px;
+            font-weight: 800;
+            line-height: 1.1;
+            text-align: center;
+            color: var(--text-main);
+            display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.02);
+            -webkit-tap-highlight-color: transparent;
+        }
+        #academyApp .banner-action-btn:active { transform: scale(0.96); }
+        #academyApp .banner-action-btn .ui-icon {
+            width: 22px !important; height: 22px !important;
+            min-width: 22px !important; min-height: 22px !important;
+            object-fit: contain !important;
+        }
+        #academyApp .banner-action-btn.copied { border-color: var(--primary); background: var(--primary-light); color: var(--primary); }
+
+        #academyApp .no-select { user-select: none; -webkit-user-select: none; }
+
+        #academyApp #antiCheatScreen {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: #000; color: #fff; z-index: 999999;
+            display: none; flex-direction: column; justify-content: center; align-items: center;
+            font-size: 16px; font-weight: 800; text-align: center; padding: 24px; line-height: 1.5;
+        }
+        body.cheating #academyApp .container { display: none !important; }
+        body.cheating #academyApp #antiCheatScreen { display: flex !important; }
+
+        #academyApp .assign-modal {
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.92);
+            background: var(--bg); z-index: 10003; width: 94%; max-width: 420px;
+            border-radius: 24px; padding: 22px 18px; opacity: 0; display: none;
+            transition: all 0.3s ease; box-shadow: 0 24px 48px rgba(0,0,0,0.25);
+            flex-direction: column; max-height: 90vh;
+        }
+        #academyApp .assign-modal.active { opacity: 1; transform: translate(-50%, -50%) scale(1); display: flex; }
+        #academyApp .assign-list { flex: 1; overflow-y: auto; margin-bottom: 16px; padding-right: 4px; }
+        
+        #academyApp .skillhub-modal {
+            position: fixed; top: 5%; left: 5%; width: 90%; height: 90%;
+            background: var(--bg); z-index: 10005; border-radius: 20px;
+            opacity: 0; display: none; flex-direction: column; overflow: hidden;
+            box-shadow: 0 24px 48px rgba(0,0,0,0.3); transform: scale(0.95);
+            transition: all 0.3s ease;
+        }
+        #academyApp .skillhub-modal.active { opacity: 1; display: flex; transform: scale(1); }
+        #academyApp .skillhub-header {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 14px 20px; background: var(--card-bg); border-bottom: 1px solid var(--border);
+        }
+        #academyApp .skillhub-iframe { flex: 1; width: 100%; border: none; background: #fff; }
+    
+
+/* ===== Розділ «Академія» як повноекранний шар поверх «Асистента» ===== */
+#academyApp {
+    position: fixed;
+    inset: 0;
+    z-index: 50000;
+    overflow-x: hidden;
+    overflow-y: auto;
+    min-height: 0;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+}
+#academyApp[hidden] { display: none !important; }
+body.academy-open { overflow: hidden; }
+
+#academyApp .theory-box > .rt-h1:first-child,#academyApp .theory-box > .rt-h2:first-child,#academyApp .theory-box > .rt-h3:first-child{margin-top:8px}
+#academyApp .theory-box > *{max-width:100%;box-sizing:border-box}
