@@ -1,6 +1,6 @@
 // SkillHUB Assistant - Service Worker (offline-first)
 // ВАЖЛИВО: при кожному релізі міняйте VERSION - тоді всі пристрої підтягнуть нові файли.
-const VERSION = 'v-12d211116e';
+const VERSION = 'v-49f6049746';
 const SHELL_CACHE = 'skillhub-shell-' + VERSION;   // "оболонка": сторінки, іконки, бібліотеки
 const RUNTIME_CACHE = 'skillhub-runtime-v1';       // шрифти, картинки досягнень та інше, що завантажується під час роботи
 
@@ -45,10 +45,17 @@ const SHELL = [
   "./assets/icons/academy/test.svg",
   "./assets/icons/academy/time.svg",
   "./assets/icons/academy/update.svg",
+  "./assets/icons/settings/Factory%20reset.svg",
+  "./assets/icons/settings/font-size.svg",
+  "./assets/icons/settings/security.svg",
+  "./assets/icons/settings/shop.svg",
+  "./assets/icons/settings/system-update.svg",
+  "./assets/icons/settings/themes.svg",
   "./assets/icons/skillhub/Check.svg",
   "./assets/icons/skillhub/Discount.svg",
   "./assets/icons/skillhub/Favorite.svg",
   "./assets/icons/skillhub/Klochkivska.svg",
+  "./assets/icons/skillhub/News.svg",
   "./assets/icons/skillhub/SkillHUB.svg",
   "./assets/icons/skillhub/Smart.svg",
   "./assets/icons/skillhub/add.svg",
@@ -59,13 +66,16 @@ const SHELL = [
   "./assets/icons/skillhub/chat.svg",
   "./assets/icons/skillhub/check-mark.svg",
   "./assets/icons/skillhub/conditioning.svg",
+  "./assets/icons/skillhub/dialogue.svg",
   "./assets/icons/skillhub/discounting.svg",
   "./assets/icons/skillhub/education.svg",
   "./assets/icons/skillhub/education1.svg",
   "./assets/icons/skillhub/exchange.svg",
   "./assets/icons/skillhub/information.svg",
   "./assets/icons/skillhub/install.svg",
+  "./assets/icons/skillhub/no.svg",
   "./assets/icons/skillhub/password-protection.svg",
+  "./assets/icons/skillhub/presa.svg",
   "./assets/icons/skillhub/puzzle.svg",
   "./assets/icons/skillhub/rating.svg",
   "./assets/icons/skillhub/refresh-time.svg",
@@ -75,6 +85,7 @@ const SHELL = [
   "./assets/icons/skillhub/statistics.svg",
   "./assets/icons/skillhub/test.svg",
   "./assets/icons/skillhub/website.svg",
+  "./assets/icons/ui/Academy-Main.svg",
   "./assets/icons/ui/add.svg",
   "./assets/icons/ui/bulb.svg",
   "./assets/icons/ui/check-mark.svg",

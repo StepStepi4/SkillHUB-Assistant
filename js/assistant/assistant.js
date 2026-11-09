@@ -1593,13 +1593,17 @@ window.saveDefaultStore = function() {
 
             let servMatches = window.SearchUtil.filter(window.allServicesSearchList, rawVal, s => s.searchStr);
 
-            let matches = [...catMatches, ...servMatches].slice(0, 15);
+            let menuMatches = window.SearchUtil.filter((db.skillHubButtons || []).filter(b => b && b.name), rawVal, b => [b.name, b.desc].filter(Boolean))
+                .slice(0, 4).map(b => ({ searchType: 'menu', btn: b, name: b.name, desc: b.desc, icon: b.emoji || '🧭' }));
+
+            let matches = [...catMatches, ...menuMatches, ...servMatches].slice(0, 15);
 
             requestAnimationFrame(() => {
                 if (matches.length > 0) {
                     elSuggList.style.display = 'block';
                     let html = matches.map((m, idx) => {
                         let text = m.searchType === 'category' ? m.ua : m.name;
+                        if (m.searchType === 'menu') text = `${m.name}${m.desc ? `<span style="display:block; font-size:11px; font-weight:500; color:var(--text-muted);">${m.desc}</span>` : ''}`;
                         let brandBadge = '';
                         if (m.searchType === 'service' && m.brandText) {
                             brandBadge = `<div class="sc-brand ${m.cls}" style="margin: 0; font-size: 9px; padding: 2px 6px; flex-shrink: 0;">${m.brandText}</div>`;
@@ -1631,6 +1635,14 @@ window.saveDefaultStore = function() {
     elOkBtn.onclick = () => elPriceInput.blur();
 
     function selectItem(item) {
+        if (item.searchType === 'menu') {
+            elCatInput.value = ""; elClearBtn.style.display = "none"; elSuggList.style.display = "none";
+            elCatInput.blur();
+            const act = getSkillHubActionStr(item.btn, false);
+            if (act) { const tmp = document.createElement('button'); tmp.setAttribute('onclick', act.replace(/^onclick="|"$/g, '').replace(/&quot;/g, '"')); document.body.appendChild(tmp); tmp.click(); tmp.remove(); }
+            else window.switchTab('tab-skillhub');
+            return;
+        }
         if(item.searchType === 'service') {
             currentCategoryData = null;
             currentServiceData = { name: item.name, origName: item.origName, icon: item.icon };

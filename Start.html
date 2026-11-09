@@ -79,10 +79,17 @@ section{display:none}section.on{display:block}
 .link{display:flex;flex-direction:column;gap:10px;align-items:stretch}
 .link .primary{border:0;background:var(--primary);color:#fff;font:inherit;font-weight:800;padding:15px 22px;border-radius:14px;font-size:16px;cursor:pointer}
 .link [hidden]{display:none}
+.topbar{position:sticky;top:0;z-index:5;display:flex;justify-content:flex-end;padding:8px 0 10px;background:var(--bg)}
+.fold{border:1.5px solid var(--border);background:var(--card);color:var(--text);font:inherit;font-weight:800;font-size:14px;padding:9px 16px;border-radius:999px;cursor:pointer}
+.inst{display:flex;gap:12px;align-items:flex-start;background:var(--card);border:2px solid var(--border);border-radius:14px;padding:14px;margin:14px 0 10px;cursor:pointer;font-weight:700;font-size:15px;color:var(--text);line-height:1.35}
+.inst input{width:22px;height:22px;flex:none;accent-color:var(--accent);margin:0}
+.inst.ok{border-color:var(--accent);background:var(--soft)}
+.skip{border:0;background:none;color:var(--muted);font:inherit;font-weight:700;font-size:14px;padding:12px;cursor:pointer;text-decoration:underline}
 </style>
 </head>
 <body>
 <div class="wrap">
+<div class="topbar"><button class="fold" onclick="goApp()">Згорнути ✕</button></div>
 
 <header>
   <img src="assets/brand/icon-512.png" alt="SkillHUB">
@@ -233,6 +240,8 @@ section{display:none}section.on{display:block}
 <div class="done">🎉 Тепер SkillHUB відкривається одним дотиком</div>
 <div class="link">
   <button id="nativeInstall" class="primary" hidden>Установити SkillHUB</button>
+  <label class="inst" id="instBox"><input type="checkbox" id="instChk"><span>Додаток встановлено, більше не показувати інструкцію</span></label>
+  <button class="skip" onclick="goApp()">Продовжити без встановлення</button>
 </div>
 
 </div>
@@ -265,7 +274,21 @@ document.getElementById('nativeInstall').addEventListener('click',function(){
   deferred.prompt();
   deferred.userChoice.finally(function(){deferred=null;document.getElementById('nativeInstall').hidden=true;});
 });
-window.addEventListener('appinstalled',function(){ markInstalled(); });
+function goApp(){
+  var h='';try{h=sessionStorage.getItem('skillhub_target_hash')||''}catch(e){}
+  try{sessionStorage.setItem('skillhub_skip_start','1')}catch(e){}
+  location.replace('index.html?nostart'+h);
+}
+document.getElementById('instChk').addEventListener('change',function(){
+  document.getElementById('instBox').classList.toggle('ok',this.checked);
+  if(this.checked){markInstalled();setTimeout(goApp,350);}
+});
+window.addEventListener('appinstalled',function(){
+  markInstalled();
+  var c=document.getElementById('instChk');c.checked=true;
+  document.getElementById('instBox').classList.add('ok');
+  document.getElementById('instBox').scrollIntoView({behavior:'smooth',block:'center'});
+});
 </script>
 </body>
 </html>

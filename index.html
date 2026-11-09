@@ -10,7 +10,8 @@
                 var standalone = (window.matchMedia && matchMedia('(display-mode: standalone)').matches) || window.navigator.standalone === true;
                 if (standalone) { localStorage.setItem('skillhub_installed', '1'); return; }
                 if (localStorage.getItem('skillhub_installed') === '1') return;
-                if (/[?&]nostart\b/.test(location.search)) return;
+                if (/[?&]nostart\b/.test(location.search)) { sessionStorage.setItem('skillhub_skip_start', '1'); return; }
+                if (sessionStorage.getItem('skillhub_skip_start') === '1') return;
                 sessionStorage.setItem('skillhub_target_hash', location.hash || '');
                 location.replace('Start.html');
             } catch (e) {}
